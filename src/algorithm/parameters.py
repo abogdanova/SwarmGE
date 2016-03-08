@@ -1,6 +1,5 @@
 from utilities.helper_methods import RETURN_PERCENT
 from fitness.fitness_wheel import set_fitness_function
-from fitness.regression import regression
 
 """algorithm Parameters"""
 
