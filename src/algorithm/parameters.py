@@ -12,6 +12,11 @@ MAX_TREE_DEPTH = 10
 MUTATION_PROBABILITY = "1 over the length of the genome"
 CROSSOVER_PROBABILITY = 0.5
 
+#For tournament selection
+TOURNAMENT_SIZE = 3
+#For truncation selection
+SELECTION_PROPORTION = 0.5
+
 #Select Regression PRoblem Suite
 SUITE = "Keijzer6"
 # "Dow"

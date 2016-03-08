@@ -1,12 +1,11 @@
 from utilities.helper_methods import RETURN_PERCENT
-from algorithm.parameters import POPULATION_SIZE,GENERATION_SIZE
+from algorithm.parameters import POPULATION_SIZE,GENERATION_SIZE, TOURNAMENT_SIZE, SELECTION_PROPORTION
 from random import sample
 
 def tournament_selection(population):
     """Given an entire population, draw <tournament_size> competitors
     randomly and return the best."""
-    # FIXME 3 should be a parameter
-    tournament_size = RETURN_PERCENT(3,POPULATION_SIZE)
+    tournament_size = RETURN_PERCENT(TOURNAMENT_SIZE,POPULATION_SIZE)
     winners = []
     while len(winners) < GENERATION_SIZE:
         competitors = sample(population, tournament_size)
@@ -15,9 +14,9 @@ def tournament_selection(population):
     return winners
 
 #Provided but no flag set. Need to append code to use this
-def truncation_selection(population, proportion=0.5):
+def truncation_selection(population):
     """Given an entire population, return the best <proportion> of
     them."""
     population.sort(reverse=True)
-    cutoff = int(len(population) * float(proportion))
+    cutoff = int(len(population) * float(SELECTION_PROPORTION))
     return population[0:cutoff]
