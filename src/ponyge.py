@@ -74,7 +74,8 @@ def mane(SEED):
         quit()
 
     # Loop
-    #FIXME We can probably remove the likes of crossover and mutation from this and set them directly in step
+    # We can probably remove the likes of crossover and mutation from this and set them directly in step
+    # We should probably parameterise things more.
     if parameters.GENOME_OPERATIONS:
         best_ever, phenotypes, total_inds, invalids, regens, final_gen = search_loop.search_loop(
                             parameters.GENERATIONS, individuals, bnf_grammar,
