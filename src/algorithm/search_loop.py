@@ -29,6 +29,7 @@ def search_loop(max_generations, individuals, grammar, replacement, selection, c
                 best_test = deepcopy(best_ever)
                 best_test.evaluate(fitness_function, dist='test')
                 if not parameters.DEBUG:
+                    #What is this!!!!!!!
                     save_best_midway(generation, best_test, TIME_STAMP, time_list)
             if parameters.SAVE_PLOTS:
                 file_path = getcwd()
