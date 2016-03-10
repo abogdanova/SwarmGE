@@ -16,6 +16,7 @@ def search_loop(max_generations, individuals, grammar, replacement, selection, c
     total_inds = params['POPULATION_SIZE']
     best_ever = max(individuals)
     stats.print_stats(0, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
+    #This runs for a certain number of evals
     if params['COMPLETE_EVALS']:
         generation = 1
         while len(phenotypes) < (max_generations * params['POPULATION_SIZE']):
@@ -35,6 +36,7 @@ def search_loop(max_generations, individuals, grammar, replacement, selection, c
             if params['SAVE_PLOTS']:
                 search_loop_save_plot(fitness_plot, best_ever.fitness, TIME_STAMP)
             generation += 1
+    #This is traditional GE
     else:
         for generation in range(1, (max_generations+1)):
             individuals, best_ever, phenotypes, invalids, step_regens = step.step(
