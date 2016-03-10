@@ -3,6 +3,7 @@ from algorithm import step, evaluate_fitness
 from algorithm.parameters import params
 from stats import stats
 from utilities.save_plot import search_loop_save_plot
+from utilities.save_best_midway import save_best_midway
 
 
 def search_loop(max_generations, individuals, grammar, replacement, selection, crossover, mutation, fitness_function, time_list, TIME_STAMP):
