@@ -1,4 +1,4 @@
-from algorithm import parameters
+from algorithm.parameters import params
 from sys import maxint
 
 
@@ -13,8 +13,8 @@ def evaluate_fitness(individuals, grammar, fitness_function, phenotypes, invalid
         if ind.phenotype == None:
             ind.fitness = maxint
             invalids += 1
-        if parameters.CACHE:
-            if parameters.MUTATE_DUPLICATES:
+        if params['CACHE']:
+            if params['MUTATE_DUPLICATES']:
                 while ind.phenotype in phenotypes:
                     ind = mutation(ind)
                     regens += 1
@@ -24,9 +24,9 @@ def evaluate_fitness(individuals, grammar, fitness_function, phenotypes, invalid
                 phenotypes[ind.phenotype] = ind.fitness
             else:
                 if ind.phenotype and (ind.phenotype in phenotypes):
-                    if parameters.LOOKUP_FITNESS:
+                    if params['LOOKUP_FITNESS']:
                         ind.fitness = phenotypes[ind.phenotype]
-                    elif parameters.LOOKUP_BAD_FITNESS:
+                    elif params['LOOKUP_BAD_FITNESS']:
                         ind.fitness = maxint
                     else:
                         ind.evaluate(fitness_function)

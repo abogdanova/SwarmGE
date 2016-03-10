@@ -1,5 +1,5 @@
 from representation import tree
-from algorithm.parameters import CODON_SIZE,FITNESS_FUNCTION,PROBLEM
+from algorithm.parameters import params
 from random import randint
 from fitness.fitness import default_fitness
 
@@ -10,7 +10,7 @@ class individual(object):
     def __init__(self, genome, ind_tree, grammar, invalid=False, max_depth=20, chromosome=False, length=500):
         if (genome == None) and (ind_tree == None):
             if chromosome:
-                self.genome = [randint(0, CODON_SIZE) for _ in range(length)]
+                self.genome = [randint(0, params['CODON_SIZE']) for _ in range(length)]
                 self.phenotype, self.used_codons, self.tree, self.nodes, self.invalid = tree.genome_init(grammar, self.genome)
             else:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid = tree.random_init(grammar, max_depth)
@@ -20,11 +20,11 @@ class individual(object):
             self.genome = genome
             self.tree = ind_tree
             self.invalid = invalid
-        self.fitness = default_fitness(FITNESS_FUNCTION.maximise)
+        self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
         self.length = length
 
     def __lt__(self, other):
-        if FITNESS_FUNCTION.maximise:
+        if params['FITNESS_FUNCTION'].maximise:
             return self.fitness < other.fitness
         else:
             return other.fitness < self.fitness
@@ -37,7 +37,7 @@ class individual(object):
         """ Evaluates phenotype in fitness function on either training or test
         distributions and sets fitness"""
         #IF the problem is regression eg has training and test data
-        if PROBLEM == "regression":
+        if params['PROBLEM'] == "regression":
             self.fitness = fitness(self.phenotype, dist)
         else:
             self.fitness = fitness(self.phenotype)

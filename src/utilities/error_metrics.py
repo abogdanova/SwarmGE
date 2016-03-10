@@ -1,3 +1,5 @@
+import numpy as np
+
 def mae(y, yhat):
     """Calculate mean absolute error between inputs."""
     return np.mean(np.abs(y - yhat))

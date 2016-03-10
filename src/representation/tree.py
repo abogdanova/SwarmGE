@@ -5,11 +5,7 @@
 # Hereby licensed under the GNU GPL v3.
 
 from os import getcwd, path, mkdir
-from operator import itemgetter
 import matplotlib.pyplot as plt
-from itertools import groupby
-from datetime import datetime
-from math import floor
 import random, copy
 import numpy as np
 

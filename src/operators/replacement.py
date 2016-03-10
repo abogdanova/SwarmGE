@@ -1,4 +1,4 @@
-from algorithm.parameters import ELITE_SIZE,GENERATION_SIZE
+from algorithm.parameters import params
 from copy import copy
 
 def generational_replacement(new_pop, individuals):
@@ -7,10 +7,10 @@ def generational_replacement(new_pop, individuals):
     pop"""
 
     individuals.sort(reverse=True)
-    for ind in individuals[:ELITE_SIZE]:
+    for ind in individuals[:params['ELITE_SIZE']]:
         new_pop.append(copy(ind))
     new_pop.sort(reverse=True)
-    return new_pop[:GENERATION_SIZE]
+    return new_pop[:params['GENERATION_SIZE']]
 
 #Provided but no flag set. Need to append code to use this
 def steady_state_replacement(new_pop, individuals):

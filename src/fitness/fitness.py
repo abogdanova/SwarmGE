@@ -1,4 +1,4 @@
-from algorithm.parameters import FITNESS_FUNCTION
+from algorithm.parameters import params
 
 def default_fitness(maximise):
     """ Return default fitness given maximization of minimization"""
@@ -33,5 +33,5 @@ def eval_or_exec(expr):
         # nesting (see http://bugs.python.org/issue3971). The amount
         # of nesting allowed varies between versions, is quite low in
         # Python2.5. If we can't evaluate, award bad fitness.
-        retval = default_fitness(FITNESS_FUNCTION.maximise)
+        retval = default_fitness(params['FITNESS_FUNCTION'].maximise)
     return retval

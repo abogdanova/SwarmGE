@@ -1,6 +1,17 @@
+from algorithm.parameters import params
 from random import shuffle, randint
 from representation import tree,individual
 from math import floor
+
+def generate_initial_pop(grammar):
+    if  params['INITIALISATION'] == "random":
+        return random_initialisation(params['POPULATION_SIZE'], grammar, params['GENOME_INIT'])
+    elif params['INITIALISATION'] == "rhh":
+        return rhh_initialisation(params['POPULATION_SIZE'], grammar, params['MAX_TREE_DEPTH'])
+    else:
+        print "Error: initialisation method not recognised"
+        quit()
+
 
 def random_initialisation(size, grammar, genome_init):
     """Randomly create a population of size and return"""

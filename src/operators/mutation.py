@@ -1,6 +1,6 @@
 from copy import deepcopy
 from random import randint, random, shuffle
-from algorithm import parameters
+from algorithm.parameters import params
 
 def int_flip_mutation(ind):
     """Mutate the individual by randomly chosing a new int with
@@ -8,7 +8,7 @@ def int_flip_mutation(ind):
     "within_used" option."""
     for i in range(len(ind.genome)):
         if random() < (1/len(ind.genome)):
-            ind.genome[i] = randint(0, parameters.CODON_SIZE)
+            ind.genome[i] = randint(0, params['CODON_SIZE'])
     ind.phenotype, ind.used_codons, ind.tree = None, None, None
    # ind.phenotype, ind.used_codons, ind.tree, ind.invalid = tree.genome_init(ind.tree.grammar, ind.genome)
    # if type(ind.used_codons) is list:
@@ -21,7 +21,7 @@ def split_mutation(pop, gen):
     progress"""
 
     min_perc = 30
-    var_perc = min_perc + (gen / float(parameters.GENERATIONS)) * (100 - (2 * min_perc))
+    var_perc = min_perc + (gen / float(params['GENERATIONS'])) * (100 - (2 * min_perc))
     shuffle(pop)
 
     pop = deepcopy(pop)

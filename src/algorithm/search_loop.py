@@ -1,7 +1,8 @@
-from algorithm import parameters, step, evaluate_fitness
+from algorithm import step, evaluate_fitness
+from algorithm.parameters import params
 from stats import stats
 from copy import deepcopy
-from os import path, mkdir, listdir, getcwd
+from os import path, mkdir, getcwd
 import matplotlib.pyplot as plt
 
 def search_loop(max_generations, individuals, grammar, replacement, selection, crossover, mutation, fitness_function, time_list, TIME_STAMP):
@@ -12,26 +13,26 @@ def search_loop(max_generations, individuals, grammar, replacement, selection, c
     invalids = 0
     #Evaluate initial population
     phenotypes, individuals, invalids, regens = evaluate_fitness.evaluate_fitness(individuals, grammar, fitness_function, phenotypes, invalids, mutation)
-    total_inds = parameters.POPULATION_SIZE
+    total_inds = params['POPULATION_SIZE']
     best_ever = max(individuals)
     stats.print_stats(0, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
-    if parameters.COMPLETE_EVALS:
+    if params['COMPLETE_EVALS']:
         generation = 1
-        while len(phenotypes) < (max_generations * parameters.POPULATION_SIZE):
+        while len(phenotypes) < (max_generations * params['POPULATION_SIZE']):
             individuals, best_ever, phenotypes, invalids, step_regens = step.step(
                     individuals, grammar, replacement, selection, crossover,
                     mutation, fitness_function, best_ever, phenotypes,
                     invalids, generation, TIME_STAMP)
             regens += step_regens
-            total_inds += parameters.POPULATION_SIZE
+            total_inds += params['POPULATION_SIZE']
             stats.print_stats(generation, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
             if generation == max_generations:
                 best_test = deepcopy(best_ever)
                 best_test.evaluate(fitness_function, dist='test')
-                if not parameters.DEBUG:
+                if not params['DEBUG']:
                     #What is this!!!!!!!
                     save_best_midway(generation, best_test, TIME_STAMP, time_list)
-            if parameters.SAVE_PLOTS:
+            if params['SAVE_PLOTS']:
                 file_path = getcwd()
                 if not path.isdir(str(file_path) + "/Results"):
                     mkdir(str(file_path) + "/Results")
@@ -53,9 +54,9 @@ def search_loop(max_generations, individuals, grammar, replacement, selection, c
                 mutation, fitness_function, best_ever, phenotypes,
                 invalids, generation, TIME_STAMP)
             regens += step_regens
-            total_inds += parameters.POPULATION_SIZE
+            total_inds += params['POPULATION_SIZE']
             stats.print_stats(generation, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
-            if parameters.SAVE_PLOTS:
+            if params['SAVE_PLOTS']:
                 file_path = getcwd()
                 if not path.isdir(str(file_path) + "/Results"):
                     mkdir(str(file_path) + "/Results")

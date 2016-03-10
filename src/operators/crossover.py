@@ -1,5 +1,5 @@
 from representation import individual,tree
-from algorithm import parameters
+from algorithm.parameters import params
 from random import randint, random
 
 def onepoint_crossover(p_0, p_1, within_used=True):
@@ -15,7 +15,7 @@ def onepoint_crossover(p_0, p_1, within_used=True):
         max_p_0, max_p_1 = len(c_p_0), len(c_p_1)
     pt_p_0, pt_p_1 = randint(1, max_p_0), randint(1, max_p_1)
     # Make new chromosomes by crossover: these slices perform copies
-    if random() < parameters.CROSSOVER_PROBABILITY:
+    if random() < params['CROSSOVER_PROBABILITY']:
         c_0 = c_p_0[:pt_p_0] + c_p_1[pt_p_1:]
         c_1 = c_p_1[:pt_p_1] + c_p_0[pt_p_0:]
     else:
@@ -38,7 +38,7 @@ def subtree_crossover(p_0, p_1, within_used=True):
     crossover and return them."""
     # Get the chromosomes#
 
-    if random() > parameters.CROSSOVER_PROBABILITY:
+    if random() > params['CROSSOVER_PROBABILITY']:
         ind0 = p_1
         ind1 = p_0
     else:

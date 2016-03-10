@@ -2,6 +2,10 @@
 
 from error_metrics import mae, rmse, mse
 from helper_methods import get_Xy_train_test, get_Xy_train_test_separate
+import sys
+import numpy as np
+from sklearn.linear_model import LinearRegression, ElasticNet
+
 
 def fit_const(train_X, train_y, test_X, test_y):
     """Use the mean of the y training values as a predictor."""

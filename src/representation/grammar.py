@@ -1,4 +1,4 @@
-from algorithm.parameters import CODON_SIZE
+from algorithm.parameters import params
 from utilities.helper_methods import python_filter
 from re import search, findall
 from itertools import groupby
@@ -17,7 +17,7 @@ class grammar(object):
         self.permutations = {}
         self.non_terminals, self.terminals = {}, []
         self.start_rule = None
-        self.codon_size = CODON_SIZE
+        self.codon_size = params['CODON_SIZE']
         self.read_bnf_file(file_name)
         self.check_depths()
         self.check_permutations()
@@ -255,6 +255,7 @@ class grammar(object):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,
                                 self.rules, self.start_rule)
 
+    #The genotype to phenotype mappping process - Maybe make this a seperate entity
     def generate(self, _input, max_wraps=2):
         """Map input via rules to output. Returns output and used_input"""
         used_input = 0

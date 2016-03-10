@@ -1,4 +1,5 @@
-from algorithm import parameters,evaluate_fitness
+from algorithm import evaluate_fitness
+from algorithm.parameters import params
 from copy import deepcopy
 from random import sample
 
@@ -9,7 +10,7 @@ def step(individuals, grammar, replacement, selection, crossover, mutation, fitn
     parents = selection(individuals)
     #Crossover parents and add to the new population
     cross_pop = []
-    while len(cross_pop) < parameters.GENERATION_SIZE:
+    while len(cross_pop) < params['GENERATION_SIZE']:
         cross_pop.extend(crossover(*sample(parents, 2)))
     #Mutate the new population
     new_pop = list(map(mutation, deepcopy(cross_pop)))

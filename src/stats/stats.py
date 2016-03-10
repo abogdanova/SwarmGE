@@ -1,4 +1,4 @@
-from algorithm import parameters
+from algorithm.parameters import params
 from datetime import timedelta
 import time
 
@@ -16,14 +16,14 @@ def print_stats(generation, individuals, best_ever, phenotypes, total_inds, inva
     print "\nGen:\t", generation
     print "  Best fitness:\t", best_ever.fitness
     print "  Total inds: \t", total_inds
-    if parameters.CACHE:
+    if params['CACHE']:
         print "  Re-generated:\t", regens
         print "  Unique evals:\t", len(phenotypes)
     print "  Invalid inds:\t", invalids
-    if parameters.CACHE:
+    if params['CACHE']:
         print "  Unused search:",100 - len(phenotypes)/float(total_inds)*100,"percent"
 
-    if parameters.GENOME_OPERATIONS:
+    if params['GENOME_OPERATIONS']:
         max_depth = max([len(i.genome) for i in individuals
                             if i.phenotype is not None])
         ave_depth = ave([len(i.genome) for i in individuals
@@ -52,9 +52,9 @@ def print_stats(generation, individuals, best_ever, phenotypes, total_inds, inva
         print "  Max tree nodes:", max_nodes
 
     print "  Time Taken: \t", time_taken, "\n"
-    if not parameters.DEBUG:
+    if not params['DEBUG']:
         save_results(generation, best_ever.fitness, time_taken, len(phenotypes), total_inds, invalids, regens, ave_depth, max_depth, ave_nodes, max_nodes, TIME_STAMP)
-        if parameters.SAVE_ALL:
+        if params['SAVE_ALL']:
             save_best(generation, generation, best_ever, TIME_STAMP)
         else:
             save_best("best", generation, best_ever, TIME_STAMP)
@@ -72,7 +72,7 @@ def save_results(generation, fitness, time_taken, phenotypes, total_inds, invali
         savefile.write("\tUnique evals:\t" + str(phenotypes))
         savefile.write("\tInvalid inds:\t" + str(invalids))
         savefile.write("\tUnused search:\t" + str(100 - (phenotypes/float(total_inds))*100) + " percent")
-        if parameters.GENOME_OPERATIONS:
+        if params['GENOME_OPERATIONS']:
             savefile.write("\tAve genome length:\t" + str(ave_depth))
             savefile.write("\tMax genome length:\t" + str(max_depth))
             savefile.write("\tAve used codons:\t" + str(ave_nodes))
@@ -84,13 +84,13 @@ def save_results(generation, fitness, time_taken, phenotypes, total_inds, invali
             savefile.write("\tMax tree nodes:\t" + str(max_nodes))
         savefile.write("\tTime Taken:\t" + str(time_taken) + "\n")
     elif END:
-        savefile.write("\n\nGrammar =      \t" + str(parameters.GRAMMAR_FILE.split("/")[1].split(".")[0])
+        savefile.write("\n\nGrammar =      \t" + str(params['GRAMMAR_FILE'].split("/")[1].split(".")[0])
                        + "\nBest fitness = \t" + str(fitness)
-                       + "\nPopulation Size = " + str(parameters.POPULATION_SIZE)
-                       + "\nGenerations =  \t" + str(parameters.GENERATIONS)
-                       + "\nMutation =     \t" + str(parameters.MUTATION_PROBABILITY)
-                       + "\nCrossover =    \t" +str(parameters.CROSSOVER_PROBABILITY)
-                       + "\nCodon Size =   \t" + str(parameters.CODON_SIZE)
+                       + "\nPopulation Size = " + str(params['POPULATION_SIZE'])
+                       + "\nGenerations =  \t" + str(params['GENERATIONS'])
+                       + "\nMutation =     \t" + str(params['MUTATION_PROBABILITY'])
+                       + "\nCrossover =    \t" +str(params['CROSSOVER_PROBABILITY'])
+                       + "\nCodon Size =   \t" + str(params['CODON_SIZE'])
                        + "\nTotal inds =   \t" + str(total_inds)
                        + "\nRe-generated = \t" + str(regens)
                        + "\nUnique evals = \t" + str(phenotypes)
