@@ -1,9 +1,9 @@
+from copy import deepcopy
 from algorithm import step, evaluate_fitness
 from algorithm.parameters import params
 from stats import stats
-from copy import deepcopy
-from os import path, mkdir, getcwd
-import matplotlib.pyplot as plt
+from utilities.save_plot import search_loop_save_plot
+
 
 def search_loop(max_generations, individuals, grammar, replacement, selection, crossover, mutation, fitness_function, time_list, TIME_STAMP):
     """Loop over max generations"""
@@ -33,19 +33,7 @@ def search_loop(max_generations, individuals, grammar, replacement, selection, c
                     #What is this!!!!!!!
                     save_best_midway(generation, best_test, TIME_STAMP, time_list)
             if params['SAVE_PLOTS']:
-                file_path = getcwd()
-                if not path.isdir(str(file_path) + "/Results"):
-                    mkdir(str(file_path) + "/Results")
-                if not path.isdir(str(file_path) + "/Results/" + str(TIME_STAMP)):
-                    mkdir(str(file_path) + "/Results/" + str(TIME_STAMP))
-                fitness_plot.append(best_ever.fitness)
-                fig = plt.figure()#figsize=[20,15])
-                ax1 = fig.add_subplot(1,1,1)
-                ax1.plot(fitness_plot)
-                ax1.set_ylabel('fitness', fontsize=14)
-                ax1.set_xlabel('Generation', fontsize=14)
-                plt.savefig(getcwd()+'/Results/'+str(TIME_STAMP)+'/fitness.pdf')
-                plt.close()
+                search_loop_save_plot(fitness_plot, best_ever.fitness, TIME_STAMP)
             generation += 1
     else:
         for generation in range(1, (max_generations+1)):
@@ -57,17 +45,5 @@ def search_loop(max_generations, individuals, grammar, replacement, selection, c
             total_inds += params['POPULATION_SIZE']
             stats.print_stats(generation, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
             if params['SAVE_PLOTS']:
-                file_path = getcwd()
-                if not path.isdir(str(file_path) + "/Results"):
-                    mkdir(str(file_path) + "/Results")
-                if not path.isdir(str(file_path) + "/Results/" + str(TIME_STAMP)):
-                    mkdir(str(file_path) + "/Results/" + str(TIME_STAMP))
-                fitness_plot.append(best_ever.fitness)
-                fig = plt.figure()#figsize=[20,15])
-                ax1 = fig.add_subplot(1,1,1)
-                ax1.plot(fitness_plot)
-                ax1.set_ylabel('fitness', fontsize=14)
-                ax1.set_xlabel('Generation', fontsize=14)
-                plt.savefig(getcwd()+'/Results/'+str(TIME_STAMP)+'/fitness.pdf')
-                plt.close()
+                search_loop_save_plot(fitness_plot, best_ever.fitness, TIME_STAMP)
     return best_ever, phenotypes, total_inds, invalids, regens, generation
