@@ -104,4 +104,5 @@ def mane(SEED):
 
 if __name__ == "__main__":
     set_params(sys.argv)
+
     mane(datetime.now().microsecond)
