@@ -27,10 +27,8 @@ import time
 
 def mane():
     """ Run program """
-    # Read grammar
     time1 = datetime.now()
     ran_seed = params['RANDOM_SEED']
-
     seed(ran_seed)
 
     if params['GENOME_OPERATIONS']:
@@ -55,7 +53,7 @@ def mane():
             mkdir(str(file_path) + "/Results/" + str(TIME_STAMP))
         filename = "./Results/" + str(TIME_STAMP) + "/" + str(TIME_STAMP)+ ".txt"
         savefile = open(filename, 'w')
-        savefile.write("# Machine: " + str(name) + "\tSeed: " + str(ran_seed) + "\n# Version: " + str(version) + "\n# Suite: " + str(parameters.GRAMMAR_FILE.split("/")[1].split(".")[0]) + "\n#\n")
+        savefile.write("# Machine: " + str(name) + "\tSeed: " + str(ran_seed) + "\n# Version: " + str(version) + "\n# Suite: " + str(params['GRAMMAR_FILE'].split("/")[1].split(".")[0]) + "\n#\n")
         savefile.close()
 
     #Set Fitness Funtion
