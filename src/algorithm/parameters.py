@@ -1,6 +1,6 @@
 from utilities.helper_methods import RETURN_PERCENT
 from fitness.fitness_wheel import set_fitness_function
-from datetime import datetime
+import time
 
 """algorithm Parameters"""
 #FIXME Need to set random seed here and only here and default to cpu clock if not present
@@ -121,7 +121,7 @@ def set_params(command_line_args):
     params['ELITE_SIZE'] = RETURN_PERCENT(1,params['POPULATION_SIZE'])
 
     if params['RANDOM_SEED'] == None:
-        params['RANDOM_SEED'] = datetime.now().microsecond
+        params['RANDOM_SEED'] = int(time.clock()*1000000)
 
     #FIXME Need to move these to before the command line args are set.
     #To run Regression
