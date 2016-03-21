@@ -1,8 +1,11 @@
 from utilities.helper_methods import RETURN_PERCENT
 from fitness.fitness_wheel import set_fitness_function
+from datetime import datetime
 
 """algorithm Parameters"""
+#FIXME Need to set random seed here and only here and default to cpu clock if not present
 params = {
+'RANDOM_SEED': None,
 'CODON_SIZE' : 100000,
 'POPULATION_SIZE' : 500,
 'GENERATION_SIZE' : None,
@@ -81,14 +84,16 @@ def set_params(command_line_args):
     try:
         #FIXME help option
         print(command_line_args)
-        OPTS, ARGS = getopt.getopt(command_line_args[1:], "p:g:e:m:x:b:f:",
+        OPTS, ARGS = getopt.getopt(command_line_args[1:], "p:g:e:m:x:b:f:r:",
                                    ["population", "generations",
                                     "elite_size", "mutation", "crossover",
-                                    "bnf_grammar", "fitness_function"])
+                                    "bnf_grammar", "fitness_function", "random_seed"])
     except getopt.GetoptError as err:
         print(str(err))
         #FIXME usage
         exit(2)
+
+    #FIXME Need to update the command line args to reflect parameters dictionary
     for opt, arg in OPTS:
         if opt in ("-p", "--population"):
             params['POPULATION_SIZE'] = int(arg)
@@ -105,6 +110,8 @@ def set_params(command_line_args):
             params['GRAMMAR_FILE'] = arg
         elif opt in ("-f", "--fitness_function"):
             params['FITNESS_FUNCTION'] = arg
+        elif opt in ("-r", "--random_seed"):
+            params['RANDOM_SEED'] = int(arg)
         else:
             assert False, "unhandeled option"
 
@@ -113,7 +120,13 @@ def set_params(command_line_args):
     #This needs to be defined better, porobabl make 1 into variable
     params['ELITE_SIZE'] = RETURN_PERCENT(1,params['POPULATION_SIZE'])
 
+    if params['RANDOM_SEED'] == None:
+        params['RANDOM_SEED'] = datetime.now().microsecond
+
+    #FIXME Need to move these to before the command line args are set.
+    #To run Regression
     params['PROBLEM'],params['ALTERNATE'],params['GRAMMAR_FILE'] = "regression", params['SUITE'], "grammars/" + params['SUITE'] + ".bnf",
+    #To run String Match
     #params['PROBLEM'],params['ALTERNATE'],params['GRAMMAR_FILE'] = "string_match", params['STRING_MATCH_TARGET'], "grammars/letter.bnf"
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],params['ALTERNATE'])
 

@@ -25,11 +25,11 @@ from fitness.fitness_wheel import set_fitness_function
 from stats import stats
 import time
 
-def mane(SEED):
+def mane():
     """ Run program """
     # Read grammar
     time1 = datetime.now()
-    ran_seed = SEED
+    ran_seed = params['RANDOM_SEED']
 
     seed(ran_seed)
 
@@ -104,4 +104,4 @@ def mane(SEED):
 
 if __name__ == "__main__":
     set_params(sys.argv)
-    mane(datetime.now().microsecond)
+    mane()

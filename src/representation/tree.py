@@ -9,11 +9,6 @@ import matplotlib.pyplot as plt
 import random, copy
 import numpy as np
 
-#NEED TO TEST THAT THIS WORKS
-#MIGHT NEED TO PASS RANDOM AROUND OR HAVE RANDOM SET IN PARAMETERS.PY
-# FIXME delete this and check that RNG is working correctly throughout
-random.seed(10)
-
 class Tree:
 
     def __init__(self, expr, parent, max_depth=20, depth_limit=20):
