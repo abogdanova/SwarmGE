@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import random, copy
 import numpy as np
 
+#FIXME Class needs breaking up and magic numbers removed
 class Tree:
 
     def __init__(self, expr, parent, max_depth=20, depth_limit=20):

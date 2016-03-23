@@ -30,6 +30,7 @@ def search_loop(max_generations, individuals, grammar, replacement, selection, c
             stats.print_stats(generation, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
             if generation == max_generations:
                 best_test = deepcopy(best_ever)
+                #FIXME Not sure I like how this is done could probably be removed
                 best_test.evaluate(fitness_function, dist='test')
                 if not params['DEBUG']:
                     #What is this!!!!!!!

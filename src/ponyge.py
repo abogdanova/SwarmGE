@@ -91,6 +91,7 @@ def mane():
     print "Invalid inds: \t", invalids
     print "Unused search:\t", 100 - (len(phenotypes)/float(total_inds))*100,"percent"
     print "\nBest:\n  Training fitness:\t", best_ever.fitness
+    #FIXME This is hacky
     best_ever.evaluate(params['FITNESS_FUNCTION'], dist='test')
     print "  Test fitness:\t\t", best_ever.fitness
     print "  Phenotype:", best_ever.phenotype

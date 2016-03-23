@@ -33,6 +33,7 @@ class individual(object):
         return ("Individual: " +
                 str(self.phenotype) + "; " + str(self.fitness))
 
+    #FIXME Hacky needs fixing
     def evaluate(self, fitness, dist="training"):
         """ Evaluates phenotype in fitness function on either training or test
         distributions and sets fitness"""
