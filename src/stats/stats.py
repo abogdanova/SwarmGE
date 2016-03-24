@@ -13,15 +13,15 @@ def print_stats(generation, individuals, best_ever, phenotypes, total_inds, inva
     time_list.append(t1)
     time_taken = timedelta(seconds = time_list[-1] - time_list[-2])
 
-    print "\nGen:\t", generation
-    print "  Best fitness:\t", best_ever.fitness
-    print "  Total inds: \t", total_inds
+    print ("\nGen:\t", generation)
+    print ("  Best fitness:\t", best_ever.fitness)
+    print ("  Total inds: \t", total_inds)
     if params['CACHE']:
-        print "  Re-generated:\t", regens
-        print "  Unique evals:\t", len(phenotypes)
-    print "  Invalid inds:\t", invalids
+        print ("  Re-generated:\t", regens)
+        print ("  Unique evals:\t", len(phenotypes))
+    print ("  Invalid inds:\t", invalids)
     if params['CACHE']:
-        print "  Unused search:",100 - len(phenotypes)/float(total_inds)*100,"percent"
+        print ("  Unused search:",100 - len(phenotypes)/float(total_inds)*100,"percent")
 
     if params['GENOME_OPERATIONS']:
         max_depth = max([len(i.genome) for i in individuals
@@ -32,10 +32,10 @@ def print_stats(generation, individuals, best_ever, phenotypes, total_inds, inva
                             if i.phenotype is not None])
         ave_nodes = ave([i.used_codons for i in individuals
                             if i.phenotype is not None])
-        print "  Ave genome length:", ave_depth
-        print "  Max genome length:", max_depth
-        print "  Ave used codons  :", ave_nodes
-        print "  Max used codons  :", max_nodes
+        print ("  Ave genome length:", ave_depth)
+        print ("  Max genome length:", max_depth)
+        print ("  Ave used codons  :", ave_nodes)
+        print ("  Max used codons  :", max_nodes)
 
     else:
         max_depth = max([i.depth for i in individuals
@@ -46,12 +46,12 @@ def print_stats(generation, individuals, best_ever, phenotypes, total_inds, inva
                             if i.phenotype is not None])
         ave_nodes = ave([i.nodes for i in individuals
                             if i.phenotype is not None])
-        print "  Ave tree depth:", ave_depth
-        print "  Max tree depth:", max_depth
-        print "  Ave tree nodes:", ave_nodes
-        print "  Max tree nodes:", max_nodes
+        print ("  Ave tree depth:", ave_depth)
+        print ("  Max tree depth:", max_depth)
+        print ("  Ave tree nodes:", ave_nodes)
+        print ("  Max tree nodes:", max_nodes)
 
-    print "  Time Taken: \t", time_taken, "\n"
+    print ("  Time Taken: \t", time_taken, "\n")
     if not params['DEBUG']:
         save_results(generation, best_ever.fitness, time_taken, len(phenotypes), total_inds, invalids, regens, ave_depth, max_depth, ave_nodes, max_nodes, TIME_STAMP)
         if params['SAVE_ALL']:

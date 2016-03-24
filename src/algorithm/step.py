@@ -19,5 +19,5 @@ def step(individuals, grammar, replacement, selection, crossover, mutation, fitn
     #Replace the sorted individuals with the new populations
     individuals = replacement(new_pop, individuals)
     best_ever = max(best_ever, max(individuals))
-    print "______"
+    print ("______")
     return individuals, best_ever, phenotypes, invalids, regens

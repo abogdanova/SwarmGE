@@ -1,5 +1,5 @@
 from algorithm.parameters import params
-from sys import maxint
+from sys import maxsize
 
 
 def evaluate_fitness(individuals, grammar, fitness_function, phenotypes, invalids, mutation):
@@ -26,8 +26,9 @@ def evaluate_fitness(individuals, grammar, fitness_function, phenotypes, invalid
                 if ind.phenotype and (ind.phenotype in phenotypes):
                     if params['LOOKUP_FITNESS']:
                         ind.fitness = phenotypes[ind.phenotype]
+                    #FIXME Not a fan of using max int for default fitness
                     elif params['LOOKUP_BAD_FITNESS']:
-                        ind.fitness = maxint
+                        ind.fitness = maxsize
                     else:
                         ind.evaluate(fitness_function)
         else:

@@ -9,7 +9,7 @@ def generate_initial_pop(grammar):
     elif params['INITIALISATION'] == "rhh":
         return rhh_initialisation(params['POPULATION_SIZE'], grammar, params['MAX_TREE_DEPTH'])
     else:
-        print "Error: initialisation method not recognised"
+        print ("Error: initialisation method not recognised")
         quit()
 
 
@@ -26,7 +26,7 @@ def rhh_initialisation(size, grammar, max_tree_depth):
     population = []
 
     if size < 2:
-        print "Error: population size too small for RHH initialisation. Returning randomly built trees."
+        print ("Error: population size too small for RHH initialisation. Returning randomly built trees.")
         return [individual.individual(None, None, grammar) for _ in range(size)]
     else:
         if size % 2:

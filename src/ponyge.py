@@ -39,9 +39,9 @@ def mane():
     time_list = [time.clock()]
     hms = "%02d%02d%02d" % (time1.hour, time1.minute, time1.second)
     TIME_STAMP = (str(time1.year)[2:] + "_" + str(time1.month) + "_" + str(time1.day) + "_" + hms + "_" + str(time1.microsecond))
-    print "\nStart:\t", time1, "\n"
+    print ("\nStart:\t", time1, "\n")
     if params['DEBUG']:
-        print "Seed:\t", ran_seed, "\n"
+        print ("Seed:\t", ran_seed, "\n")
     else:
         from socket import gethostname
         hostname = gethostname().split('.')
@@ -85,17 +85,17 @@ def mane():
     print("Best " + str(best_ever))
     time_list.append(time.clock())
     total_time = timedelta(seconds = (time_list[-1] - time_list[0]))
-    print "\nTime taken:\t", total_time
-    print "\nTotal evals:  \t", total_inds
-    print "Unique evals: \t", len(phenotypes)
-    print "Invalid inds: \t", invalids
-    print "Unused search:\t", 100 - (len(phenotypes)/float(total_inds))*100,"percent"
-    print "\nBest:\n  Training fitness:\t", best_ever.fitness
+    print ("\nTime taken:\t", total_time)
+    print ("\nTotal evals:  \t", total_inds)
+    print ("Unique evals: \t", len(phenotypes))
+    print ("Invalid inds: \t", invalids)
+    print ("Unused search:\t", 100 - (len(phenotypes)/float(total_inds))*100,"percent")
+    print ("\nBest:\n  Training fitness:\t", best_ever.fitness)
     #FIXME This is hacky
     best_ever.evaluate(params['FITNESS_FUNCTION'], dist='test')
-    print "  Test fitness:\t\t", best_ever.fitness
-    print "  Phenotype:", best_ever.phenotype
-    print "  Genome:", best_ever.genome
+    print ("  Test fitness:\t\t", best_ever.fitness)
+    print ("  Phenotype:", best_ever.phenotype)
+    print ("  Genome:", best_ever.genome)
     if not params['DEBUG']:
         stats.save_best("best", final_gen, best_ever, TIME_STAMP)
         stats.save_results(final_gen, best_ever.fitness, total_time, len(phenotypes), total_inds, invalids, regens, None, None, None, None, TIME_STAMP, total_time=total_time, END=True)

@@ -17,7 +17,7 @@ CODON_SIZE = 100000
 
 now = datetime.now()
 SEED = now.microsecond # 637553#
-print "Seed:\t", SEED
+print ("Seed:\t", SEED)
 seed(SEED)
 
 SAVE = True
@@ -178,7 +178,7 @@ class Grammar(object):
         if self.start_rule[0] in self.non_terminals:
             self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
         else:
-            print "Error: start rule not a non-terminal"
+            print ("Error: start rule not a non-terminal")
             quit()
         self.max_arity = 0
         for NT in self.non_terminals:
@@ -226,7 +226,7 @@ class Grammar(object):
         if depth < self.min_path:
             # There is a bug somewhere that is looking for a tree smaller than
             # any we can create
-            print "Error: cannot check permutations for tree smaller than the minimum size"
+            print ("Error: cannot check permutations for tree smaller than the minimum size")
             quit()
         if depth in self.permutations.keys():
             return self.permutations[depth]
@@ -336,7 +336,7 @@ def get_min_ramp_depth(size, grammar):
 
 bnf_grammar = Grammar("grammars/Keijzer6.bnf")
 
-print get_min_ramp_depth(100000, bnf_grammar)
+print (get_min_ramp_depth(100000, bnf_grammar))
 
 genome = [71557, 78983, 6936, 94335, 11033, 25537, 38955, 98913, 15088, 37863, 63685, 18624, 31850, 95985, 2693, 83403, 22772, 5721, 68714, 89495, 86318, 12724, 417, 69911, 88845, 23565, 56800, 8611, 44617, 9866, 75489, 36, 56477, 83105, 40146, 91800, 23401, 57877, 19486, 19364, 66408, 88421, 89404, 92370, 10957, 32679, 65316, 90767, 7506, 47455, 74928, 91953, 96159, 8644, 22424, 88524, 93489, 93577, 86196, 1044, 45637, 18977, 3451, 99300, 95769, 33068, 40826, 93951, 79954, 14367, 77172, 98048, 11769, 45637, 78034]
 
@@ -352,33 +352,33 @@ phenotype3, genome3, orig_tree_3, nodes_3, check_3 = tree.grow_init(bnf_grammar,
 
 phenotype4, genome4, orig_tree_4, nodes_4, check_4 = tree.pi_grow_init(bnf_grammar, 10, SAVE)
 
-print "\nPhenotype 1:\tFull init:\t", phenotype1
-print "            \tIndex count\t\t", nodes_1
-print "            \tNode count\t", orig_tree_1.get_nodes(0)
-print "            \tGenome length\t", len(genome1)
+print ("\nPhenotype 1:\tFull init:\t", phenotype1)
+print ("            \tIndex count\t\t", nodes_1)
+print ("            \tNode count\t", orig_tree_1.get_nodes(0))
+print ("            \tGenome length\t", len(genome1))
 
-print "\nPhenotype 2:\tRandom init:\t", phenotype2
-print "            \tIndex count\t\t", nodes_2
-print "            \tNode count\t", orig_tree_2.get_nodes(0)
-print "            \tGenome length\t", len(genome2)
+print ("\nPhenotype 2:\tRandom init:\t", phenotype2)
+print ("            \tIndex count\t\t", nodes_2)
+print ("            \tNode count\t", orig_tree_2.get_nodes(0))
+print ("            \tGenome length\t", len(genome2))
 
-#print "\nPhenotype 2.5:\tPI random init:\t", phenotype2_5
-#print "            \tNode Count\t\t", fitnesses_2_5[0]
-#print "            \tPhenotype length\t", fitnesses_2_5[1]
-#print "            \tRoot Bias\t\t", round(fitnesses_2_5[2], 2)
-#print "            \tSlope\t\t\t", fitnesses_2_5[3]
-#print "            \tMax Depth:\t", fitnesses_2_5[4]
+#print ("\nPhenotype 2.5:\tPI random init:\t", phenotype2_5))
+#print ("            \tNode Count\t\t", fitnesses_2_5[0])
+#print ("            \tPhenotype length\t", fitnesses_2_5[1])
+#print ("            \tRoot Bias\t\t", round(fitnesses_2_5[2], 2))
+#print ("            \tSlope\t\t\t", fitnesses_2_5[3])
+#print ("            \tMax Depth:\t", fitnesses_2_5[4])
 
-#print "\nPhenotype 3:\tGrow init:\t", phenotype3
-#print "            \tNode Count\t\t", fitnesses_3[0]
-#print "            \tPhenotype length\t", fitnesses_3[1]
-#print "            \tRoot Bias\t\t", round(fitnesses_3[2], 2)
-#print "            \tSlope\t\t\t", fitnesses_3[3]
-#print "            \tMax Depth:\t", fitnesses_3[4]
+#print ("\nPhenotype 3:\tGrow init:\t", phenotype3)
+#print ("            \tNode Count\t\t", fitnesses_3[0])
+#print ("            \tPhenotype length\t", fitnesses_3[1])
+#print ("            \tRoot Bias\t\t", round(fitnesses_3[2], 2))
+#print ("            \tSlope\t\t\t", fitnesses_3[3])
+#print ("            \tMax Depth:\t", fitnesses_3[4])
 
-#print "\nPhenotype 4:\tPI Grow init:\t", phenotype4
-#print "            \tNode Count\t\t", fitnesses_4[0]
-#print "            \tPhenotype length\t", fitnesses_4[1]
-#print "            \tRoot Bias\t\t", round(fitnesses_4[2], 2)
-#print "            \tSlope\t\t\t", fitnesses_4[3]
-#print "            \tMax Depth:\t", fitnesses_4[4]
+#print ("\nPhenotype 4:\tPI Grow init:\t", phenotype4)
+#print ("            \tNode Count\t\t", fitnesses_4[0])
+#print ("            \tPhenotype length\t", fitnesses_4[1])
+#print ("            \tRoot Bias\t\t", round(fitnesses_4[2], 2))
+#print ("            \tSlope\t\t\t", fitnesses_4[3])
+#print ("            \tMax Depth:\t", fitnesses_4[4])

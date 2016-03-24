@@ -1,5 +1,5 @@
 from numpy import log, sqrt
-from sys import maxint
+from sys import maxsize
 from math import isnan
 from copy import deepcopy
 import numpy as np
@@ -25,7 +25,7 @@ class regression():
                 test_out = eval(func)
                 fitness = mse(test_out, self.test_exp)
             except:
-                fitness = maxint
+                fitness = maxsize
 
         elif dist == "training":
             x = deepcopy(self.training_in)
@@ -33,10 +33,10 @@ class regression():
                 training_out = eval(func)
                 fitness = mse(training_out, self.training_exp)
             except:
-                fitness = maxint
+                fitness = maxsize
 
         if (not fitness) or (fitness == np.nan) or isnan(fitness):
-            fitness = maxint
+            fitness = maxsize
 
         return fitness
 
@@ -51,7 +51,7 @@ def pdiv(a, b):
         elif (type(a) is np.float64) or (type(a) is float) or (type(a) is int):
             b[mask] = a
         else:
-            print "New type encountered in pdiv:\t", type(a), "\n\n", a
+            print ("New type encountered in pdiv:\t", type(a), "\n\n", a)
             quit()
         return a/b
     else:

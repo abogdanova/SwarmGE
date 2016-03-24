@@ -541,7 +541,7 @@ class Tree:
         #grow (based on grammar) from random node, with a given depth limit
         x, y = tree.random_derivation([], self.grammar, 0, max_depth=tree.max_depth)
         if tree.check_expansion(self.grammar):
-            print "Invalid"
+            print ("Invalid")
         genome = self.build_genome([])
 
         return self.get_output(), genome, self
@@ -561,7 +561,7 @@ class Tree:
         #grow (based on grammar) from random node, with a given depth limit
         x, y = tree.random_derivation([], self.grammar, 0, max_depth=tree.max_depth)
         if tree.check_expansion(self.grammar):
-            print "Invalid"
+            print ("Invalid")
         genome = self.build_genome([])
 
         return self.get_output(), genome, self
@@ -588,7 +588,7 @@ class Tree:
             symbol = chosen_prod[i]
             tree.children.append(Tree((symbol[0],),tree))
         if tree.check_expansion(self.grammar):
-            print "Invalid"
+            print ("Invalid")
         genome = self.build_genome([])
         return self.get_output(), genome, self
 
@@ -716,7 +716,7 @@ def original_subtree_crossover(tree1, tree2):
             try:
                 p2.children.index(t2)
             except ValueError:
-                print "Error: child not in parent."
+                print ("Error: child not in parent.")
                 quit()
             i2 = p2.children.index(t2)
             p2.children[i2] = t1
@@ -729,7 +729,7 @@ def original_subtree_crossover(tree1, tree2):
             try:
                 p1.children.index(t1)
             except ValueError:
-                print "Error: child not in parent"
+                print ("Error: child not in parent")
                 quit()
             i1 = p1.children.index(t1)
             p1.children[i1] = t2
@@ -792,7 +792,7 @@ def slow_subtree_crossover(orig_tree1, orig_tree2):
             try:
                 p2.children.index(t2)
             except ValueError:
-                print "Error: child not in parent."
+                print ("Error: child not in parent.")
                 quit()
             i2 = p2.children.index(t2)
             p2.children[i2] = t1
@@ -805,7 +805,7 @@ def slow_subtree_crossover(orig_tree1, orig_tree2):
             try:
                 p1.children.index(t1)
             except ValueError:
-                print "Error: child not in parent"
+                print ("Error: child not in parent")
                 quit()
             i1 = p1.children.index(t1)
             p1.children[i1] = t2
@@ -843,7 +843,7 @@ def slow_subtree_crossover(orig_tree1, orig_tree2):
        # dt1 = tree1.get_max_children(tree1, 0)
        # dt2 = tree2.get_max_children(tree2, 0)
         while False:# (dt1 > tree1.depth_limit) or (dt2 > tree2.depth_limit):
-            print "Repeating myself"
+            print ("Repeating myself")
             do_crossover(intersection)
             dt1 = tree1.get_max_children(tree1, 0)
             dt2 = tree2.get_max_children(tree2, 0)
@@ -898,7 +898,7 @@ def subtree_crossover(orig_tree1, orig_tree2):
             try:
                 p2.children.index(t2)
             except ValueError:
-                print "Error: child not in parent."
+                print ("Error: child not in parent.")
                 quit()
             i2 = p2.children.index(t2)
             p2.children[i2] = t1
@@ -911,7 +911,7 @@ def subtree_crossover(orig_tree1, orig_tree2):
             try:
                 p1.children.index(t1)
             except ValueError:
-                print "Error: child not in parent"
+                print ("Error: child not in parent")
                 quit()
             i1 = p1.children.index(t1)
             p1.children[i1] = t2
@@ -960,7 +960,7 @@ def genome_init(grammar, genome, counter="test"):
     tree = Tree((str(grammar.start_rule[0]),), None)
     index = tree.genome_derivation(genome, grammar, 0)
     if tree.check_expansion(grammar):
-        print "tree.genome_init generated an Invalid\n\nRandomly generating a new tree..."
+        print ("tree.genome_init generated an Invalid\n\nRandomly generating a new tree...")
         new_out, new_gen, new_tree, new_nodes, nothing = random_init(grammar, tree.max_depth)
         return new_out, [new_gen, len(new_gen)], new_tree, new_nodes, True
     else:
@@ -970,7 +970,7 @@ def random_init(grammar, depth, counter="test"):
     tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
     genome, nodes = tree.random_derivation([], grammar, 0, max_depth=depth)
     if tree.check_expansion(grammar):
-        print "tree.random_init generated an Invalid"
+        print ("tree.random_init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, nodes, False
 
@@ -978,7 +978,7 @@ def pi_random_init(grammar, depth, counter="test"):
     tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
     genome, nodes = tree.pi_random_derivation(grammar, 0, max_depth=depth)
     if tree.check_expansion(grammar):
-        print "tree.pi_random_init generated an Invalid"
+        print ("tree.pi_random_init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, nodes, False
 
@@ -987,7 +987,7 @@ def grow_init(grammar, depth, counter="test"):
     tree.depth_limit = depth
     genome, nodes = tree.grow([], grammar, 0, max_depth=depth)
     if tree.check_expansion(grammar):
-        print "tree.grow_init generated an Invalid"
+        print ("tree.grow_init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, nodes, False
 
@@ -995,7 +995,7 @@ def pi_grow_init(grammar, depth, counter="test"):
     tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
     genome, nodes = tree.pi_grow(grammar, 0, max_depth=depth)
     if tree.check_expansion(grammar):
-        print "tree.pi_grow_init generated an Invalid"
+        print ("tree.pi_grow_init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, nodes, False
 
@@ -1003,6 +1003,6 @@ def full_init(grammar, depth, counter="test"):
     tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
     genome, nodes = tree.full([], grammar, 0, max_depth=depth)
     if tree.check_expansion(grammar):
-        print "tree.full_init generated an Invalid"
+        print ("tree.full_init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, nodes, False

@@ -158,7 +158,7 @@ class grammar(object):
         if self.start_rule[0] in self.non_terminals:
             self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
         else:
-            print "Error: start rule not a non-terminal"
+            print ("Error: start rule not a non-terminal")
             quit()
         self.max_arity = 0
         for NT in self.non_terminals:
@@ -206,7 +206,7 @@ class grammar(object):
         if depth < self.min_path:
             # There is a bug somewhere that is looking for a tree smaller than
             # any we can create
-            print "Error: cannot check permutations for tree smaller than the minimum size"
+            print ("Error: cannot check permutations for tree smaller than the minimum size")
             quit()
         if depth in self.permutations.keys():
             return self.permutations[depth]
