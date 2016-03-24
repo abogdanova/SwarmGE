@@ -32,7 +32,7 @@ def rhh_initialisation(size, grammar, max_tree_depth):
         if size % 2:
             # Population size is odd
             size = size + 1
-        if size/2 < depths:
+        if size/2 < len(depths):
             depths = depths[:int(size/2)]
         times = int(floor((size/2)/len(depths)))
         remainder = int(size/2 - (times * len(depths)))
@@ -86,7 +86,7 @@ def get_min_ramp_depth(size, grammar, max_tree_deth):
     if size % 2:
         # Population size is odd
         size = size + 1
-    if size/2 < depths:
+    if size/2 < len(depths):
         depths = depths[:int(size/2)]
 
     unique_start = int(floor((size)/len(depths)))

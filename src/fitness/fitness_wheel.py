@@ -1,5 +1,5 @@
-from regression import regression
-from string_match import string_match
+from fitness.regression import regression
+from fitness.string_match import string_match
 
 def set_fitness_function(problem, alternate=None):
     #Regression Problem

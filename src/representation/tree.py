@@ -522,7 +522,7 @@ class Tree:
                 check = True
         return check
 
-    def slow_subtree_mutate(self):
+    def advanced_subtree_mutate(self):
         """ Creates a list of all nodes and picks one node at random to mutate.
             Because we have a list of all nodes we can (but currently don't)
             choose what kind of nodes to mutate on. Handy. Should hopefully be
@@ -676,80 +676,7 @@ def get_best_fit(y):
     slope, constant = np.polyfit(x, y, 1)
     return slope, constant
 
-def original_subtree_crossover(tree1, tree2):
-    tree1 = copy.deepcopy(tree1)
-    tree2 = copy.deepcopy(tree2)
-
-    labels1 = tree1.getLabels()
-    labels2 = tree2.getLabels()
-    intersection = labels1.intersection(labels2)
-
-    intersection = filter(lambda x: x in tree1.grammar.non_terminals, intersection)
-    #see if there is a label to do a crossover
-    if len(intersection) != 0:
-       # print "1\t", tree1.get_output()
-       # print "2\t", tree2.get_output()
-       # print "  intersection", intersection
-
-        t1 = tree1.get_random(0.1)
-
-        #finds the nodes to crossover at
-        while t1.root not in intersection:
-            t1 = tree1.get_random(0.1)
-       # print "  t1\t", t1.root, "\t", t1.get_output(), "\t", t1
-        t2 = tree2.get_random(0.1)
-       # print "  t2\t",  t2.root, "\t", t2.get_output(), "\t", t2
-        while t2.root != t1.root:
-            t2 = tree2.get_random(0.1)
-           # print t2.root
-
-        d1 = t1.get_depth()
-        d2 = t2.get_depth()
-
-        # when the crossover is between the entire tree of both tree1 and tree2
-        if d1 == 0 and d2 == 0:
-            return t2, t2.build_genome([]), t1, t1.build_genome([])
-        #when only t1 is the entire tree1
-        elif d1 == 0:
-            p2 = t2.parent
-            tree1 = t2
-            try:
-                p2.children.index(t2)
-            except ValueError:
-                print ("Error: child not in parent.")
-                quit()
-            i2 = p2.children.index(t2)
-            p2.children[i2] = t1
-            t1.parent = p2
-            t2.parent = None
-        #when only t2 is the entire tree2
-        elif d2 == 0:
-            p1 = t1.parent
-            tree2 = t1
-            try:
-                p1.children.index(t1)
-            except ValueError:
-                print ("Error: child not in parent")
-                quit()
-            i1 = p1.children.index(t1)
-            p1.children[i1] = t2
-            t2.parent = p1
-            t1.parent = None
-        #when the crossover node for both trees is not the entire tree
-        else:
-            p1 = t1.parent
-            p2 = t2.parent
-            i1 = p1.children.index(t1)
-            i2 = p2.children.index(t2)
-
-            p1.children[i1] = t2
-            p2.children[i2] = t1
-
-            t2.parent = p1
-            t1.parent = p2
-    return tree1, tree1.build_genome([]), tree2, tree2.build_genome([])
-
-def slow_subtree_crossover(orig_tree1, orig_tree2):
+def advanced_subtree_crossover(orig_tree1, orig_tree2):
 
     def do_crossover(tree1, tree2, intersection):
         tree1 = copy.deepcopy(orig_tree1)
@@ -937,7 +864,8 @@ def subtree_crossover(orig_tree1, orig_tree2):
     labels2 = tree2.getLabels()
     intersection = labels1.intersection(labels2)
 
-    intersection = filter(lambda x: x in [i for i in tree1.grammar.non_terminals if tree1.grammar.non_terminals[i]['b_factor'] > 1], intersection)
+    intersection = list(filter(lambda x: x in [i for i in tree1.grammar.non_terminals if tree1.grammar.non_terminals[i]['b_factor'] > 1], intersection))
+    #Lets replace this
 
     #see if there is a label to do a crossover
     if len(intersection) != 0:

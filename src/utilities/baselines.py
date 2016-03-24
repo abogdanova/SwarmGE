@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from error_metrics import mae, rmse, mse
-from helper_methods import get_Xy_train_test, get_Xy_train_test_separate
+from utilities.error_metrics import mae, rmse, mse
+from utilities.helper_methods import get_Xy_train_test, get_Xy_train_test_separate
 import sys
 import numpy as np
 from sklearn.linear_model import LinearRegression, ElasticNet
