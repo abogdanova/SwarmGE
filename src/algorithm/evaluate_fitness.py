@@ -11,7 +11,7 @@ def evaluate_fitness(individuals, grammar, fitness_function, phenotypes, invalid
         elif ind.tree and (ind.phenotype == None):
             ind.phenotype = ind.tree.get_output()
         if ind.phenotype == None:
-            ind.fitness = maxint
+            ind.fitness = maxsize
             invalids += 1
         if params['CACHE']:
             if params['MUTATE_DUPLICATES']:
