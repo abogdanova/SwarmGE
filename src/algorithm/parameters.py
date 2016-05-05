@@ -126,7 +126,6 @@ def set_params(command_line_args):
     #FIXME Need to move these to before the command line args are set.
     #To run Regression
     params['PROBLEM'],params['ALTERNATE'],params['GRAMMAR_FILE'] = "regression", params['SUITE'], "grammars/" + params['SUITE'] + ".bnf",
-
     #To run String Match
     #params['PROBLEM'],params['ALTERNATE'],params['GRAMMAR_FILE'] = "string_match", params['STRING_MATCH_TARGET'], "grammars/letter.bnf"
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],params['ALTERNATE'])
