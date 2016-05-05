@@ -3,7 +3,6 @@ from fitness.fitness_wheel import set_fitness_function
 import time
 
 """algorithm Parameters"""
-#FIXME Need to set random seed here and only here and default to cpu clock if not present
 params = {
 'RANDOM_SEED': None,
 'CODON_SIZE' : 100000,
@@ -84,6 +83,7 @@ def set_params(command_line_args):
     try:
         #FIXME help option
         print(command_line_args)
+        #FIXME Need to decide on these when everything has been fixed
         OPTS, ARGS = getopt.getopt(command_line_args[1:], "p:g:e:m:x:b:f:r:",
                                    ["population", "generations",
                                     "elite_size", "mutation", "crossover",
