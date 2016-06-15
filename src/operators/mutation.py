@@ -1,6 +1,7 @@
-from copy import deepcopy
 from random import randint, random, shuffle
 from algorithm.parameters import params
+from representation import individual
+from copy import deepcopy
 
 def int_flip_mutation(ind):
     """Mutate the individual by randomly chosing a new int with
@@ -9,10 +10,7 @@ def int_flip_mutation(ind):
     for i in range(len(ind.genome)):
         if random() < (1/len(ind.genome)):
             ind.genome[i] = randint(0, params['CODON_SIZE'])
-    ind.phenotype, ind.used_codons, ind.tree = None, None, None
-   # ind.phenotype, ind.used_codons, ind.tree, ind.invalid = tree.genome_init(ind.tree.grammar, ind.genome)
-   # if type(ind.used_codons) is list:
-   #     ind.genome, ind.used_codons = ind.used_codons[0], ind.used_codons[1]
+    ind = individual.individual(ind.genome, None)
     return ind
 
 def split_mutation(pop, gen):
@@ -39,12 +37,11 @@ def subtree_mutation(ind):
     probability p_mut. Works per-codon, hence no need for
     "within_used" option."""
 
-    tail = ind.genome[ind.used_codons:]
+    tail = deepcopy(ind.genome[ind.used_codons+1:])
     ind.phenotype, genome, ind.tree = ind.tree.subtree_mutate()
-    ind.used_codons = len(genome)
-    ind.genome = genome + tail
-    ind.nodes = ind.tree.get_nodes()
-    ind.depth = ind.tree.get_max_children(ind.tree, 0)
+    ind = individual.individual(genome, None)
+    ind.genome = genome + tail[:int(len(genome)/2)]
+
     return ind
 
 def leaf_mutation(ind):

@@ -7,8 +7,9 @@ def tournament_selection(population):
     randomly and return the best."""
     tournament_size = RETURN_PERCENT(params['TOURNAMENT_SIZE'],params['POPULATION_SIZE'])
     winners = []
+    available = [i for i in population if not i.invalid]
     while len(winners) < params['GENERATION_SIZE']:
-        competitors = sample(population, tournament_size)
+        competitors = sample(available, tournament_size)
         competitors.sort(reverse=True)
         winners.append(competitors[0])
     return winners

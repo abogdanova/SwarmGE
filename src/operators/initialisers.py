@@ -4,30 +4,29 @@ from representation import tree,individual
 from math import floor
 
 def generate_initial_pop(grammar):
-    if  params['INITIALISATION'] == "random":
+    if params['INITIALISATION'] == "random" or params['GENOME_INIT']:
         return random_initialisation(params['POPULATION_SIZE'], grammar, params['GENOME_INIT'])
     elif params['INITIALISATION'] == "rhh":
-        return rhh_initialisation(params['POPULATION_SIZE'], grammar, params['MAX_TREE_DEPTH'])
+        return rhh_initialisation(params['POPULATION_SIZE'], grammar)
     else:
         print ("Error: initialisation method not recognised")
         quit()
-
 
 def random_initialisation(size, grammar, genome_init):
     """Randomly create a population of size and return"""
     return [individual.individual(None, None, grammar, chromosome=genome_init) for _ in range(size)]
 
-def rhh_initialisation(size, grammar, max_tree_depth):
+def rhh_initialisation(size, grammar):
     """ Create a population of size using ramped half and half (or sensible
         initialisation) and return. Individuals have a genome created for them
     """
 
-    depths = range(grammar.min_path, max_tree_depth+1)
+    depths = range(grammar.min_ramp + 1, params['MAX_INIT_DEPTH']+1)
     population = []
 
     if size < 2:
         print ("Error: population size too small for RHH initialisation. Returning randomly built trees.")
-        return [individual.individual(None, None, grammar) for _ in range(size)]
+        return [individual.individual(None, None) for _ in range(size)]
     else:
         if size % 2:
             # Population size is odd
@@ -40,48 +39,45 @@ def rhh_initialisation(size, grammar, max_tree_depth):
         for depth in depths:
             for i in range(times):
                 """ Grow """
-                phenotype_1, genome_1, tree_1, nodes_1, invalid_1 = tree.random_init(grammar, depth)
-                ind_1 = individual.individual(None, tree_1, grammar)
-                ind_1.phenotype, ind_1.used_codons, ind_1.invalid = phenotype_1, len(genome_1), invalid_1
-                ind_1.genome = genome_1 + [randint(0, grammar.codon_size) for i in range(int(ind_1.used_codons/2))]
-                ind_1.nodes = nodes_1
-                ind_1.depth = ind_1.tree.get_max_children(ind_1.tree, 0)
-                population.append(ind_1)
+                method = "random"
+                phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
+                ind = individual.individual(genome, None)
+                ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
+                population.append(ind)
                 """ Full """
-                phenotype_2, genome_2, tree_2, nodes_2, invalid_2 = tree.full_init(grammar, depth)
-                ind_2 = individual.individual(None, tree_2, grammar)
-                ind_2.phenotype, ind_2.used_codons, ind_2.invalid = phenotype_2, len(genome_2), invalid_2
-                ind_2.genome = genome_2 + [randint(0, grammar.codon_size) for i in range(int(ind_2.used_codons/2))]
-                ind_2.nodes = nodes_2
-                ind_2.depth = ind_2.tree.get_max_children(ind_2.tree, 0)
-                population.append(ind_2)
+                method = "full"
+                phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
+                ind = individual.individual(genome, None)
+                ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
+                population.append(ind)
+
         if remainder:
+            depths = list(depths)
             shuffle(depths)
+
         for i in range(remainder):
             depth = depths.pop()
             """ Grow """
-            phenotype_1, genome_1, tree_1, nodes_1, invalid_1 = tree.random_init(grammar, depth)
-            ind_1 = individual.individual(None, tree_1, grammar)
-            ind_1.phenotype, ind_1.used_codons, ind_1.invalid = phenotype_1, len(genome_1), invalid_1
-            ind_1.genome = genome_1 + [randint(0, grammar.codon_size) for i in range(int(ind_1.used_codons/2))]
-            ind_1.nodes = nodes_1
-            ind_1.depth = ind_1.tree.get_max_children(ind_1.tree, 0)
-            population.append(ind_1)
+            method = "random"
+            phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
+            ind = individual.individual(genome, None)
+            ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
+            population.append(ind)
             """ Full """
-            phenotype_2, genome_2, tree_2, nodes_2, invalid_2 = tree.full_init(grammar, depth)
-            ind_2 = individual.individual(None, tree_2, grammar)
-            ind_2.phenotype, ind_2.used_codons, ind_2.invalid = phenotype_2, len(genome_2), invalid_2
-            ind_2.genome = genome_2 + [randint(0, grammar.codon_size) for i in range(int(ind_2.used_codons/2))]
-            ind_2.nodes = nodes_2
-            ind_2.depth = ind_2.tree.get_max_children(ind_2.tree, 0)
-            population.append(ind_2)
+            method = "full"
+            phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
+            ind = individual.individual(genome, None)
+            ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
+            population.append(ind)
         return population
 
-def get_min_ramp_depth(size, grammar, max_tree_deth):
+def get_min_ramp_depth(grammar):
     """ Find the minimum depth at which ramping can start where we can have
         unique solutions (no duplicates)."""
 
+    max_tree_deth = params['MAX_TREE_DEPTH']
     depths = range(grammar.min_path, max_tree_deth+1)
+    size = params['POPULATION_SIZE']
 
     if size % 2:
         # Population size is odd

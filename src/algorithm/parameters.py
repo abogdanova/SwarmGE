@@ -4,78 +4,104 @@ import time
 
 """algorithm Parameters"""
 params = {
-'RANDOM_SEED': None,
-'CODON_SIZE' : 100000,
+
+# Evolutionary Parameters
 'POPULATION_SIZE' : 500,
-'GENERATION_SIZE' : None,
-'ELITE_SIZE' : None,
 'GENERATIONS' : 50,
-'MAX_TREE_DEPTH' : 10,
-'MUTATION_PROBABILITY' : "1 over the length of the genome",
+
+# Class of problem
+'PROBLEM' : "regression",
+    # "regression"
+    # "string_match"
+
+# Select Regression Problem Suite
+'SUITE' : "Keijzer6",
+    # "Dow"
+    # "Keijzer6"
+    # "Vladislavleva4"
+
+# Specify String for StringMatch Problem
+'STRING_MATCH_TARGET' : "ponyge_rocks",
+
+# Set max sizes of individuals
+'MAX_TREE_DEPTH' : 17,
+    # For tree-based operations
+'CODON_SIZE' : 100000,
+    # For genome-based operations
+
+# Initialisation
+'INITIALISATION' : "rhh",
+    # "random"
+    # "rhh"
+'MAX_INIT_DEPTH' : 10,
+    # Set the maximum tree depth for initialisation.
+'GENOME_INIT' : False,
+    # If True, initialises individuals by generating random genomes (i.e.
+    # doesn't use trees to initialise individuals).
+
+# Selection
+'SELECTION' : "tournament",
+    # "tournament",
+    # "truncation",
+'TOURNAMENT_SIZE' : 3,
+    # For tournament selection
+'SELECTION_PROPORTION' : 0.5,
+    # For truncation selection
+
+# Crossover
+'CROSSOVER' : "subtree",
+    # "onepoint",
+    # "subtree",
 'CROSSOVER_PROBABILITY' : 0.5,
 
-#For tournament selection
-'TOURNAMENT_SIZE' : 3,
-#For truncation selection
-'SELECTION_PROPORTION' : 0.5,
-#With random initialisation you have the choice of either the initialisation
-#of a random genome and subsequent derivation of a tree/individual (which may
-#or may not be valid), or the initialisation of a random tree (which is
-#guaranteed to always be valid). Default is the creation of a random valid tree.
-'GENOME_INIT' : False,
-#Switch between tree and genome variation operators. Essentially switch
-#between GE and GGP."""
-'GENOME_OPERATIONS' : False,
-#"""Use this to turn on debugging mode. This mode doesn't write any
-#files and should be used when you want to test new methods or grammars, etc."""
+# Mutation
+'MUTATION' : "subtree",
+    # "subtree",
+    # "int_flip",
+    # "split",
+'MUTATION_PROBABILITY' : "1 over the length of the genome",
+
+# Replacement
+'REPLACEMENT' : "generational",
+    # "generational",
+    # "steady_state",
+
+# Debugging
+    # Use this to turn on debugging mode. This mode doesn't write any files and
+    # should be used when you want to test new methods or grammars, etc.
 'DEBUG' : True,
-#"""Use this to save the phenotype of the best individual from each generation.
-#This is useful for maiking gifs of the evolution of the best indivs, but can
-#generate a lot of files.
-#Changed the next to from not DEBUG, DEBUG should be used correctly"""
+
+# Saving
 'SAVE_ALL' : False,
-#"""Saves a CDF graph of the first individual and the final evolved individual.
-#Also saves a graph of the evolution of the best fitness result for each
-#generation."""
-'SAVE_PLOTS' : False,
-#"""Tracks unique individuals across evolution by saving a string of each
-#phenotype in a big list of all phenotypes. Saves all fitness information on
-#each individual. Gives you an idea of how much repitition is in standard GE/GP.
-#Must be True if you're using REMOVE_DUPLICATES."""
+    # Use this to save the phenotype of the best individual from each
+    # generation. Can generate a lot of files. DEBUG must be False.
+'SAVE_PLOTS' : True,
+    # Saves a plot of the evolution of the best fitness result for each
+    # generation.
+
+# Caching
 'CACHE' : True,
-#"""Uses the cache to look up the fitness of duplicate individuals. CACHE must
-#be True if you want to use this (obviously)"""
+    # The cache tracks unique individuals across evolution by saving a string of
+    # each phenotype in a big list of all phenotypes. Saves all fitness
+    # information on each individual. Gives you an idea of how much repetition
+    # is in standard GE/GP.
 'LOOKUP_FITNESS' : False,
-#"""Uses the cache to give a bad fitness to duplicate individuals. CACHE must
-#be True if you want to use this (obviously)"""
+    # Uses the cache to look up the fitness of duplicate individuals. CACHE must
+    # be set to True if you want to use this.
 'LOOKUP_BAD_FITNESS' : True,
-#"""Removes duplicate individuals from the population by replacing them with
-#mutated versions of the original individual. Hopefully this will encourage
-#diversity in the population."""
+    # Uses the cache to give a bad fitness to duplicate individuals. CACHE must
+    # be True if you want to use this (obviously)"""
 'MUTATE_DUPLICATES' : False,
-#""" Using the cache doesn't execute the full number of fitness evaluations. Use
-#this to continue the run in order to execute the full number of fitness
-#evaluations."""
+    # Removes duplicate individuals from the population by replacing them with
+    # mutated versions of the original individual. Hopefully this will encourage
+    # diversity in the population.
 'COMPLETE_EVALS' : False,
-#Select Regression PRoblem Suite
-'SUITE' : "Keijzer6",
-# "Dow"
-# "Keijzer6"
-# "Vladislavleva4"
-#Specify String for StringMatch Problem
-'STRING_MATCH_TARGET' : "ponyge_rocks",
-#Specifies the problem
-'PROBLEM' : None,
-#Specifies the modifier for the problem depending on the problem
-'ALTERNATE' : None,
-#The grammar file to be used
-'GRAMMAR_FILE' : None,
-#The Fitness Function to be used
-'FITNESS_FUNCTION' : None,
-#Set the initialisation to be used
-'INITIALISATION' : "rhh"
-# "random"
-# "rhh"
+    # Using the cache doesn't execute the full number of fitness evaluations.
+    # Use this to continue the run in order to execute the full number of
+    # fitness evaluations.
+
+# Set Random Seed
+'RANDOM_SEED': 381130
 }
 
 def set_params(command_line_args):
@@ -84,10 +110,11 @@ def set_params(command_line_args):
         #FIXME help option
         print(command_line_args)
         #FIXME Need to decide on these when everything has been fixed
-        OPTS, ARGS = getopt.getopt(command_line_args[1:], "p:g:e:m:x:b:f:r:",
+        OPTS, ARGS = getopt.getopt(command_line_args[1:], "p:g:e:m:x:b:f:r:d",
                                    ["population", "generations",
                                     "elite_size", "mutation", "crossover",
-                                    "bnf_grammar", "fitness_function", "random_seed"])
+                                    "bnf_grammar", "fitness_function",
+                                    "random_seed", "debug"])
     except getopt.GetoptError as err:
         print(str(err))
         #FIXME usage
@@ -112,6 +139,8 @@ def set_params(command_line_args):
             params['FITNESS_FUNCTION'] = arg
         elif opt in ("-r", "--random_seed"):
             params['RANDOM_SEED'] = int(arg)
+        elif opt in ("-d", "--debug"):
+            params['DEBUG'] = True
         else:
             assert False, "unhandeled option"
 
@@ -123,10 +152,49 @@ def set_params(command_line_args):
     if params['RANDOM_SEED'] == None:
         params['RANDOM_SEED'] = int(time.clock()*1000000)
 
-    #FIXME Need to move these to before the command line args are set.
-    #To run Regression
-    params['PROBLEM'],params['ALTERNATE'],params['GRAMMAR_FILE'] = "regression", params['SUITE'], "grammars/" + params['SUITE'] + ".bnf",
-    #To run String Match
-    #params['PROBLEM'],params['ALTERNATE'],params['GRAMMAR_FILE'] = "string_match", params['STRING_MATCH_TARGET'], "grammars/letter.bnf"
+    # Set all parameters as specified in params
+    from operators import crossover, mutation, selection, replacement
+
+    # Crossover
+    if params['CROSSOVER'] == "subtree":
+        params['CROSSOVER'] = crossover.subtree_crossover
+    elif params['CROSSOVER'] == "onepoint":
+        params['CROSSOVER'] = crossover.onepoint_crossover
+
+    # Mutation
+    if params['MUTATION'] == "subtree":
+        params['MUTATION'] = mutation.subtree_mutation
+    elif params['MUTATION'] == "int_flip":
+        params['MUTATION'] = mutation.int_flip_mutation
+    elif params['MUTATION'] == "split":
+        params['MUTATION'] = mutation.split_mutation
+
+    # Set GENOME_OPERATIONS automatically
+    if params['MUTATION'] == mutation.int_flip_mutation and \
+                    params['CROSSOVER'] == crossover.onepoint_crossover:
+        params['GENOME_OPERATIONS'] = True
+    else:
+        params['GENOME_OPERATIONS'] = False
+
+    # Selection
+    if params['SELECTION'] == "tournament":
+        params['SELECTION'] = selection.tournament_selection
+    elif params['SELECTION'] == "truncation":
+        params['SELECTION'] = selection.truncation_selection
+
+    # Replacement
+    if params['REPLACEMENT'] == "generational":
+        params['REPLACEMENT'] = replacement.generational_replacement
+    elif params['REPLACEMENT'] == "steady_state":
+        params['REPLACEMENT'] = replacement.steady_state_replacement
+
+    # Set problem specifics
+    if params['PROBLEM'] == "regression":
+        params['GRAMMAR_FILE'] = "grammars/" + params['SUITE'] + ".bnf"
+        params['ALTERNATE'] = params['SUITE']
+    elif params['PROBLEM'] == "string_match":
+        params['GRAMMAR_FILE'] = "grammars/letter.bnf"
+        params['ALTERNATE'] = params['STRING_MATCH_TARGET']
+
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],params['ALTERNATE'])
 

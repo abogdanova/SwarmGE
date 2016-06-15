@@ -3,51 +3,49 @@ from algorithm import step, evaluate_fitness
 from algorithm.parameters import params
 from stats import stats
 from utilities.save_plot import search_loop_save_plot
-from utilities.save_best_midway import save_best_midway
 
-
-def search_loop(max_generations, individuals, grammar, replacement, selection, crossover, mutation, fitness_function, time_list, TIME_STAMP):
+def search_loop(max_generations, individuals):
     """Loop over max generations"""
 
     phenotypes = {}
     fitness_plot = []
     invalids = 0
     #Evaluate initial population
-    phenotypes, individuals, invalids, regens = evaluate_fitness.evaluate_fitness(individuals, grammar, fitness_function, phenotypes, invalids, mutation)
+    phenotypes, individuals, invalids, regens = evaluate_fitness.evaluate_fitness(individuals, phenotypes, invalids)
     total_inds = params['POPULATION_SIZE']
     best_ever = max(individuals)
-    stats.print_stats(0, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
+    stats.print_stats(0, individuals, best_ever, phenotypes, total_inds, invalids, regens)
     #This runs for a certain number of evals
     if params['COMPLETE_EVALS']:
         generation = 1
         while len(phenotypes) < (max_generations * params['POPULATION_SIZE']):
+            # New generation
             individuals, best_ever, phenotypes, invalids, step_regens = step.step(
-                    individuals, grammar, replacement, selection, crossover,
-                    mutation, fitness_function, best_ever, phenotypes,
-                    invalids, generation, TIME_STAMP)
+                    individuals, best_ever, phenotypes, invalids)
             regens += step_regens
             total_inds += params['POPULATION_SIZE']
-            stats.print_stats(generation, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
+
+            # Print stats
+            stats.print_stats(generation, individuals, best_ever, phenotypes,
+                              total_inds, invalids, regens)
             if generation == max_generations:
                 best_test = deepcopy(best_ever)
-                #FIXME Not sure I like how this is done could probably be removed
-                best_test.evaluate(fitness_function, dist='test')
+                if params['PROBLEM'] == "regression":
+                    best_test.evaluate(dist='test')
                 if not params['DEBUG']:
-                    #What is this!!!!!!!
-                    save_best_midway(generation, best_test, TIME_STAMP, time_list)
+                    stats.save_best_midway(generation, best_test)
             if params['SAVE_PLOTS']:
-                search_loop_save_plot(fitness_plot, best_ever.fitness, TIME_STAMP)
+                search_loop_save_plot(fitness_plot, best_ever.fitness)
             generation += 1
     #This is traditional GE
     else:
         for generation in range(1, (max_generations+1)):
             individuals, best_ever, phenotypes, invalids, step_regens = step.step(
-                individuals, grammar, replacement, selection, crossover,
-                mutation, fitness_function, best_ever, phenotypes,
-                invalids, generation, TIME_STAMP)
+                individuals, best_ever, phenotypes, invalids)
             regens += step_regens
             total_inds += params['POPULATION_SIZE']
-            stats.print_stats(generation, individuals, best_ever, phenotypes, total_inds, invalids, regens, time_list, TIME_STAMP)
+            stats.print_stats(generation, individuals, best_ever, phenotypes,
+                              total_inds, invalids, regens)
             if params['SAVE_PLOTS']:
-                search_loop_save_plot(fitness_plot, best_ever.fitness, TIME_STAMP)
+                search_loop_save_plot(fitness_plot, best_ever.fitness)
     return best_ever, phenotypes, total_inds, invalids, regens, generation

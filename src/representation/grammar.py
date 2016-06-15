@@ -182,7 +182,7 @@ class grammar(object):
 
         perms_list = []
         if self.max_arity > self.min_path:
-            for i in max(range(self.max_arity+1 - self.min_path), range(ramps)):
+            for i in range(max((self.max_arity+1 - self.min_path), ramps)):
                 x = self.check_all_permutations(i + self.min_path)
                 perms_list.append(x)
                 if i > 0:

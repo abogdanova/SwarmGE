@@ -9,8 +9,8 @@ def set_fitness_function(problem, alternate=None):
     elif problem == "string_match":
         return string_match(alternate)
     elif problem == "new":
-        print ("new pronlem goes here")
+        print ("new problem goes here")
         #parameters.FITNESS_FUNCTION = whatever
     else:
-        print ("Please specify a fitness function")
+        print ("Please specify a valid fitness function")
         exit()

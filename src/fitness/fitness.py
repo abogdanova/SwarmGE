@@ -1,11 +1,12 @@
 from algorithm.parameters import params
+from sys import maxsize
 
 def default_fitness(maximise):
     """ Return default fitness given maximization of minimization"""
     if maximise:
-        return -100000.0
+        return -maxsize
     else:
-        return 100000.0
+        return maxsize
 
 def eval_or_exec(expr):
     """ Use eval or exec to interpret expr.

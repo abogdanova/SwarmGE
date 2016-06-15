@@ -4,19 +4,18 @@
 # Copyright (c) 2015 James McDermott and Michael Fenton
 # Hereby licensed under the GNU GPL v3.
 
-from os import getcwd, path, mkdir
-import matplotlib.pyplot as plt
-import random, copy
-import numpy as np
+from copy import deepcopy
+from algorithm.parameters import params
+import random
 
-#FIXME Class needs breaking up and magic numbers removed
+random.seed(10)
+
 class Tree:
 
     def __init__(self, expr, parent, max_depth=20, depth_limit=20):
         self.parent = parent
         self.max_depth = max_depth
         self.codon = None
-        self.index = None
         self.depth_limit = depth_limit
         self.id = None
         if len(expr) == 1:
@@ -30,7 +29,6 @@ class Tree:
                     self.children.append(Tree(child, self))
                 else:
                     self.children.append(Tree((child,), self))
-        self.grammar = None
 
     def __str__(self):
         result = "("
@@ -46,7 +44,7 @@ class Tree:
     def get_depth(self):
         """Get the depth of the current node."""
 
-        count = 0
+        count = 1
         currentParent = self.parent
         while currentParent != None:
             count += 1
@@ -58,42 +56,67 @@ class Tree:
             the given tree (returns the maximum depth of the tree).
         """
 
-        if current.get_depth() > max_D:
-            max_D = current.get_depth()
+        curr_depth = current.get_depth()
+        if curr_depth > max_D:
+            max_D = curr_depth
         for child in current.children:
-            max_D = current.get_max_children(child, max_D)
+            max_D = child.get_max_children(child, max_D)
         return max_D
 
-    def get_overall_tree_depth(self):
-        """ Given a subtree, returns the overall max tree depth of the entire
-            tree."""
-        if not self.parent:
-            return self.get_max_children(self, 0)
-        else:
-            currentParent = self.parent
-            while currentParent != None:
-                if currentParent.parent == None:
-                    break
-                else:
-                    currentParent = currentParent.parent
-            return currentParent.get_max_children(currentParent, 0)
+    def get_target_nodes(self, array, number=0, target=None):
+        """ Returns the indexes of all nodes which match the target NT in a
+            given tree.
+        """
+
+        number += 1
+        if self.root in params['BNF_GRAMMAR'].non_terminals:
+            if self.root == target:
+                array.append(number)
+            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+            # We only want to look at children who are NTs themselves. If the
+            # kids are Ts then we don't need to look in their tree.
+            if not NT_kids:
+                # The child is a Terminal
+                number += 1
+            else:
+                for child in NT_kids:
+                    array, number = child.get_target_nodes(array, number=number, target=target)
+        return array, number
 
     def get_nodes(self, number=0):
         """ Returns the total number of nodes in a given tree.
         """
 
-        if self.codon:
-            number += 1
-
-        if self.root in self.grammar.non_terminals:
-            NT_kids = [kid for kid in self.children if kid.root in self.grammar.non_terminals]
+        number += 1
+        if self.root in params['BNF_GRAMMAR'].non_terminals:
+            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
             # We only want to look at children who are NTs themselves. If the
             # kids are Ts then we don't need to look in their tree.
-            for child in NT_kids:
-                number = child.get_nodes(number)
+            if not NT_kids:
+                # The child is a Terminal
+                number += 1
+            else:
+                for child in NT_kids:
+                    number = child.get_nodes(number)
         return number
 
-    def get_node_ids(self, number=0, n_list=[]):
+    def get_decision_nodes(self, number=0):
+        """ Returns the total number of nodes which create
+            production choices in a given tree.
+        """
+
+        if self.root in params['BNF_GRAMMAR'].non_terminals:
+            if self.codon:
+                number += 1
+            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+            # We only want to look at children who are NTs themselves. If the
+            # kids are Ts then we don't need to look in their tree.
+            if NT_kids:
+                for child in NT_kids:
+                    number = child.get_decision_nodes(number)
+        return number
+
+    def get_node_ids(self, n_list, number=0):
         """ Assigns every node in the tree a unique id. Returns a list
             including:
                 node id
@@ -111,8 +134,8 @@ class Tree:
         depth = self.get_depth()
         n_list.append([number, self.root, self, kids, depth, self.get_max_children(self, 0)-depth])
         self.id = number
-        if self.root in self.grammar.non_terminals:
-            NT_kids = [kid for kid in self.children if kid.root in self.grammar.non_terminals]
+        if self.root in params['BNF_GRAMMAR'].non_terminals:
+            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
             # We only want to look at children who are NTs themselves. If the
             # kids are Ts then we don't need to look in their tree.
             if not NT_kids:
@@ -127,39 +150,30 @@ class Tree:
                 n_list.append([number, self.root, self, kids, depth, self.get_max_children(self, 0)-depth])
             else:
                 for child in NT_kids:
-                    number, n_list = child.get_node_ids(number=number, n_list=n_list)
+                    number, n_list = child.get_node_ids(n_list, number=number)
         return number, n_list
 
     def return_node_from_id(self, node_id, number=0, return_tree=None):
         """ Returns the total number of nodes in a given tree.
         """
 
-        if self.codon:
-            number += 1
-        if (number == node_id) and (return_tree == None):
+        number += 1
+        if number == node_id:
             return_tree = self
-        elif self.root in self.grammar.non_terminals:
-            NT_kids = [kid for kid in self.children if kid.root in self.grammar.non_terminals]
+        elif self.root in params['BNF_GRAMMAR'].non_terminals:
+            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
             # We only want to look at children who are NTs themselves. If the
             # kids are Ts then we don't need to look in their tree.
             if not NT_kids:
                 # The child is a Terminal
                 for child in self.children:
-                    if child.codon:
-                        number += 1
-                    if (number == node_id) and (return_tree == None):
+                    number += 1
+                    if number == node_id:
                         return_tree = child
             else:
                 for child in NT_kids:
-                    return_tree, number = child.return_node_from_id(node_id, number, return_tree)
+                    return_tree, number = child.return_node_from_id(node_id, number=number, return_tree=return_tree)
         return return_tree, number
-
-    def get_random(self, prob):
-        r = random.random()
-        if r < prob or len(self.children) == 0:
-            return self
-        else:
-            return random.choice(self.children).get_random(prob)
 
     def get_output(self):
         output = []
@@ -170,109 +184,256 @@ class Tree:
                 output += child.get_output()
         return "".join(output)
 
-    def build_genome(self, genome=[]):
+    def check_genome(self):
+        """ Goes through a tree and checks each codon to ensure production
+            choice is correct """
+
+        if self.codon:
+            productions = params['BNF_GRAMMAR'].rules[self.root]
+            selection = self.codon % len(productions)
+            chosen_prod = productions[selection]
+            prods = [prod[0] for prod in chosen_prod]
+            roots = []
+            for kid in self.children:
+                roots.append(kid.root)
+            if roots != prods:
+                print ("\nGenome is incorrect")
+                print ("Codon productions:\t", prods)
+                print ("Actual children:  \t", roots)
+                quit()
+        for kid in self.children:
+            kid.check_genome()
+
+    def check_tree(self):
+        """ Checks the entire tree for discrepancies """
+
+        self.check_genome()
+        invalid = self.check_expansion()
+        if invalid:
+            print ("Invalid given tree")
+            quit()
+
+        orig_out = deepcopy(self.get_output())
+        orig_gen = deepcopy(self.build_genome([]))
+
+        output, genome, tree, nodes, invalid, depth, \
+        used_codons = genome_init(orig_gen)
+
+        if invalid:
+            print ("Invalid genome tree")
+            print ("Original:\t", orig_out)
+            print ("Genome:  \t", output)
+            quit()
+
+        if orig_out != output:
+            print ("Tree output doesn't match genome tree output")
+            print ("Original:\t", orig_out)
+            print ("Genome:  \t", output)
+            quit()
+
+        elif orig_gen != genome:
+            print ("Tree genome doesn't match genome tree genome")
+            print ("Original:\t", orig_gen)
+            print ("Genome:  \t", genome)
+            quit()
+
+    def build_genome(self, genome):
         """ Goes through a tree and builds a genome from all codons in the subtree.
         """
 
-        if self.children and self.codon:
+        if self.codon:
             genome.append(self.codon)
+            # print len(genome), "\tCodon:\t", self.codon, "Root:\t", self.root
         for kid in self.children:
             genome = kid.build_genome(genome)
         return genome
 
-    def check_terminal_depths(self, depths):
-        """ Check what depths all terminal children are at. Returns a list of
-            said depths."""
-
-        if self.root in self.grammar.non_terminals:
-            NT_kids = [kid for kid in self.children if kid.root in self.grammar.non_terminals]
-            # We only want to look at children who are NTs themselves. If the
-            # kids are Ts then we don't need to look in their tree.
-            if not NT_kids:
-                # The child is a Terminal
-                for child in self.children:
-                    depths.append(child.get_depth())
-            else:
-                for child in NT_kids:
-                    depths = child.check_terminal_depths(depths)
-        return depths
-
-    def genome_derivation(self, genome, grammar, index):
+    def genome_derivation(self, genome, index, depth, max_depth, nodes):
         """ Builds a tree using production choices from a given genome. Not
             guaranteed to terminate.
         """
 
-        if index < len(genome):
-            self.grammar = grammar
-            productions = grammar.rules[self.root]
+        if index != "Incomplete" and index < len(genome):
+            nodes += 1
+            depth += 1
+
+            productions = params['BNF_GRAMMAR'].rules[self.root]
             selection = genome[index % len(genome)] % len(productions)
             chosen_prod = productions[selection]
-            self.codon = genome[index % len(genome)]
             if len(productions) > 1:
+                # Codon consumed
+                self.codon = genome[index % len(genome)]
                 index += 1
+            self.children = []
+
+            # print ("\nCurrent root:   \t", self.root)
+            # print ("  Choices:      \t", productions)
+            # print ("  Chosen Product:\t", chosen_prod)
+            # print ("  Current node: \t", nodes)
+            # print ("  Current depth:\t", depth)
+            # print ("  Current max d:\t", max_depth)
+
+            # if not any([prod[1] == params['BNF_GRAMMAR'].NT for prod in chosen_prod]):
+            #     # Branch is completely expanded
+            #     depth += 1
+            #     nodes += 1
+
+            for i in range(len(chosen_prod)):
+                symbol = chosen_prod[i]
+                if symbol[1] == params['BNF_GRAMMAR'].T:
+                    self.children.append(Tree((symbol[0],), self))
+
+                elif symbol[1] == params['BNF_GRAMMAR'].NT:
+                    self.children.append(Tree((symbol[0],), self))
+                    index, nodes, d, max_depth = self.children[-1].genome_derivation(genome,
+                                     index, depth, max_depth, nodes)
+
+        elif len(params['BNF_GRAMMAR'].rules[self.root]) == 1:
+            #Unit production at end of genome
+
+            nodes += 1
+            depth += 1
+
+            productions = params['BNF_GRAMMAR'].rules[self.root]
+            chosen_prod = productions[0]
             self.children = []
 
             for i in range(len(chosen_prod)):
                 symbol = chosen_prod[i]
-                if symbol[1] == grammar.T:
-                    #if the right hand side is a terminal
-                    self.children.append(Tree((symbol[0],),self))
-                elif symbol[1] == grammar.NT:
-                    # if the right hand side is a non-terminal
-                    self.children.append(Tree((symbol[0],),self))
-                    index = self.children[-1].genome_derivation(genome, grammar, index)
+                if symbol[1] == params['BNF_GRAMMAR'].T:
+                    self.children.append(Tree((symbol[0],), self))
+                elif symbol[1] == params['BNF_GRAMMAR'].NT:
+                    self.children.append(Tree((symbol[0],), self))
+                    index, nodes, d, max_depth = self.children[-1].genome_derivation(genome,
+                                     index, depth, max_depth, nodes)
         else:
             # Mapping incomplete
-            return "Incomplete"
-        return index
+            return "Incomplete", "Incomplete", "Incomplete", "Incomplete"
 
-    def random_derivation(self, genome, grammar, index, max_depth=20):
-        """ Randomly builds a tree from a given root node up to a given depth.
-        """
+        NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+        if not NT_kids:
+            # Then the branch terminates here
+            depth += 1
+            nodes += 1
 
-        self.grammar = grammar
-        productions = grammar.rules[self.root]
+            # print "\nCurrent root:   \t", chosen_prod
+            # print "  Current node: \t", nodes
+            # print "  Current depth:\t", depth
+            # print "  Current max d:\t", max_depth
+
+        if max_depth != "Incomplete" and (depth > max_depth):
+            max_depth = depth
+        return index, nodes, depth, max_depth
+
+    def legal_productions(self, method, remaining_depth, productions):
+        """ Returns the available production choices for a node given a depth
+            limit """
+
         available = []
-        remaining_depth = max_depth
 
-        if remaining_depth > grammar.max_arity:
-            available = productions
-        else:
-            for prod in productions:
-                depth = 0
-                for item in prod:
-                    if (item[1] == grammar.NT) and (item[2] > depth):
-                        depth = item[2]
-                if depth < remaining_depth:
-                    available.append(prod)
+        if method == "random":
+            if remaining_depth > params['BNF_GRAMMAR'].max_arity:
+                available = productions
+            elif remaining_depth <= 0:
+                min_path = min([max([item[2] for item in prod]) for prod in productions])
+                shortest = [prod for prod in productions if max([item[2] for item in prod]) == min_path]
+                available = shortest
+            else:
+                for prod in productions:
+                    prod_depth = max([item[2] for item in prod])
+                    if prod_depth < remaining_depth:
+                        available.append(prod)
+                if not available:
+                    min_path = min([max([item[2] for item in prod]) for prod in productions])
+                    shortest = [prod for prod in productions if max([item[2] for item in prod]) == min_path]
+                    available = shortest
 
+        elif method == "full":
+            if remaining_depth > params['BNF_GRAMMAR'].max_arity:
+                for production in productions:
+                    if any(sym[3] for sym in production):
+                        available.append(production)
+                if not available:
+                    for production in productions:
+                        if all(sym[3] for sym in production) == False:
+                            available.append(production)
+            else:
+                for prod in productions:
+                    prod_depth = max([item[2] for item in prod])
+                    if prod_depth == remaining_depth - 1:
+                        available.append(prod)
+                if not available:
+                    # Then we don't have what we're looking for
+                    for prod in productions:
+                        prod_depth = 0
+                        for item in prod:
+                            if (item[1] == params['BNF_GRAMMAR'].NT) and (item[2] > prod_depth):
+                                prod_depth = item[2]
+                        if prod_depth < remaining_depth:
+                            available.append(prod)
+        return available
+
+    def derivation(self, genome, method, nodes, depth, max_depth, depth_limit=20):
+        """ Derive a tree using a given method """
+
+        nodes += 1
+        depth += 1
+        productions = params['BNF_GRAMMAR'].rules[self.root]
+        remaining_depth = depth_limit
+
+        available = self.legal_productions(method, remaining_depth, productions)
         chosen_prod = random.choice(available)
+
         if len(productions) > 1:
             choice = productions.index(chosen_prod)
-            codon = random.randrange(0, grammar.codon_size, len(productions)) + choice
+            codon = random.randrange(len(productions), params['BNF_GRAMMAR'].codon_size, len(productions)) + choice
             self.codon = codon
-            self.index = index
-            index += 1
             genome.append(codon)
+
+        # print "\nCurrent root:   \t", self.root
+        # print "  Choices:      \t", productions
+        # print "  Chosen Product:\t", chosen_prod
+        # print "  Current node: \t", nodes
+        # print "  Current depth:\t", depth
+        # print "  Current max d:\t", max_depth
+        # print "  Remaining depth:\t", remaining_depth
+
         self.children = []
-        for i in range(len(chosen_prod)):
-            symbol = chosen_prod[i]
-            if symbol[1] == grammar.T:
+        for symbol in chosen_prod:
+            if symbol[1] == params['BNF_GRAMMAR'].T:
                 #if the right hand side is a terminal
                 self.children.append(Tree((symbol[0],),self))
-            elif symbol[1] == grammar.NT:
+            elif symbol[1] == params['BNF_GRAMMAR'].NT:
                 # if the right hand side is a non-terminal
                 self.children.append(Tree((symbol[0],),self))
-                genome, index = self.children[-1].random_derivation(genome, grammar, index, max_depth=max_depth-1)
-        return genome, index
+                genome, nodes, d, max_depth = self.children[-1].derivation(genome, method, nodes, depth, max_depth, depth_limit=depth_limit-1)
 
-    def pi_random_derivation(self, grammar, index, max_depth=20):
+        NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+
+        if not NT_kids:
+            # Then the branch terminates here
+            depth += 1
+            nodes += 1
+
+            # print "\nCurrent root:   \t", chosen_prod
+            # print "  Current node: \t", nodes
+            # print "  Current depth:\t", depth
+
+        if depth > max_depth:
+            max_depth = depth
+
+        # if not NT_kids:
+        #     print "  Current max d:\t", max_depth
+        #     print "  Remaining depth:\t", remaining_depth - 1
+        return genome, nodes, depth, max_depth
+
+    def pi_random_derivation(self, index, max_depth=20):
         """ Randomly builds a tree from a given root node up to a maximum
             given depth. Uses position independent stuff.
         """
 
         queue = []
-        queue.append([self, grammar.non_terminals[self.root]['recursive']])
+        queue.append([self, params['BNF_GRAMMAR'].non_terminals[self.root]['recursive']])
 
         while queue:
             num = len(queue)
@@ -281,27 +442,26 @@ class Tree:
             node = all_node[0]
 
             if node.get_depth() < max_depth:
-                node.grammar = grammar
-                productions = grammar.rules[node.root]
+                productions = params['BNF_GRAMMAR'].rules[node.root]
                 available = []
                 remaining_depth = max_depth - node.get_depth()
 
-                if remaining_depth > grammar.max_arity:
+                if remaining_depth > params['BNF_GRAMMAR'].max_arity:
                     available = productions
                 else:
                     for prod in productions:
                         depth = 0
                         for item in prod:
-                            if (item[1] == grammar.NT) and (item[2] > depth):
+                            if (item[1] == params['BNF_GRAMMAR'].NT) and (item[2] > depth):
                                 depth = item[2]
                         if depth < remaining_depth:
                             available.append(prod)
                 chosen_prod = random.choice(available)
                 if len(productions) > 1:
                     prod_choice = productions.index(chosen_prod)
-                    codon = random.randrange(0, grammar.codon_size, len(productions)) + prod_choice
+                    codon = random.randrange(0, params['BNF_GRAMMAR'].codon_size, len(productions)) + prod_choice
                     node.codon = codon
-                    node.index = index
+                    node.id = index
                     index += 1
                 node.children = []
 
@@ -309,72 +469,13 @@ class Tree:
                     symbol = chosen_prod[i]
                     child = Tree((symbol[0],),node)
                     node.children.append(child)
-                    if symbol[1] == grammar.NT:
+                    if symbol[1] == params['BNF_GRAMMAR'].NT:
                         # if the right hand side is a non-terminal
-                        queue.insert(chosen+i, [child, grammar.non_terminals[child.root]['recursive']])
+                        queue.insert(chosen+i, [child, params['BNF_GRAMMAR'].non_terminals[child.root]['recursive']])
         genome = self.build_genome([])
-        return genome, index
+        return genome
 
-    def grow(self, genome, grammar, index, max_depth=20):
-        """ Grows a tree until a single branch reaches a specified depth. Does
-            this by only using recursive production choices until a single
-            branch of the tree has reached the specified maximum depth. After
-            that any choices are allowed
-        """
-
-        allowable = self.get_overall_tree_depth()
-        if allowable < max_depth - 1:
-            # We want to prevent the tree from creating terminals until a
-            # single branch has reached the full depth
-            if self.get_depth() < max_depth:
-                self.grammar = grammar
-                productions = grammar.rules[self.root]
-                available = []
-                remaining_depth = max_depth - self.get_depth()
-                if remaining_depth > grammar.max_arity:
-                    for production in productions:
-                        if any(sym[3] for sym in production):
-                            available.append(production)
-                    if not available:
-                        for production in productions:
-                            if all(sym[3] for sym in production) == False:
-                                available.append(production)
-                else:
-                    for prod in productions:
-                        depth = 0
-                        for item in prod:
-                            if (item[1] == grammar.NT) and (item[2] > depth):
-                                depth = item[2]
-                        if depth < remaining_depth:
-                            available.append(prod)
-                chosen_prod = random.choice(available)
-                if len(productions) > 1:
-                    choice = productions.index(chosen_prod)
-                    codon = random.randrange(0, grammar.codon_size, len(productions)) + choice
-                    genome.append(codon)
-                    self.codon = codon
-                    self.index = index
-                    index += 1
-                self.children = []
-
-                for i in range(len(chosen_prod)):
-                    symbol = chosen_prod[i]
-                    if symbol[1] == grammar.T:
-                        #if the right hand side is a terminal
-                        self.children.append(Tree((symbol[0],),self))
-                    elif symbol[1] == grammar.NT:
-                        # if the right hand side is a non-terminal
-                        self.children.append(Tree((symbol[0],),self))
-                        genome, index = self.children[-1].grow(genome, grammar, index, max_depth=max_depth)
-        else:
-            # A node in the tree has reached the depth limit, fill out the rest
-            # of the tree as normal
-            depth_limit = max_depth - self.get_depth()
-            self.max_depth = depth_limit
-            genome, index = self.random_derivation(genome, grammar, index, max_depth=depth_limit)
-        return genome, index
-
-    def pi_grow(self, grammar, index, max_depth=20):
+    def pi_grow(self, index, max_depth=20):
         """ Grows a tree until a single branch reaches a specified depth. Does
             this by only using recursive production choices until a single
             branch of the tree has reached the specified maximum depth. After
@@ -382,7 +483,7 @@ class Tree:
         """
 
         queue = []
-        queue.append([self, grammar.non_terminals[self.root]['recursive']])
+        queue.append([self, params['BNF_GRAMMAR'].non_terminals[self.root]['recursive']])
 
         while queue:
             num = len(queue)
@@ -391,8 +492,7 @@ class Tree:
             node = all_node[0]
 
             if node.get_depth() < max_depth:
-                node.grammar = grammar
-                productions = grammar.rules[node.root]
+                productions = params['BNF_GRAMMAR'].rules[node.root]
                 available = []
                 remaining_depth = max_depth - node.get_depth()
 
@@ -400,7 +500,7 @@ class Tree:
                     # We want to prevent the tree from creating terminals
                     # until a single branch has reached the full depth
 
-                    if remaining_depth > grammar.max_arity:
+                    if remaining_depth > params['BNF_GRAMMAR'].max_arity:
                         for production in productions:
                             if any(sym[3] for sym in production):
                                 available.append(production)
@@ -412,27 +512,27 @@ class Tree:
                         for prod in productions:
                             depth = 0
                             for item in prod:
-                                if (item[1] == grammar.NT) and (item[2] > depth):
+                                if (item[1] == params['BNF_GRAMMAR'].NT) and (item[2] > depth):
                                     depth = item[2]
                             if depth < remaining_depth:
                                 available.append(prod)
                 else:
-                    if remaining_depth > grammar.max_arity:
+                    if remaining_depth > params['BNF_GRAMMAR'].max_arity:
                         available = productions
                     else:
                         for prod in productions:
                             depth = 0
                             for item in prod:
-                                if (item[1] == grammar.NT) and (item[2] > depth):
+                                if (item[1] == params['BNF_GRAMMAR'].NT) and (item[2] > depth):
                                     depth = item[2]
                             if depth < remaining_depth:
                                 available.append(prod)
                 chosen_prod = random.choice(available)
                 if len(productions) > 1:
                     prod_choice = productions.index(chosen_prod)
-                    codon = random.randrange(0, grammar.codon_size, len(productions)) + prod_choice
+                    codon = random.randrange(0, params['BNF_GRAMMAR'].codon_size, len(productions)) + prod_choice
                     node.codon = codon
-                    node.index = index
+                    node.id = index
                     index += 1
                 node.children = []
 
@@ -440,111 +540,30 @@ class Tree:
                     symbol = chosen_prod[i]
                     child = Tree((symbol[0],),node)
                     node.children.append(child)
-                    if symbol[1] == grammar.NT:
+                    if symbol[1] == params['BNF_GRAMMAR'].NT:
                         # if the right hand side is a non-terminal
-                        queue.insert(chosen+i, [child, grammar.non_terminals[child.root]['recursive']])
+                        queue.insert(chosen+i, [child, params['BNF_GRAMMAR'].non_terminals[child.root]['recursive']])
         genome = self.build_genome([])
-        return genome, index
+        return genome
 
-    def full(self, genome, grammar, index, max_depth=20):
-        """ Grows a tree until all branches have reached a specified depth. Does this by only using recursive production choices until all
-            branches of the tree have reached the specified maximum depth.
-            After that, any choices are allowed
-        """
-
-        if self.get_depth() < max_depth:
-            self.grammar = grammar
-            productions = grammar.rules[self.root]
-            available = []
-            remaining_depth = max_depth - self.get_depth()
-            if remaining_depth > grammar.max_arity:
-                for production in productions:
-                    if any(sym[3] for sym in production):
-                        available.append(production)
-                if not available:
-                    for production in productions:
-                        if all(sym[3] for sym in production) == False:
-                            available.append(production)
-            else:
-                for prod in productions:
-                    depth = 0
-                    for item in prod:
-                        if (item[1] == grammar.NT) and (item[2] > depth):
-                            depth = item[2]
-                    if depth == remaining_depth - 1:
-                        available.append(prod)
-                if not available:
-                    # Then we don't have what we're looking for
-                    for prod in productions:
-                        depth = 0
-                        for item in prod:
-                            if (item[1] == grammar.NT) and (item[2] > depth):
-                                depth = item[2]
-                        if depth < remaining_depth:
-                            available.append(prod)
-            chosen_prod = random.choice(available)
-
-            if len(productions) > 1:
-                choice = productions.index(chosen_prod)
-                codon = random.randrange(0, grammar.codon_size, len(productions)) + choice
-                self.codon = codon
-                self.index = index
-                index += 1
-                genome.append(codon)
-            self.children = []
-            for i in range(len(chosen_prod)):
-                symbol = chosen_prod[i]
-                if symbol[1] == grammar.T:
-                    #if the right hand side is a terminal
-                    self.children.append(Tree((symbol[0],),self))
-                elif symbol[1] == grammar.NT:
-                    # if the right hand side is a non-terminal
-                    self.children.append(Tree((symbol[0],),self))
-                    genome, index = self.children[-1].full(genome, grammar, index, max_depth=max_depth)
-        return genome, index
-
-    def check_expansion(self, grammar):
+    def check_expansion(self):
         """ Check if a given tree is completely expanded or not. Return boolean
             True if the tree IS NOT completely expanded.
         """
 
         check = False
-        if self.root in grammar.non_terminals.keys():
+        if self.root in params['BNF_GRAMMAR'].non_terminals.keys():
             # Current node is a NT and should have children
             if self.children:
                 # Everything is as expected
                 for child in self.children:
-                    check = child.check_expansion(grammar)
+                    check = child.check_expansion()
                     if check:
                         break
             else:
                 # Current node is not completely expanded
                 check = True
         return check
-
-    def advanced_subtree_mutate(self):
-        """ Creates a list of all nodes and picks one node at random to mutate.
-            Because we have a list of all nodes we can (but currently don't)
-            choose what kind of nodes to mutate on. Handy. Should hopefully be
-            faster and less error-prone to the previous subtree mutation.
-        """
-
-        n, node_list = self.get_node_ids(number=0, n_list=[])
-
-        node = random.choice(node_list)
-        tree = node[2]
-        while tree.root in self.grammar.terminals:
-            node = random.choice(node_list)
-            tree = node[2]
-        tree.max_depth = self.depth_limit - node[4]
-
-        #grow (based on grammar) from random node, with a given depth limit
-        x, y = tree.random_derivation([], self.grammar, 0, max_depth=tree.max_depth)
-        if tree.check_expansion(self.grammar):
-            print ("Invalid")
-        genome = self.build_genome([])
-
-        return self.get_output(), genome, self
 
     def subtree_mutate(self):
         """ Creates a list of all nodes and picks one node at random to mutate.
@@ -553,273 +572,59 @@ class Tree:
             faster and less error-prone to the previous subtree mutation.
         """
 
-        n = self.get_nodes()
+        n = self.get_nodes(0)
         number = random.randint(1, n)
-        tree = self.return_node_from_id(number)[0]
+        tree = self.return_node_from_id(number, number=0, return_tree=None)[0]
+
+        while tree.root in params['BNF_GRAMMAR'].terminals:
+            number = random.randint(1, n)
+            tree = self.return_node_from_id(number, number=0, return_tree=None)[0]
+
         tree.max_depth = self.depth_limit - tree.get_depth()
-
-        #grow (based on grammar) from random node, with a given depth limit
-        x, y = tree.random_derivation([], self.grammar, 0, max_depth=tree.max_depth)
-        if tree.check_expansion(self.grammar):
-            print ("Invalid")
+        x, y, d, md = tree.derivation([], "random", 0, 0, 0, depth_limit=tree.max_depth)
         genome = self.build_genome([])
 
         return self.get_output(), genome, self
 
-    def leaf_mutate(self):
-        """ Mutates a random leaf node from a given tree.
-        """
-        # Choose a random NT from the tree which has all T children
-        tree = self.get_random(0.1)
-        check = [kid.root in tree.grammar.terminals for kid in tree.children]
-        while not check or (all(check) != True):
-            tree = self.get_random(0.1)
-            check = [kid.root in tree.grammar.terminals for kid in tree.children]
-        # New production choices are those productions which are terminals
-        productions = tree.grammar.rules[tree.root]
-        available = [i for i in productions if all([sym[1] == 'T' for sym in i]) == True]
-        chosen_prod = random.choice(available)
-        if len(productions) > 1:
-            choice = productions.index(chosen_prod)
-            codon = random.randrange(0, tree.grammar.codon_size, len(productions)) + choice
-            tree.codon = codon
-        tree.children = []
-        for i in range(len(chosen_prod)):
-            symbol = chosen_prod[i]
-            tree.children.append(Tree((symbol[0],),tree))
-        if tree.check_expansion(self.grammar):
-            print ("Invalid")
-        genome = self.build_genome([])
-        return self.get_output(), genome, self
-
-    def getLabels(self):
-        labels = [self.root]
+    def getLabels(self, labels):
+        labels.add(self.root)
 
         for c in self.children:
-            labels.extend(c.getLabels())
-        return set(labels)
+            labels = c.getLabels(labels)
+        return labels
 
-    def get_imbalance(self, current, array, names):
-        """ Calculate the imbalance of a given tree (i.e. is the tree left or
-            right-biased)."""
-
-        if self.root in self.grammar.non_terminals:
-            NT_kids = [kid for kid in self.children if kid.root in self.grammar.non_terminals]
-            # We only want to look at children who are NTs themselves. If the
-            # kids are Ts then we don't need to look in their tree.
-            if not NT_kids:
-                # The child is a Terminal
-                for child in self.children:
-                    array.append(-child.get_depth())
-                    if child.root[-1] == "(":
-                        names.append(child.root[:-1])
-                    else:
-                        names.append(child.root)
-            else:
-                for child in NT_kids:
-                    array, names = child.get_imbalance(child, array, names)
-        return array, names
-
-    def print_tree(self, name):
-        """ Print out the tree for all to see."""
-
-        file_path = getcwd()
-        if not path.isdir(str(file_path) + "/Tree_graphs"):
-            mkdir(str(file_path) + "/Tree_graphs")
-
-        arr, names = self.get_imbalance(self, [], [])
-        x = range(len(arr))
-        fig = plt.figure()
-        ax1 = fig.add_subplot(1,1,1)
-        ax1.axes.get_xaxis().set_visible(False)
-        ax1.set_frame_on(False)
-        ax1.plot(x, arr, "r.")
-
-        slope, constant = get_best_fit(arr)
-        ax1.plot(x, [i*slope+constant for i in x], "-")
-
-        for label, a, b in zip(names, x, arr):
-            ax1.annotate(
-                label,
-                xy = (a, b))
-        plt.savefig(getcwd()+'/Tree_graphs/' + str(name) + '.pdf')
-        plt.close()
-
-    def get_tree_stats(self):
-        """ Get the following statistics from a given tree:
-                Node count
-                Phenotype length
-                Root bias
-                Slope of line of best fit
-        """
-
-        node_count = self.get_nodes(0)
-        arr, names = self.get_imbalance(self, [], [])
-        phenotype_length = len(arr)
-        max_depth = abs(min(arr))
-        if phenotype_length == 1:
-            slope = 0
-        else:
-            slope, constant = get_best_fit(arr)
-        root = max(arr)
-        position = arr.index(root)
-        if position:
-            position += 1
-        root_bias = (position/float(len(arr)))*100
-
-        return [node_count, phenotype_length, root_bias, slope, max_depth], arr
-
-def get_best_fit(y):
-    """ Get the line of best fit given a list of points"""
-
-    x = range(len(y))
-    slope, constant = np.polyfit(x, y, 1)
-    return slope, constant
-
-def advanced_subtree_crossover(orig_tree1, orig_tree2):
-
-    def do_crossover(tree1, tree2, intersection):
-        tree1 = copy.deepcopy(orig_tree1)
-        tree2 = copy.deepcopy(orig_tree2)
-
-        crossover_choice = random.choice(intersection)
-
-        n1, node_list1 = tree1.get_node_ids(number=0, n_list=[])
-        n2, node_list2 = tree2.get_node_ids(number=0, n_list=[])
-
-       # print "-----"
-       # print "  0  t1\t", node_list1[0][4], node_list1[0][5], node_list1[0][4]+ node_list1[0][5]
-       # print "  0  t2\t", node_list2[0][4], node_list2[0][5], node_list2[0][4]+ node_list2[0][5]
-
-        chosen_node1 = random.choice([i for i in node_list1 if (i[1] == crossover_choice)])
-        t1 = chosen_node1[2]
-        while (t1.root in tree1.grammar.terminals):
-            chosen_node1 = random.choice([i for i in node_list1 if i[1] == crossover_choice])
-            t1 = chosen_node1[2]
-
-        chosen_node2 = random.choice([i for i in node_list2 if i[1] == crossover_choice])
-        t2 = chosen_node2[2]
-        while (t2.root in tree2.grammar.terminals):
-            chosen_node2 = random.choice([i for i in node_list2 if i[1] == crossover_choice])
-            t2 = chosen_node2[2]
-
-        d1 = chosen_node1[4]
-        d2 = chosen_node2[4]
-
-       # print "  1  t1\t", d1, "\t", t1.get_max_children(t1, 0)
-       # print "  1  t2\t", d2, "\t", t2.get_max_children(t2, 0)
-
-        # when the crossover is between the entire tree of both tree1 and tree2
-        if d1 == 0 and d2 == 0:
-            return t2, t2.build_genome([]), t1, t1.build_genome([])
-        #when only t1 is the entire tree1
-        elif d1 == 0:
-            p2 = t2.parent
-            tree1 = t2
-            try:
-                p2.children.index(t2)
-            except ValueError:
-                print ("Error: child not in parent.")
-                quit()
-            i2 = p2.children.index(t2)
-            p2.children[i2] = t1
-            t1.parent = p2
-            t2.parent = None
-        #when only t2 is the entire tree2
-        elif d2 == 0:
-            p1 = t1.parent
-            tree2 = t1
-            try:
-                p1.children.index(t1)
-            except ValueError:
-                print ("Error: child not in parent")
-                quit()
-            i1 = p1.children.index(t1)
-            p1.children[i1] = t2
-            t2.parent = p1
-            t1.parent = None
-        #when the crossover node for both trees is not the entire tree
-        else:
-            p1 = t1.parent
-            p2 = t2.parent
-            i1 = p1.children.index(t1)
-            i2 = p2.children.index(t2)
-
-            p1.children[i1] = t2
-            p2.children[i2] = t1
-
-            t2.parent = p1
-            t1.parent = p2
-
-    tree1 = copy.deepcopy(orig_tree1)
-    tree2 = copy.deepcopy(orig_tree2)
-
-    labels1 = tree1.getLabels()
-    labels2 = tree2.getLabels()
-    intersection = labels1.intersection(labels2)
-
-    intersection = filter(lambda x: x in tree1.grammar.non_terminals, intersection)
-
-   # dt1 = tree1.get_max_children(tree1, 0)
-   # dt2 = tree2.get_max_children(tree2, 0)
-
-    #see if there is a label to do a crossover
-    if len(intersection) != 0:
-
-        do_crossover(tree1, tree2, intersection)
-       # dt1 = tree1.get_max_children(tree1, 0)
-       # dt2 = tree2.get_max_children(tree2, 0)
-        while False:# (dt1 > tree1.depth_limit) or (dt2 > tree2.depth_limit):
-            print ("Repeating myself")
-            do_crossover(intersection)
-            dt1 = tree1.get_max_children(tree1, 0)
-            dt2 = tree2.get_max_children(tree2, 0)
-            quit()
-
-       # print "  2  t1\t", tree1.get_output(), "\t", tree1
-       # print "  2  t2\t", tree2.get_output(), "\t", tree2
-
-       # print "  2  t1\t", dt1
-       # print "  2  t2\t", dt2
-   # if (dt1 > tree1.depth_limit) or (dt2 > tree2.depth_limit):
-   #     print "Ass"
-   #     quit()
-    return tree1, tree2.build_genome([]), tree2, tree2.build_genome([])
+    def print_tree(self):
+        print (self)
 
 def subtree_crossover(orig_tree1, orig_tree2):
 
+    # Have to do a deepcopy of original trees as identical trees will give the
+    # same class instances for their children.
+    copy_tree1 = deepcopy(orig_tree1)
+    copy_tree2 = deepcopy(orig_tree2)
+
     def do_crossover(tree1, tree2, intersection):
-        tree1 = copy.deepcopy(orig_tree1)
-        tree2 = copy.deepcopy(orig_tree2)
 
         crossover_choice = random.choice(intersection)
 
-        n1 = tree1.get_nodes()
-        number1 = random.randint(1, n1)
-        t1 = tree1.return_node_from_id(number1)[0]
+        indexes_1, n1 = tree1.get_target_nodes([], target=crossover_choice)
+        indexes_1 = list(set(indexes_1))
+        number1 = random.choice(indexes_1)
+        t1 = tree1.return_node_from_id(number1, number=0, return_tree=None)[0]
 
-        while t1.root not in intersection:
-            n1 = tree1.get_nodes()
-            number1 = random.randint(1, n1)
-            t1 = tree1.return_node_from_id(number1)[0]
-
-        n2 = tree2.get_nodes()
-        number2 = random.randint(1, n2)
-        t2 = tree2.return_node_from_id(number2)[0]
-
-        while t2.root not in intersection:
-            n2 = tree2.get_nodes()
-            number2 = random.randint(1, n2)
-            t2 = tree2.return_node_from_id(number2)[0]
+        indexes_2, n2 = tree2.get_target_nodes([], target=crossover_choice)
+        indexes_2 = list(set(indexes_2))
+        number2 = random.choice(indexes_2)
+        t2 = tree2.return_node_from_id(number2, number=0, return_tree=None)[0]
 
         d1 = t1.get_depth()
         d2 = t2.get_depth()
 
         # when the crossover is between the entire tree of both tree1 and tree2
-        if d1 == 0 and d2 == 0:
-            return t2, t2.build_genome(), t1, t1.build_genome()
+        if d1 == 1 and d2 == 1:
+            return t2, t1
         #when only t1 is the entire tree1
-        elif d1 == 0:
+        elif d1 == 1:
             p2 = t2.parent
             tree1 = t2
             try:
@@ -831,8 +636,9 @@ def subtree_crossover(orig_tree1, orig_tree2):
             p2.children[i2] = t1
             t1.parent = p2
             t2.parent = None
+
         #when only t2 is the entire tree2
-        elif d2 == 0:
+        elif d2 == 1:
             p1 = t1.parent
             tree2 = t1
             try:
@@ -848,6 +654,7 @@ def subtree_crossover(orig_tree1, orig_tree2):
         else:
             p1 = t1.parent
             p2 = t2.parent
+
             i1 = p1.children.index(t1)
             i2 = p2.children.index(t2)
 
@@ -857,80 +664,64 @@ def subtree_crossover(orig_tree1, orig_tree2):
             t2.parent = p1
             t1.parent = p2
 
-    tree1 = copy.deepcopy(orig_tree1)
-    tree2 = copy.deepcopy(orig_tree2)
+        return tree1, tree2
 
-    labels1 = tree1.getLabels()
-    labels2 = tree2.getLabels()
-    intersection = labels1.intersection(labels2)
+    def get_labels(t1, t2):
+        return t1.getLabels(set()), t2.getLabels(set())
 
-    intersection = list(filter(lambda x: x in [i for i in tree1.grammar.non_terminals if tree1.grammar.non_terminals[i]['b_factor'] > 1], intersection))
-    #Lets replace this
+    labels1, labels2 = get_labels(orig_tree1, orig_tree2)
 
-    #see if there is a label to do a crossover
+    def intersect(l1, l2):
+        intersection = l1.intersection(l2)
+        intersection = list(filter(lambda x: x in [i for i in params['BNF_GRAMMAR'].non_terminals if params['BNF_GRAMMAR'].non_terminals[i]['b_factor'] > 1], intersection))
+
+        return intersection
+
+    intersection = intersect(labels1, labels2)
+
     if len(intersection) != 0:
-
-        do_crossover(tree1, tree2, intersection)
-       # dt1 = tree1.get_max_children(tree1, 0)
-       # dt2 = tree2.get_max_children(tree2, 0)
-        while False:# (dt1 > tree1.depth_limit) or (dt2 > tree2.depth_limit):
-            do_crossover(intersection)
-            dt1 = tree1.get_max_children(tree1, 0)
-            dt2 = tree2.get_max_children(tree2, 0)
-            quit()
-
-   # if (dt1 > tree1.depth_limit) or (dt2 > tree2.depth_limit):
-   #     print "Depth limit exceeded in crossover"
-   #     quit()
-    return tree1, tree2.build_genome([]), tree2, tree2.build_genome([])
-
-def genome_init(grammar, genome, counter="test"):
-    tree = Tree((str(grammar.start_rule[0]),), None)
-    index = tree.genome_derivation(genome, grammar, 0)
-    if tree.check_expansion(grammar):
-        print ("tree.genome_init generated an Invalid\n\nRandomly generating a new tree...")
-        new_out, new_gen, new_tree, new_nodes, nothing = random_init(grammar, tree.max_depth)
-        return new_out, [new_gen, len(new_gen)], new_tree, new_nodes, True
+        # Cross over parts of trees
+        ret_tree1, ret_tree2 = do_crossover(copy_tree1, copy_tree2, intersection)
     else:
-        return tree.get_output(), index, tree, index, False
+        # Cross over entire trees
+        ret_tree1, ret_tree2 = copy_tree2, copy_tree1
 
-def random_init(grammar, depth, counter="test"):
-    tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
-    genome, nodes = tree.random_derivation([], grammar, 0, max_depth=depth)
-    if tree.check_expansion(grammar):
-        print ("tree.random_init generated an Invalid")
-        quit()
-    return tree.get_output(), genome, tree, nodes, False
+    return ret_tree1, ret_tree1.build_genome([]), ret_tree2, ret_tree2.build_genome([])
 
-def pi_random_init(grammar, depth, counter="test"):
-    tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
-    genome, nodes = tree.pi_random_derivation(grammar, 0, max_depth=depth)
-    if tree.check_expansion(grammar):
+def genome_init(genome, depth_limit=20):
+
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, depth_limit=depth_limit)
+    used_codons, nodes, depth, max_depth = tree.genome_derivation(genome, 0, 0, 0, 0)
+
+    invalid = False
+    if any([i == "Incomplete" for i in [used_codons, nodes, depth, max_depth]]) or tree.check_expansion():
+        invalid = True
+    return tree.get_output(), genome, tree, nodes, invalid, max_depth, used_codons
+
+def pi_random_init(depth):
+
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, max_depth=depth, depth_limit=depth)
+    genome = tree.pi_random_derivation(0, max_depth=depth)
+    if tree.check_expansion():
         print ("tree.pi_random_init generated an Invalid")
         quit()
-    return tree.get_output(), genome, tree, nodes, False
+    return tree.get_output(), genome, tree, False
 
-def grow_init(grammar, depth, counter="test"):
-    tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
-    tree.depth_limit = depth
-    genome, nodes = tree.grow([], grammar, 0, max_depth=depth)
-    if tree.check_expansion(grammar):
-        print ("tree.grow_init generated an Invalid")
-        quit()
-    return tree.get_output(), genome, tree, nodes, False
+def pi_grow_init(depth):
 
-def pi_grow_init(grammar, depth, counter="test"):
-    tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
-    genome, nodes = tree.pi_grow(grammar, 0, max_depth=depth)
-    if tree.check_expansion(grammar):
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, max_depth=depth, depth_limit=depth)
+    genome = tree.pi_grow(0, max_depth=depth)
+    if tree.check_expansion():
         print ("tree.pi_grow_init generated an Invalid")
         quit()
-    return tree.get_output(), genome, tree, nodes, False
+    return tree.get_output(), genome, tree, False
 
-def full_init(grammar, depth, counter="test"):
-    tree = Tree((str(grammar.start_rule[0]),), None, max_depth=depth)
-    genome, nodes = tree.full([], grammar, 0, max_depth=depth)
-    if tree.check_expansion(grammar):
-        print ("tree.full_init generated an Invalid")
+def init(depth, method):
+
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, max_depth=depth-1, depth_limit=depth-1)
+    genome, nodes, d, max_depth = tree.derivation([], method, 0, 0, 0, depth_limit=depth-1)
+
+    if tree.check_expansion():
+        print ("tree.init generated an Invalid")
         quit()
-    return tree.get_output(), genome, tree, nodes, False
+    return tree.get_output(), genome, tree, nodes, False, max_depth, len(genome)
