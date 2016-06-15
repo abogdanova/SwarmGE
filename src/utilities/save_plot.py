@@ -1,6 +1,9 @@
 from algorithm.parameters import params
 from os import path, mkdir, getcwd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+plt.rc('font', family='Times New Roman')
 
 def search_loop_save_plot(fitness_plot, fitness):
     file_path = getcwd()

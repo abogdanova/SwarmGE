@@ -1,6 +1,6 @@
 from representation import individual, tree
-from algorithm.parameters import params
 from random import randint, random, sample
+from algorithm.parameters import params
 from copy import deepcopy
 
 def crossover(parents):

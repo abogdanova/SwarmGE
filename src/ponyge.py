@@ -5,22 +5,16 @@
 # Hereby licensed under the GNU GPL v3.
 """ Python GE implementation """
 
-import matplotlib
-
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-plt.rc('font', family='Times New Roman')
-from random import seed
+from fitness.fitness_wheel import set_fitness_function
+from algorithm.parameters import params, set_params
 from datetime import datetime, timedelta
-import sys
+from operators import initialisers
 from representation import grammar
 from algorithm import search_loop
-from algorithm.parameters import params,set_params
-from operators import initialisers,mutation,crossover,selection,replacement
-from operators.initialisers import generate_initial_pop
-from fitness.fitness_wheel import set_fitness_function
 from stats import stats
+from random import seed
 import time
+import sys
 
 def mane():
     """ Run program """
@@ -50,12 +44,11 @@ def mane():
     params['BNF_GRAMMAR'] = bnf_grammar
 
     # Loop
-    best_ever, phenotypes, total_inds, invalids, regens, final_gen = search_loop.search_loop(
-                    params['GENERATIONS'], generate_initial_pop(bnf_grammar))
+    best_ever, phenotypes, total_inds, invalids, regens, final_gen = search_loop.search_loop()
 
-    #END LOOP
     params['TIME_LIST'].append(time.clock())
-    total_time = timedelta(seconds = (params['TIME_LIST'][-1] - params['TIME_LIST'][0]))
+    total_time = timedelta(seconds=(params['TIME_LIST'][-1] -
+                                    params['TIME_LIST'][0]))
 
     # Print final review
     stats.print_final_stats(best_ever, total_time, total_inds, len(phenotypes),
@@ -64,8 +57,8 @@ def mane():
     if not params['DEBUG']:
         stats.save_best("best", final_gen, best_ever)
         stats.save_results(final_gen, best_ever.fitness, total_time,
-                   len(phenotypes), total_inds, invalids, regens, None, None,
-                   None, None, total_time=total_time, END=True)
+                           len(phenotypes), total_inds, invalids, regens, None,
+                           None, None, None, total_time=total_time, END=True)
     return params['TIME_STAMP'], best_ever.fitness
 
 if __name__ == "__main__":

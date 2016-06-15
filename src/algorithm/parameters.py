@@ -1,5 +1,5 @@
-from utilities.helper_methods import RETURN_PERCENT
 from fitness.fitness_wheel import set_fitness_function
+from utilities.helper_methods import RETURN_PERCENT
 import time
 
 """algorithm Parameters"""
@@ -144,9 +144,11 @@ def set_params(command_line_args):
         else:
             assert False, "unhandeled option"
 
-    #Set the size of a generation :-/ seems redundant but need to examine of Population size changes
+    # Set the size of a generation
     params['GENERATION_SIZE'] = params['POPULATION_SIZE']
-    #This needs to be defined better, porobabl make 1 into variable
+
+    # Elite size is set to either 1 or 1% of the population size, whichever is
+    # bigger.
     params['ELITE_SIZE'] = RETURN_PERCENT(1,params['POPULATION_SIZE'])
 
     if params['RANDOM_SEED'] == None:
@@ -196,5 +198,6 @@ def set_params(command_line_args):
         params['GRAMMAR_FILE'] = "grammars/letter.bnf"
         params['ALTERNATE'] = params['STRING_MATCH_TARGET']
 
-    params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],params['ALTERNATE'])
+    params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
+                                                      params['ALTERNATE'])
 

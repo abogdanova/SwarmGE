@@ -58,7 +58,7 @@ class individual(object):
         distributions and sets fitness"""
 
         if params['PROBLEM'] == "regression":
-            # The problem is regression eg has training and test data
+            # The problem is regression, e.g. has training and test data
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype, dist)
         else:
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype)
