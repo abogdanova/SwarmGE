@@ -3,7 +3,6 @@ from algorithm.parameters import params
 from representation import tree
 from random import randint
 
-"""Need to migrate codon size to good location, maybe the grammar???"""
 
 class individual(object):
     """A GE individual"""

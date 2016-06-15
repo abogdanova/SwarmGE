@@ -1,5 +1,6 @@
-from algorithm.parameters import params
 from fitness.fitness import default_fitness
+from algorithm.parameters import params
+
 
 def evaluate_fitness(individuals, phenotypes, invalids):
     """ Perform the mapping for each individual """
@@ -19,6 +20,8 @@ def evaluate_fitness(individuals, phenotypes, invalids):
                         while ind.phenotype in phenotypes:
                             ind = params['MUTATION'](ind)
                             regens += 1
+                        ind.evaluate()
+                        phenotypes[ind.phenotype] = ind.fitness
                     elif params['LOOKUP_FITNESS']:
                         ind.fitness = phenotypes[ind.phenotype]
                     elif params['LOOKUP_BAD_FITNESS']:

@@ -3,8 +3,9 @@ from algorithm.parameters import params
 from representation import individual
 from copy import deepcopy
 
+
 def int_flip_mutation(ind):
-    """Mutate the individual by randomly chosing a new int with
+    """Mutate the individual by randomly choosing a new int with
     probability p_mut. Works per-codon, hence no need for
     "within_used" option."""
     for i in range(len(ind.genome)):
@@ -13,13 +14,15 @@ def int_flip_mutation(ind):
     ind = individual.individual(ind.genome, None)
     return ind
 
+
 def split_mutation(pop, gen):
     """Takes a population of individuals and performs subtree mutation on some
     and leaf mutation on others. Proportions of each varies as generations
     progress"""
 
     min_perc = 30
-    var_perc = min_perc + (gen / float(params['GENERATIONS'])) * (100 - (2 * min_perc))
+    var_perc = min_perc + (gen / float(params['GENERATIONS'])) * \
+                          (100 - (2 * min_perc))
     shuffle(pop)
 
     pop = deepcopy(pop)
@@ -32,6 +35,7 @@ def split_mutation(pop, gen):
     pop = pop_1 + pop_2
     return pop
 
+
 def subtree_mutation(ind):
     """Mutate the individual by randomly chosing a new int with
     probability p_mut. Works per-codon, hence no need for
@@ -43,6 +47,7 @@ def subtree_mutation(ind):
     ind.genome = genome + tail[:int(len(genome)/2)]
 
     return ind
+
 
 def leaf_mutation(ind):
     """Mutate the individual by randomly chosing a new int with

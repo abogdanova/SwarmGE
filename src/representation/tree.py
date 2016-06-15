@@ -4,11 +4,11 @@
 # Copyright (c) 2015 James McDermott and Michael Fenton
 # Hereby licensed under the GNU GPL v3.
 
-from copy import deepcopy
 from algorithm.parameters import params
+from copy import deepcopy
 import random
-
 random.seed(10)
+
 
 class Tree:
 
@@ -596,6 +596,7 @@ class Tree:
     def print_tree(self):
         print (self)
 
+
 def subtree_crossover(orig_tree1, orig_tree2):
 
     # Have to do a deepcopy of original trees as identical trees will give the
@@ -623,34 +624,35 @@ def subtree_crossover(orig_tree1, orig_tree2):
         # when the crossover is between the entire tree of both tree1 and tree2
         if d1 == 1 and d2 == 1:
             return t2, t1
-        #when only t1 is the entire tree1
+        # when only t1 is the entire tree1
         elif d1 == 1:
             p2 = t2.parent
             tree1 = t2
             try:
                 p2.children.index(t2)
             except ValueError:
-                print ("Error: child not in parent.")
+                print("Error: child not in parent.")
                 quit()
             i2 = p2.children.index(t2)
             p2.children[i2] = t1
             t1.parent = p2
             t2.parent = None
 
-        #when only t2 is the entire tree2
+        # when only t2 is the entire tree2
         elif d2 == 1:
             p1 = t1.parent
             tree2 = t1
             try:
                 p1.children.index(t1)
             except ValueError:
-                print ("Error: child not in parent")
+                print("Error: child not in parent")
                 quit()
             i1 = p1.children.index(t1)
             p1.children[i1] = t2
             t2.parent = p1
             t1.parent = None
-        #when the crossover node for both trees is not the entire tree
+
+        # when the crossover node for both trees is not the entire tree
         else:
             p1 = t1.parent
             p2 = t2.parent
@@ -688,6 +690,7 @@ def subtree_crossover(orig_tree1, orig_tree2):
 
     return ret_tree1, ret_tree1.build_genome([]), ret_tree2, ret_tree2.build_genome([])
 
+
 def genome_init(genome, depth_limit=20):
 
     tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, depth_limit=depth_limit)
@@ -698,6 +701,7 @@ def genome_init(genome, depth_limit=20):
         invalid = True
     return tree.get_output(), genome, tree, nodes, invalid, max_depth, used_codons
 
+
 def pi_random_init(depth):
 
     tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, max_depth=depth, depth_limit=depth)
@@ -707,6 +711,7 @@ def pi_random_init(depth):
         quit()
     return tree.get_output(), genome, tree, False
 
+
 def pi_grow_init(depth):
 
     tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, max_depth=depth, depth_limit=depth)
@@ -715,6 +720,7 @@ def pi_grow_init(depth):
         print ("tree.pi_grow_init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, False
+
 
 def init(depth, method):
 

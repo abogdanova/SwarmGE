@@ -15,7 +15,7 @@ params = {
     # "string_match"
 
 # Select Regression Problem Suite
-'SUITE' : "Keijzer6",
+'SUITE' : "Vladislavleva4",
     # "Dow"
     # "Keijzer6"
     # "Vladislavleva4"
@@ -25,9 +25,7 @@ params = {
 
 # Set max sizes of individuals
 'MAX_TREE_DEPTH' : 17,
-    # For tree-based operations
 'CODON_SIZE' : 100000,
-    # For genome-based operations
 
 # Initialisation
 'INITIALISATION' : "rhh",
@@ -40,7 +38,7 @@ params = {
     # doesn't use trees to initialise individuals).
 
 # Selection
-'SELECTION' : "tournament",
+'SELECTION' : "truncation",
     # "tournament",
     # "truncation",
 'TOURNAMENT_SIZE' : 3,
@@ -52,7 +50,7 @@ params = {
 'CROSSOVER' : "subtree",
     # "onepoint",
     # "subtree",
-'CROSSOVER_PROBABILITY' : 0.5,
+'CROSSOVER_PROBABILITY' : 0.75,
 
 # Mutation
 'MUTATION' : "subtree",
@@ -60,9 +58,10 @@ params = {
     # "int_flip",
     # "split",
 'MUTATION_PROBABILITY' : "1 over the length of the genome",
+    # Subtree mutation is guaranteed to mutate one subtree per individual
 
 # Replacement
-'REPLACEMENT' : "generational",
+'REPLACEMENT' : "steady_state",
     # "generational",
     # "steady_state",
 
@@ -88,10 +87,10 @@ params = {
 'LOOKUP_FITNESS' : False,
     # Uses the cache to look up the fitness of duplicate individuals. CACHE must
     # be set to True if you want to use this.
-'LOOKUP_BAD_FITNESS' : True,
+'LOOKUP_BAD_FITNESS' : False,
     # Uses the cache to give a bad fitness to duplicate individuals. CACHE must
     # be True if you want to use this (obviously)"""
-'MUTATE_DUPLICATES' : False,
+'MUTATE_DUPLICATES' : True,
     # Removes duplicate individuals from the population by replacing them with
     # mutated versions of the original individual. Hopefully this will encourage
     # diversity in the population.
@@ -101,7 +100,7 @@ params = {
     # fitness evaluations.
 
 # Set Random Seed
-'RANDOM_SEED': 381130
+'RANDOM_SEED': None
 }
 
 def set_params(command_line_args):
