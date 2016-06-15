@@ -38,7 +38,7 @@ params = {
     # doesn't use trees to initialise individuals).
 
 # Selection
-'SELECTION' : "truncation",
+'SELECTION' : "tournament",
     # "tournament",
     # "truncation",
 'TOURNAMENT_SIZE' : 3,
@@ -61,14 +61,14 @@ params = {
     # Subtree mutation is guaranteed to mutate one subtree per individual
 
 # Replacement
-'REPLACEMENT' : "steady_state",
+'REPLACEMENT' : "generational",
     # "generational",
     # "steady_state",
 
 # Debugging
     # Use this to turn on debugging mode. This mode doesn't write any files and
     # should be used when you want to test new methods or grammars, etc.
-'DEBUG' : True,
+'DEBUG' : False,
 
 # Saving
 'SAVE_ALL' : False,
@@ -87,10 +87,10 @@ params = {
 'LOOKUP_FITNESS' : False,
     # Uses the cache to look up the fitness of duplicate individuals. CACHE must
     # be set to True if you want to use this.
-'LOOKUP_BAD_FITNESS' : False,
+'LOOKUP_BAD_FITNESS' : True,
     # Uses the cache to give a bad fitness to duplicate individuals. CACHE must
     # be True if you want to use this (obviously)"""
-'MUTATE_DUPLICATES' : True,
+'MUTATE_DUPLICATES' : False,
     # Removes duplicate individuals from the population by replacing them with
     # mutated versions of the original individual. Hopefully this will encourage
     # diversity in the population.

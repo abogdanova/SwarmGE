@@ -5,6 +5,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.rc('font', family='Times New Roman')
 
+
 def search_loop_save_plot(fitness_plot, fitness):
     file_path = getcwd()
     if not path.isdir(str(file_path) + "/Results"):
