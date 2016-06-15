@@ -11,6 +11,7 @@ def search_loop():
     phenotypes = {}
     fitness_plot = []
     invalids = 0
+    generation = 0
 
     # Initialise population
     individuals = generate_initial_pop(params['BNF_GRAMMAR'])
@@ -41,7 +42,7 @@ def search_loop():
                     best_test.evaluate(dist='test')
                 if not params['DEBUG']:
                     stats.save_best_midway(generation, best_test)
-            if params['SAVE_PLOTS']:
+            if params['SAVE_PLOTS'] and not params['DEBUG']:
                 search_loop_save_plot(fitness_plot, best_ever.fitness)
             generation += 1
 
