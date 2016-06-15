@@ -18,13 +18,11 @@ class individual(object):
                 self.used_codons = tree.genome_init(self.genome,
                                         depth_limit=params['MAX_TREE_DEPTH'])
                 self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
-                self.fitnesses = {}
             else:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
                 self.depth, self.used_codons = tree.init(max_depth, "random")
                 self.genome = genome + [randint(0, params['CODON_SIZE']) for i in range(int(self.used_codons/2))]
                 self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
-                self.fitnesses = {}
         elif genome:
             self.genome = genome
             self.phenotype, genome, self.tree, self.nodes, self.invalid, \
@@ -58,9 +56,11 @@ class individual(object):
     def evaluate(self, dist="training"):
         """ Evaluates phenotype in fitness function on either training or test
         distributions and sets fitness"""
-        #IF the problem is regression eg has training and test data
+
         if params['PROBLEM'] == "regression":
+            # The problem is regression eg has training and test data
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype, dist)
         else:
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype)
-       # print "\n", self.fitness, "\t", self.phenotype
+
+        # print ("\n", self.fitness, "\t", self.phenotype)
