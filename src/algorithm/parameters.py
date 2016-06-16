@@ -223,6 +223,7 @@ def set_params(command_line_args):
     # Set random seed
     seed(params['RANDOM_SEED'])
 
+    #TODO move all this to a helper file or method keep it all clean
     # Initialise time lists and trackers
     time1 = datetime.now()
     trackers.time_list.append(time.clock())
