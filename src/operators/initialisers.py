@@ -3,18 +3,21 @@ from random import shuffle, randint
 from representation import tree,individual
 from math import floor
 
+
 def generate_initial_pop(grammar):
     if params['INITIALISATION'] == "random" or params['GENOME_INIT']:
         return random_initialisation(params['POPULATION_SIZE'], grammar, params['GENOME_INIT'])
     elif params['INITIALISATION'] == "rhh":
         return rhh_initialisation(params['POPULATION_SIZE'], grammar)
     else:
-        print ("Error: initialisation method not recognised")
+        print("Error: initialisation method not recognised")
         quit()
+
 
 def random_initialisation(size, grammar, genome_init):
     """Randomly create a population of size and return"""
     return [individual.individual(None, None, grammar, chromosome=genome_init) for _ in range(size)]
+
 
 def rhh_initialisation(size, grammar):
     """ Create a population of size using ramped half and half (or sensible
@@ -25,7 +28,7 @@ def rhh_initialisation(size, grammar):
     population = []
 
     if size < 2:
-        print ("Error: population size too small for RHH initialisation. Returning randomly built trees.")
+        print("Error: population size too small for RHH initialisation. Returning randomly built trees.")
         return [individual.individual(None, None) for _ in range(size)]
     else:
         if size % 2:
@@ -70,6 +73,7 @@ def rhh_initialisation(size, grammar):
             ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
             population.append(ind)
         return population
+
 
 def get_min_ramp_depth(grammar):
     """ Find the minimum depth at which ramping can start where we can have

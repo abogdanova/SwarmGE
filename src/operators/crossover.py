@@ -3,6 +3,14 @@ from random import randint, random, sample
 from algorithm.parameters import params
 from copy import deepcopy
 
+
+def crossover_wheel():
+    if params['CROSSOVER'] == "subtree":
+        params['CROSSOVER'] = subtree_crossover
+    elif params['CROSSOVER'] == "onepoint":
+        params['CROSSOVER'] = onepoint_crossover
+
+
 def crossover(parents):
     """ Perform crossover on a population """
 
@@ -20,6 +28,7 @@ def crossover(parents):
             cross_pop.extend(inds)
 
     return cross_pop
+
 
 def onepoint_crossover(p_0, p_1, within_used=True):
     """Given two individuals, create two children using one-point
@@ -48,6 +57,7 @@ def onepoint_crossover(p_0, p_1, within_used=True):
     ind_1 = individual.individual(c_1, None)
 
     return [ind_0, ind_1]
+
 
 def subtree_crossover(p_0, p_1):
     """Given two individuals, create two children using subtree

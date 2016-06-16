@@ -7,6 +7,7 @@ from copy import deepcopy
 from sys import stdout
 import time
 
+
 """Algorithm statistics"""
 stats = {
 
@@ -44,35 +45,41 @@ def get_stats(individuals, END=False):
         available = [i for i in individuals if not i.invalid]
         stats['time_taken'] = timedelta(seconds=trackers.time_list[-1] -
                                                 trackers.time_list[-2])
-        # Genome Stats
-        stats['max_genome_length'] = max([len(i.genome) for i in available])
-        stats['ave_genome_length'] = ave([len(i.genome) for i in available])
-        stats['min_genome_length'] = min([len(i.genome) for i in available])
-
-        # Used Codon Stats
-        stats['max_used_codons'] = max([i.used_codons for i in available])
-        stats['ave_used_codons'] = ave([i.used_codons for i in available])
-        stats['min_used_codons'] = min([i.used_codons for i in available])
-
-        # Tree Depth Stats
-        stats['max_tree_depth'] = max([i.depth for i in available])
-        stats['ave_tree_depth'] = ave([i.depth for i in available])
-        stats['min_tree_depth'] = min([i.depth for i in available])
-
-        # Tree Node Stats
-        stats['max_tree_nodes'] = max([i.nodes for i in available])
-        stats['ave_tree_nodes'] = ave([i.nodes for i in available])
-        stats['min_tree_nodes'] = min([i.nodes for i in available])
-
-        # Fitness Stats
-        stats['ave_fitness'] = ave([i.fitness for i in available])
-        stats['best_fitness'] = max([i.fitness for i in available])
-
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
         stats['unique_inds'] = len(trackers.cache)
-        stats['unused_search'] = 100 - stats['unique_inds'] / stats['total_inds']*100
+        stats['unused_search'] = 100 - stats['unique_inds'] / \
+                                       stats['total_inds']*100
         stats['best_ever'] = max(individuals)
+
+        # Genome Stats
+        genome_lengths = [len(i.genome) for i in available]
+        stats['max_genome_length'] = max(genome_lengths)
+        stats['ave_genome_length'] = ave(genome_lengths)
+        stats['min_genome_length'] = min(genome_lengths)
+
+        # Used Codon Stats
+        codons = [i.used_codons for i in available]
+        stats['max_used_codons'] = max(codons)
+        stats['ave_used_codons'] = ave(codons)
+        stats['min_used_codons'] = min(codons)
+
+        # Tree Depth Stats
+        depths = [i.depth for i in available]
+        stats['max_tree_depth'] = max(depths)
+        stats['ave_tree_depth'] = ave(depths)
+        stats['min_tree_depth'] = min(depths)
+
+        # Tree Node Stats
+        nodes = [i.nodes for i in available]
+        stats['max_tree_nodes'] = max(nodes)
+        stats['ave_tree_nodes'] = ave(nodes)
+        stats['min_tree_nodes'] = min(nodes)
+
+        # Fitness Stats
+        fitnesses = [i.fitness for i in available]
+        stats['ave_fitness'] = ave(fitnesses)
+        stats['best_fitness'] = stats['best_ever'].fitness
 
     if params['VERBOSE']:
         print_stats()
@@ -157,20 +164,17 @@ def print_final_stats(total_time):
     Prints a final review of the overall evolutionary process
     """
 
-    print("Best " + str(stats['best_ever']))
-    print("\nTime taken:\t", total_time)
-    print("\nTotal evals:  \t", stats['total_inds'])
-    print("Unique evals: \t", stats['unique_inds'])
-    print("Invalid inds: \t", stats['invalids'])
-    print("Unused search:\t", stats['unused_search'], "percent")
     if params['PROBLEM'] == "regression":
-        print("\nBest:\n  Training fitness:\t", stats['best_ever'].fitness)
+        print("\n\nBest:\n  Training fitness:\t", stats['best_ever'].fitness)
         stats['best_ever'].evaluate(dist='test')
         print("  Test fitness:\t\t", stats['best_ever'].fitness)
     else:
-        print("\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
+        print("\n\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
     print("  Phenotype:", stats['best_ever'].phenotype)
     print("  Genome:", stats['best_ever'].genome)
+    for stat in stats:
+        print(" ", stat, ": \t", stats[stat])
+    print("\nTime taken:\t", total_time)
 
 
 def save_final_stats(total_time):

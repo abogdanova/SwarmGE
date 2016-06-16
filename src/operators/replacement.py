@@ -1,6 +1,14 @@
 from algorithm.parameters import params
 from copy import copy
 
+
+def replacement_wheel():
+    if params['REPLACEMENT'] == "generational":
+        params['REPLACEMENT'] = generational_replacement
+    elif params['REPLACEMENT'] == "steady_state":
+        params['REPLACEMENT'] = steady_state_replacement
+
+
 def generational_replacement(new_pop, individuals):
     """Return new pop. The ELITE_SIZE best individuals are appended
     to new pop if they are better than the worst individuals in new
@@ -11,6 +19,7 @@ def generational_replacement(new_pop, individuals):
         new_pop.append(copy(ind))
     new_pop.sort(reverse=True)
     return new_pop[:params['GENERATION_SIZE']]
+
 
 #Provided but no flag set. Need to append code to use this
 def steady_state_replacement(new_pop, individuals):

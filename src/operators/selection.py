@@ -2,6 +2,14 @@ from utilities.helper_methods import RETURN_PERCENT
 from algorithm.parameters import params
 from random import sample
 
+
+def selection_wheel():
+    if params['SELECTION'] == "tournament":
+        params['SELECTION'] = tournament_selection
+    elif params['SELECTION'] == "truncation":
+        params['SELECTION'] = truncation_selection
+
+
 def tournament_selection(population):
     """Given an entire population, draw <tournament_size> competitors
     randomly and return the best."""
@@ -13,6 +21,7 @@ def tournament_selection(population):
         competitors.sort(reverse=True)
         winners.append(competitors[0])
     return winners
+
 
 #Provided but no flag set. Need to append code to use this
 def truncation_selection(population):

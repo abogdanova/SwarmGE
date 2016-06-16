@@ -4,6 +4,15 @@ from representation import individual
 from copy import deepcopy
 
 
+def mutation_wheel():
+    if params['MUTATION'] == "subtree":
+        params['MUTATION'] = subtree_mutation
+    elif params['MUTATION'] == "int_flip":
+        params['MUTATION'] = int_flip_mutation
+    elif params['MUTATION'] == "split":
+        params['MUTATION'] = split_mutation
+
+
 def int_flip_mutation(ind):
     """Mutate the individual by randomly choosing a new int with
     probability p_mut. Works per-codon, hence no need for

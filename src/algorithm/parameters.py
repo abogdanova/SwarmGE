@@ -1,10 +1,8 @@
-from fitness.fitness_wheel import set_fitness_function
+from fitness.fitness_wheel import set_fitness_function, set_fitness_params
 from utilities.helper_methods import RETURN_PERCENT
 from socket import gethostname
 hostname = gethostname().split('.')
 machine_name = hostname[0]
-from utilities import trackers
-from datetime import datetime
 from random import seed
 import time
 
@@ -12,8 +10,8 @@ import time
 params = {
 
 # Evolutionary Parameters
-'POPULATION_SIZE' : 50,
-'GENERATIONS' : 5,
+'POPULATION_SIZE' : 100,
+'GENERATIONS' : 10,
 
 # Class of problem
 'PROBLEM' : "regression",
@@ -74,12 +72,12 @@ params = {
 # Debugging
     # Use this to turn on debugging mode. This mode doesn't write any files and
     # should be used when you want to test new methods or grammars, etc.
-'DEBUG' : False,
+'DEBUG' : True,
 
 # Printing
     # Use this to print out basic statistics for each generation to the command
     # line.
-'VERBOSE' : True,
+'VERBOSE' : False,
 
 # Saving
 'SAVE_ALL' : False,
@@ -114,7 +112,7 @@ params = {
 'MACHINE' : machine_name,
 
 # Set Random Seed
-'RANDOM_SEED': None
+'RANDOM_SEED': 10 # None
 
 }
 
@@ -163,29 +161,27 @@ def set_params(command_line_args):
 
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger.
-    params['ELITE_SIZE'] = RETURN_PERCENT(1,params['POPULATION_SIZE'])
+    params['ELITE_SIZE'] = RETURN_PERCENT(1, params['POPULATION_SIZE'])
 
+    # Set random seed
     if params['RANDOM_SEED'] == None:
         params['RANDOM_SEED'] = int(time.clock()*1000000)
+    seed(params['RANDOM_SEED'])
 
     # Set all parameters as specified in params
     from operators import crossover, mutation, selection, replacement
 
-    # Crossover
-    # TODO Crossover Param Wheel to tidy this up
-    if params['CROSSOVER'] == "subtree":
-        params['CROSSOVER'] = crossover.subtree_crossover
-    elif params['CROSSOVER'] == "onepoint":
-        params['CROSSOVER'] = crossover.onepoint_crossover
+    # Set Crossover
+    crossover.crossover_wheel()
 
-    # Mutation
-    #TODO Mutation Param Wheel to tidy this up
-    if params['MUTATION'] == "subtree":
-        params['MUTATION'] = mutation.subtree_mutation
-    elif params['MUTATION'] == "int_flip":
-        params['MUTATION'] = mutation.int_flip_mutation
-    elif params['MUTATION'] == "split":
-        params['MUTATION'] = mutation.split_mutation
+    # Set Mutation
+    mutation.mutation_wheel()
+
+    # Set Selection
+    selection.selection_wheel()
+
+    # Set Replacement
+    replacement.replacement_wheel()
 
     # Set GENOME_OPERATIONS automatically
     if params['MUTATION'] == mutation.int_flip_mutation and \
@@ -194,49 +190,10 @@ def set_params(command_line_args):
     else:
         params['GENOME_OPERATIONS'] = False
 
-    # Selection
-    #TODO Selection Param Wheel
-    if params['SELECTION'] == "tournament":
-        params['SELECTION'] = selection.tournament_selection
-    elif params['SELECTION'] == "truncation":
-        params['SELECTION'] = selection.truncation_selection
-
-    # Replacement
-    #TODO Replacement Param Wheel
-    if params['REPLACEMENT'] == "generational":
-        params['REPLACEMENT'] = replacement.generational_replacement
-    elif params['REPLACEMENT'] == "steady_state":
-        params['REPLACEMENT'] = replacement.steady_state_replacement
-
     # Set problem specifics
-    #TODO Fitness Param Wheel
-    if params['PROBLEM'] == "regression":
-        params['GRAMMAR_FILE'] = "grammars/" + params['SUITE'] + ".bnf"
-        params['ALTERNATE'] = params['SUITE']
-    elif params['PROBLEM'] == "string_match":
-        params['GRAMMAR_FILE'] = "grammars/letter.bnf"
-        params['ALTERNATE'] = params['STRING_MATCH_TARGET']
-
+    params['GRAMMAR_FILE'], params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
                                                       params['ALTERNATE'])
-
-    # Set random seed
-    seed(params['RANDOM_SEED'])
-
-    #TODO move all this to a helper file or method keep it all clean
-    # Initialise time lists and trackers
-    time1 = datetime.now()
-    trackers.time_list.append(time.clock())
-    hms = "%02d%02d%02d" % (time1.hour, time1.minute, time1.second)
-    params['TIME_STAMP'] = (str(time1.year)[2:] + "_" + str(time1.month) +
-                            "_" + str(time1.day) + "_" + hms +
-                            "_" + str(time1.microsecond))
-    print("\nStart:\t", time1, "\n")
-
-    # Generate save folders and files
-    if params['DEBUG']:
-        print("Seed:\t", params['RANDOM_SEED'], "\n")
-    else:
-        from stats.stats import generate_folders_and_files
-        generate_folders_and_files()
-
+    # Initialise run lists and folders
+    from utilities.initialise_run import initialise_run_params
+    initialise_run_params()
