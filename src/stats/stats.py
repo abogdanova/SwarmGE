@@ -12,6 +12,8 @@ def ave(x):
 
     return sum(x)/len(x)
 
+#TODO Make a verbose mode to show these during run, for non verbose mode some form of progress bar is needed
+#TODO Look in to using params and for loop to save on code here
 
 def print_stats(generation, individuals, best_ever, phenotypes, total_inds,
                 invalids, regens):
@@ -165,7 +167,7 @@ def save_best_midway(gen, best_ever):
     savefile.write("\nTotal time:\t" + str(time_taken))
     savefile.close()
 
-
+#TODO Generate two text files at the end of run params.txt and results.csv
 def generate_folders_and_files(ran_seed):
     from socket import gethostname
     hostname = gethostname().split('.')
