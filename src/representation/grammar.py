@@ -263,7 +263,6 @@ class grammar(object):
         wraps = -1
         output = []
         production_choices = []
-
         unexpanded_symbols = [self.start_rule]
         while (wraps < max_wraps) and (len(unexpanded_symbols) > 0):
             # Wrap
