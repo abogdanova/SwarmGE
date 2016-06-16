@@ -72,7 +72,7 @@ params = {
 # Debugging
     # Use this to turn on debugging mode. This mode doesn't write any files and
     # should be used when you want to test new methods or grammars, etc.
-'DEBUG' : True,
+'DEBUG' : False,
 
 # Printing
     # Use this to print out basic statistics for each generation to the command
@@ -117,7 +117,12 @@ params = {
 }
 
 def set_params(command_line_args):
+    from operators.crossover import crossover_wheel
+    from operators.mutation import mutation_wheel
+    from operators.selection import selection_wheel
+    from operators.replacement import replacement_wheel
     import getopt
+
     try:
         #FIXME help option
         print(command_line_args)
@@ -168,24 +173,23 @@ def set_params(command_line_args):
         params['RANDOM_SEED'] = int(time.clock()*1000000)
     seed(params['RANDOM_SEED'])
 
-    # Set all parameters as specified in params
-    from operators import crossover, mutation, selection, replacement
 
+    # Set all parameters as specified in params
     # Set Crossover
-    crossover.crossover_wheel()
+    crossover_wheel()
 
     # Set Mutation
-    mutation.mutation_wheel()
+    mutation_wheel()
 
     # Set Selection
-    selection.selection_wheel()
+    selection_wheel()
 
     # Set Replacement
-    replacement.replacement_wheel()
+    replacement_wheel()
 
     # Set GENOME_OPERATIONS automatically
-    if params['MUTATION'] == mutation.int_flip_mutation and \
-                    params['CROSSOVER'] == crossover.onepoint_crossover:
+    if params['MUTATION'] == 'int_flip' and \
+                    params['CROSSOVER'] == 'onepoint':
         params['GENOME_OPERATIONS'] = True
     else:
         params['GENOME_OPERATIONS'] = False
