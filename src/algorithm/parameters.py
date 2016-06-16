@@ -1,8 +1,14 @@
 from fitness.fitness_wheel import set_fitness_function
 from utilities.helper_methods import RETURN_PERCENT
+from socket import gethostname
+hostname = gethostname().split('.')
+machine_name = hostname[0]
+from utilities import trackers
+from datetime import datetime
+from random import seed
 import time
 
-"""algorithm Parameters"""
+"""Algorithm parameters"""
 params = {
 
 # Evolutionary Parameters
@@ -70,6 +76,11 @@ params = {
     # should be used when you want to test new methods or grammars, etc.
 'DEBUG' : False,
 
+# Printing
+    # Use this to print out basic statistics for each generation to the command
+    # line.
+'VERBOSE' : True,
+
 # Saving
 'SAVE_ALL' : False,
     # Use this to save the phenotype of the best individual from each
@@ -99,8 +110,12 @@ params = {
     # Use this to continue the run in order to execute the full number of
     # fitness evaluations.
 
+# Set machine name (useful for doing multiple runs)
+'MACHINE' : machine_name,
+
 # Set Random Seed
 'RANDOM_SEED': None
+
 }
 
 def set_params(command_line_args):
@@ -204,4 +219,23 @@ def set_params(command_line_args):
 
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
                                                       params['ALTERNATE'])
+
+    # Set random seed
+    seed(params['RANDOM_SEED'])
+
+    # Initialise time lists and trackers
+    time1 = datetime.now()
+    trackers.time_list.append(time.clock())
+    hms = "%02d%02d%02d" % (time1.hour, time1.minute, time1.second)
+    params['TIME_STAMP'] = (str(time1.year)[2:] + "_" + str(time1.month) +
+                            "_" + str(time1.day) + "_" + hms +
+                            "_" + str(time1.microsecond))
+    print("\nStart:\t", time1, "\n")
+
+    # Generate save folders and files
+    if params['DEBUG']:
+        print("Seed:\t", params['RANDOM_SEED'], "\n")
+    else:
+        from stats.stats import generate_folders_and_files
+        generate_folders_and_files()
 

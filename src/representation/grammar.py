@@ -1,12 +1,14 @@
-from algorithm.parameters import params
 from utilities.helper_methods import python_filter
+from algorithm.parameters import params
+from operators import initialisers
 from re import search, findall
 from itertools import groupby
 
+
 class grammar(object):
     """ Context Free Grammar """
-    NT = "NT" # Non Terminal
-    T = "T" # Terminal
+    NT = "NT"  # Non Terminal
+    T = "T"  # Terminal
 
     def __init__(self, file_name):
         if file_name.endswith("pybnf"):
@@ -21,6 +23,7 @@ class grammar(object):
         self.read_bnf_file(file_name)
         self.check_depths()
         self.check_permutations()
+        self.min_ramp = initialisers.get_min_ramp_depth(self)
 
     def read_bnf_file(self, file_name):
         """Read a grammar file in BNF format"""

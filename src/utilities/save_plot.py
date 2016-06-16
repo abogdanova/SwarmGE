@@ -1,22 +1,18 @@
+from utilities.trackers import best_fitness_list
 from algorithm.parameters import params
-from os import path, mkdir, getcwd
+from os import getcwd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.rc('font', family='Times New Roman')
 
 
-def search_loop_save_plot(fitness_plot, fitness):
-    file_path = getcwd()
-    if not path.isdir(str(file_path) + "/Results"):
-        mkdir(str(file_path) + "/Results")
-    if not path.isdir(str(file_path) + "/Results/" + str(params['TIME_STAMP'])):
-        mkdir(str(file_path) + "/Results/" + str(params['TIME_STAMP']))
-    fitness_plot.append(fitness)
+def save_best_fitness_plot():
+
     fig = plt.figure()#figsize=[20,15])
     ax1 = fig.add_subplot(1,1,1)
-    ax1.plot(fitness_plot)
+    ax1.plot(best_fitness_list)
     ax1.set_ylabel('fitness', fontsize=14)
     ax1.set_xlabel('Generation', fontsize=14)
-    plt.savefig(getcwd()+'/Results/'+str(params['TIME_STAMP'])+'/fitness.pdf')
+    plt.savefig(getcwd()+'/results/'+str(params['TIME_STAMP'])+'/fitness.pdf')
     plt.close()

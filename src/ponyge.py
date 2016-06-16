@@ -7,59 +7,29 @@
 
 from fitness.fitness_wheel import set_fitness_function
 from algorithm.parameters import params, set_params
-from datetime import datetime, timedelta
-from operators import initialisers
+from stats.stats import get_stats, stats
 from representation import grammar
 from algorithm import search_loop
-from stats import stats
-from random import seed
-import time
 import sys
+
 
 def mane():
     """ Run program """
-    time1 = datetime.now()
-    ran_seed = params['RANDOM_SEED']
-    seed(ran_seed)
 
-    params['TIME_LIST'] = [time.clock()]
-    hms = "%02d%02d%02d" % (time1.hour, time1.minute, time1.second)
-    params['TIME_STAMP'] = (str(time1.year)[2:] + "_" + str(time1.month) +
-                            "_" + str(time1.day) + "_" + hms +
-                            "_" + str(time1.microsecond))
-    print ("\nStart:\t", time1, "\n")
-    if params['DEBUG']:
-        print ("Seed:\t", ran_seed, "\n")
-    else:
-        stats.generate_folders_and_files(ran_seed)
-
-    #Set Fitness Funtion
+    # Set Fitness Funtion
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
                                                       params['ALTERNATE'])
-    #Set Grammar File
-    bnf_grammar = grammar.grammar(params['GRAMMAR_FILE'])
+    # Set Grammar File
+    params['BNF_GRAMMAR'] = grammar.grammar(params['GRAMMAR_FILE'])
 
-    #Calculate the minimum ramping level for the grammar
-    bnf_grammar.min_ramp = initialisers.get_min_ramp_depth(bnf_grammar)
-    params['BNF_GRAMMAR'] = bnf_grammar
-
-    # Loop
-    best_ever, phenotypes, total_inds, invalids, regens, final_gen = search_loop.search_loop()
-
-    params['TIME_LIST'].append(time.clock())
-    total_time = timedelta(seconds=(params['TIME_LIST'][-1] -
-                                    params['TIME_LIST'][0]))
+    # Run evolution
+    individuals = search_loop.search_loop()
 
     # Print final review
-    stats.print_final_stats(best_ever, total_time, total_inds, len(phenotypes),
-                            invalids)
+    get_stats(individuals, END=True)
 
-    if not params['DEBUG']:
-        stats.save_best("best", final_gen, best_ever)
-        stats.save_results(final_gen, best_ever.fitness, total_time,
-                           len(phenotypes), total_inds, invalids, regens, None,
-                           None, None, None, total_time=total_time, END=True)
-    return params['TIME_STAMP'], best_ever.fitness
+    # Returns only needed if running experiment manager
+    return params['TIME_STAMP'], stats['best_ever'].fitness
 
 if __name__ == "__main__":
     set_params(sys.argv)
