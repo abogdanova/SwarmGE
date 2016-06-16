@@ -128,39 +128,43 @@ def set_params(command_line_args):
         #FIXME help option
         print(command_line_args)
         #FIXME Need to decide on these when everything has been fixed
-        OPTS, ARGS = getopt.getopt(command_line_args[1:], "p:g:e:m:x:b:f:r:d",
-                                   ["population", "generations",
-                                    "elite_size", "mutation", "crossover",
-                                    "bnf_grammar", "fitness_function",
-                                    "random_seed", "debug"])
+        OPTS, ARGS = getopt.getopt(command_line_args[1:], "",
+                                   ["help","population=", "generations=",
+                                    "elite_size=", "mutation=", "crossover=",
+                                    "bnf_grammar=", "fitness_function=",
+                                    "random_seed=", "debug="])
     except getopt.GetoptError as err:
+        print("All parameters need a value associated with it \n",
+              "Run puthon ponyge.py --help for more info")
         print(str(err))
-        #FIXME usage
         exit(2)
 
     #FIXME Need to update the command line args to reflect parameters dictionary
     for opt, arg in OPTS:
-        if opt in ("-p", "--population"):
+        if opt == "--population":
             params['POPULATION_SIZE'] = int(arg)
             params['GENERATION_SIZE'] = int(arg)
-        elif opt in ("-g", "--generations"):
+        elif opt == "--generations":
             params.GENERATIONS = int(arg)
-        elif opt in ("-e", "--elite_size"):
+        elif opt == "--elite_size":
             params['ELITE_SIZE'] = int(arg)
-        elif opt in ("-m", "--mutation"):
+        elif opt == "--mutation":
             params['MUTATION_PROBABILITY'] = float(arg)
-        elif opt in ("-x", "--crossover"):
+        elif opt == "--crossover":
             params['CROSSOVER_PROBABILITY'] = float(arg)
-        elif opt in ("-b", "--bnf_grammar"):
+        elif opt == "--bnf_grammar":
             params['GRAMMAR_FILE'] = arg
-        elif opt in ("-f", "--fitness_function"):
+        elif opt == "--fitness_function":
             params['FITNESS_FUNCTION'] = arg
-        elif opt in ("-r", "--random_seed"):
+        elif opt == "--random_seed":
             params['RANDOM_SEED'] = int(arg)
-        elif opt in ("-d", "--debug"):
+        elif opt == "--debug":
             params['DEBUG'] = True
+        elif opt == "--help":
+            print("Help stuff should go here")
+            exit()
         else:
-            assert False, "unhandeled option"
+            assert False, "Unhandeled Option"
 
     # Set the size of a generation
     params['GENERATION_SIZE'] = params['POPULATION_SIZE']
@@ -171,6 +175,7 @@ def set_params(command_line_args):
 
     # Set random seed
     if params['RANDOM_SEED'] == None:
+        #TODO Is this the best way to get a random seed?
         params['RANDOM_SEED'] = int(time.clock()*1000000)
     seed(params['RANDOM_SEED'])
 
