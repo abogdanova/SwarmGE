@@ -255,6 +255,7 @@ class grammar(object):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,
                                 self.rules, self.start_rule)
 
+    #TODO Add counters to keep track of derivation tree info
     #The genotype to phenotype mappping process - Maybe make this a seperate entity
     def generate(self, _input, max_wraps=2):
         """Map input via rules to output. Returns output and used_input"""
