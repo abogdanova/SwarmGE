@@ -5,6 +5,7 @@ from algorithm.parameters import params
 from copy import deepcopy
 from stats import stats
 
+#TODO Setup a search loop wheel for added experimental setting
 def search_loop():
     """Loop over max generations"""
 
