@@ -79,7 +79,7 @@ params = {
 # Printing
     # Use this to print out basic statistics for each generation to the command
     # line.
-'VERBOSE' : False,
+'VERBOSE' : True,
 
 # Saving
 'SAVE_ALL' : False,
