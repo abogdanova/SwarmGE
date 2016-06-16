@@ -121,6 +121,7 @@ def set_params(command_line_args):
     from operators.mutation import mutation_wheel
     from operators.selection import selection_wheel
     from operators.replacement import replacement_wheel
+    from utilities.initialise_run import initialise_run_params
     import getopt
 
     try:
@@ -199,5 +200,4 @@ def set_params(command_line_args):
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
                                                       params['ALTERNATE'])
     # Initialise run lists and folders
-    from utilities.initialise_run import initialise_run_params
     initialise_run_params()
