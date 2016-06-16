@@ -19,12 +19,18 @@ stats = {
 "unused_search" : 0,
 "ave_genome_length" : 0,
 "max_genome_length" : 0,
+"min_genome_length" : 0,
 "ave_used_codons" : 0,
 "max_used_codons" : 0,
+"min_used_codons" : 0,
 "ave_tree_depth" : 0,
 "max_tree_depth" : 0,
+"min_tree_depth" : 0,
 "ave_tree_nodes" : 0,
-"max_tree_nodes" : 0
+"max_tree_nodes" : 0,
+"min_tree_nodes" : 0,
+"ave_fitness" : 0,
+"best_fitness" : 0
 }
 
 
@@ -32,26 +38,37 @@ def get_stats(individuals, END=False):
     """Generate the statistics for an evolutionary run"""
 
     if END or params['VERBOSE'] or not params['DEBUG']:
-        t1 = time.clock()
-        trackers.time_list.append(t1)
+
+        # Time Stats
+        trackers.time_list.append(time.clock())
+        available = [i for i in individuals if not i.invalid]
         stats['time_taken'] = timedelta(seconds=trackers.time_list[-1] -
                                                 trackers.time_list[-2])
-        stats['max_genome_length'] = max([len(i.genome) for i in individuals
-                                          if not i.invalid])
-        stats['ave_genome_length'] = ave([len(i.genome) for i in individuals
-                                          if not i.invalid])
-        stats['max_used_codons'] = max([i.used_codons for i in individuals
-                                        if not i.invalid])
-        stats['ave_used_codons'] = ave([i.used_codons for i in individuals
-                                        if not i.invalid])
-        stats['max_tree_depth'] = max([i.depth for i in individuals
-                                       if not i.invalid])
-        stats['ave_tree_depth'] = ave([i.depth for i in individuals
-                                       if not i.invalid])
-        stats['max_tree_nodes'] = max([i.nodes for i in individuals
-                                       if not i.invalid])
-        stats['ave_tree_nodes'] = ave([i.nodes for i in individuals
-                                       if not i.invalid])
+        # Genome Stats
+        stats['max_genome_length'] = max([len(i.genome) for i in available])
+        stats['ave_genome_length'] = ave([len(i.genome) for i in available])
+        stats['min_genome_length'] = min([len(i.genome) for i in available])
+
+        # Used Codon Stats
+        stats['max_used_codons'] = max([i.used_codons for i in available])
+        stats['ave_used_codons'] = ave([i.used_codons for i in available])
+        stats['min_used_codons'] = min([i.used_codons for i in available])
+
+        # Tree Depth Stats
+        stats['max_tree_depth'] = max([i.depth for i in available])
+        stats['ave_tree_depth'] = ave([i.depth for i in available])
+        stats['min_tree_depth'] = min([i.depth for i in available])
+
+        # Tree Node Stats
+        stats['max_tree_nodes'] = max([i.nodes for i in available])
+        stats['ave_tree_nodes'] = ave([i.nodes for i in available])
+        stats['min_tree_nodes'] = min([i.nodes for i in available])
+
+        # Fitness Stats
+        stats['ave_fitness'] = ave([i.fitness for i in available])
+        stats['best_fitness'] = max([i.fitness for i in available])
+
+        # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
         stats['unique_inds'] = len(trackers.cache)
         stats['unused_search'] = 100 - stats['unique_inds'] / stats['total_inds']*100
@@ -72,15 +89,16 @@ def get_stats(individuals, END=False):
             save_best_midway(best_test)
 
     if not params['DEBUG']:
-        save_stats()
+        save_stats(END)
         if params['SAVE_ALL']:
             save_best(stats['gen'])
-        else:
+        elif params['VERBOSE'] or END:
             save_best("best")
 
     if params['SAVE_PLOTS'] and not params['DEBUG']:
         trackers.best_fitness_list.append(stats['best_ever'].fitness)
-        save_best_fitness_plot()
+        if params['VERBOSE'] or END:
+            save_best_fitness_plot()
 
     if END:
         total_time = timedelta(seconds=(trackers.time_list[-1] -
@@ -108,16 +126,30 @@ def print_stats():
     print("\n")
 
 
-def save_stats():
+def save_stats(END=False):
     """Write the results to a results file for later analysis"""
+    if params['VERBOSE']:
+        filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
+        savefile = open(filename, 'a')
+        for stat in stats:
+            savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
+        savefile.write("\n")
+        savefile.close()
 
-    filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
-    savefile = open(filename, 'a')
+    elif END:
+        stats_list = [stats[stat] for stat in trackers.stats_key_list]
+        trackers.stats_list.append(stats_list)
+        filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
+        savefile = open(filename, 'a')
+        for item in trackers.stats_list:
+            for stat in item:
+                savefile.write(str(stat) + "\t")
+            savefile.write("\n")
+        savefile.close()
 
-    for stat in stats:
-        savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
-    savefile.write("\n")
-    savefile.close()
+    else:
+        stats_list = [stats[stat] for stat in trackers.stats_key_list]
+        trackers.stats_list.append(stats_list)
 
 
 def print_final_stats(total_time):
@@ -198,5 +230,14 @@ def generate_folders_and_files():
     filename = "./results/" + str(params['TIME_STAMP']) + "/parameters.txt"
     savefile = open(filename, 'w')
     for param in params:
-        savefile.write("\n" + str(param) + " : \t" + str(params[param]))
+        savefile.write(str(param) + " : \t" + str(params[param]) + "\n")
+    savefile.close()
+
+    # Save stats
+    filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
+    savefile = open(filename, 'w')
+    for stat in stats:
+        trackers.stats_key_list.append(stat)
+        savefile.write(str(stat) + "\t")
+    savefile.write("\n")
     savefile.close()

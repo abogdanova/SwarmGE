@@ -12,8 +12,8 @@ import time
 params = {
 
 # Evolutionary Parameters
-'POPULATION_SIZE' : 500,
-'GENERATIONS' : 50,
+'POPULATION_SIZE' : 50,
+'GENERATIONS' : 5,
 
 # Class of problem
 'PROBLEM' : "regression",
@@ -79,7 +79,7 @@ params = {
 # Printing
     # Use this to print out basic statistics for each generation to the command
     # line.
-'VERBOSE' : True,
+'VERBOSE' : False,
 
 # Saving
 'SAVE_ALL' : False,
