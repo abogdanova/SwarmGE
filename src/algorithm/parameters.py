@@ -157,12 +157,14 @@ def set_params(command_line_args):
     from operators import crossover, mutation, selection, replacement
 
     # Crossover
+    # TODO Crossover Param Wheel to tidy this up
     if params['CROSSOVER'] == "subtree":
         params['CROSSOVER'] = crossover.subtree_crossover
     elif params['CROSSOVER'] == "onepoint":
         params['CROSSOVER'] = crossover.onepoint_crossover
 
     # Mutation
+    #TODO Mutation Param Wheel to tidy this up
     if params['MUTATION'] == "subtree":
         params['MUTATION'] = mutation.subtree_mutation
     elif params['MUTATION'] == "int_flip":
@@ -178,18 +180,21 @@ def set_params(command_line_args):
         params['GENOME_OPERATIONS'] = False
 
     # Selection
+    #TODO Selection Param Wheel
     if params['SELECTION'] == "tournament":
         params['SELECTION'] = selection.tournament_selection
     elif params['SELECTION'] == "truncation":
         params['SELECTION'] = selection.truncation_selection
 
     # Replacement
+    #TODO Replacement Param Wheel
     if params['REPLACEMENT'] == "generational":
         params['REPLACEMENT'] = replacement.generational_replacement
     elif params['REPLACEMENT'] == "steady_state":
         params['REPLACEMENT'] = replacement.steady_state_replacement
 
     # Set problem specifics
+    #TODO Fitness Param Wheel
     if params['PROBLEM'] == "regression":
         params['GRAMMAR_FILE'] = "grammars/" + params['SUITE'] + ".bnf"
         params['ALTERNATE'] = params['SUITE']
