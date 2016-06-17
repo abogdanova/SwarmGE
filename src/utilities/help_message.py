@@ -6,7 +6,7 @@ def help_message():
              "\t--debug: \tDisables printing of all ancillary files",
              "\t--population: \tSets the population size, requires int value",
              "\t--generations: \tSets the number of generations, requires int value",
-             "\t--initialisation: \t",
+             "\t--initialisation: \tSets the initialsation, requires a string such as rhh (see paramater.py for full list)",
              "\t--max_init_depth: \t",
              "\t--genome_init: \t",
              "\t--max_tree_depth: \t",
