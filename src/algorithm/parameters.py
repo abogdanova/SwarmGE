@@ -10,8 +10,8 @@ import time
 params = {
 
 # Evolutionary Parameters
-'POPULATION_SIZE' : 100,
-'GENERATIONS' : 10,
+'POPULATION_SIZE' : 10,
+'GENERATIONS' : 5,
 
 # Class of problem
 'PROBLEM' : "regression",

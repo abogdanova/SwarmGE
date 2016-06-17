@@ -22,6 +22,7 @@ class individual(object):
                 self.depth, self.used_codons = tree.init(max_depth, "random")
                 self.genome = genome + [randint(0, params['CODON_SIZE']) for i in range(int(self.used_codons/2))]
                 self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
+        #TODO Need to extend this to be purely linerar GE using gramar class - MF
         elif genome:
             self.genome = genome
             self.phenotype, genome, self.tree, self.nodes, self.invalid, \
@@ -51,7 +52,6 @@ class individual(object):
         return ("Individual: " +
                 str(self.phenotype) + "; " + str(self.fitness))
 
-    #FIXME Hacky needs fixing
     def evaluate(self, dist="training"):
         """ Evaluates phenotype in fitness function on either training or test
         distributions and sets fitness"""
@@ -62,4 +62,4 @@ class individual(object):
         else:
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype)
 
-        # print ("\n", self.fitness, "\t", self.phenotype)
+        #print ("\n", self.fitness, "\t", self.phenotype)
