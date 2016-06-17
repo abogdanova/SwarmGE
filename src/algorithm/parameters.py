@@ -212,9 +212,6 @@ def set_params(command_line_args):
         #Need to also add
         #SAVE_ALL, SAVE_PLOTS, CACHE, LOOKUP_FITNESS, LOOKUP_BAD_FITNESS,MUTATE_DUPLICATES
         #COMPLETE_EVALS, MACHINE
-        #This will need to be fixed
-        #elif opt == "--mutation":
-        #    params['MUTATION_PROBABILITY'] = float(arg)
         else:
             assert False, "Unhandeled Option"
 
