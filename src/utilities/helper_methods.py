@@ -25,7 +25,6 @@ def python_filter(txt):
                      if line.strip() != ""])
     return txt
 
-#FIXME Needs to be sorted for elite size
 def RETURN_PERCENT(num, pop_size):
     """Returns either one percent of the population size or a given number,
        whichever is larger."""

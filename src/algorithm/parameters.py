@@ -130,7 +130,6 @@ def set_params(command_line_args):
     import getopt
 
     try:
-        #print(command_line_args)
         OPTS, ARGS = getopt.getopt(command_line_args[1:], "",
                                    ["help","debug","population=","generations=","initialisation=",
                                     "max_init_depth=","genome_init","max_tree_depth=",
@@ -147,7 +146,10 @@ def set_params(command_line_args):
         exit(2)
 
     for opt, arg in OPTS:
-        if opt == "--population":
+        if opt == "--help":
+            help_message()
+            exit()
+        elif opt == "--population":
             params['POPULATION_SIZE'] = int(arg)
             params['GENERATION_SIZE'] = int(arg)
         elif opt == "--generations":
@@ -216,10 +218,6 @@ def set_params(command_line_args):
             params['MUTATE_DUPLICATES'] = True
         elif opt == "--complete_evals":
             params['COMPLETE_EVALS'] = True
-        #TODO add method to print help
-        elif opt == "--help":
-            help_message()
-            exit()
         else:
             assert False, "Unhandled Option, please use --help for available params"
 
