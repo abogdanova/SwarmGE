@@ -231,7 +231,6 @@ def set_params(command_line_args):
 
     # Set random seed
     if params['RANDOM_SEED'] == None:
-        #TODO Is this the best way to get a random seed?
         params['RANDOM_SEED'] = int(time.clock()*1000000)
     seed(params['RANDOM_SEED'])
 
