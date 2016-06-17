@@ -45,7 +45,7 @@ params = {
 'SELECTION' : "tournament",
     # "tournament",
     # "truncation",
-'TOURNAMENT_SIZE' : 3,
+'TOURNAMENT_SIZE' : 2,
     # For tournament selection
 'SELECTION_PROPORTION' : 0.5,
     # For truncation selection
