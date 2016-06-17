@@ -8,6 +8,9 @@ def selection_wheel():
         params['SELECTION'] = tournament_selection
     elif params['SELECTION'] == "truncation":
         params['SELECTION'] = truncation_selection
+    else:
+        print("Error: Selection operator not specified correctly")
+        exit(2)
 
 
 def tournament_selection(population):
@@ -15,6 +18,7 @@ def tournament_selection(population):
     randomly and return the best."""
     tournament_size = params['TOURNAMENT_SIZE']
     winners = []
+    #TODO Check to see if this is correct (only do selection on valid individuals)...
     available = [i for i in population if not i.invalid]
     while len(winners) < params['GENERATION_SIZE']:
         competitors = sample(available, tournament_size)

@@ -82,7 +82,8 @@ def get_stats(individuals, END=False):
         stats['best_fitness'] = stats['best_ever'].fitness
 
     if params['VERBOSE']:
-        print_stats()
+        if not END:
+            print_stats()
     else:
         perc = stats['gen'] / (params['GENERATIONS']+1) * 100
         stdout.write("Evolution: %d%% complete\r" % (perc))
@@ -128,7 +129,7 @@ def print_stats():
     """Print the statistics for the generation and individuals"""
 
     print("______\n")
-    for stat in stats:
+    for stat in sorted(stats.keys()):
         print(" ", stat, ": \t", stats[stat])
     print("\n")
 
@@ -144,7 +145,7 @@ def save_stats(END=False):
         savefile.close()
 
     elif END:
-        stats_list = [stats[stat] for stat in trackers.stats_key_list]
+        stats_list = [stats[stat] for stat in sorted(stats.keys())]
         trackers.stats_list.append(stats_list)
         filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
         savefile = open(filename, 'a')
@@ -155,7 +156,7 @@ def save_stats(END=False):
         savefile.close()
 
     else:
-        stats_list = [stats[stat] for stat in trackers.stats_key_list]
+        stats_list = [stats[stat] for stat in sorted(stats.keys())]
         trackers.stats_list.append(stats_list)
 
 
@@ -172,7 +173,7 @@ def print_final_stats(total_time):
         print("\n\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
     print("  Phenotype:", stats['best_ever'].phenotype)
     print("  Genome:", stats['best_ever'].genome)
-    for stat in stats:
+    for stat in sorted(stats.keys()):
         print(" ", stat, ": \t", stats[stat])
     print("\nTime taken:\t", total_time)
 
@@ -240,8 +241,7 @@ def generate_folders_and_files():
     # Save stats
     filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
     savefile = open(filename, 'w')
-    for stat in stats:
-        trackers.stats_key_list.append(stat)
+    for stat in sorted(stats.keys()):
         savefile.write(str(stat) + "\t")
     savefile.write("\n")
     savefile.close()

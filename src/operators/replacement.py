@@ -7,6 +7,9 @@ def replacement_wheel():
         params['REPLACEMENT'] = generational_replacement
     elif params['REPLACEMENT'] == "steady_state":
         params['REPLACEMENT'] = steady_state_replacement
+    else:
+        print("Error: Replacement operator not specified correctly")
+        exit(2)
 
 
 def generational_replacement(new_pop, individuals):

@@ -16,8 +16,3 @@ time_list = []
 stats_list = []
     # List for storing stats at each gneration
     # Used when verbose mode is off to speed up program
-
-stats_key_list = []
-    # List for storing the keys of individual stats. Means we can print and save
-    # the stats list while maintaining the order of entries (seeing as stats.stats
-    # is a dictionary, which is unordered).

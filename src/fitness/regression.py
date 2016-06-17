@@ -1,11 +1,12 @@
+from utilities.helper_methods import get_Xy_train_test, get_Xy_train_test_separate
+from utilities.error_metrics import mae, mse, rmse
+from os import listdir, getcwd
 from numpy import log, sqrt
+from copy import deepcopy
 from sys import maxsize
 from math import isnan
-from copy import deepcopy
 import numpy as np
-from os import listdir, getcwd
-from utilities.error_metrics import mae, mse, rmse
-from utilities.helper_methods import get_Xy_train_test, get_Xy_train_test_separate
+
 
 class regression():
     """ fitness function for regression problems. Given a set of training or
@@ -17,7 +18,6 @@ class regression():
         self.n_vars = np.shape(self.test_in)[1]
 
     def __call__(self, func, dist):
-       # print func
 
         if dist == "test":
             x = deepcopy(self.test_in)

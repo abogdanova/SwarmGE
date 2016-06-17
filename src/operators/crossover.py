@@ -9,6 +9,9 @@ def crossover_wheel():
         params['CROSSOVER'] = subtree_crossover
     elif params['CROSSOVER'] == "onepoint":
         params['CROSSOVER'] = onepoint_crossover
+    else:
+        print("Error: Crossover operator not specified correctly")
+        exit(2)
 
 
 def crossover(parents):
@@ -16,6 +19,7 @@ def crossover(parents):
 
     cross_pop = []
     while len(cross_pop) < params['GENERATION_SIZE']:
+        #TODO check is this correct. We do crossover on a subset of the selected population.
         inds_in = deepcopy(sample(parents, 2))
         inds = params['CROSSOVER'](inds_in[0], inds_in[1])
         if any([ind.invalid for ind in inds]):
@@ -24,6 +28,7 @@ def crossover(parents):
         elif any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
             # Tree is too big, need to do crossover again
             pass
+        #TODO we have a global tree depth limit, but no global max used codons length limit. Add in to prevent genome bloat?
         else:
             cross_pop.extend(inds)
 

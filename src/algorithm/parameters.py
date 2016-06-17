@@ -88,7 +88,7 @@ params = {
     # generation.
 
 # Caching
-'CACHE' : True,
+'CACHE' : False,
     # The cache tracks unique individuals across evolution by saving a string of
     # each phenotype in a big list of all phenotypes. Saves all fitness
     # information on each individual. Gives you an idea of how much repetition
@@ -96,7 +96,7 @@ params = {
 'LOOKUP_FITNESS' : False,
     # Uses the cache to look up the fitness of duplicate individuals. CACHE must
     # be set to True if you want to use this.
-'LOOKUP_BAD_FITNESS' : True,
+'LOOKUP_BAD_FITNESS' : False,
     # Uses the cache to give a bad fitness to duplicate individuals. CACHE must
     # be True if you want to use this (obviously)"""
 'MUTATE_DUPLICATES' : False,
