@@ -3,7 +3,7 @@ from algorithm.parameters import params
 from representation import individual
 from copy import deepcopy
 
-
+#TODO Make use of the parameter for MUTATION_EVENTS
 def mutation_wheel():
     if params['MUTATION'] == "subtree":
         params['MUTATION'] = subtree_mutation

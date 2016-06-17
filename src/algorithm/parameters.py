@@ -61,7 +61,7 @@ params = {
     # "subtree",
     # "int_flip",
     # "split",
-'MUTATION_PROBABILITY' : "1 over the length of the genome",
+'MUTATION_EVENTS' : "1 over the length of the genome",
     # Subtree mutation is guaranteed to mutate one subtree per individual
 
 # Replacement
@@ -112,7 +112,11 @@ params = {
 'MACHINE' : machine_name,
 
 # Set Random Seed
-'RANDOM_SEED': 10 # None
+'RANDOM_SEED': 10, # None
+
+# Elite size is set to either 1 or 1% of the population size, whichever is
+# bigger.
+'ELITE_SIZE' : None
 
 }
 
@@ -133,7 +137,7 @@ def set_params(command_line_args):
                                     "max_init_depth=","genome_init=","max_tree_depth=",
                                     "codon_size=","selection=","selection_proportion=",
                                     "tournament_size=","crossover=","crossover_prob=",
-                                    "replacement=","mutation=","mutation_prob=","random_seed=",
+                                    "replacement=","mutation=","mutation_events=","random_seed=",
                                     "bnf_grammar=","problem=","problem_suite=","target_string=",
                                     "verbose"])
     except getopt.GetoptError as err:
@@ -153,6 +157,7 @@ def set_params(command_line_args):
             params['INITIALISATION'] = arg
         elif opt == "--max_init_depth":
             params['MAX_INIT_DEPTH'] = int(arg)
+        #Check how we want to do this
         elif opt == "--genome_init":
             params['GENOME_INIT'] = int(arg)
         elif opt == "--max_tree_depth":
@@ -173,11 +178,16 @@ def set_params(command_line_args):
             params['REPLACEMENT'] = arg
         elif opt == "--mutation":
             params['MUTATION'] = arg
-
-        #This needs fixing we can't use magic numbers and what if we wanted 2 mutations
-        elif opt == "--mutation_prob":
-            params['MUTATION_PROBABILITY'] = arg
-
+        #Mutation used three types of input that change the behavoiur of
+        elif opt == "--mutation_events":
+            try:
+                params['MUTATION_EVENTS'] = int(arg)
+            except:
+                try:
+                    params['MUTATION_EVENTS'] = float(arg)
+                except:
+                    print("Error: Please define mutation probability as int or float")
+                    exit(2)
         elif opt == "--random_seed":
             params['RANDOM_SEED'] = int(arg)
         elif opt == "--bnf_grammar":
@@ -192,6 +202,8 @@ def set_params(command_line_args):
             params['DEBUG'] = True
         elif opt == "--verbose":
             params['VERBOSE'] = True
+        elif opt == "--elite_size":
+            params['ELITE_SIZE'] = int(arg)
 
         #TODO add method to print help
         elif opt == "--help":
@@ -201,22 +213,18 @@ def set_params(command_line_args):
         #SAVE_ALL, SAVE_PLOTS, CACHE, LOOKUP_FITNESS, LOOKUP_BAD_FITNESS,MUTATE_DUPLICATES
         #COMPLETE_EVALS, MACHINE
         #This will need to be fixed
-        elif opt == "--elite_size":
-            params['ELITE_SIZE'] = int(arg)
         #elif opt == "--mutation":
         #    params['MUTATION_PROBABILITY'] = float(arg)
-        #elif opt == "--fitness_function":
-        #    params['FITNESS_FUNCTION'] = arg
         else:
             assert False, "Unhandeled Option"
 
+    # Elite size is set to either 1 or 1% of the population size, whichever is
+    # bigger if no elite size is previously set.
+    if params['ELITE_SIZE'] == None :
+        params['ELITE_SIZE'] = RETURN_PERCENT(1, params['POPULATION_SIZE'])
+
     # Set the size of a generation
     params['GENERATION_SIZE'] = params['POPULATION_SIZE']
-
-    # Elite size is set to either 1 or 1% of the population size, whichever is
-    # bigger.
-    #FIXME this needs to be paramaterised what if I want 5% elites etc
-    params['ELITE_SIZE'] = RETURN_PERCENT(1, params['POPULATION_SIZE'])
 
     # Set random seed
     if params['RANDOM_SEED'] == None:
@@ -224,6 +232,12 @@ def set_params(command_line_args):
         params['RANDOM_SEED'] = int(time.clock()*1000000)
     seed(params['RANDOM_SEED'])
 
+    # Set GENOME_OPERATIONS automatically
+    if params['MUTATION'] == 'int_flip' and \
+                    params['CROSSOVER'] == 'onepoint':
+        params['GENOME_OPERATIONS'] = True
+    else:
+        params['GENOME_OPERATIONS'] = False
 
     # Set all parameters as specified in params
     # Set Crossover
@@ -238,14 +252,6 @@ def set_params(command_line_args):
     # Set Replacement
     replacement_wheel()
 
-    # Set GENOME_OPERATIONS automatically
-    if params['MUTATION'] == 'int_flip' and \
-                    params['CROSSOVER'] == 'onepoint':
-        params['GENOME_OPERATIONS'] = True
-    else:
-        params['GENOME_OPERATIONS'] = False
-
-    #FIXME We can't set a custom grammar for a problem this needs to be fixed
     # Set problem specifics
     params['GRAMMAR_FILE'], params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
