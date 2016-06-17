@@ -129,9 +129,7 @@ def set_params(command_line_args):
     import getopt
 
     try:
-        #FIXME help option
-        print(command_line_args)
-        #FIXME Need to decide on these when everything has been fixed
+        #print(command_line_args)
         OPTS, ARGS = getopt.getopt(command_line_args[1:], "",
                                    ["help","debug","population=","generations=","initialisation=",
                                     "max_init_depth=","genome_init=","max_tree_depth=",
@@ -139,7 +137,8 @@ def set_params(command_line_args):
                                     "tournament_size=","crossover=","crossover_prob=",
                                     "replacement=","mutation=","mutation_events=","random_seed=",
                                     "bnf_grammar=","problem=","problem_suite=","target_string=",
-                                    "verbose"])
+                                    "verbose","elite_size=","save_all","save_plots","cache","lookup_fitness",
+                                    "lookup_bad_fitness","mutate_duplicates","complete_evals"])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run puthon ponyge.py --help for more info")
@@ -157,7 +156,7 @@ def set_params(command_line_args):
             params['INITIALISATION'] = arg
         elif opt == "--max_init_depth":
             params['MAX_INIT_DEPTH'] = int(arg)
-        #Check how we want to do this
+        #FIXME Check how we want to do this
         elif opt == "--genome_init":
             params['GENOME_INIT'] = int(arg)
         elif opt == "--max_tree_depth":
@@ -204,16 +203,26 @@ def set_params(command_line_args):
             params['VERBOSE'] = True
         elif opt == "--elite_size":
             params['ELITE_SIZE'] = int(arg)
-
+        elif opt == "--save_all":
+            params['SAVE_ALL'] = True
+        elif opt == "--save_plots":
+            params['SAVE_PLOTS'] = True
+        elif opt == "--cache":
+            params['CACHE'] = True
+        elif opt == "--lookup_fitness":
+            params['LOOKUP_FITNESS'] = True
+        elif opt == "--lookup_bad_fitness":
+            params['LOOKUP_BAD_FITNESS'] = True
+        elif opt == "--mutate_duplicates":
+            params['MUTATE_DUPLICATES'] = True
+        elif opt == "--complete_evals":
+            params['COMPLETE_EVALS'] = True
         #TODO add method to print help
         elif opt == "--help":
             print("Help stuff should go here")
             exit()
-        #Need to also add
-        #SAVE_ALL, SAVE_PLOTS, CACHE, LOOKUP_FITNESS, LOOKUP_BAD_FITNESS,MUTATE_DUPLICATES
-        #COMPLETE_EVALS, MACHINE
         else:
-            assert False, "Unhandeled Option"
+            assert False, "Unhandled Option, please use --help for available params"
 
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger if no elite size is previously set.
