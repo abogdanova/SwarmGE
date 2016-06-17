@@ -5,9 +5,9 @@ an advertisement and a starting-point for those new to GE, a reference
 for implementors and researchers, a rapid-prototyping medium for our
 own experiments, and a Python workout.
 
-PonyGE was originally designed to be a small single file implementation of
-GE however over time this has grown to a stage where a more formal
-structured approach was needed.
+PonyGE (https://github.com/jmmcd/ponyge) was originally designed to be
+a small single file implementation of GE however over time this has
+grown to a stage where a more formal structured approach was needed.
 
 PonyGE2 is copyright (C) 2009-2016
 Erik Hemberg <erik.hemberg@gmail.com>,
