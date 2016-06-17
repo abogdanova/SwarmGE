@@ -23,7 +23,7 @@ def mane():
     params['BNF_GRAMMAR'] = grammar.grammar(params['GRAMMAR_FILE'])
 
     # Run evolution
-    individuals = search_loop.search_loop()
+    individuals = search_loop.search_loop_wheel()
 
     # Print final review
     get_stats(individuals, END=True)

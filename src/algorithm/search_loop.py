@@ -4,7 +4,15 @@ from algorithm import step, evaluate_fitness
 from algorithm.parameters import params
 from utilities.trackers import cache
 
-#TODO Setup a search loop wheel for added experimental setting
+
+def search_loop_wheel():
+    """Allows the user to select different main search functions."""
+    if params['COMPLETE_EVALS']:
+        return search_loop_complete_evals()
+    else:
+        return search_loop()
+
+
 def search_loop():
     """Loop over max generations"""
 
@@ -17,27 +25,39 @@ def search_loop():
     # Generate statistics for run so far
     get_stats(individuals)
 
-    if params['COMPLETE_EVALS']:
-        # Runs for a specified number of evaluations
-        while len(cache) < (params['GENERATIONS'] * params['POPULATION_SIZE']):
+    # Traditional GE
+    for generation in range(1, (params['GENERATIONS']+1)):
+        stats['gen'] = generation
 
-            stats['gen'] += 1
+        # New generation
+        individuals = step.step(individuals)
 
-            # New generation
-            individuals = step.step(individuals)
+        # Generate statistics for run so far
+        get_stats(individuals)
 
-            # Generate statistics for run so far
-            get_stats(individuals)
+    return individuals
 
-    else:
-        # Traditional GE
-        for generation in range(1, (params['GENERATIONS']+1)):
-            stats['gen'] = generation
+def search_loop_complete_evals():
+    """Loop over total evaluations"""
 
-            # New generation
-            individuals = step.step(individuals)
+    # Initialise population
+    individuals = generate_initial_pop(params['BNF_GRAMMAR'])
 
-            # Generate statistics for run so far
-            get_stats(individuals)
+    # Evaluate initial population
+    individuals = evaluate_fitness.evaluate_fitness(individuals)
+
+    # Generate statistics for run so far
+    get_stats(individuals)
+
+    # Runs for a specified number of evaluations
+    while len(cache) < (params['GENERATIONS'] * params['POPULATION_SIZE']):
+
+        stats['gen'] += 1
+
+        # New generation
+        individuals = step.step(individuals)
+
+        # Generate statistics for run so far
+        get_stats(individuals)
 
     return individuals

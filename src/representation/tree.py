@@ -7,7 +7,6 @@
 from algorithm.parameters import params
 from copy import deepcopy
 import random
-random.seed(10)
 
 
 class Tree:
