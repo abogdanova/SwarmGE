@@ -33,7 +33,13 @@ def help_message():
              "\t--lookup_fitness: \t\tUses the cache to lookup duplicate fitnesses, require cache to be true",
              "\t--lookup_bad_fitness: \t\tGives duplicate phenotypes a bad fintness when encountered, requires cache",
              "\t--mutate_duplicates: \t\tRemoves duplicate idividuals with mutated versions",
-             "\t--complete_evals: \t\tAdvanced feature to reuse save computation from use of cache"]
+             "\t--complete_evals: \t\tAdvanced feature to reuse save computation from use of cache",
+             "----------------------------",
+             "To try out ponyge simply run: python ponyge.py",
+             " ",
+             "Thanks for trying our product",
+             " ",
+             "PonyGE Team :D"]
 
     for line in lines:
         print(line)
