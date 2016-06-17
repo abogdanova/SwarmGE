@@ -17,6 +17,7 @@ class Tree:
         self.codon = None
         self.depth_limit = depth_limit
         self.id = None
+        self.depth = 1
         if len(expr) == 1:
             self.root = expr[0]
             self.children = []
@@ -51,9 +52,7 @@ class Tree:
         return count
 
     def get_max_children(self, current, max_D=0):
-        """ The distance from the current node to the furthest branched NT in
-            the given tree (returns the maximum depth of the tree).
-        """
+        #TODO Remove obsolete function
 
         curr_depth = current.get_depth()
         if curr_depth > max_D:
@@ -62,117 +61,54 @@ class Tree:
             max_D = child.get_max_children(child, max_D)
         return max_D
 
-    def get_target_nodes(self, array, number=0, target=None):
-        """ Returns the indexes of all nodes which match the target NT in a
+    def get_tree_info(self, current, number=0, max_D=0):
+        """ Get the number of nodes and the max depth of the tree.
+        """
+
+        number += 1
+        if self.root in params['BNF_GRAMMAR'].non_terminals:
+            current.id = number
+            if current.parent:
+                current.depth = current.parent.depth + 1
+            if current.depth > max_D:
+                max_D = current.depth
+            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+            if not NT_kids:
+                number += 1
+            else:
+                for child in NT_kids:
+                    max_D, number = child.get_tree_info(child, number, max_D)
+
+        return max_D, number
+
+    def get_target_nodes(self, array, target=None):
+        """ Returns the ids of all NT nodes which match the target NT list in a
             given tree.
         """
 
-        number += 1
         if self.root in params['BNF_GRAMMAR'].non_terminals:
-            if self.root == target:
-                array.append(number)
+            if self.root in target:
+                array.append(self.id)
             NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
-            # We only want to look at children who are NTs themselves. If the
-            # kids are Ts then we don't need to look in their tree.
-            if not NT_kids:
-                # The child is a Terminal
-                number += 1
-            else:
-                for child in NT_kids:
-                    array, number = child.get_target_nodes(array, number=number, target=target)
-        return array, number
-
-    def get_nodes(self, number=0):
-        """ Returns the total number of nodes in a given tree.
-        """
-
-        number += 1
-        if self.root in params['BNF_GRAMMAR'].non_terminals:
-            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
-            # We only want to look at children who are NTs themselves. If the
-            # kids are Ts then we don't need to look in their tree.
-            if not NT_kids:
-                # The child is a Terminal
-                number += 1
-            else:
-                for child in NT_kids:
-                    number = child.get_nodes(number)
-        return number
-
-    def get_decision_nodes(self, number=0):
-        """ Returns the total number of nodes which create
-            production choices in a given tree.
-        """
-
-        if self.root in params['BNF_GRAMMAR'].non_terminals:
-            if self.codon:
-                number += 1
-            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
-            # We only want to look at children who are NTs themselves. If the
-            # kids are Ts then we don't need to look in their tree.
             if NT_kids:
                 for child in NT_kids:
-                    number = child.get_decision_nodes(number)
-        return number
+                    array = child.get_target_nodes(array, target=target)
+        return array
 
-    def get_node_ids(self, n_list, number=0):
-        """ Assigns every node in the tree a unique id. Returns a list
-            including:
-                node id
-                node root
-                node children
-                node depth
-                max node child depth
+    def return_node_from_id(self, node_id, return_tree=None):
+        """ Returns a specific node given a node id. Can only return NT nodes.
         """
 
-        number += 1
-        kids = []
-        for child in self.children:
-            if child.children == []:
-                kids.append(child.root)
-        depth = self.get_depth()
-        n_list.append([number, self.root, self, kids, depth, self.get_max_children(self, 0)-depth])
-        self.id = number
-        if self.root in params['BNF_GRAMMAR'].non_terminals:
-            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
-            # We only want to look at children who are NTs themselves. If the
-            # kids are Ts then we don't need to look in their tree.
-            if not NT_kids:
-                # The child is a Terminal
-                number += 1
-                kids = []
-                for child in self.children:
-                    child.id = number
-                    if child.children == []:
-                        kids.append(child.root)
-                depth = self.get_depth()
-                n_list.append([number, self.root, self, kids, depth, self.get_max_children(self, 0)-depth])
-            else:
-                for child in NT_kids:
-                    number, n_list = child.get_node_ids(n_list, number=number)
-        return number, n_list
-
-    def return_node_from_id(self, node_id, number=0, return_tree=None):
-        """ Returns the total number of nodes in a given tree.
-        """
-
-        number += 1
-        if number == node_id:
+        if self.id == node_id:
             return_tree = self
         elif self.root in params['BNF_GRAMMAR'].non_terminals:
             NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
             # We only want to look at children who are NTs themselves. If the
             # kids are Ts then we don't need to look in their tree.
-            if not NT_kids:
-                # The child is a Terminal
-                for child in self.children:
-                    number += 1
-                    if number == node_id:
-                        return_tree = child
-            else:
+            if NT_kids:
                 for child in NT_kids:
-                    return_tree, number = child.return_node_from_id(node_id, number=number, return_tree=return_tree)
-        return return_tree, number
+                    return_tree = child.return_node_from_id(node_id, return_tree=return_tree)
+        return return_tree
 
     def get_output(self):
         output = []
@@ -212,6 +148,23 @@ class Tree:
             print("Invalid given tree")
             quit()
 
+        def check_nodes(tree, n=0):
+            n += 1
+            if tree.id != n:
+                print("Node ids do not match node numbers")
+                quit()
+
+            if tree.root in params['BNF_GRAMMAR'].non_terminals:
+                NT_kids = [kid for kid in tree.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+                if not NT_kids:
+                    n += 1
+                else:
+                    for child in NT_kids:
+                        n = check_nodes(child, n)
+            return n
+
+        check_nodes(self)
+
         orig_out = deepcopy(self.get_output())
         orig_gen = deepcopy(self.build_genome([]))
 
@@ -242,7 +195,6 @@ class Tree:
 
         if self.codon:
             genome.append(self.codon)
-            # print len(genome), "\tCodon:\t", self.codon, "Root:\t", self.root
         for kid in self.children:
             genome = kid.build_genome(genome)
         return genome
@@ -377,6 +329,8 @@ class Tree:
 
         nodes += 1
         depth += 1
+        self.id, self.depth = nodes, depth
+
         productions = params['BNF_GRAMMAR'].rules[self.root]
         remaining_depth = depth_limit
 
@@ -389,13 +343,13 @@ class Tree:
             self.codon = codon
             genome.append(codon)
 
-        # print "\nCurrent root:   \t", self.root
-        # print "  Choices:      \t", productions
-        # print "  Chosen Product:\t", chosen_prod
-        # print "  Current node: \t", nodes
-        # print "  Current depth:\t", depth
-        # print "  Current max d:\t", max_depth
-        # print "  Remaining depth:\t", remaining_depth
+        # print("\nCurrent root:   \t", self.root)
+        # print("  Choices:      \t", productions)
+        # print("  Chosen Product:\t", chosen_prod)
+        # print("  Current node: \t", nodes)
+        # print("  Current depth:\t", depth)
+        # print("  Current max d:\t", max_depth)
+        # print("  Remaining depth:\t", remaining_depth)
 
         self.children = []
         for symbol in chosen_prod:
@@ -414,9 +368,9 @@ class Tree:
             depth += 1
             nodes += 1
 
-            # print "\nCurrent root:   \t", chosen_prod
-            # print "  Current node: \t", nodes
-            # print "  Current depth:\t", depth
+            # print("\nCurrent root:   \t", chosen_prod)
+            # print("  Current node: \t", nodes)
+            # print("  Current depth:\t", depth)
 
         if depth > max_depth:
             max_depth = depth
@@ -493,7 +447,9 @@ class Tree:
                 available = []
                 remaining_depth = max_depth - node.get_depth()
 
-                if (self.get_max_children(self) < max_depth - 1) or (node.parent == None) or ((all_node[1] and (not any([item[1] for item in queue])))):
+                if (self.get_max_children(self) < max_depth - 1) or \
+                        (node.parent == None) or \
+                        ((all_node[1] and (not any([item[1] for item in queue])))):
                     # We want to prevent the tree from creating terminals
                     # until a single branch has reached the full depth
 
@@ -569,13 +525,10 @@ class Tree:
             faster and less error-prone to the previous subtree mutation.
         """
 
-        n = self.get_nodes(0)
-        number = random.randint(1, n)
-        tree = self.return_node_from_id(number, number=0, return_tree=None)[0]
+        targets = self.get_target_nodes([], target=params['BNF_GRAMMAR'].non_terminals)
 
-        while tree.root in params['BNF_GRAMMAR'].terminals:
-            number = random.randint(1, n)
-            tree = self.return_node_from_id(number, number=0, return_tree=None)[0]
+        number = random.choice(targets)
+        tree = self.return_node_from_id(number, return_tree=None)
 
         tree.max_depth = self.depth_limit - tree.get_depth()
         x, y, d, md = tree.derivation([], "random", 0, 0, 0, depth_limit=tree.max_depth)
@@ -592,101 +545,6 @@ class Tree:
 
     def print_tree(self):
         print(self)
-
-
-def subtree_crossover(orig_tree1, orig_tree2):
-
-    # Have to do a deepcopy of original trees as identical trees will give the
-    # same class instances for their children.
-    copy_tree1 = deepcopy(orig_tree1)
-    copy_tree2 = deepcopy(orig_tree2)
-
-    def do_crossover(tree1, tree2, intersection):
-
-        crossover_choice = random.choice(intersection)
-
-        indexes_1, n1 = tree1.get_target_nodes([], target=crossover_choice)
-        indexes_1 = list(set(indexes_1))
-        number1 = random.choice(indexes_1)
-        t1 = tree1.return_node_from_id(number1, number=0, return_tree=None)[0]
-
-        indexes_2, n2 = tree2.get_target_nodes([], target=crossover_choice)
-        indexes_2 = list(set(indexes_2))
-        number2 = random.choice(indexes_2)
-        t2 = tree2.return_node_from_id(number2, number=0, return_tree=None)[0]
-
-        d1 = t1.get_depth()
-        d2 = t2.get_depth()
-
-        # when the crossover is between the entire tree of both tree1 and tree2
-        if d1 == 1 and d2 == 1:
-            return t2, t1
-        # when only t1 is the entire tree1
-        elif d1 == 1:
-            p2 = t2.parent
-            tree1 = t2
-            try:
-                p2.children.index(t2)
-            except ValueError:
-                print("Error: child not in parent.")
-                quit()
-            i2 = p2.children.index(t2)
-            p2.children[i2] = t1
-            t1.parent = p2
-            t2.parent = None
-
-        # when only t2 is the entire tree2
-        elif d2 == 1:
-            p1 = t1.parent
-            tree2 = t1
-            try:
-                p1.children.index(t1)
-            except ValueError:
-                print("Error: child not in parent")
-                quit()
-            i1 = p1.children.index(t1)
-            p1.children[i1] = t2
-            t2.parent = p1
-            t1.parent = None
-
-        # when the crossover node for both trees is not the entire tree
-        else:
-            p1 = t1.parent
-            p2 = t2.parent
-
-            i1 = p1.children.index(t1)
-            i2 = p2.children.index(t2)
-
-            p1.children[i1] = t2
-            p2.children[i2] = t1
-
-            t2.parent = p1
-            t1.parent = p2
-
-        return tree1, tree2
-
-    def get_labels(t1, t2):
-        return t1.getLabels(set()), t2.getLabels(set())
-
-    labels1, labels2 = get_labels(orig_tree1, orig_tree2)
-
-    def intersect(l1, l2):
-        intersection = l1.intersection(l2)
-        intersection = [i for i in intersection if i in params['BNF_GRAMMAR'].crossover_NTs]
-        return sorted(intersection)
-
-    intersection = intersect(labels1, labels2)
-
-    if len(intersection) != 0:
-        # Cross over parts of trees
-        ret_tree1, ret_tree2 = do_crossover(copy_tree1, copy_tree2,
-                                            intersection)
-    else:
-        # Cross over entire trees
-        ret_tree1, ret_tree2 = copy_tree2, copy_tree1
-
-    return ret_tree1, ret_tree1.build_genome([]), ret_tree2, \
-           ret_tree2.build_genome([])
 
 
 def genome_init(genome, depth_limit=20):
@@ -740,4 +598,5 @@ def init(depth, method):
     if tree.check_expansion():
         print("tree.init generated an Invalid")
         quit()
+
     return tree.get_output(), genome, tree, nodes, False, max_depth, len(genome)

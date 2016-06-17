@@ -1,7 +1,7 @@
 from random import randint, random, shuffle
 from algorithm.parameters import params
 from representation import individual
-from copy import deepcopy
+from copy import deepcopy, copy
 
 
 def mutation_wheel():
@@ -67,7 +67,8 @@ def subtree_mutation(ind):
     for i in range(p_mut):
         tail = deepcopy(ind.genome[ind.used_codons+1:])
         ind.phenotype, genome, ind.tree = ind.tree.subtree_mutate()
-        ind = individual.individual(genome, None)
+        ind.used_codons = len(genome)
+        ind.depth, ind.nodes = ind.tree.get_tree_info(ind.tree)
         ind.genome = genome + tail[:int(len(genome)/2)]
 
     return ind

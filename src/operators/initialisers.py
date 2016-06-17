@@ -44,13 +44,17 @@ def rhh_initialisation(size, grammar):
                 """ Grow """
                 method = "random"
                 phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
-                ind = individual.individual(genome, None)
+                ind = individual.individual(genome, ind_tree)
+                ind.phenotype, ind.nodes = phenotype, nodes
+                ind.depth, ind.used_codons = tree_depth, used_cod
                 ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
                 population.append(ind)
                 """ Full """
                 method = "full"
                 phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
-                ind = individual.individual(genome, None)
+                ind = individual.individual(genome, ind_tree)
+                ind.phenotype, ind.nodes = phenotype, nodes
+                ind.depth, ind.used_codons = tree_depth, used_cod
                 ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
                 population.append(ind)
 
@@ -63,13 +67,17 @@ def rhh_initialisation(size, grammar):
             """ Grow """
             method = "random"
             phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
-            ind = individual.individual(genome, None)
+            ind = individual.individual(genome, ind_tree)
+            ind.phenotype, ind.nodes = phenotype, nodes
+            ind.depth, ind.used_codons = tree_depth, used_cod
             ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
             population.append(ind)
             """ Full """
             method = "full"
             phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
-            ind = individual.individual(genome, None)
+            ind = individual.individual(genome, ind_tree)
+            ind.phenotype, ind.nodes = phenotype, nodes
+            ind.depth, ind.used_codons = tree_depth, used_cod
             ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
             population.append(ind)
         return population

@@ -7,6 +7,7 @@ from random import randint
 class individual(object):
     """A GE individual"""
 
+    #TODO need to add chromosome length to parameters
     def __init__(self, genome, ind_tree, invalid=False, max_depth=20,
                                                 chromosome=False, length=500):
         if (genome == None) and (ind_tree == None):
@@ -23,12 +24,12 @@ class individual(object):
                 self.genome = genome + [randint(0, params['CODON_SIZE']) for i in range(int(self.used_codons/2))]
                 self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
         #TODO Need to extend this to be purely linerar GE using gramar class - MF
-        elif genome:
+        elif genome and (ind_tree == None):
             self.genome = genome
             self.phenotype, genome, self.tree, self.nodes, self.invalid, \
             self.depth, self.used_codons = tree.genome_init(genome,
                                         depth_limit=params['MAX_TREE_DEPTH'])
-        elif ind_tree:
+        elif ind_tree and (genome == None):
             self.tree = ind_tree
             self.invalid = invalid
             genome = self.tree.build_genome([])
