@@ -208,6 +208,8 @@ class Tree:
             nodes += 1
             depth += 1
 
+            self.id, self.depth = nodes, depth
+
             productions = params['BNF_GRAMMAR'].rules[self.root]
             selection = genome[index % len(genome)] % len(productions)
             chosen_prod = productions[selection]
@@ -217,17 +219,12 @@ class Tree:
                 index += 1
             self.children = []
 
-            # print ("\nCurrent root:   \t", self.root)
-            # print ("  Choices:      \t", productions)
-            # print ("  Chosen Product:\t", chosen_prod)
-            # print ("  Current node: \t", nodes)
-            # print ("  Current depth:\t", depth)
-            # print ("  Current max d:\t", max_depth)
-
-            # if not any([prod[1] == params['BNF_GRAMMAR'].NT for prod in chosen_prod]):
-            #     # Branch is completely expanded
-            #     depth += 1
-            #     nodes += 1
+            # print("\nCurrent root:   \t", self.root)
+            # print("  Choices:      \t", productions)
+            # print("  Chosen Product:\t", chosen_prod)
+            # print("  Current node: \t", nodes)
+            # print("  Current depth:\t", depth)
+            # print("  Current max d:\t", max_depth)
 
             for i in range(len(chosen_prod)):
                 symbol = chosen_prod[i]
@@ -244,6 +241,8 @@ class Tree:
 
             nodes += 1
             depth += 1
+
+            self.id, self.depth = nodes, depth
 
             productions = params['BNF_GRAMMAR'].rules[self.root]
             chosen_prod = productions[0]

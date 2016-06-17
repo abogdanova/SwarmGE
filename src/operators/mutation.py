@@ -22,11 +22,11 @@ def int_flip_mutation(ind):
 
     p_mut = params['MUTATION_EVENTS']
     if type(p_mut) is str:
-        p_mut == 1/len(ind.genome)
+        p_mut = 1/len(ind.genome)
     elif type(p_mut) is float:
         p_mut = params['MUTATION_EVENTS']
     elif type(p_mut) is int:
-        p_mut == p_mut/len(ind.genome)
+        p_mut = p_mut/len(ind.genome)
 
     for i in range(len(ind.genome)):
         if random() < p_mut:
