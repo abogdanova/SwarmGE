@@ -129,12 +129,15 @@ def set_params(command_line_args):
         print(command_line_args)
         #FIXME Need to decide on these when everything has been fixed
         OPTS, ARGS = getopt.getopt(command_line_args[1:], "",
-                                   ["help","population=", "generations=",
-                                    "elite_size=", "mutation=", "crossover=",
-                                    "bnf_grammar=", "fitness_function=",
-                                    "random_seed=", "debug="])
+                                   ["help","debug","population=","generations=","initialisation=",
+                                    "max_init_depth=","genome_init=","max_tree_depth=",
+                                    "codon_size=","selection=","selection_proportion=",
+                                    "tournament_size=","crossover=","crossover_prob=",
+                                    "replacement=","mutation=","mutation_prob=","random_seed=",
+                                    "bnf_grammar=","problem=","problem_suite=","target_string=",
+                                    "verbose"])
     except getopt.GetoptError as err:
-        print("All parameters need a value associated with it \n",
+        print("Most parameters need a value associated with them \n",
               "Run puthon ponyge.py --help for more info")
         print(str(err))
         exit(2)
@@ -145,24 +148,65 @@ def set_params(command_line_args):
             params['POPULATION_SIZE'] = int(arg)
             params['GENERATION_SIZE'] = int(arg)
         elif opt == "--generations":
-            params.GENERATIONS = int(arg)
-        elif opt == "--elite_size":
-            params['ELITE_SIZE'] = int(arg)
-        elif opt == "--mutation":
-            params['MUTATION_PROBABILITY'] = float(arg)
+            params['GENERATIONS'] = int(arg)
+        elif opt == "--initialisation":
+            params['INITIALISATION'] = arg
+        elif opt == "--max_init_depth":
+            params['MAX_INIT_DEPTH'] = int(arg)
+        elif opt == "--genome_init":
+            params['GENOME_INIT'] = int(arg)
+        elif opt == "--max_tree_depth":
+            params['MAX_TREE_DEPTH'] = int(arg)
+        elif opt == "--codon_size":
+            params['CODON_SIZE'] = int(arg)
+        elif opt == "--selection":
+            params['SELECTION'] = arg
+        elif opt == "--tournament_size":
+            params['TOURNAMENT_SIZE'] = int(arg)
+        elif opt == "--selection_proportion":
+            params['SELECTION_PROPORTION'] = float(arg)
         elif opt == "--crossover":
+            params['CROSSOVER'] = arg
+        elif opt == "--crossover_prob":
             params['CROSSOVER_PROBABILITY'] = float(arg)
-        elif opt == "--bnf_grammar":
-            params['GRAMMAR_FILE'] = arg
-        elif opt == "--fitness_function":
-            params['FITNESS_FUNCTION'] = arg
+        elif opt == "--replacement":
+            params['REPLACEMENT'] = arg
+        elif opt == "--mutation":
+            params['MUTATION'] = arg
+
+        #This needs fixing we can't use magic numbers and what if we wanted 2 mutations
+        elif opt == "--mutation_prob":
+            params['MUTATION_PROBABILITY'] = arg
+
         elif opt == "--random_seed":
             params['RANDOM_SEED'] = int(arg)
+        elif opt == "--bnf_grammar":
+            params['GRAMMAR_FILE'] = arg
+        elif opt == "--problem":
+            params['PROBLEM'] = arg
+        elif opt == "--problem_suite":
+            params['SUITE'] = arg
+        elif opt == "--target_string":
+            params['STRING_MATCH_TARGET'] = arg
         elif opt == "--debug":
             params['DEBUG'] = True
+        elif opt == "--verbose":
+            params['VERBOSE'] = True
+
+        #TODO add method to print help
         elif opt == "--help":
             print("Help stuff should go here")
             exit()
+        #Need to also add
+        #SAVE_ALL, SAVE_PLOTS, CACHE, LOOKUP_FITNESS, LOOKUP_BAD_FITNESS,MUTATE_DUPLICATES
+        #COMPLETE_EVALS, MACHINE
+        #This will need to be fixed
+        elif opt == "--elite_size":
+            params['ELITE_SIZE'] = int(arg)
+        #elif opt == "--mutation":
+        #    params['MUTATION_PROBABILITY'] = float(arg)
+        #elif opt == "--fitness_function":
+        #    params['FITNESS_FUNCTION'] = arg
         else:
             assert False, "Unhandeled Option"
 
@@ -171,6 +215,7 @@ def set_params(command_line_args):
 
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger.
+    #FIXME this needs to be paramaterised what if I want 5% elites etc
     params['ELITE_SIZE'] = RETURN_PERCENT(1, params['POPULATION_SIZE'])
 
     # Set random seed
@@ -200,6 +245,7 @@ def set_params(command_line_args):
     else:
         params['GENOME_OPERATIONS'] = False
 
+    #FIXME We can't set a custom grammar for a problem this needs to be fixed
     # Set problem specifics
     params['GRAMMAR_FILE'], params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
