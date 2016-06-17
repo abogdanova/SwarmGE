@@ -7,6 +7,9 @@ def set_fitness_params(problem, params):
         return "grammars/" + params['SUITE'] + ".bnf", params['SUITE']
     elif problem == "string_match":
         return "grammars/letter.bnf", params['STRING_MATCH_TARGET']
+    else:
+        print("Error: Problem not specified correctly")
+        exit(2)
 
 
 def set_fitness_function(problem, alternate=None):

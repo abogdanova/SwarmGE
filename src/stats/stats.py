@@ -190,6 +190,7 @@ def save_final_stats(total_time):
 
 
 def save_best(name="best"):
+    #TODO Need to save best training and test fitness for regression problems
     filename = "./results/" + str(params['TIME_STAMP']) + "/" + str(name) + \
                ".txt"
     savefile = open(filename, 'w')

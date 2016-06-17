@@ -196,9 +196,9 @@ class Tree:
             for kid in self.children:
                 roots.append(kid.root)
             if roots != prods:
-                print ("\nGenome is incorrect")
-                print ("Codon productions:\t", prods)
-                print ("Actual children:  \t", roots)
+                print("\nGenome is incorrect")
+                print("Codon productions:\t", prods)
+                print("Actual children:  \t", roots)
                 quit()
         for kid in self.children:
             kid.check_genome()
@@ -209,7 +209,7 @@ class Tree:
         self.check_genome()
         invalid = self.check_expansion()
         if invalid:
-            print ("Invalid given tree")
+            print("Invalid given tree")
             quit()
 
         orig_out = deepcopy(self.get_output())
@@ -219,21 +219,21 @@ class Tree:
         used_codons = genome_init(orig_gen)
 
         if invalid:
-            print ("Invalid genome tree")
-            print ("Original:\t", orig_out)
-            print ("Genome:  \t", output)
+            print("Invalid genome tree")
+            print("Original:\t", orig_out)
+            print("Genome:  \t", output)
             quit()
 
         if orig_out != output:
-            print ("Tree output doesn't match genome tree output")
-            print ("Original:\t", orig_out)
-            print ("Genome:  \t", output)
+            print("Tree output doesn't match genome tree output")
+            print("Original:\t", orig_out)
+            print("Genome:  \t", output)
             quit()
 
         elif orig_gen != genome:
-            print ("Tree genome doesn't match genome tree genome")
-            print ("Original:\t", orig_gen)
-            print ("Genome:  \t", genome)
+            print("Tree genome doesn't match genome tree genome")
+            print("Original:\t", orig_gen)
+            print("Genome:  \t", genome)
             quit()
 
     def build_genome(self, genome):
@@ -431,8 +431,7 @@ class Tree:
             given depth. Uses position independent stuff.
         """
 
-        queue = []
-        queue.append([self, params['BNF_GRAMMAR'].non_terminals[self.root]['recursive']])
+        queue = [[self, params['BNF_GRAMMAR'].non_terminals[self.root]['recursive']]]
 
         while queue:
             num = len(queue)
@@ -481,8 +480,7 @@ class Tree:
             that any choices are allowed
         """
 
-        queue = []
-        queue.append([self, params['BNF_GRAMMAR'].non_terminals[self.root]['recursive']])
+        queue = [[self, params['BNF_GRAMMAR'].non_terminals[self.root]['recursive']]]
 
         while queue:
             num = len(queue)
@@ -593,7 +591,7 @@ class Tree:
         return labels
 
     def print_tree(self):
-        print (self)
+        print(self)
 
 
 def subtree_crossover(orig_tree1, orig_tree2):
@@ -674,59 +672,72 @@ def subtree_crossover(orig_tree1, orig_tree2):
 
     def intersect(l1, l2):
         intersection = l1.intersection(l2)
-        intersection = list(filter(lambda x: x in [i for i in params['BNF_GRAMMAR'].non_terminals if params['BNF_GRAMMAR'].non_terminals[i]['b_factor'] > 1], intersection))
-
+        intersection = [i for i in intersection if i in params['BNF_GRAMMAR'].crossover_NTs]
         return sorted(intersection)
 
     intersection = intersect(labels1, labels2)
 
     if len(intersection) != 0:
         # Cross over parts of trees
-        ret_tree1, ret_tree2 = do_crossover(copy_tree1, copy_tree2, intersection)
+        ret_tree1, ret_tree2 = do_crossover(copy_tree1, copy_tree2,
+                                            intersection)
     else:
         # Cross over entire trees
         ret_tree1, ret_tree2 = copy_tree2, copy_tree1
 
-    return ret_tree1, ret_tree1.build_genome([]), ret_tree2, ret_tree2.build_genome([])
+    return ret_tree1, ret_tree1.build_genome([]), ret_tree2, \
+           ret_tree2.build_genome([])
 
 
 def genome_init(genome, depth_limit=20):
 
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, depth_limit=depth_limit)
-    used_codons, nodes, depth, max_depth = tree.genome_derivation(genome, 0, 0, 0, 0)
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                depth_limit=depth_limit)
+    used_codons, nodes, depth, max_depth = tree.genome_derivation(genome, 0, 0,
+                                                                  0, 0)
 
     invalid = False
-    if any([i == "Incomplete" for i in [used_codons, nodes, depth, max_depth]]) or tree.check_expansion():
+    if any([i == "Incomplete" for i in [used_codons, nodes, depth,
+                                        max_depth]]) or tree.check_expansion():
         invalid = True
-    return tree.get_output(), genome, tree, nodes, invalid, max_depth, used_codons
+    return tree.get_output(), genome, tree, nodes, invalid, max_depth, \
+           used_codons
 
 
 def pi_random_init(depth):
 
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, max_depth=depth, depth_limit=depth)
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                max_depth=depth, depth_limit=depth)
     genome = tree.pi_random_derivation(0, max_depth=depth)
     if tree.check_expansion():
-        print ("tree.pi_random_init generated an Invalid")
+        print("tree.pi_random_init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, False
 
 
 def pi_grow_init(depth):
 
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, max_depth=depth, depth_limit=depth)
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                max_depth=depth, depth_limit=depth)
     genome = tree.pi_grow(0, max_depth=depth)
     if tree.check_expansion():
-        print ("tree.pi_grow_init generated an Invalid")
+        print("tree.pi_grow_init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, False
 
 
 def init(depth, method):
+    """
+    Initialise a tree to a given depth using a specified method for
+    initialisation.
+    """
 
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None, max_depth=depth-1, depth_limit=depth-1)
-    genome, nodes, d, max_depth = tree.derivation([], method, 0, 0, 0, depth_limit=depth-1)
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                max_depth=depth-1, depth_limit=depth-1)
+    genome, nodes, d, max_depth = tree.derivation([], method, 0, 0, 0,
+                                                  depth_limit=depth-1)
 
     if tree.check_expansion():
-        print ("tree.init generated an Invalid")
+        print("tree.init generated an Invalid")
         quit()
     return tree.get_output(), genome, tree, nodes, False, max_depth, len(genome)

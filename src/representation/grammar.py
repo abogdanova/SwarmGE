@@ -24,6 +24,7 @@ class grammar(object):
         self.check_depths()
         self.check_permutations()
         self.min_ramp = initialisers.get_min_ramp_depth(self)
+        self.crossover_NTs = [i for i in self.non_terminals if self.non_terminals[i]['b_factor'] > 1]
 
     def read_bnf_file(self, file_name):
         """Read a grammar file in BNF format"""
