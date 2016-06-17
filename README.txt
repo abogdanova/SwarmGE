@@ -28,7 +28,7 @@ We don't provide any setup script. You can run an example problem (the
 default is String-match, see below) just by saying:
 
 $ cd src
-$ ./ponyge.py
+$ python ponyge.py
 
 This will run an example problem and generate a results folder. The folder
 contains several files showing the runs stats, producing graphs and
@@ -36,7 +36,7 @@ documenting the parameters used, aswell as a file containing the best
 individuals. For a more verbose command line experience run the following
 
 $ cd src
-$ ./ponyge.py --verbose
+$ python ponyge.py --verbose
 
 #FIXME Change this to be relevant to PonyGE2
 Each line of the output corresponds to a generation in the evolution,
@@ -50,7 +50,7 @@ out again.
 There are a number of flags that can be used for passing values via
 the command-line. To see a full list of these just run the following
 
-$ ./ponyge.py --help
+$ python ponyge.py --help
 
 
 Writing grammars

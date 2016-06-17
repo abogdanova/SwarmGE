@@ -126,13 +126,14 @@ def set_params(command_line_args):
     from operators.selection import selection_wheel
     from operators.replacement import replacement_wheel
     from utilities.initialise_run import initialise_run_params
+    from utilities.help_message import help_message
     import getopt
 
     try:
         #print(command_line_args)
         OPTS, ARGS = getopt.getopt(command_line_args[1:], "",
                                    ["help","debug","population=","generations=","initialisation=",
-                                    "max_init_depth=","genome_init=","max_tree_depth=",
+                                    "max_init_depth=","genome_init","max_tree_depth=",
                                     "codon_size=","selection=","selection_proportion=",
                                     "tournament_size=","crossover=","crossover_prob=",
                                     "replacement=","mutation=","mutation_events=","random_seed=",
@@ -145,7 +146,6 @@ def set_params(command_line_args):
         print(str(err))
         exit(2)
 
-    #FIXME Need to update the command line args to reflect parameters dictionary
     for opt, arg in OPTS:
         if opt == "--population":
             params['POPULATION_SIZE'] = int(arg)
@@ -156,9 +156,8 @@ def set_params(command_line_args):
             params['INITIALISATION'] = arg
         elif opt == "--max_init_depth":
             params['MAX_INIT_DEPTH'] = int(arg)
-        #FIXME Check how we want to do this
         elif opt == "--genome_init":
-            params['GENOME_INIT'] = int(arg)
+            params['GENOME_INIT'] = True
         elif opt == "--max_tree_depth":
             params['MAX_TREE_DEPTH'] = int(arg)
         elif opt == "--codon_size":
@@ -219,7 +218,7 @@ def set_params(command_line_args):
             params['COMPLETE_EVALS'] = True
         #TODO add method to print help
         elif opt == "--help":
-            print("Help stuff should go here")
+            help_message()
             exit()
         else:
             assert False, "Unhandled Option, please use --help for available params"
