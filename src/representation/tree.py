@@ -676,7 +676,7 @@ def subtree_crossover(orig_tree1, orig_tree2):
         intersection = l1.intersection(l2)
         intersection = list(filter(lambda x: x in [i for i in params['BNF_GRAMMAR'].non_terminals if params['BNF_GRAMMAR'].non_terminals[i]['b_factor'] > 1], intersection))
 
-        return intersection
+        return sorted(intersection)
 
     intersection = intersect(labels1, labels2)
 

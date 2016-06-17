@@ -18,9 +18,11 @@ def crossover(parents):
     """ Perform crossover on a population """
 
     cross_pop = []
+    i = 0
     while len(cross_pop) < params['GENERATION_SIZE']:
         #TODO check is this correct. We do crossover on a subset of the selected population.
         inds_in = deepcopy(sample(parents, 2))
+
         inds = params['CROSSOVER'](inds_in[0], inds_in[1])
         if any([ind.invalid for ind in inds]):
             # we have an invalid, need to do crossover again
@@ -31,6 +33,7 @@ def crossover(parents):
         #TODO we have a global tree depth limit, but no global max used codons length limit. Add in to prevent genome bloat?
         else:
             cross_pop.extend(inds)
+        i += 1
 
     return cross_pop
 
