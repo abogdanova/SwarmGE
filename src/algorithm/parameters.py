@@ -112,7 +112,7 @@ params = {
 'MACHINE' : machine_name,
 
 # Set Random Seed
-'RANDOM_SEED': 10, # None
+'RANDOM_SEED': None,
 
 # Elite size is set to either 1 or 1% of the population size, whichever is
 # bigger.
