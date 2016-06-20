@@ -59,14 +59,20 @@ def subtree_mutate(ind_tree):
         faster and less error-prone to the previous subtree mutation.
     """
 
+    # Find which nodes we can mutate from
     targets = ind_tree.get_target_nodes([], target=params['BNF_GRAMMAR'].non_terminals)
 
+    # Pick a node
     number = choice(targets)
+
+    # Get the subtree
     new_tree = ind_tree.return_node_from_id(number, return_tree=None)
 
+    # Set the depth limits for the new subtree
     new_tree.max_depth = ind_tree.depth_limit - new_tree.get_depth()
+
+    # Mutate a new subtree
     x, y, d, md = new_tree.derivation([], "random", 0, 0, 0, depth_limit=new_tree.max_depth)
     genome = ind_tree.build_genome([])
 
     return ind_tree.get_output(), genome, ind_tree
-
