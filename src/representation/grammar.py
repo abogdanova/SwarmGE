@@ -261,26 +261,32 @@ class grammar(object):
 
     #TODO Add counters to keep track of derivation tree info - DF
     #The genotype to phenotype mappping process - Maybe make this a seperate entity
-    def generate(self, _input, max_wraps=0):
+    def generate(self, _input, max_wraps=0, max_depth=10000):
         #Max depth and number of nodes and valid need to be return for stats
         #once method is fixed
         """Map input via rules to output. Returns output and used_input"""
         used_input = 0
+        current_depth = 0
+        current_max_depth = 0
         wraps = -1
         output = []
         production_choices = []
-        unexpanded_symbols = [self.start_rule]
-        while (wraps < max_wraps) and (len(unexpanded_symbols) > 0):
+        unexpanded_symbols = [(self.start_rule, 0)]
+        while (wraps < max_wraps) and (len(unexpanded_symbols) > 0) and (current_max_depth <= max_depth):
             # Wrap
             if used_input % len(_input) == 0 and \
                     used_input > 0 and \
                     len(production_choices) > 1:
                 wraps += 1
             # Expand a production
-            current_symbol = unexpanded_symbols.pop(0)
+            current_item = unexpanded_symbols.pop(0)
+            current_symbol, current_depth = current_item[0],current_item[1]
+            if current_max_depth<current_depth:
+                current_max_depth = current_depth
             # Set output if it is a terminal
             if current_symbol[1] != self.NT:
                 output.append(current_symbol[0])
+
             else:
                 production_choices = self.rules[current_symbol[0]]
                 # Select a production
@@ -289,7 +295,10 @@ class grammar(object):
                 if len(production_choices) > 1:
                     used_input += 1
                 # Derviation order is left to right(depth-first)
-                unexpanded_symbols = production_choices[current_production] + unexpanded_symbols
+                children = []
+                for prod in production_choices[current_production]:
+                    children.append(prod,current_depth+1)
+                unexpanded_symbols = children + unexpanded_symbols
 
         #Not completly expanded
         if len(unexpanded_symbols) > 0:
