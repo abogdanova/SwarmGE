@@ -30,6 +30,7 @@ params = {
 # Set max sizes of individuals
 'MAX_TREE_DEPTH' : 17,
 'CODON_SIZE' : 100000,
+'GENOME_LENGTH' : 500,
 
 # Initialisation
 'INITIALISATION' : "rhh",
@@ -60,7 +61,6 @@ params = {
 'MUTATION' : "subtree",
     # "subtree",
     # "int_flip",
-    # "split",
 'MUTATION_EVENTS' : "1 over the length of the genome",
     # Subtree mutation is guaranteed to mutate one subtree per individual
 
@@ -131,14 +131,20 @@ def set_params(command_line_args):
 
     try:
         OPTS, ARGS = getopt.getopt(command_line_args[1:], "",
-                                   ["help","debug","population=","generations=","initialisation=",
-                                    "max_init_depth=","genome_init","max_tree_depth=",
-                                    "codon_size=","selection=","selection_proportion=",
-                                    "tournament_size=","crossover=","crossover_prob=",
-                                    "replacement=","mutation=","mutation_events=","random_seed=",
-                                    "bnf_grammar=","problem=","problem_suite=","target_string=",
-                                    "verbose","elite_size=","save_all","save_plots","cache","lookup_fitness",
-                                    "lookup_bad_fitness","mutate_duplicates","complete_evals"])
+                                   ["help", "debug", "population=",
+                                    "generations=", "initialisation=",
+                                    "max_init_depth=", "genome_init",
+                                    "max_tree_depth=", "codon_size=",
+                                    "selection=", "selection_proportion=",
+                                    "tournament_size=", "crossover=",
+                                    "crossover_prob=", "replacement=",
+                                    "mutation=", "mutation_events=",
+                                    "random_seed=", "bnf_grammar=", "problem=",
+                                    "problem_suite=", "target_string=",
+                                    "verbose", "elite_size=", "save_all",
+                                    "save_plots", "cache", "lookup_fitness",
+                                    "lookup_bad_fitness", "mutate_duplicates",
+                                    "complete_evals", "genome_length="])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run puthon ponyge.py --help for more info")
@@ -164,6 +170,8 @@ def set_params(command_line_args):
             params['MAX_TREE_DEPTH'] = int(arg)
         elif opt == "--codon_size":
             params['CODON_SIZE'] = int(arg)
+        elif opt == "--genome_length":
+            params['GENOME_LENGTH'] = int(arg)
         elif opt == "--selection":
             params['SELECTION'] = arg
         elif opt == "--tournament_size":

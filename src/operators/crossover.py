@@ -20,7 +20,6 @@ def crossover(parents):
     cross_pop = []
     i = 0
     while len(cross_pop) < params['GENERATION_SIZE']:
-        #TODO check is this correct. We do crossover on a subset of the selected population.
         inds_in = deepcopy(sample(parents, 2))
 
         inds = params['CROSSOVER'](inds_in[0], inds_in[1])

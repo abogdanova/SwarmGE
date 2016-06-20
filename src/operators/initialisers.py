@@ -1,12 +1,13 @@
+from representation import individual
+from representation import tree as Tree
 from algorithm.parameters import params
 from random import shuffle, randint
-from representation import tree,individual
 from math import floor
 
 
 def generate_initial_pop(grammar):
     if params['INITIALISATION'] == "random" or params['GENOME_INIT']:
-        return random_initialisation(params['POPULATION_SIZE'], grammar, params['GENOME_INIT'])
+        return random_initialisation(params['POPULATION_SIZE'], grammar, )
     elif params['INITIALISATION'] == "rhh":
         return rhh_initialisation(params['POPULATION_SIZE'], grammar)
     else:
@@ -43,19 +44,19 @@ def rhh_initialisation(size, grammar):
             for i in range(times):
                 """ Grow """
                 method = "random"
-                phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
+                phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree_init(depth, method)
                 ind = individual.individual(genome, ind_tree)
                 ind.phenotype, ind.nodes = phenotype, nodes
                 ind.depth, ind.used_codons = tree_depth, used_cod
-                ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
+                ind.genome = genome + [randint(0, grammar.codon_size) for _ in range(int(ind.used_codons/2))]
                 population.append(ind)
                 """ Full """
                 method = "full"
-                phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
+                phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree_init(depth, method)
                 ind = individual.individual(genome, ind_tree)
                 ind.phenotype, ind.nodes = phenotype, nodes
                 ind.depth, ind.used_codons = tree_depth, used_cod
-                ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
+                ind.genome = genome + [randint(0, grammar.codon_size) for _ in range(int(ind.used_codons/2))]
                 population.append(ind)
 
         if remainder:
@@ -66,19 +67,19 @@ def rhh_initialisation(size, grammar):
             depth = depths.pop()
             """ Grow """
             method = "random"
-            phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
+            phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree_init(depth, method)
             ind = individual.individual(genome, ind_tree)
             ind.phenotype, ind.nodes = phenotype, nodes
             ind.depth, ind.used_codons = tree_depth, used_cod
-            ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
+            ind.genome = genome + [randint(0, grammar.codon_size) for _ in range(int(ind.used_codons/2))]
             population.append(ind)
             """ Full """
             method = "full"
-            phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree.init(depth, method)
+            phenotype, genome, ind_tree, nodes, invalid, tree_depth, used_cod = tree_init(depth, method)
             ind = individual.individual(genome, ind_tree)
             ind.phenotype, ind.nodes = phenotype, nodes
             ind.depth, ind.used_codons = tree_depth, used_cod
-            ind.genome = genome + [randint(0, grammar.codon_size) for i in range(int(ind.used_codons/2))]
+            ind.genome = genome + [randint(0, grammar.codon_size) for _ in range(int(ind.used_codons/2))]
             population.append(ind)
         return population
 
@@ -104,3 +105,58 @@ def get_min_ramp_depth(grammar):
             ramp = i
             break
     return ramp
+
+
+def genome_init(genome, depth_limit=20):
+
+    tree = Tree.Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                depth_limit=depth_limit)
+    used_codons, nodes, depth, max_depth = tree.genome_derivation(genome, 0, 0,
+                                                                  0, 0)
+
+    invalid = False
+    if any([i == "Incomplete" for i in [used_codons, nodes, depth,
+                                        max_depth]]) or tree.check_expansion():
+        invalid = True
+    return tree.get_output(), genome, tree, nodes, invalid, max_depth, \
+           used_codons
+
+
+def pi_random_init(depth):
+
+    tree = Tree.Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                max_depth=depth, depth_limit=depth)
+    genome = tree.pi_random_derivation(0, max_depth=depth)
+    if tree.check_expansion():
+        print("tree.pi_random_init generated an Invalid")
+        quit()
+    return tree.get_output(), genome, tree, False
+
+
+def pi_grow_init(depth):
+
+    tree = Tree.Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                max_depth=depth, depth_limit=depth)
+    genome = tree.pi_grow(0, max_depth=depth)
+    if tree.check_expansion():
+        print("tree.pi_grow_init generated an Invalid")
+        quit()
+    return tree.get_output(), genome, tree, False
+
+
+def tree_init(depth, method):
+    """
+    Initialise a tree to a given depth using a specified method for
+    initialisation.
+    """
+
+    tree = Tree.Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                max_depth=depth-1, depth_limit=depth-1)
+    genome, nodes, d, max_depth = tree.derivation([], method, 0, 0, 0,
+                                                  depth_limit=depth-1)
+
+    if tree.check_expansion():
+        print("tree.init generated an Invalid")
+        quit()
+
+    return tree.get_output(), genome, tree, nodes, False, max_depth, len(genome)

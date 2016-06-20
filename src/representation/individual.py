@@ -1,40 +1,42 @@
 from fitness.fitness import default_fitness
 from algorithm.parameters import params
-from representation import tree
+from operators import initialisers
 from random import randint
 
 
 class individual(object):
     """A GE individual"""
 
-    #TODO need to add chromosome length to parameters
-    def __init__(self, genome, ind_tree, invalid=False, max_depth=20,
-                                                chromosome=False, length=500):
+    def __init__(self, genome, ind_tree, invalid=False, max_depth=20):
         if (genome == None) and (ind_tree == None):
-            if chromosome:
-                self.genome = [randint(0, params['CODON_SIZE']) for _ in range(length)]
+            if params['GENOME_INIT']:
+                self.genome = [randint(0, params['CODON_SIZE']) for _ in
+                               range(params['GENOME_LENGTH'])]
                 self.phenotype, genome, self.tree, self.nodes, \
                 self.invalid, self.depth, \
-                self.used_codons = tree.genome_init(self.genome,
+                self.used_codons = initialisers.genome_init(self.genome,
                                         depth_limit=params['MAX_TREE_DEPTH'])
                 self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
             else:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
-                self.depth, self.used_codons = tree.init(max_depth, "random")
-                self.genome = genome + [randint(0, params['CODON_SIZE']) for i in range(int(self.used_codons/2))]
+                self.depth, self.used_codons = initialisers.tree_init(max_depth,
+                                                                      "random")
+                self.genome = genome + [randint(0, params['CODON_SIZE']) for _
+                                        in range(int(self.used_codons/2))]
                 self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
         #TODO Need to extend this to be purely linerar GE using gramar class - MF
         elif genome and (ind_tree == None):
             self.genome = genome
             self.phenotype, genome, self.tree, self.nodes, self.invalid, \
-            self.depth, self.used_codons = tree.genome_init(genome,
+            self.depth, self.used_codons = initialisers.genome_init(genome,
                                         depth_limit=params['MAX_TREE_DEPTH'])
         elif ind_tree and (genome == None):
             self.tree = ind_tree
             self.invalid = invalid
             genome = self.tree.build_genome([])
             self.used_codons = len(genome)
-            self.genome = genome + [randint(0, params['CODON_SIZE']) for i in range(int(self.used_codons/2))]
+            self.genome = genome + [randint(0, params['CODON_SIZE']) for _ in
+                                    range(int(self.used_codons/2))]
             self.phenotype = self.tree.get_output()
         else:
             self.genome = genome

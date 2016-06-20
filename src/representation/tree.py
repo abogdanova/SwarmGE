@@ -517,24 +517,6 @@ class Tree:
                 check = True
         return check
 
-    def subtree_mutate(self):
-        """ Creates a list of all nodes and picks one node at random to mutate.
-            Because we have a list of all nodes we can (but currently don't)
-            choose what kind of nodes to mutate on. Handy. Should hopefully be
-            faster and less error-prone to the previous subtree mutation.
-        """
-
-        targets = self.get_target_nodes([], target=params['BNF_GRAMMAR'].non_terminals)
-
-        number = random.choice(targets)
-        tree = self.return_node_from_id(number, return_tree=None)
-
-        tree.max_depth = self.depth_limit - tree.get_depth()
-        x, y, d, md = tree.derivation([], "random", 0, 0, 0, depth_limit=tree.max_depth)
-        genome = self.build_genome([])
-
-        return self.get_output(), genome, self
-
     def getLabels(self, labels):
         labels.add(self.root)
 
@@ -544,58 +526,3 @@ class Tree:
 
     def print_tree(self):
         print(self)
-
-
-def genome_init(genome, depth_limit=20):
-
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
-                depth_limit=depth_limit)
-    used_codons, nodes, depth, max_depth = tree.genome_derivation(genome, 0, 0,
-                                                                  0, 0)
-
-    invalid = False
-    if any([i == "Incomplete" for i in [used_codons, nodes, depth,
-                                        max_depth]]) or tree.check_expansion():
-        invalid = True
-    return tree.get_output(), genome, tree, nodes, invalid, max_depth, \
-           used_codons
-
-
-def pi_random_init(depth):
-
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
-                max_depth=depth, depth_limit=depth)
-    genome = tree.pi_random_derivation(0, max_depth=depth)
-    if tree.check_expansion():
-        print("tree.pi_random_init generated an Invalid")
-        quit()
-    return tree.get_output(), genome, tree, False
-
-
-def pi_grow_init(depth):
-
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
-                max_depth=depth, depth_limit=depth)
-    genome = tree.pi_grow(0, max_depth=depth)
-    if tree.check_expansion():
-        print("tree.pi_grow_init generated an Invalid")
-        quit()
-    return tree.get_output(), genome, tree, False
-
-
-def init(depth, method):
-    """
-    Initialise a tree to a given depth using a specified method for
-    initialisation.
-    """
-
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
-                max_depth=depth-1, depth_limit=depth-1)
-    genome, nodes, d, max_depth = tree.derivation([], method, 0, 0, 0,
-                                                  depth_limit=depth-1)
-
-    if tree.check_expansion():
-        print("tree.init generated an Invalid")
-        quit()
-
-    return tree.get_output(), genome, tree, nodes, False, max_depth, len(genome)

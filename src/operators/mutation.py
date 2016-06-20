@@ -1,7 +1,7 @@
-from random import randint, random, shuffle
+from random import randint, random, choice
 from algorithm.parameters import params
 from representation import individual
-from copy import deepcopy, copy
+from copy import deepcopy
 
 
 def mutation_wheel():
@@ -9,8 +9,6 @@ def mutation_wheel():
         params['MUTATION'] = subtree_mutation
     elif params['MUTATION'] == "int_flip":
         params['MUTATION'] = int_flip_mutation
-    elif params['MUTATION'] == "split":
-        params['MUTATION'] = split_mutation
     else:
         print("Error: Mutation operator not specified correctly")
         exit(2)
@@ -35,26 +33,6 @@ def int_flip_mutation(ind):
     return ind
 
 
-def split_mutation(pop, gen):
-    """Takes a population of individuals and performs subtree mutation on some
-    and leaf mutation on others. Proportions of each varies as generations
-    progress"""
-
-    min_perc = 30
-    var_perc = min_perc + (gen / float(params['GENERATIONS'])) * \
-                          (100 - (2 * min_perc))
-    shuffle(pop)
-    pop = deepcopy(pop)
-
-    br_point = int((var_perc/100)*len(pop))
-    pop_1 = pop[:br_point]
-    pop_2 = pop[br_point:]
-    pop_1 = list(map(leaf_mutation, pop_1))
-    pop_2 = list(map(subtree_mutation, pop_2))
-    pop = pop_1 + pop_2
-    return pop
-
-
 def subtree_mutation(ind):
     """Mutate the individual by replacing a randomly selected subtree with a
     new subtree. Guaranteed one event per individual if called."""
@@ -66,7 +44,7 @@ def subtree_mutation(ind):
 
     for i in range(p_mut):
         tail = deepcopy(ind.genome[ind.used_codons+1:])
-        ind.phenotype, genome, ind.tree = ind.tree.subtree_mutate()
+        ind.phenotype, genome, ind.tree = subtree_mutate(ind.tree)
         ind.used_codons = len(genome)
         ind.depth, ind.nodes = ind.tree.get_tree_info(ind.tree)
         ind.genome = genome + tail[:int(len(genome)/2)]
@@ -74,13 +52,21 @@ def subtree_mutation(ind):
     return ind
 
 
-def leaf_mutation(ind):
-    """Mutate the individual by randomly chosing a new int with
-    probability p_mut. Works per-codon, hence no need for
-    "within_used" option."""
+def subtree_mutate(ind_tree):
+    """ Creates a list of all nodes and picks one node at random to mutate.
+        Because we have a list of all nodes we can (but currently don't)
+        choose what kind of nodes to mutate on. Handy. Should hopefully be
+        faster and less error-prone to the previous subtree mutation.
+    """
 
-    tail = ind.genome[ind.used_codons:]
-    ind.phenotype, genome, ind.tree = ind.tree.leaf_mutate()
-    ind.used_codons = len(genome)
-    ind.genome = genome + tail
-    return ind
+    targets = ind_tree.get_target_nodes([], target=params['BNF_GRAMMAR'].non_terminals)
+
+    number = choice(targets)
+    new_tree = ind_tree.return_node_from_id(number, return_tree=None)
+
+    new_tree.max_depth = ind_tree.depth_limit - new_tree.get_depth()
+    x, y, d, md = new_tree.derivation([], "random", 0, 0, 0, depth_limit=new_tree.max_depth)
+    genome = ind_tree.build_genome([])
+
+    return ind_tree.get_output(), genome, ind_tree
+
