@@ -14,6 +14,7 @@ def help_message():
              "\t--codon_size: \t\tSets the range from 0 to condon_size to be used in genome, requires int value",
              "\t--genome_length: \t\tSets the maximum length for chromosomes to be initialised to, requires int value",
              "\t--selection: \t\tSets the selection to be used, requires string such as tournament",
+             "\t--invalid_selection: \t\tAllow for the selection of invalid individuals during selection",
              "\t--selection_proportion: \t\tSets the proportion for truncation selection, requires float like 0.5",
              "\t--tournament_size: \t\tSets the number of indivs to contest tournament, requires int",
              "\t--crossover: \t\tSets the type of crossover to be used, requires string such as subtree",

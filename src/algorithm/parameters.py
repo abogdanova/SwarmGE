@@ -50,6 +50,8 @@ params = {
     # For tournament selection
 'SELECTION_PROPORTION' : 0.5,
     # For truncation selection
+'INVALID_SELECTION' : False,
+    # Allow for selection of invalid individuals during selection process.
 
 # Crossover
 'CROSSOVER' : "subtree",
@@ -144,7 +146,8 @@ def set_params(command_line_args):
                                     "verbose", "elite_size=", "save_all",
                                     "save_plots", "cache", "lookup_fitness",
                                     "lookup_bad_fitness", "mutate_duplicates",
-                                    "complete_evals", "genome_length="])
+                                    "complete_evals", "genome_length=",
+                                    "invalid_selection"])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run puthon ponyge.py --help for more info")
@@ -174,6 +177,8 @@ def set_params(command_line_args):
             params['GENOME_LENGTH'] = int(arg)
         elif opt == "--selection":
             params['SELECTION'] = arg
+        elif opt == "--invalid_selection":
+            params['INVALID_SELECTION'] = arg
         elif opt == "--tournament_size":
             params['TOURNAMENT_SIZE'] = int(arg)
         elif opt == "--selection_proportion":

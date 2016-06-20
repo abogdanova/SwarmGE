@@ -29,7 +29,6 @@ def crossover(parents):
         elif any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
             # Tree is too big, need to do crossover again
             pass
-        #TODO we have a global tree depth limit, but no global max used codons length limit. Add in to prevent genome bloat?
         else:
             cross_pop.extend(inds)
         i += 1
