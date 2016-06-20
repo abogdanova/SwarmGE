@@ -259,29 +259,27 @@ class grammar(object):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,
                                 self.rules, self.start_rule)
 
-    #TODO Add counters to keep track of derivation tree info - DF
-    #The genotype to phenotype mappping process - Maybe make this a seperate entity
-    def generate(self, _input, max_wraps=0, max_depth=10000):
-        #Max depth and number of nodes and valid need to be return for stats
-        #once method is fixed
-        """Map input via rules to output. Returns output and used_input"""
-        used_input = 0
-        current_depth = 0
-        current_max_depth = 0
-        wraps = -1
-        output = []
-        production_choices = []
+    def generate(self, _input, max_wraps=0):
+        """ The genotype to phenotype mappping process. Map input via rules to
+        output. Returns output and used_input. """
+        #TODO check tree depths to see if correct
+        used_input, current_depth, current_max_depth, nodes = 0, 0, 0, 1
+        wraps, output, production_choices = -1, [], []
         unexpanded_symbols = [(self.start_rule, 0)]
-        while (wraps < max_wraps) and (len(unexpanded_symbols) > 0) and (current_max_depth <= max_depth):
+
+        while (wraps < max_wraps) and \
+                (len(unexpanded_symbols) > 0) and\
+                (current_max_depth <= params['MAX_TREE_DEPTH']):
             # Wrap
             if used_input % len(_input) == 0 and \
                     used_input > 0 and \
-                    len(production_choices) > 1:
+                    any([i[0][1] == "NT" for i in unexpanded_symbols]):
                 wraps += 1
+
             # Expand a production
             current_item = unexpanded_symbols.pop(0)
-            current_symbol, current_depth = current_item[0],current_item[1]
-            if current_max_depth<current_depth:
+            current_symbol, current_depth = current_item[0], current_item[1]
+            if current_max_depth < current_depth:
                 current_max_depth = current_depth
             # Set output if it is a terminal
             if current_symbol[1] != self.NT:
@@ -297,14 +295,22 @@ class grammar(object):
                 # Derviation order is left to right(depth-first)
                 children = []
                 for prod in production_choices[current_production]:
-                    children.append(prod,current_depth+1)
+                    children.append([prod, current_depth+1])
+
+                NT_kids = [child for child in children if child[0][1] == "NT"]
+                if any(NT_kids):
+                    nodes += len(NT_kids)
+                else:
+                    nodes += 1
                 unexpanded_symbols = children + unexpanded_symbols
 
-        #Not completly expanded
         if len(unexpanded_symbols) > 0:
-            return (None, used_input)
+            # Not completly expanded, invalid solution.
+            return output, _input, None, nodes, True, current_max_depth+1, \
+                   used_input
 
         output = "".join(output)
         if self.python_mode:
             output = python_filter(output)
-        return (output, used_input)
+        return output, _input, None, nodes, False, current_max_depth+1,\
+               used_input

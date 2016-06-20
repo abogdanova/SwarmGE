@@ -24,12 +24,15 @@ class individual(object):
                 self.genome = genome + [randint(0, params['CODON_SIZE']) for _
                                         in range(int(self.used_codons/2))]
                 self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
-        #TODO Need to extend this to be purely linerar GE using gramar class - MF
         elif genome and (ind_tree == None):
             self.genome = genome
-            self.phenotype, genome, self.tree, self.nodes, self.invalid, \
-            self.depth, self.used_codons = initialisers.genome_init(genome,
-                                        depth_limit=params['MAX_TREE_DEPTH'])
+            if params['GENOME_OPERATIONS']:
+                self.phenotype, genome, self.tree, self.nodes, self.invalid, \
+                self.depth, self.used_codons = params['BNF_GRAMMAR'].generate(genome)
+            else:
+                self.phenotype, genome, self.tree, self.nodes, self.invalid, \
+                self.depth, self.used_codons = initialisers.genome_init(genome,
+                                            depth_limit=params['MAX_TREE_DEPTH'])
         elif ind_tree and (genome == None):
             self.tree = ind_tree
             self.invalid = invalid

@@ -41,7 +41,7 @@ def search_loop_complete_evals():
     """Loop over total evaluations"""
 
     # Initialise population
-    individuals = generate_initial_pop(params['BNF_GRAMMAR'])
+    individuals = generate_initial_pop()
 
     # Evaluate initial population
     individuals = evaluate_fitness.evaluate_fitness(individuals)

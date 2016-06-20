@@ -3,8 +3,8 @@ from algorithm.parameters import params
 from os import path, mkdir, getcwd
 from datetime import timedelta
 from utilities import trackers
-from copy import deepcopy
 from sys import stdout
+from copy import copy
 import time
 
 
@@ -81,6 +81,13 @@ def get_stats(individuals, END=False):
         stats['ave_fitness'] = ave(fitnesses)
         stats['best_fitness'] = stats['best_ever'].fitness
 
+    # Save fitness plot information
+    if params['SAVE_PLOTS'] and not params['DEBUG']:
+        trackers.best_fitness_list.append(stats['best_ever'].fitness)
+        if params['VERBOSE'] or END:
+            save_best_fitness_plot()
+
+    # Print statistics
     if params['VERBOSE']:
         if not END:
             print_stats()
@@ -89,24 +96,26 @@ def get_stats(individuals, END=False):
         stdout.write("Evolution: %d%% complete\r" % (perc))
         stdout.flush()
 
+    # Generate test fitness on regression problems
+    if params['PROBLEM'] == "regression" and \
+            (END or (params['COMPLETE_EVALS'] and
+                             stats['gen'] == params['GENERATIONS'])):
+        stats['best_ever'].training_fitness = copy(stats['best_ever'].fitness)
+        stats['best_ever'].evaluate(dist='test')
+        stats['best_ever'].test_fitness = copy(stats['best_ever'].fitness)
+        stats['best_ever'].fitness = stats['best_ever'].training_fitness
+
     if params['COMPLETE_EVALS'] and not params['DEBUG']:
         if stats['gen'] == params['GENERATIONS']:
-            best_test = deepcopy(stats['best_ever'])
-            if params['PROBLEM'] == "regression":
-                best_test.evaluate(dist='test')
-            save_best_midway(best_test)
+            save_best_midway(stats['best_ever'])
 
+    # Save statistics
     if not params['DEBUG']:
         save_stats(END)
         if params['SAVE_ALL']:
             save_best(stats['gen'])
         elif params['VERBOSE'] or END:
             save_best("best")
-
-    if params['SAVE_PLOTS'] and not params['DEBUG']:
-        trackers.best_fitness_list.append(stats['best_ever'].fitness)
-        if params['VERBOSE'] or END:
-            save_best_fitness_plot()
 
     if END:
         total_time = timedelta(seconds=(trackers.time_list[-1] -
@@ -166,9 +175,8 @@ def print_final_stats(total_time):
     """
 
     if params['PROBLEM'] == "regression":
-        print("\n\nBest:\n  Training fitness:\t", stats['best_ever'].fitness)
-        stats['best_ever'].evaluate(dist='test')
-        print("  Test fitness:\t\t", stats['best_ever'].fitness)
+        print("\n\nBest:\n  Training fitness:\t", stats['best_ever'].training_fitness)
+        print("  Test fitness:\t\t", stats['best_ever'].test_fitness)
     else:
         print("\n\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
     print("  Phenotype:", stats['best_ever'].phenotype)
@@ -190,7 +198,7 @@ def save_final_stats(total_time):
 
 
 def save_best(name="best"):
-    #TODO Need to save best training and test fitness for regression problems
+
     filename = "./results/" + str(params['TIME_STAMP']) + "/" + str(name) + \
                ".txt"
     savefile = open(filename, 'w')
@@ -198,7 +206,11 @@ def save_best(name="best"):
     savefile.write("Phenotype:\n" + str(stats['best_ever'].phenotype) + "\n\n")
     savefile.write("Genotype:\n" + str(stats['best_ever'].genome) + "\n")
     savefile.write("Tree:\n" + str(stats['best_ever'].tree) + "\n")
-    savefile.write("\nfitness:\t" + str(stats['best_ever'].fitness))
+    if params['PROBLEM'] == "regression":
+        savefile.write("\nTraining fitness:\t" + str(stats['best_ever'].training_fitness))
+        savefile.write("\nTest fitness:\t" + str(stats['best_ever'].test_fitness))
+    else:
+        savefile.write("\nFitness:\t" + str(stats['best_ever'].fitness))
     savefile.close()
 
 
@@ -214,7 +226,11 @@ def save_best_midway(best_ever):
     savefile.write("Phenotype:\n" + str(best_ever.phenotype) + "\n\n")
     savefile.write("Genotype:\n" + str(best_ever.genome) + "\n")
     savefile.write("Tree:\n" + str(best_ever.tree) + "\n")
-    savefile.write("\nFitness:\t" + str(best_ever.fitness))
+    if params['PROBLEM'] == "regression":
+        savefile.write("\nTraining fitness:\t" + str(stats['best_ever'].training_fitness))
+        savefile.write("\nTest fitness:\t" + str(stats['best_ever'].test_fitness))
+    else:
+        savefile.write("\nFitness:\t" + str(stats['best_ever'].fitness))
     savefile.write("\nTotal time:\t" + str(time_taken))
     savefile.close()
 

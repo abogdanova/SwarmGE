@@ -1,4 +1,3 @@
-from utilities.helper_methods import RETURN_PERCENT
 from algorithm.parameters import params
 from random import sample
 

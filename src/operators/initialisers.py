@@ -1,6 +1,6 @@
-from representation import individual
 from representation import tree as Tree
 from algorithm.parameters import params
+from representation import individual
 from random import shuffle, randint
 from math import floor
 

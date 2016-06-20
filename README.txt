@@ -38,14 +38,10 @@ individuals. For a more verbose command line experience run the following
 $ cd src
 $ python ponyge.py --verbose
 
-#FIXME Change this to be relevant to PonyGE2
-Each line of the output corresponds to a generation in the evolution,
-and tells you the generation number, number of fitness evaluations
-which have taken place, average fitness with standard deviation,
-average number of codons used (see any GE paper, eg those referenced
-below, for definition) with standard deviation and the best
-individual found so far. At the end, the best individual is printed
-out again.
+Each line of the output corresponds to a generation in the evolution, and prints
+out all statistics on the current run (if --verbose is specified). Upon
+completion of a run, the best individual is printed to the command line, along
+with summary statistics.
 
 There are a number of flags that can be used for passing values via
 the command-line. To see a full list of these just run the following
