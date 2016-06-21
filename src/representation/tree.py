@@ -46,7 +46,7 @@ class Tree:
 
         count = 1
         currentParent = self.parent
-        while currentParent != None:
+        while currentParent is not None:
             count += 1
             currentParent = currentParent.parent
         return count
@@ -113,7 +113,7 @@ class Tree:
     def get_output(self):
         output = []
         for child in self.children:
-            if child.children == []:
+            if not child.children:
                 output.append(child.root)
             else:
                 output += child.get_output()
@@ -447,8 +447,8 @@ class Tree:
                 remaining_depth = max_depth - node.get_depth()
 
                 if (self.get_max_children(self) < max_depth - 1) or \
-                        (node.parent == None) or \
-                        ((all_node[1] and (not any([item[1] for item in queue])))):
+                        (node.parent is None) or \
+                        (all_node[1] and (not any([item[1] for item in queue]))):
                     # We want to prevent the tree from creating terminals
                     # until a single branch has reached the full depth
 

@@ -10,6 +10,8 @@ class grammar(object):
     NT = "NT"  # Non Terminal
     T = "T"  # Terminal
 
+    #TODO put in a warning flag informing the user that they have unit productions in the grammar, and that unit productions now consume codons
+
     def __init__(self, file_name):
         if file_name.endswith("pybnf"):
             self.python_mode = True
@@ -43,7 +45,7 @@ class grammar(object):
                     if not search(non_terminal_pattern, lhs):
                         raise ValueError("lhs is not a NT:", lhs)
                     self.non_terminals[str(lhs)] = {"id":lhs, "min_steps":9999999999999, "expanded":False, 'recursive':True, 'permutations':None, 'b_factor':0}
-                    if self.start_rule == None:
+                    if self.start_rule is None:
                         self.start_rule = (lhs, self.NT)
                     # Find terminals
                     tmp_productions = []
@@ -115,7 +117,8 @@ class grammar(object):
                             NT_s = [sym for sym in choice if sym[1] == self.NT]
                             NT_choices = list(NT_s for NT_s,_ in groupby(NT_s))
                             if len(NT_choices) > 1:
-                                if all([self.non_terminals[item[0]]['expanded'] for item in NT_choices]) == True:
+                                if all([self.non_terminals[item[0]]['expanded']
+                                        for item in NT_choices]):
                                     if vals['expanded'] and (vals['min_steps'] > max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1):
                                         vals['min_steps'] = max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1
                                     elif not vals['expanded']:
@@ -144,7 +147,7 @@ class grammar(object):
                         temp = [bit for bit in choice if bit[1] == 'NT']
                         orary = 0
                         for bit in temp:
-                            if self.non_terminals[bit[0]]['recursive'] == False:
+                            if not self.non_terminals[bit[0]]['recursive']:
                                 orary += 1
                         if (orary == len(temp)) and temp:
                             # then all NTs in this production choice are not
@@ -260,7 +263,7 @@ class grammar(object):
                                 self.rules, self.start_rule)
 
     def generate(self, _input, max_wraps=0):
-        """ The genotype to phenotype mappping process. Map input via rules to
+        """ The genotype to phenotype mapping process. Map input via rules to
         output. Returns output and used_input. """
         #TODO check tree depths to see if correct
         used_input, current_depth, current_max_depth, nodes = 0, 0, 0, 1

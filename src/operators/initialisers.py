@@ -36,7 +36,7 @@ def rhh_initialisation(size):
     else:
         if size % 2:
             # Population size is odd
-            size = size + 1
+            size += 1
         if size/2 < len(depths):
             depths = depths[:int(size/2)]
         times = int(floor((size/2)/len(depths)))
@@ -104,7 +104,7 @@ def get_min_ramp_depth(grammar):
 
     if size % 2:
         # Population size is odd
-        size = size + 1
+        size += 1
     if size/2 < len(depths):
         depths = depths[:int(size/2)]
 

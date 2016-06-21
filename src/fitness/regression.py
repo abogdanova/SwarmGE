@@ -8,7 +8,7 @@ from math import isnan
 import numpy as np
 
 
-class regression():
+class regression:
     """ fitness function for regression problems. Given a set of training or
     test data, returns the RMS error between inputs and outputs for a set.
     """

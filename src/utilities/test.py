@@ -37,6 +37,8 @@ class Grammar(object):
         self.permutations = {}
         self.non_terminals, self.terminals = {}, []
         self.start_rule = None
+        self.min_path = 0
+        self.max_arity = 0
         self.codon_size = CODON_SIZE
         self.read_bnf_file(file_name)
         self.check_depths()
@@ -59,7 +61,7 @@ class Grammar(object):
                     if not search(non_terminal_pattern, lhs):
                         raise ValueError("lhs is not a NT:", lhs)
                     self.non_terminals[str(lhs)] = {"id":lhs, "min_steps":9999999999999, "expanded":False, 'recursive':True, 'permutations':None, 'b_factor':0}
-                    if self.start_rule == None:
+                    if self.start_rule is None:
                         self.start_rule = (lhs, self.NT)
                     # Find terminals
                     tmp_productions = []
@@ -131,7 +133,8 @@ class Grammar(object):
                             NT_s = [sym for sym in choice if sym[1] == self.NT]
                             NT_choices = list(NT_s for NT_s,_ in groupby(NT_s))
                             if len(NT_choices) > 1:
-                                if all([self.non_terminals[item[0]]['expanded'] for item in NT_choices]) == True:
+                                if all([self.non_terminals[item[0]]['expanded']
+                                        for item in NT_choices]):
                                     if vals['expanded'] and (vals['min_steps'] > max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1):
                                         vals['min_steps'] = max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1
                                     elif not vals['expanded']:
@@ -160,7 +163,7 @@ class Grammar(object):
                         temp = [bit for bit in choice if bit[1] == 'NT']
                         orary = 0
                         for bit in temp:
-                            if self.non_terminals[bit[0]]['recursive'] == False:
+                            if not self.non_terminals[bit[0]]['recursive']:
                                 orary += 1
                         if (orary == len(temp)) and temp:
                             # then all NTs in this production choice are not
@@ -178,7 +181,7 @@ class Grammar(object):
         if self.start_rule[0] in self.non_terminals:
             self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
         else:
-            print ("Error: start rule not a non-terminal")
+            print("Error: start rule not a non-terminal")
             quit()
         self.max_arity = 0
         for NT in self.non_terminals:
@@ -306,12 +309,12 @@ class Grammar(object):
 
         #Not completly expanded
         if len(unexpanded_symbols) > 0:
-            return (None, used_input)
+            return None, used_input
 
         output = "".join(output)
         if self.python_mode:
             output = helper_methods.python_filter(output)
-        return (output, used_input)
+        return output, used_input
 
 def get_min_ramp_depth(size, grammar):
     """ Find the minimum depth at which ramping can start where we can have
@@ -321,11 +324,11 @@ def get_min_ramp_depth(size, grammar):
 
     if size % 2:
         # Population size is odd
-        size = size + 1
+        size += 1
     if size/2 < depths:
         depths = depths[:int(size/2)]
 
-    unique_start = int(floor((size)/len(depths)))
+    unique_start = int(floor(size / len(depths)))
     ramp = None
     for i in sorted(grammar.permutations.keys()):
         if grammar.permutations[i] > unique_start:

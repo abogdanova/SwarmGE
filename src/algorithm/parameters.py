@@ -236,14 +236,14 @@ def set_params(command_line_args):
 
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger if no elite size is previously set.
-    if params['ELITE_SIZE'] == None :
+    if params['ELITE_SIZE'] is None:
         params['ELITE_SIZE'] = RETURN_PERCENT(1, params['POPULATION_SIZE'])
 
     # Set the size of a generation
     params['GENERATION_SIZE'] = params['POPULATION_SIZE']
 
     # Set random seed
-    if params['RANDOM_SEED'] == None:
+    if params['RANDOM_SEED'] is None:
         params['RANDOM_SEED'] = int(time.clock()*1000000)
     seed(params['RANDOM_SEED'])
 

@@ -93,7 +93,7 @@ def get_stats(individuals, END=False):
             print_stats()
     else:
         perc = stats['gen'] / (params['GENERATIONS']+1) * 100
-        stdout.write("Evolution: %d%% complete\r" % (perc))
+        stdout.write("Evolution: %d%% complete\r" % perc)
         stdout.flush()
 
     # Generate test fitness on regression problems

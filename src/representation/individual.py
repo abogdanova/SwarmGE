@@ -8,7 +8,7 @@ class individual(object):
     """A GE individual"""
 
     def __init__(self, genome, ind_tree, invalid=False, max_depth=20):
-        if (genome == None) and (ind_tree == None):
+        if (genome is None) and (ind_tree is None):
             if params['GENOME_INIT']:
                 self.genome = [randint(0, params['CODON_SIZE']) for _ in
                                range(params['GENOME_LENGTH'])]
@@ -24,7 +24,7 @@ class individual(object):
                 self.genome = genome + [randint(0, params['CODON_SIZE']) for _
                                         in range(int(self.used_codons/2))]
                 self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
-        elif genome and (ind_tree == None):
+        elif genome and (ind_tree is None):
             self.genome = genome
             if params['GENOME_OPERATIONS']:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
@@ -33,7 +33,7 @@ class individual(object):
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
                 self.depth, self.used_codons = initialisers.genome_init(genome,
                                             depth_limit=params['MAX_TREE_DEPTH'])
-        elif ind_tree and (genome == None):
+        elif ind_tree and (genome is None):
             self.tree = ind_tree
             self.invalid = invalid
             genome = self.tree.build_genome([])
