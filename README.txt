@@ -96,13 +96,15 @@ needed if we just consume codons for unit productions.
 The original design decision on unit productions was also taken before the
 introduction of evolvable grammars whereby the arity of a unit production
 could change over time and in this case consuming codons will help to limit
-the ripple effect from that change in arity.
+the ripple effect from that change in arity. This also replicates non coding
+regions of genome as seen in nature.
 
 In summary, the merits for not consuming a codon for unit productions are
-not defined. The benifits in consuming codons are a reduction in computation
-and improved speed with linear tree style operations. The other benifits are
-an increase in non-coding regions in the chromosome (more in line with nature)
-that through evolution of the grammar may then express useful information.
+not clearly defined in the literature. The benifits in consuming codons are
+a reduction in computation and improved speed with linear tree style operations.
+Other benifits are an increase in non-coding regions in the chromosome
+(more in line with nature) that through evolution of the grammar may then
+express useful information.
 
 Reference
 ---------
