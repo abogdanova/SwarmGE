@@ -167,6 +167,28 @@ coevolutionary setup a player's fitness depends on its opponents, so
 players shouldn't keep their fitness from previous generations); and
 0.2 is the mutation rate.
 
+Note on unit productions!!!!
+------------------------------------
+
+Traditionally GE would not consume a codon for unit productions. This
+was a design decision taken by O'Neill et al. In PonyGE2 unit productions
+consume codons. The logic being that it helps to do linear tree style
+operations.
+
+No only that but the checks needed for unit productions during
+the running of the algorithm can add up to millions of checks that aren't
+needed if we just consume codons for unit productions.
+
+The original design decision on unit productions was also taken before the
+introduction of evolvable grammars whereby the arity of a unit production
+could change over time and in this case consuming codons will help to limit
+the ripple effect from that change in arity.
+
+In summary, the merits for not consuming a codon for unit productions are
+not defined. The benifits in consuming codons are a reduction in computation
+and improved speed with linear tree style operations. The other benifits are
+an increase in non-coding regions in the chromosome (more in line with nature)
+that through evolution of the grammar may then express useful information.
 
 Reference
 ---------
