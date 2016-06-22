@@ -10,7 +10,6 @@ class grammar(object):
     NT = "NT"  # Non Terminal
     T = "T"  # Terminal
 
-    #TODO put in a warning flag informing the user that they have unit productions in the grammar, and that unit productions now consume codons
 
     def __init__(self, file_name):
         if file_name.endswith("pybnf"):
@@ -44,7 +43,12 @@ class grammar(object):
                     lhs = lhs.strip()
                     if not search(non_terminal_pattern, lhs):
                         raise ValueError("lhs is not a NT:", lhs)
-                    self.non_terminals[str(lhs)] = {"id":lhs, "min_steps":9999999999999, "expanded":False, 'recursive':True, 'permutations':None, 'b_factor':0}
+                    self.non_terminals[str(lhs)] = {"id": lhs,
+                                                    "min_steps": 9999999999999,
+                                                    "expanded": False,
+                                                    'recursive': True,
+                                                    'permutations': None,
+                                                    'b_factor': 0}
                     if self.start_rule is None:
                         self.start_rule = (lhs, self.NT)
                     # Find terminals
@@ -72,6 +76,9 @@ class grammar(object):
                     # Create a rule
                     if not lhs in self.rules:
                         self.rules[lhs] = tmp_productions
+                        if len(tmp_productions) == 1:
+                            print("Warning: Grammar contains unit production for production rule", lhs)
+                            print("         Unit productions consume GE codons.")
                     else:
                         raise ValueError("lhs should be unique", lhs)
                 else:
