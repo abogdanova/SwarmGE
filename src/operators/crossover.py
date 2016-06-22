@@ -2,7 +2,6 @@ from random import randint, random, sample, choice
 from representation import individual, tree
 from algorithm.parameters import params
 from operators import initialisers
-from copy import deepcopy
 
 
 def crossover_wheel():
@@ -131,17 +130,7 @@ def no_tree_subtree_crossover(p_0, p_1):
     return [ind0, ind1]
 
 
-def do_subtree_crossover(orig_tree1, orig_tree2):
-
-    # Have to do a deepcopy of original trees as identical trees will give the
-    # same class instances for their children.
-
-    if id(orig_tree1) == id(orig_tree2):
-        copy_tree1 = deepcopy(orig_tree1)
-        copy_tree2 = deepcopy(orig_tree2)
-    else:
-        copy_tree1 = orig_tree1
-        copy_tree2 = orig_tree2
+def do_subtree_crossover(tree1, tree2):
 
     def do_crossover(tree1, tree2, intersection):
 
@@ -210,22 +199,21 @@ def do_subtree_crossover(orig_tree1, orig_tree2):
     def get_labels(t1, t2):
         return t1.getLabels(set()), t2.getLabels(set())
 
-    labels1, labels2 = get_labels(orig_tree1, orig_tree2)
-
     def intersect(l1, l2):
         intersection = l1.intersection(l2)
         intersection = [i for i in intersection if i in params['BNF_GRAMMAR'].crossover_NTs]
         return sorted(intersection)
 
+    labels1, labels2 = get_labels(tree1, tree2)
+
     intersection = intersect(labels1, labels2)
 
     if len(intersection) != 0:
         # Cross over parts of trees
-        ret_tree1, ret_tree2 = do_crossover(copy_tree1, copy_tree2,
-                                            intersection)
+        ret_tree1, ret_tree2 = do_crossover(tree1, tree2, intersection)
     else:
         # Cross over entire trees
-        ret_tree1, ret_tree2 = copy_tree2, copy_tree1
+        ret_tree1, ret_tree2 = tree2, tree1
 
     return ret_tree1, ret_tree1.build_genome([]), ret_tree2, \
            ret_tree2.build_genome([])
