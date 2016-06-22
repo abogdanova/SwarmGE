@@ -23,9 +23,11 @@ def crossover(parents):
     cross_pop = []
     i = 0
     while len(cross_pop) < params['GENERATION_SIZE']:
-        inds_in = deepcopy(sample(parents, 2))
+        inds_in = sample(parents, 2)
+        ind_0 = individual.individual(inds_in[0].genome, None)
+        ind_1 = individual.individual(inds_in[1].genome, None)
 
-        inds = params['CROSSOVER'](inds_in[0], inds_in[1])
+        inds = params['CROSSOVER'](ind_0, ind_1)
         if any([ind.invalid for ind in inds]):
             # we have an invalid, need to do crossover again
             pass

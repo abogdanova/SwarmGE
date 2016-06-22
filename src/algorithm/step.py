@@ -1,7 +1,6 @@
 from algorithm.parameters import params
 from algorithm import evaluate_fitness
 from operators import crossover
-from copy import deepcopy
 
 def step(individuals):
     """Return individuals and best ever individual from a step of
@@ -14,7 +13,7 @@ def step(individuals):
     cross_pop = crossover.crossover(parents)
 
     # Mutate the new population
-    new_pop = list(map(params['MUTATION'], deepcopy(cross_pop)))
+    new_pop = list(map(params['MUTATION'], cross_pop))
 
     # Evaluate the fitness of the new population
     new_pop = evaluate_fitness.evaluate_fitness(new_pop)
