@@ -298,10 +298,10 @@ class grammar(object):
             else:
                 production_choices = self.rules[current_symbol[0]]
                 # Select a production
-                current_production = _input[used_input % len(_input)] % len(production_choices)
-                # Use an input if there was more then 1 choice
-                if len(production_choices) > 1:
-                    used_input += 1
+                current_production = _input[used_input % len(_input)] % \
+                                     len(production_choices)
+                # Use an input
+                used_input += 1
                 # Derviation order is left to right(depth-first)
                 children = []
                 for prod in production_choices[current_production]:

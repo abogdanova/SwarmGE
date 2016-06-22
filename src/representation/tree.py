@@ -336,11 +336,10 @@ class Tree:
         available = self.legal_productions(method, remaining_depth, productions)
         chosen_prod = random.choice(available)
 
-        if len(productions) > 1:
-            choice = productions.index(chosen_prod)
-            codon = random.randrange(len(productions), params['BNF_GRAMMAR'].codon_size, len(productions)) + choice
-            self.codon = codon
-            genome.append(codon)
+        choice = productions.index(chosen_prod)
+        codon = random.randrange(len(productions), params['BNF_GRAMMAR'].codon_size, len(productions)) + choice
+        self.codon = codon
+        genome.append(codon)
 
         # print("\nCurrent root:   \t", self.root)
         # print("  Choices:      \t", productions)
