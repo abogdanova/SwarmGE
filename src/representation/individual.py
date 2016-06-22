@@ -68,4 +68,59 @@ class individual(object):
         else:
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype)
 
-        #print ("\n", self.fitness, "\t", self.phenotype)
+        # print("\n", self.fitness, "\t", self.phenotype)
+
+
+class no_tree_individual(object):
+    """A GE individual that doesn't store tree information (faster). """
+
+    def __init__(self, genome, max_depth=20):
+        if genome is None:
+            if params['GENOME_INIT']:
+                self.genome = [randint(0, params['CODON_SIZE']) for _ in
+                               range(params['GENOME_LENGTH'])]
+                self.phenotype, genome, _, self.nodes, \
+                self.invalid, self.depth, \
+                self.used_codons = initialisers.genome_init(self.genome,
+                                        depth_limit=params['MAX_TREE_DEPTH'])
+                self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
+            else:
+                self.phenotype, genome, _, self.nodes, self.invalid, \
+                self.depth, self.used_codons = initialisers.tree_init(max_depth,
+                                                                      "random")
+                self.genome = genome + [randint(0, params['CODON_SIZE']) for _
+                                        in range(int(self.used_codons/2))]
+                self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
+        else:
+            self.genome = genome
+            if params['GENOME_OPERATIONS']:
+                self.phenotype, genome, _, self.nodes, self.invalid, \
+                self.depth, self.used_codons = params['BNF_GRAMMAR'].generate(genome)
+            else:
+                self.phenotype, genome, _, self.nodes, self.invalid, \
+                self.depth, self.used_codons = initialisers.genome_init(genome,
+                                            depth_limit=params['MAX_TREE_DEPTH'])
+        self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
+        self.name = None
+
+    def __lt__(self, other):
+        if params['FITNESS_FUNCTION'].maximise:
+            return self.fitness < other.fitness
+        else:
+            return other.fitness < self.fitness
+
+    def __str__(self):
+        return ("Individual: " +
+                str(self.phenotype) + "; " + str(self.fitness))
+
+    def evaluate(self, dist="training"):
+        """ Evaluates phenotype in fitness function on either training or test
+        distributions and sets fitness"""
+
+        if params['PROBLEM'] == "regression":
+            # The problem is regression, e.g. has training and test data
+            self.fitness = params['FITNESS_FUNCTION'](self.phenotype, dist)
+        else:
+            self.fitness = params['FITNESS_FUNCTION'](self.phenotype)
+
+        # print("\n", self.fitness, "\t", self.phenotype)

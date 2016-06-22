@@ -251,8 +251,22 @@ def set_params(command_line_args):
     if params['MUTATION'] == 'int_flip' and \
                     params['CROSSOVER'] == 'onepoint':
         params['GENOME_OPERATIONS'] = True
+    elif params['MUTATION'] == 'nt_subtree' and \
+                    params['CROSSOVER'] == 'nt_subtree':
+        params['GENOME_OPERATIONS'] = True
+        params['INITIALISATION'] = "nt_rhh"
     else:
         params['GENOME_OPERATIONS'] = False
+
+    # Check for use of trees
+    if params['MUTATION'] == 'nt_subtree' and \
+                    params['CROSSOVER'] != 'nt_subtree':
+        print("Error: must specify no trees or all trees")
+        quit()
+    elif params['MUTATION'] != 'nt_subtree' and \
+                    params['CROSSOVER'] == 'nt_subtree':
+        print("Error: must specify no trees or all trees")
+        quit()
 
     # Set all parameters as specified in params
     # Set Crossover

@@ -5,6 +5,7 @@
 # Hereby licensed under the GNU GPL v3.
 
 from algorithm.parameters import params
+from operators import initialisers
 from copy import deepcopy
 import random
 
@@ -51,7 +52,7 @@ class Tree:
             currentParent = currentParent.parent
         return count
 
-    def get_max_children(self, current, max_D=0):
+    def get_max_children(self, current, max_D=1):
         #TODO Remove obsolete function
 
         curr_depth = current.get_depth()
@@ -66,10 +67,12 @@ class Tree:
         """
 
         number += 1
-        if self.root in params['BNF_GRAMMAR'].non_terminals:
+        if current.root in params['BNF_GRAMMAR'].non_terminals:
             current.id = number
             if current.parent:
                 current.depth = current.parent.depth + 1
+            else:
+                current.depth = 1
             if current.depth > max_D:
                 max_D = current.depth
             NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
@@ -150,8 +153,10 @@ class Tree:
 
         def check_nodes(tree, n=0):
             n += 1
+
             if tree.id != n:
                 print("Node ids do not match node numbers")
+                print(tree.id, n)
                 quit()
 
             if tree.root in params['BNF_GRAMMAR'].non_terminals:
@@ -169,7 +174,7 @@ class Tree:
         orig_gen = deepcopy(self.build_genome([]))
 
         output, genome, tree, nodes, invalid, depth, \
-        used_codons = genome_init(orig_gen)
+        used_codons = initialisers.genome_init(orig_gen)
 
         if invalid:
             print("Invalid genome tree")
@@ -213,45 +218,15 @@ class Tree:
             productions = params['BNF_GRAMMAR'].rules[self.root]
             selection = genome[index % len(genome)] % len(productions)
             chosen_prod = productions[selection]
-            if len(productions) > 1:
-                # Codon consumed
-                self.codon = genome[index % len(genome)]
-                index += 1
-            self.children = []
-
-            # print("\nCurrent root:   \t", self.root)
-            # print("  Choices:      \t", productions)
-            # print("  Chosen Product:\t", chosen_prod)
-            # print("  Current node: \t", nodes)
-            # print("  Current depth:\t", depth)
-            # print("  Current max d:\t", max_depth)
-
-            for i in range(len(chosen_prod)):
-                symbol = chosen_prod[i]
-                if symbol[1] == params['BNF_GRAMMAR'].T:
-                    self.children.append(Tree((symbol[0],), self))
-
-                elif symbol[1] == params['BNF_GRAMMAR'].NT:
-                    self.children.append(Tree((symbol[0],), self))
-                    index, nodes, d, max_depth = self.children[-1].genome_derivation(genome,
-                                     index, depth, max_depth, nodes)
-
-        elif len(params['BNF_GRAMMAR'].rules[self.root]) == 1:
-            #Unit production at end of genome
-
-            nodes += 1
-            depth += 1
-
-            self.id, self.depth = nodes, depth
-
-            productions = params['BNF_GRAMMAR'].rules[self.root]
-            chosen_prod = productions[0]
+            self.codon = genome[index % len(genome)]
+            index += 1
             self.children = []
 
             for i in range(len(chosen_prod)):
                 symbol = chosen_prod[i]
                 if symbol[1] == params['BNF_GRAMMAR'].T:
                     self.children.append(Tree((symbol[0],), self))
+
                 elif symbol[1] == params['BNF_GRAMMAR'].NT:
                     self.children.append(Tree((symbol[0],), self))
                     index, nodes, d, max_depth = self.children[-1].genome_derivation(genome,
@@ -266,14 +241,37 @@ class Tree:
             depth += 1
             nodes += 1
 
-            # print "\nCurrent root:   \t", chosen_prod
-            # print "  Current node: \t", nodes
-            # print "  Current depth:\t", depth
-            # print "  Current max d:\t", max_depth
-
         if max_depth != "Incomplete" and (depth > max_depth):
             max_depth = depth
         return index, nodes, depth, max_depth
+
+    def fast_genome_derivation(self, genome, index=0):
+        """ Builds a tree using production choices from a given genome. Not
+            guaranteed to terminate.
+        """
+
+        if index != "Incomplete" and index < len(genome):
+
+            productions = params['BNF_GRAMMAR'].rules[self.root]
+            selection = genome[index % len(genome)] % len(productions)
+            chosen_prod = productions[selection]
+            self.codon = genome[index % len(genome)]
+            index += 1
+            self.children = []
+
+            for i in range(len(chosen_prod)):
+                symbol = chosen_prod[i]
+                if symbol[1] == params['BNF_GRAMMAR'].T:
+                    self.children.append(Tree((symbol[0],), self))
+
+                elif symbol[1] == params['BNF_GRAMMAR'].NT:
+                    self.children.append(Tree((symbol[0],), self))
+                    index = self.children[-1].fast_genome_derivation(genome,
+                                     index)
+        else:
+            # Mapping incomplete
+            return "Incomplete"
+        return index
 
     def legal_productions(self, method, remaining_depth, productions):
         """ Returns the available production choices for a node given a depth
@@ -331,51 +329,37 @@ class Tree:
         self.id, self.depth = nodes, depth
 
         productions = params['BNF_GRAMMAR'].rules[self.root]
-        remaining_depth = depth_limit
-
-        available = self.legal_productions(method, remaining_depth, productions)
+        available = self.legal_productions(method, depth_limit, productions)
         chosen_prod = random.choice(available)
 
         choice = productions.index(chosen_prod)
-        codon = random.randrange(len(productions), params['BNF_GRAMMAR'].codon_size, len(productions)) + choice
+        codon = random.randrange(len(productions),
+                                 params['BNF_GRAMMAR'].codon_size,
+                                 len(productions)) + choice
         self.codon = codon
         genome.append(codon)
-
-        # print("\nCurrent root:   \t", self.root)
-        # print("  Choices:      \t", productions)
-        # print("  Chosen Product:\t", chosen_prod)
-        # print("  Current node: \t", nodes)
-        # print("  Current depth:\t", depth)
-        # print("  Current max d:\t", max_depth)
-        # print("  Remaining depth:\t", remaining_depth)
-
         self.children = []
+
         for symbol in chosen_prod:
             if symbol[1] == params['BNF_GRAMMAR'].T:
                 #if the right hand side is a terminal
-                self.children.append(Tree((symbol[0],),self))
+                self.children.append(Tree((symbol[0],), self))
             elif symbol[1] == params['BNF_GRAMMAR'].NT:
                 # if the right hand side is a non-terminal
-                self.children.append(Tree((symbol[0],),self))
+                self.children.append(Tree((symbol[0],), self))
                 genome, nodes, d, max_depth = self.children[-1].derivation(genome, method, nodes, depth, max_depth, depth_limit=depth_limit-1)
 
-        NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+        NT_kids = [kid for kid in self.children if kid.root in
+                   params['BNF_GRAMMAR'].non_terminals]
 
         if not NT_kids:
             # Then the branch terminates here
             depth += 1
             nodes += 1
 
-            # print("\nCurrent root:   \t", chosen_prod)
-            # print("  Current node: \t", nodes)
-            # print("  Current depth:\t", depth)
-
         if depth > max_depth:
             max_depth = depth
 
-        # if not NT_kids:
-        #     print "  Current max d:\t", max_depth
-        #     print "  Remaining depth:\t", remaining_depth - 1
         return genome, nodes, depth, max_depth
 
     def pi_random_derivation(self, index, max_depth=20):
@@ -391,10 +375,13 @@ class Tree:
             all_node = queue.pop(chosen)
             node = all_node[0]
 
-            if node.get_depth() < max_depth:
+            n, depth = self.get_tree_info(self)
+            depth += 1
+
+            if depth < max_depth:
                 productions = params['BNF_GRAMMAR'].rules[node.root]
                 available = []
-                remaining_depth = max_depth - node.get_depth()
+                remaining_depth = max_depth - depth
 
                 if remaining_depth > params['BNF_GRAMMAR'].max_arity:
                     available = productions
@@ -402,14 +389,16 @@ class Tree:
                     for prod in productions:
                         depth = 0
                         for item in prod:
-                            if (item[1] == params['BNF_GRAMMAR'].NT) and (item[2] > depth):
+                            if (item[1] == params['BNF_GRAMMAR'].NT) and \
+                                    (item[2] > depth):
                                 depth = item[2]
                         if depth < remaining_depth:
                             available.append(prod)
                 chosen_prod = random.choice(available)
                 if len(productions) > 1:
                     prod_choice = productions.index(chosen_prod)
-                    codon = random.randrange(0, params['BNF_GRAMMAR'].codon_size, len(productions)) + prod_choice
+                    codon = random.randrange(0, params['BNF_GRAMMAR'].codon_size,
+                                             len(productions)) + prod_choice
                     node.codon = codon
                     node.id = index
                     index += 1
@@ -417,7 +406,7 @@ class Tree:
 
                 for i in range(len(chosen_prod)):
                     symbol = chosen_prod[i]
-                    child = Tree((symbol[0],),node)
+                    child = Tree((symbol[0],), node)
                     node.children.append(child)
                     if symbol[1] == params['BNF_GRAMMAR'].NT:
                         # if the right hand side is a non-terminal
@@ -439,11 +428,13 @@ class Tree:
             chosen = random.randint(0, num-1)
             all_node = queue.pop(chosen)
             node = all_node[0]
+            n, depth = self.get_tree_info(self)
+            depth += 1
 
-            if node.get_depth() < max_depth:
+            if depth < max_depth:
                 productions = params['BNF_GRAMMAR'].rules[node.root]
                 available = []
-                remaining_depth = max_depth - node.get_depth()
+                remaining_depth = max_depth - depth
 
                 if (self.get_max_children(self) < max_depth - 1) or \
                         (node.parent is None) or \

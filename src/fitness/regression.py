@@ -2,9 +2,9 @@ from utilities.helper_methods import get_Xy_train_test, get_Xy_train_test_separa
 from utilities.error_metrics import mae, mse, rmse
 from os import listdir, getcwd
 from numpy import log, sqrt
-from copy import deepcopy
 from sys import maxsize
 from math import isnan
+from copy import copy
 import numpy as np
 
 #todo look in to operator overload to remove deepcopy
@@ -12,7 +12,9 @@ class regression:
     """ fitness function for regression problems. Given a set of training or
     test data, returns the RMS error between inputs and outputs for a set.
     """
+
     maximise = False
+
     def __init__(self, experiment):
         self.training_in, self.training_exp, self.test_in, self.test_exp = get_data(experiment)
         self.n_vars = np.shape(self.test_in)[1]
@@ -20,7 +22,7 @@ class regression:
     def __call__(self, func, dist):
 
         if dist == "test":
-            x = deepcopy(self.test_in)
+            x = copy(self.test_in)
             try:
                 test_out = eval(func)
                 fitness = mse(test_out, self.test_exp)
@@ -28,7 +30,7 @@ class regression:
                 fitness = maxsize
 
         elif dist == "training":
-            x = deepcopy(self.training_in)
+            x = copy(self.training_in)
             try:
                 training_out = eval(func)
                 fitness = mse(training_out, self.training_exp)
@@ -51,7 +53,7 @@ def pdiv(a, b):
         elif (type(a) is np.float64) or (type(a) is float) or (type(a) is int):
             b[mask] = a
         else:
-            print ("New type encountered in pdiv:\t", type(a), "\n\n", a)
+            print("New type encountered in pdiv:\t", type(a), "\n\n", a)
             quit()
         return a/b
     else:
