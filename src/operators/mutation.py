@@ -1,19 +1,24 @@
+from algorithm.mapper import tree_derivation
 from random import randint, random, choice
+from representation import tree as Tree
 from algorithm.parameters import params
 from representation import individual
-from operators import initialisers
 
 
 def mutation_wheel():
     if params['MUTATION'] == "subtree":
         params['MUTATION'] = subtree_mutation
-    elif params['MUTATION'] == "nt_subtree":
-        params['MUTATION'] = no_tree_subtree_mutation
     elif params['MUTATION'] == "int_flip":
         params['MUTATION'] = int_flip_mutation
     else:
         print("Error: Mutation operator not specified correctly")
         exit(2)
+
+
+def mutation(pop):
+    """ Perform mutation on a population """
+
+    return list(map(params['MUTATION'], pop))
 
 
 def int_flip_mutation(ind):
@@ -31,8 +36,10 @@ def int_flip_mutation(ind):
     for i in range(len(ind.genome)):
         if random() < p_mut:
             ind.genome[i] = randint(0, params['CODON_SIZE'])
-    ind = individual.individual(ind.genome, None)
-    return ind
+
+    new_ind = individual.individual(ind.genome, None)
+
+    return new_ind
 
 
 def subtree_mutation(ind):
@@ -50,28 +57,6 @@ def subtree_mutation(ind):
         ind.used_codons = len(genome)
         ind.genome = genome + tail
         ind.depth, ind.nodes = ind.tree.get_tree_info(ind.tree)
-        ind.depth += 1
-
-    return ind
-
-
-def no_tree_subtree_mutation(ind):
-    """Mutate the individual by replacing a randomly selected subtree with a
-    new subtree. Guaranteed one event per individual if called."""
-
-    # Allow for multiple subtree mutation events
-    p_mut = params['MUTATION_EVENTS']
-    if type(p_mut) is not int:
-        p_mut = 1
-
-    for i in range(p_mut):
-        tail = ind.genome[ind.used_codons:]
-        ind_tree = initialisers.fast_genome_init(ind.genome[:ind.used_codons])
-        ind_tree.get_tree_info(ind_tree)
-        ind.phenotype, genome, new_tree = subtree_mutate(ind_tree)
-        ind.used_codons = len(genome)
-        ind.genome = genome + tail
-        ind.depth, ind.nodes = new_tree.get_tree_info(new_tree)
         ind.depth += 1
 
     return ind
@@ -97,6 +82,6 @@ def subtree_mutate(ind_tree):
     new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.get_depth()
 
     # Mutate a new subtree
-    new_tree.derivation([], "random", 0, 0, 0, depth_limit=new_tree.max_depth)
+    tree_derivation(Tree, new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
 
     return ind_tree.get_output(), ind_tree.build_genome([]), ind_tree

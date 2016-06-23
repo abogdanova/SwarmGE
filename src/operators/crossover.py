@@ -1,14 +1,11 @@
 from random import randint, random, sample, choice
-from representation import individual, tree
 from algorithm.parameters import params
-from operators import initialisers
+from representation import individual
 
 
 def crossover_wheel():
     if params['CROSSOVER'] == "subtree":
         params['CROSSOVER'] = subtree_crossover
-    elif params['CROSSOVER'] == "nt_subtree":
-        params['CROSSOVER'] = no_tree_subtree_crossover
     elif params['CROSSOVER'] == "onepoint":
         params['CROSSOVER'] = onepoint_crossover
     else:
@@ -20,11 +17,15 @@ def crossover(parents):
     """ Perform crossover on a population """
 
     cross_pop = []
-    i = 0
     while len(cross_pop) < params['GENERATION_SIZE']:
         inds_in = sample(parents, 2)
+
         ind_0 = individual.individual(inds_in[0].genome, None)
         ind_1 = individual.individual(inds_in[1].genome, None)
+
+        if ind_0.invalid or ind_1.invalid:
+            print("Error, invalid inds selected for crossover")
+            exit(2)
 
         inds = params['CROSSOVER'](ind_0, ind_1)
         if any([ind.invalid for ind in inds]):
@@ -35,7 +36,6 @@ def crossover(parents):
             pass
         else:
             cross_pop.extend(inds)
-        i += 1
 
     return cross_pop
 
@@ -77,9 +77,7 @@ def subtree_crossover(p_0, p_1):
         ind0 = p_1
         ind1 = p_0
     else:
-
         tail_0, tail_1 = p_0.genome[p_0.used_codons:], p_1.genome[p_1.used_codons:]
-
         tree_0, genome_0, tree_1, genome_1 = do_subtree_crossover(p_0.tree, p_1.tree)
 
         ind0 = individual.individual(genome_0, tree_0)
@@ -89,39 +87,6 @@ def subtree_crossover(p_0, p_1):
         ind0.depth += 1
 
         ind1 = individual.individual(genome_1, tree_1)
-        ind1.genome = genome_1 + tail_1
-        ind1.used_codons = len(genome_1)
-        ind1.depth, ind1.nodes = tree_1.get_tree_info(tree_1)
-        ind1.depth += 1
-
-    return [ind0, ind1]
-
-
-def no_tree_subtree_crossover(p_0, p_1):
-    """Given two individuals, create two children using subtree crossover and
-    return them."""
-
-    if random() > params['CROSSOVER_PROBABILITY']:
-        ind0 = p_1
-        ind1 = p_0
-    else:
-
-        tail_0, tail_1 = p_0.genome[p_0.used_codons:], p_1.genome[p_1.used_codons:]
-
-        tree_0 = initialisers.fast_genome_init(p_0.genome[:p_0.used_codons])
-        tree_0.get_tree_info(tree_0)
-        tree_1 = initialisers.fast_genome_init(p_1.genome[:p_1.used_codons])
-        tree_1.get_tree_info(tree_1)
-
-        tree_0, genome_0, tree_1, genome_1 = do_subtree_crossover(tree_0, tree_1)
-
-        ind0 = individual.no_tree_individual(genome_0)
-        ind0.genome = genome_0 + tail_0
-        ind0.used_codons = len(genome_0)
-        ind0.depth, ind0.nodes = tree_0.get_tree_info(tree_0)
-        ind0.depth += 1
-
-        ind1 = individual.no_tree_individual(genome_1)
         ind1.genome = genome_1 + tail_1
         ind1.used_codons = len(genome_1)
         ind1.depth, ind1.nodes = tree_1.get_tree_info(tree_1)
@@ -211,6 +176,7 @@ def do_subtree_crossover(tree1, tree2):
     if len(intersection) != 0:
         # Cross over parts of trees
         ret_tree1, ret_tree2 = do_crossover(tree1, tree2, intersection)
+
     else:
         # Cross over entire trees
         ret_tree1, ret_tree2 = tree2, tree1

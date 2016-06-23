@@ -37,6 +37,7 @@ def search_loop():
 
     return individuals
 
+
 def search_loop_complete_evals():
     """Loop over total evaluations"""
 

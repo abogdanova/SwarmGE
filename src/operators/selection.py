@@ -15,6 +15,7 @@ def selection_wheel():
 def tournament_selection(population):
     """Given an entire population, draw <tournament_size> competitors
     randomly and return the best."""
+
     tournament_size = params['TOURNAMENT_SIZE']
     winners = []
     if params['INVALID_SELECTION']:

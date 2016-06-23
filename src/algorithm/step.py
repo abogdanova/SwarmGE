@@ -1,6 +1,8 @@
+from algorithm.evaluate_fitness import evaluate_fitness
 from algorithm.parameters import params
-from algorithm import evaluate_fitness
-from operators import crossover
+from operators.crossover import crossover
+from operators.mutation import mutation
+
 
 def step(individuals):
     """Return individuals and best ever individual from a step of
@@ -10,13 +12,13 @@ def step(individuals):
     parents = params['SELECTION'](individuals)
 
     # Crossover parents and add to the new population
-    cross_pop = crossover.crossover(parents)
+    cross_pop = crossover(parents)
 
     # Mutate the new population
-    new_pop = list(map(params['MUTATION'], cross_pop))
+    new_pop = mutation(cross_pop)
 
     # Evaluate the fitness of the new population
-    new_pop = evaluate_fitness.evaluate_fitness(new_pop)
+    new_pop = evaluate_fitness(new_pop)
 
     # Replace the sorted individuals with the new populations
     individuals = params['REPLACEMENT'](new_pop, individuals)

@@ -1,4 +1,3 @@
-from utilities.helper_methods import python_filter
 from algorithm.parameters import params
 from operators import initialisers
 from re import search, findall
@@ -269,58 +268,3 @@ class grammar(object):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,
                                 self.rules, self.start_rule)
 
-    def generate(self, _input, max_wraps=0):
-        """ The genotype to phenotype mapping process. Map input via rules to
-        output. Returns output and used_input. """
-        #TODO check tree depths to see if correct
-        used_input, current_depth, current_max_depth, nodes = 0, 0, 0, 1
-        wraps, output, production_choices = -1, [], []
-        unexpanded_symbols = [(self.start_rule, 0)]
-
-        while (wraps < max_wraps) and \
-                (len(unexpanded_symbols) > 0) and\
-                (current_max_depth <= params['MAX_TREE_DEPTH']):
-            # Wrap
-            if used_input % len(_input) == 0 and \
-                    used_input > 0 and \
-                    any([i[0][1] == "NT" for i in unexpanded_symbols]):
-                wraps += 1
-
-            # Expand a production
-            current_item = unexpanded_symbols.pop(0)
-            current_symbol, current_depth = current_item[0], current_item[1]
-            if current_max_depth < current_depth:
-                current_max_depth = current_depth
-            # Set output if it is a terminal
-            if current_symbol[1] != self.NT:
-                output.append(current_symbol[0])
-
-            else:
-                production_choices = self.rules[current_symbol[0]]
-                # Select a production
-                current_production = _input[used_input % len(_input)] % \
-                                     len(production_choices)
-                # Use an input
-                used_input += 1
-                # Derviation order is left to right(depth-first)
-                children = []
-                for prod in production_choices[current_production]:
-                    children.append([prod, current_depth+1])
-
-                NT_kids = [child for child in children if child[0][1] == "NT"]
-                if any(NT_kids):
-                    nodes += len(NT_kids)
-                else:
-                    nodes += 1
-                unexpanded_symbols = children + unexpanded_symbols
-
-        if len(unexpanded_symbols) > 0:
-            # Not completly expanded, invalid solution.
-            return output, _input, None, nodes, True, current_max_depth+1, \
-                   used_input
-
-        output = "".join(output)
-        if self.python_mode:
-            output = python_filter(output)
-        return output, _input, None, nodes, False, current_max_depth+1,\
-               used_input

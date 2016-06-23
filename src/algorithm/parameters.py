@@ -1,5 +1,3 @@
-from fitness.fitness_wheel import set_fitness_function, set_fitness_params
-from utilities.helper_methods import RETURN_PERCENT
 from socket import gethostname
 hostname = gethostname().split('.')
 machine_name = hostname[0]
@@ -123,6 +121,8 @@ params = {
 }
 
 def set_params(command_line_args):
+    from utilities.helper_methods import RETURN_PERCENT
+    from fitness.fitness_wheel import set_fitness_function, set_fitness_params
     from operators.crossover import crossover_wheel
     from operators.mutation import mutation_wheel
     from operators.selection import selection_wheel
@@ -251,22 +251,15 @@ def set_params(command_line_args):
     if params['MUTATION'] == 'int_flip' and \
                     params['CROSSOVER'] == 'onepoint':
         params['GENOME_OPERATIONS'] = True
-    elif params['MUTATION'] == 'nt_subtree' and \
-                    params['CROSSOVER'] == 'nt_subtree':
-        params['GENOME_OPERATIONS'] = True
-        params['INITIALISATION'] = "nt_rhh"
     else:
         params['GENOME_OPERATIONS'] = False
 
-    # Check for use of trees
-    if params['MUTATION'] == 'nt_subtree' and \
-                    params['CROSSOVER'] != 'nt_subtree':
-        print("Error: must specify no trees or all trees")
-        quit()
-    elif params['MUTATION'] != 'nt_subtree' and \
-                    params['CROSSOVER'] == 'nt_subtree':
-        print("Error: must specify no trees or all trees")
-        quit()
+    # Set TREE_OPERATIONS automatically
+    if params['MUTATION'] == 'subtree' and \
+                    params['CROSSOVER'] == 'subtree':
+        params['TREE_OPERATIONS'] = True
+    else:
+        params['TREE_OPERATIONS'] = False
 
     # Set all parameters as specified in params
     # Set Crossover
