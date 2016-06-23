@@ -7,7 +7,7 @@ from math import isnan
 from copy import copy
 import numpy as np
 
-#todo look in to operator overload to remove deepcopy
+#todo look in to operator overload to remove copy
 class regression:
     """ fitness function for regression problems. Given a set of training or
     test data, returns the RMS error between inputs and outputs for a set.
