@@ -79,7 +79,7 @@ def subtree_mutate(ind_tree):
     new_tree = ind_tree.return_node_from_id(number, return_tree=None)
 
     # Set the depth limits for the new subtree
-    new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.get_depth()
+    new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.get_current_depth()
 
     # Mutate a new subtree
     tree_derivation(Tree, new_tree, [], "random", 0, 0, 0, new_tree.max_depth)

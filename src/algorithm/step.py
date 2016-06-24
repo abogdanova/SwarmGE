@@ -1,7 +1,7 @@
 from algorithm.evaluate_fitness import evaluate_fitness
-from algorithm.parameters import params
 from operators.crossover import crossover
 from operators.mutation import mutation
+from algorithm.parameters import params
 
 
 def step(individuals):

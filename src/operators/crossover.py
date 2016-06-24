@@ -111,8 +111,8 @@ def do_subtree_crossover(tree1, tree2):
         number2 = choice(indexes_2)
         t2 = tree2.return_node_from_id(number2, return_tree=None)
 
-        d1 = t1.get_depth()
-        d2 = t2.get_depth()
+        d1 = t1.get_current_depth()
+        d2 = t2.get_current_depth()
 
         # when the crossover is between the entire tree of both tree1 and tree2
         if d1 == 1 and d2 == 1:
@@ -162,7 +162,7 @@ def do_subtree_crossover(tree1, tree2):
         return tree1, tree2
 
     def get_labels(t1, t2):
-        return t1.getLabels(set()), t2.getLabels(set())
+        return t1.get_labels(set()), t2.get_labels(set())
 
     def intersect(l1, l2):
         intersection = l1.intersection(l2)
