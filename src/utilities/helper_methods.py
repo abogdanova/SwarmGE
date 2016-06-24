@@ -1,8 +1,7 @@
-import numpy as np
-from representation import tree
 from algorithm.parameters import params
-from copy import deepcopy
-from operators.initialisers import genome_init
+from representation import tree
+import numpy as np
+
 
 def python_filter(txt):
     """ Create correct python syntax.
@@ -29,7 +28,8 @@ def python_filter(txt):
                      if line.strip() != ""])
     return txt
 
-def RETURN_PERCENT(num, pop_size):
+
+def return_percent(num, pop_size):
     """Returns either one percent of the population size or a given number,
        whichever is larger."""
     percent = int(round(pop_size/100))
@@ -50,80 +50,6 @@ def generate_tree_from_genome(genome):
     return new_tree
 
 
-def verify_tree(ind_tree):
-    """ Checks the entire tree for discrepancies """
-
-    check_genome_from_tree(ind_tree)
-    invalid = ind_tree.check_expansion()
-    if invalid:
-        print("Invalid given tree")
-        quit()
-
-    def check_nodes(ind_tree, n=0):
-        n += 1
-
-        if ind_tree.id != n:
-            print("Node ids do not match node numbers")
-            print(ind_tree.id, n)
-            quit()
-
-        if ind_tree.root in params['BNF_GRAMMAR'].non_terminals:
-            NT_kids = [kid for kid in ind_tree.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
-            if not NT_kids:
-                n += 1
-            else:
-                for child in NT_kids:
-                    n = check_nodes(child, n)
-        return n
-
-    check_nodes(ind_tree)
-
-    orig_out = deepcopy(ind_tree.get_output())
-    orig_gen = deepcopy(ind_tree.build_genome([]))
-
-    output, genome, ind_tree, nodes, invalid, depth, \
-    used_codons = genome_init(orig_gen)
-
-    if invalid:
-        print("Invalid genome tree")
-        print("Original:\t", orig_out)
-        print("Genome:  \t", output)
-        quit()
-
-    if orig_out != output:
-        print("Tree output doesn't match genome tree output")
-        print("Original:\t", orig_out)
-        print("Genome:  \t", output)
-        quit()
-
-    elif orig_gen != genome:
-        print("Tree genome doesn't match genome tree genome")
-        print("Original:\t", orig_gen)
-        print("Genome:  \t", genome)
-        quit()
-
-
-def check_genome_from_tree(ind_tree):
-    """ Goes through a tree and checks each codon to ensure production
-        choice is correct """
-
-    if ind_tree.codon:
-        productions = params['BNF_GRAMMAR'].rules[ind_tree.root]
-        selection = ind_tree.codon % len(productions)
-        chosen_prod = productions[selection]
-        prods = [prod[0] for prod in chosen_prod]
-        roots = []
-        for kid in ind_tree.children:
-            roots.append(kid.root)
-        if roots != prods:
-            print("\nGenome is incorrect")
-            print("Codon productions:\t", prods)
-            print("Actual children:  \t", roots)
-            quit()
-    for kid in ind_tree.children:
-        kid.check_genome_from_tree()
-
-
 def get_Xy_train_test(filename, randomise=True, test_proportion=0.5, skip_header=0):
     """Read in a table of numbers and split it into X (all columns up
     to last) and y (last column), then split it into training and
@@ -141,6 +67,7 @@ def get_Xy_train_test(filename, randomise=True, test_proportion=0.5, skip_header
     test_y = y[idx:]
     return train_X, train_y, test_X, test_y
 
+
 def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     """Read in training and testing data files, and split each into X
     (all columns up to last) and y (last column)."""
@@ -152,5 +79,3 @@ def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     test_y = test_Xy[:,-1].transpose() # last column
 
     return train_X, train_y, test_X, test_y
-
-

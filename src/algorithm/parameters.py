@@ -121,7 +121,7 @@ params = {
 }
 
 def set_params(command_line_args):
-    from utilities.helper_methods import RETURN_PERCENT
+    from utilities.helper_methods import return_percent
     from fitness.fitness_wheel import set_fitness_function, set_fitness_params
     from operators.crossover import crossover_wheel
     from operators.mutation import mutation_wheel
@@ -237,7 +237,7 @@ def set_params(command_line_args):
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger if no elite size is previously set.
     if params['ELITE_SIZE'] is None:
-        params['ELITE_SIZE'] = RETURN_PERCENT(1, params['POPULATION_SIZE'])
+        params['ELITE_SIZE'] = return_percent(1, params['POPULATION_SIZE'])
 
     # Set the size of a generation
     params['GENERATION_SIZE'] = params['POPULATION_SIZE']
