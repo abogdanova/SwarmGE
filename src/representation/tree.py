@@ -37,21 +37,21 @@ class Tree:
         """Get the depth of the current node."""
 
         count = 1
-        currentParent = self.parent
-        while currentParent is not None:
+        current_parent = self.parent
+        while current_parent is not None:
             count += 1
-            currentParent = currentParent.parent
+            current_parent = current_parent.parent
         return count
 
-    def get_max_tree_depth(self, current, max_D=1):
+    def get_max_tree_depth(self, current, max_d=1):
         """ Returns the maximum depth of the tree from the current node. """
 
         curr_depth = current.get_current_depth()
-        if curr_depth > max_D:
-            max_D = curr_depth
+        if curr_depth > max_d:
+            max_d = curr_depth
         for child in current.children:
-            max_D = child.get_max_tree_depth(child, max_D)
-        return max_D
+            max_d = child.get_max_tree_depth(child, max_d)
+        return max_d
 
     def get_tree_info(self, current, number=0, max_D=0):
         """ Get the number of nodes and the max depth of the tree.

@@ -7,7 +7,8 @@ from math import isnan
 from copy import copy
 import numpy as np
 
-#todo look in to operator overload to remove copy
+
+#TODO James: look in to operator overwrite to remove copy
 class regression:
     """ fitness function for regression problems. Given a set of training or
     test data, returns the RMS error between inputs and outputs for a set.
@@ -42,6 +43,7 @@ class regression:
 
         return fitness
 
+
 def pdiv(a, b):
     """ Protected division operator to prevent division by zero"""
 
@@ -62,6 +64,7 @@ def pdiv(a, b):
         else:
             return a/b
 
+
 def psqrt(x):
     """ Protected square root operator"""
 
@@ -75,6 +78,7 @@ def psqrt(x):
         else:
             return sqrt(x)
 
+
 def plog(x):
     """ Protected log operator"""
 
@@ -87,6 +91,7 @@ def plog(x):
             return x
         else:
             return log(x)
+
 
 def get_data(experiment):
     """ Return the training and test data for the current experiment.

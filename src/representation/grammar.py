@@ -9,7 +9,6 @@ class grammar(object):
     NT = "NT"  # Non Terminal
     T = "T"  # Terminal
 
-
     def __init__(self, file_name):
         if file_name.endswith("pybnf"):
             self.python_mode = True
@@ -267,4 +266,3 @@ class grammar(object):
     def __str__(self):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,
                                 self.rules, self.start_rule)
-

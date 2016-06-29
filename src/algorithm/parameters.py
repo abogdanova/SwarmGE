@@ -8,8 +8,8 @@ import time
 params = {
 
 # Evolutionary Parameters
-'POPULATION_SIZE' : 10,
-'GENERATIONS' : 5,
+'POPULATION_SIZE' : 500,
+'GENERATIONS' : 50,
 
 # Class of problem
 'PROBLEM' : "regression",
@@ -30,7 +30,7 @@ params = {
 'CODON_SIZE' : 100000,
 'GENOME_LENGTH' : 500,
 
-# Initialisation
+# INITIALISATION
 'INITIALISATION' : "rhh",
     # "random"
     # "rhh"
@@ -40,7 +40,7 @@ params = {
     # If True, initialises individuals by generating random genomes (i.e.
     # doesn't use trees to initialise individuals).
 
-# Selection
+# SELECTION
 'SELECTION' : "tournament",
     # "tournament",
     # "truncation",
@@ -51,35 +51,36 @@ params = {
 'INVALID_SELECTION' : False,
     # Allow for selection of invalid individuals during selection process.
 
-# Crossover
-'CROSSOVER' : "subtree",
+# CROSSOVER
+'CROSSOVER' : "onepoint",
     # "onepoint",
     # "subtree",
 'CROSSOVER_PROBABILITY' : 0.75,
 
-# Mutation
-'MUTATION' : "subtree",
+# MUTATION
+'MUTATION' : "int_flip",
     # "subtree",
     # "int_flip",
-'MUTATION_EVENTS' : "1 over the length of the genome",
-    # Subtree mutation is guaranteed to mutate one subtree per individual
+'MUTATION_PROBABILITY' : None,
+'MUTATION_EVENTS' : 1,
 
-# Replacement
+# REPLACEMENT
 'REPLACEMENT' : "generational",
     # "generational",
     # "steady_state",
+'ELITE_SIZE' : None,
 
-# Debugging
+# DEBUGGING
     # Use this to turn on debugging mode. This mode doesn't write any files and
     # should be used when you want to test new methods or grammars, etc.
 'DEBUG' : False,
 
-# Printing
+# PRINTING
     # Use this to print out basic statistics for each generation to the command
     # line.
 'VERBOSE' : False,
 
-# Saving
+# SAVING
 'SAVE_ALL' : False,
     # Use this to save the phenotype of the best individual from each
     # generation. Can generate a lot of files. DEBUG must be False.
@@ -87,7 +88,7 @@ params = {
     # Saves a plot of the evolution of the best fitness result for each
     # generation.
 
-# Caching
+# CACHING
 'CACHE' : False,
     # The cache tracks unique individuals across evolution by saving a string of
     # each phenotype in a big list of all phenotypes. Saves all fitness
@@ -112,11 +113,7 @@ params = {
 'MACHINE' : machine_name,
 
 # Set Random Seed
-'RANDOM_SEED': None,
-
-# Elite size is set to either 1 or 1% of the population size, whichever is
-# bigger.
-'ELITE_SIZE' : None
+'RANDOM_SEED': None
 
 }
 
@@ -158,23 +155,31 @@ def set_params(command_line_args):
         if opt == "--help":
             help_message()
             exit()
+
+        # POPULATION OPTIONS
         elif opt == "--population":
             params['POPULATION_SIZE'] = int(arg)
             params['GENERATION_SIZE'] = int(arg)
         elif opt == "--generations":
             params['GENERATIONS'] = int(arg)
-        elif opt == "--initialisation":
-            params['INITIALISATION'] = arg
-        elif opt == "--max_init_depth":
-            params['MAX_INIT_DEPTH'] = int(arg)
-        elif opt == "--genome_init":
-            params['GENOME_INIT'] = True
+
+        # INDIVIDUAL SIZE
         elif opt == "--max_tree_depth":
             params['MAX_TREE_DEPTH'] = int(arg)
         elif opt == "--codon_size":
             params['CODON_SIZE'] = int(arg)
         elif opt == "--genome_length":
             params['GENOME_LENGTH'] = int(arg)
+
+        # INITIALISATION
+        elif opt == "--initialisation":
+            params['INITIALISATION'] = arg
+        elif opt == "--max_init_depth":
+            params['MAX_INIT_DEPTH'] = int(arg)
+        elif opt == "--genome_init":
+            params['GENOME_INIT'] = True
+
+        # SELECTION
         elif opt == "--selection":
             params['SELECTION'] = arg
         elif opt == "--invalid_selection":
@@ -183,26 +188,39 @@ def set_params(command_line_args):
             params['TOURNAMENT_SIZE'] = int(arg)
         elif opt == "--selection_proportion":
             params['SELECTION_PROPORTION'] = float(arg)
+
+        # CROSSOVER
         elif opt == "--crossover":
             params['CROSSOVER'] = arg
         elif opt == "--crossover_prob":
             params['CROSSOVER_PROBABILITY'] = float(arg)
-        elif opt == "--replacement":
-            params['REPLACEMENT'] = arg
+
+        # MUTATION
         elif opt == "--mutation":
             params['MUTATION'] = arg
-        #Mutation used three types of input that change the behavoiur of
         elif opt == "--mutation_events":
             try:
                 params['MUTATION_EVENTS'] = int(arg)
             except:
-                try:
-                    params['MUTATION_EVENTS'] = float(arg)
-                except:
-                    print("Error: Please define mutation probability as int or float")
-                    exit(2)
-        elif opt == "--random_seed":
-            params['RANDOM_SEED'] = int(arg)
+                print("Error: Please define mutation events as int")
+                exit(2)
+        elif opt == "--mutation_probability":
+            try:
+                params['MUTATION_PROBABILITY'] = float(arg)
+            except:
+                print("Error: Please define mutation probability as float")
+                exit(2)
+            if not 1 >= params['MUTATION_PROBABILITY'] >= 0:
+                print("Error: Mutation probability outside allowable range [0:1]")
+                exit(2)
+
+        # REPLACEMENT
+        elif opt == "--replacement":
+            params['REPLACEMENT'] = arg
+        elif opt == "--elite_size":
+            params['ELITE_SIZE'] = int(arg)
+
+        # PROBLEM SPECIFICS
         elif opt == "--bnf_grammar":
             params['GRAMMAR_FILE'] = arg
         elif opt == "--problem":
@@ -211,25 +229,31 @@ def set_params(command_line_args):
             params['SUITE'] = arg
         elif opt == "--target_string":
             params['STRING_MATCH_TARGET'] = arg
+
+        # OPTIONS
+        elif opt == "--random_seed":
+            params['RANDOM_SEED'] = int(arg)
         elif opt == "--debug":
             params['DEBUG'] = True
         elif opt == "--verbose":
             params['VERBOSE'] = True
-        elif opt == "--elite_size":
-            params['ELITE_SIZE'] = int(arg)
         elif opt == "--save_all":
             params['SAVE_ALL'] = True
         elif opt == "--save_plots":
             params['SAVE_PLOTS'] = True
+
+        # CACHING
         elif opt == "--cache":
             params['CACHE'] = True
-        elif opt == "--lookup_fitness":
             params['LOOKUP_FITNESS'] = True
         elif opt == "--lookup_bad_fitness":
+            params['LOOKUP_FITNESS'] = False
             params['LOOKUP_BAD_FITNESS'] = True
         elif opt == "--mutate_duplicates":
+            params['LOOKUP_FITNESS'] = False
             params['MUTATE_DUPLICATES'] = True
         elif opt == "--complete_evals":
+            params['LOOKUP_FITNESS'] = False
             params['COMPLETE_EVALS'] = True
         else:
             assert False, "Unhandled Option, please use --help for available params"
@@ -261,6 +285,14 @@ def set_params(command_line_args):
     else:
         params['TREE_OPERATIONS'] = False
 
+    # Set problem specifics
+    params['GRAMMAR_FILE'], params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
+    params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
+                                                      params['ALTERNATE'])
+
+    # Initialise run lists and folders
+    initialise_run_params()
+
     # Set all parameters as specified in params
     # Set Crossover
     crossover_wheel()
@@ -273,10 +305,3 @@ def set_params(command_line_args):
 
     # Set Replacement
     replacement_wheel()
-
-    # Set problem specifics
-    params['GRAMMAR_FILE'], params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
-    params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
-                                                      params['ALTERNATE'])
-    # Initialise run lists and folders
-    initialise_run_params()

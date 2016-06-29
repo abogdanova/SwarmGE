@@ -25,13 +25,10 @@ def int_flip_mutation(ind):
     """Mutate the individual by randomly choosing a new int with probability
     p_mut. Works per-codon, hence no need for "within_used" option."""
 
-    p_mut = params['MUTATION_EVENTS']
-    if type(p_mut) is str:
-        p_mut = 1/len(ind.genome)
-    elif type(p_mut) is float:
-        p_mut = params['MUTATION_EVENTS']
-    elif type(p_mut) is int:
-        p_mut /= len(ind.genome)
+    if params['MUTATION_PROBABILITY']:
+        p_mut = params['MUTATION_PROBABILITY']
+    else:
+        p_mut = params['MUTATION_EVENTS']/len(ind.genome)
 
     for i in range(len(ind.genome)):
         if random() < p_mut:
@@ -46,12 +43,7 @@ def subtree_mutation(ind):
     """Mutate the individual by replacing a randomly selected subtree with a
     new subtree. Guaranteed one event per individual if called."""
 
-    # Allow for multiple subtree mutation events
-    p_mut = params['MUTATION_EVENTS']
-    if type(p_mut) is not int:
-        p_mut = 1
-
-    for i in range(p_mut):
+    for i in range(params['MUTATION_EVENTS']):
         tail = ind.genome[ind.used_codons:]
         ind.phenotype, genome, ind.tree = subtree_mutate(ind.tree)
         ind.used_codons = len(genome)

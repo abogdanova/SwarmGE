@@ -143,6 +143,23 @@ def print_stats():
     print("\n")
 
 
+def print_final_stats(total_time):
+    """
+    Prints a final review of the overall evolutionary process
+    """
+
+    if params['PROBLEM'] == "regression":
+        print("\n\nBest:\n  Training fitness:\t", stats['best_ever'].training_fitness)
+        print("  Test fitness:\t\t", stats['best_ever'].test_fitness)
+    else:
+        print("\n\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
+    print("  Phenotype:", stats['best_ever'].phenotype)
+    print("  Genome:", stats['best_ever'].genome)
+    for stat in sorted(stats.keys()):
+        print(" ", stat, ": \t", stats[stat])
+    print("\nTime taken:\t", total_time)
+
+
 def save_stats(END=False):
     """Write the results to a results file for later analysis"""
     if params['VERBOSE']:
@@ -169,21 +186,18 @@ def save_stats(END=False):
         trackers.stats_list.append(stats_list)
 
 
-def print_final_stats(total_time):
+def save_stats_headers():
     """
-    Prints a final review of the overall evolutionary process
+    Saves the headers for all stats in the stats dictionary.
+    :return: Nothing.
     """
 
-    if params['PROBLEM'] == "regression":
-        print("\n\nBest:\n  Training fitness:\t", stats['best_ever'].training_fitness)
-        print("  Test fitness:\t\t", stats['best_ever'].test_fitness)
-    else:
-        print("\n\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
-    print("  Phenotype:", stats['best_ever'].phenotype)
-    print("  Genome:", stats['best_ever'].genome)
+    filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
+    savefile = open(filename, 'w')
     for stat in sorted(stats.keys()):
-        print(" ", stat, ": \t", stats[stat])
-    print("\nTime taken:\t", total_time)
+        savefile.write(str(stat) + "\t")
+    savefile.write("\n")
+    savefile.close()
 
 
 def save_final_stats(total_time):
@@ -194,6 +208,19 @@ def save_final_stats(total_time):
     filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
     savefile = open(filename, 'a')
     savefile.write("Total time taken\t" + str(total_time))
+    savefile.close()
+
+
+def save_params():
+    """
+    Save evolutionary parameters
+    :return: Nothing
+    """
+
+    filename = "./results/" + str(params['TIME_STAMP']) + "/parameters.txt"
+    savefile = open(filename, 'w')
+    for param in params:
+        savefile.write(str(param) + " : \t" + str(params[param]) + "\n")
     savefile.close()
 
 
@@ -248,17 +275,5 @@ def generate_folders_and_files():
                       str(params['TIME_STAMP'])):
         mkdir(str(file_path) + "/Results/" + str(params['TIME_STAMP']))
 
-    # Save evolutionary parameters
-    filename = "./results/" + str(params['TIME_STAMP']) + "/parameters.txt"
-    savefile = open(filename, 'w')
-    for param in params:
-        savefile.write(str(param) + " : \t" + str(params[param]) + "\n")
-    savefile.close()
-
-    # Save stats
-    filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
-    savefile = open(filename, 'w')
-    for stat in sorted(stats.keys()):
-        savefile.write(str(stat) + "\t")
-    savefile.write("\n")
-    savefile.close()
+    save_params()
+    save_stats_headers()
