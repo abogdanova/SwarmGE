@@ -69,7 +69,7 @@ class individual(object):
         """ Evaluates phenotype in fitness function on either training or test
         distributions and sets fitness"""
 
-        if params['PROBLEM'] == "regression":
+        if params['PROBLEM'] in ("regression", "classification"):
             # The problem is regression, e.g. has training and test data
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype, dist)
         else:

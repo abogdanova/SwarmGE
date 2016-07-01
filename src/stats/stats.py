@@ -97,7 +97,7 @@ def get_stats(individuals, END=False):
         stdout.flush()
 
     # Generate test fitness on regression problems
-    if params['PROBLEM'] == "regression" and \
+    if params['PROBLEM'] in ("regression", "classification") and \
             (END or (params['COMPLETE_EVALS'] and
                              stats['gen'] == params['GENERATIONS'])):
         stats['best_ever'].training_fitness = copy(stats['best_ever'].fitness)
@@ -148,7 +148,7 @@ def print_final_stats(total_time):
     Prints a final review of the overall evolutionary process
     """
 
-    if params['PROBLEM'] == "regression":
+    if params['PROBLEM'] in ("regression", "classification"):
         print("\n\nBest:\n  Training fitness:\t", stats['best_ever'].training_fitness)
         print("  Test fitness:\t\t", stats['best_ever'].test_fitness)
     else:
@@ -233,7 +233,7 @@ def save_best(name="best"):
     savefile.write("Phenotype:\n" + str(stats['best_ever'].phenotype) + "\n\n")
     savefile.write("Genotype:\n" + str(stats['best_ever'].genome) + "\n")
     savefile.write("Tree:\n" + str(stats['best_ever'].tree) + "\n")
-    if params['PROBLEM'] == "regression":
+    if params['PROBLEM'] in ("regression", "classification"):
         savefile.write("\nTraining fitness:\t" + str(stats['best_ever'].training_fitness))
         savefile.write("\nTest fitness:\t" + str(stats['best_ever'].test_fitness))
     else:
@@ -253,7 +253,7 @@ def save_best_midway(best_ever):
     savefile.write("Phenotype:\n" + str(best_ever.phenotype) + "\n\n")
     savefile.write("Genotype:\n" + str(best_ever.genome) + "\n")
     savefile.write("Tree:\n" + str(best_ever.tree) + "\n")
-    if params['PROBLEM'] == "regression":
+    if params['PROBLEM'] in ("regression", "classification"):
         savefile.write("\nTraining fitness:\t" + str(stats['best_ever'].training_fitness))
         savefile.write("\nTest fitness:\t" + str(stats['best_ever'].test_fitness))
     else:

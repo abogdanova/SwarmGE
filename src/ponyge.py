@@ -34,4 +34,3 @@ def mane():
 if __name__ == "__main__":
     set_params(sys.argv)
     mane()
-0.

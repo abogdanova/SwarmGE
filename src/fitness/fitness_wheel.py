@@ -1,9 +1,10 @@
 from fitness.string_match import string_match
 from fitness.regression import regression
+from utilities.error_metrics import inverse_f1_score
 
 
 def set_fitness_params(problem, params):
-    if problem == "regression":
+    if problem in ("regression", "classification"):
         return "grammars/" + params['SUITE'] + ".bnf", params['SUITE']
     elif problem == "string_match":
         return "grammars/letter.bnf", params['STRING_MATCH_TARGET']
@@ -16,6 +17,8 @@ def set_fitness_function(problem, alternate=None):
     # Regression Problem
     if problem == "regression":
         return regression(alternate)
+    elif problem == "classification":
+        return regression(alternate, error=inverse_f1_score)
     # String Match Problem
     elif problem == "string_match":
         return string_match(alternate)
