@@ -6,11 +6,10 @@ from math import floor
 from representation import tree
 from utilities import helper_methods
 import matplotlib
-import matplotlib.pyplot as plt
-
-
-plt.rc('font', family='Times New Roman')
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+plt.rc('font', family='Times New Roman')
+
 CODON_SIZE = 100000
 
 now = datetime.now()

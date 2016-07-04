@@ -2,10 +2,8 @@ from utilities.trackers import best_fitness_list
 from algorithm.parameters import params
 from os import getcwd
 import matplotlib
-import matplotlib.pyplot as plt
-
-
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 plt.rc('font', family='Times New Roman')
 
 
