@@ -6,6 +6,9 @@
 # Hereby licensed under the GNU GPL v3.
 """ Python GE implementation """
 
+from utilities.initialise_run import check_python_version
+check_python_version()
+
 from fitness.fitness_wheel import set_fitness_function
 from algorithm.parameters import params, set_params
 from stats.stats import get_stats, stats
