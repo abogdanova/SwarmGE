@@ -2,17 +2,7 @@ from algorithm.parameters import params
 from copy import copy
 
 
-def replacement_wheel():
-    if params['REPLACEMENT'] == "generational":
-        params['REPLACEMENT'] = generational_replacement
-    elif params['REPLACEMENT'] == "steady_state":
-        params['REPLACEMENT'] = steady_state_replacement
-    else:
-        print("Error: Replacement operator not specified correctly")
-        exit(2)
-
-
-def generational_replacement(new_pop, individuals):
+def generational(new_pop, individuals):
     """Return new pop. The ELITE_SIZE best individuals are appended
     to new pop if they are better than the worst individuals in new
     pop"""
@@ -25,7 +15,7 @@ def generational_replacement(new_pop, individuals):
 
 
 # Provided but no flag set. Need to append code to use this
-def steady_state_replacement(new_pop, individuals):
+def steady_state(new_pop, individuals):
     """Return individuals. If the best of new pop is better than the
     worst of individuals it is inserted into individuals"""
     individuals.sort(reverse=True)

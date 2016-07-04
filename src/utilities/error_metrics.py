@@ -18,10 +18,9 @@ def mse(y, yhat):
 
 
 def hinge(y, yhat):
-    """Hinge loss is a suitable loss function for classification.  Here y
-    is the true values (-1 and 1) and yhat is the "raw" output of the
-    individual, ie a real value. The classifier will use sign(yhat) as
-    its prediction."""
+    """Hinge loss is a suitable loss function for classification.  Here y is
+    the true values (-1 and 1) and yhat is the "raw" output of the individual,
+    ie a real value. The classifier will use sign(yhat) as its prediction."""
     return np.max(0, 1 - y * yhat)
 
 

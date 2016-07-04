@@ -3,16 +3,6 @@ from algorithm.parameters import params
 from representation import individual
 
 
-def crossover_wheel():
-    if params['CROSSOVER'] == "subtree":
-        params['CROSSOVER'] = subtree_crossover
-    elif params['CROSSOVER'] == "onepoint":
-        params['CROSSOVER'] = onepoint_crossover
-    else:
-        print("Error: Crossover operator not specified correctly")
-        exit(2)
-
-
 def crossover(parents):
     """ Perform crossover on a population """
 
@@ -40,7 +30,7 @@ def crossover(parents):
     return cross_pop
 
 
-def onepoint_crossover(p_0, p_1, within_used=True):
+def onepoint(p_0, p_1, within_used=True):
     """Given two individuals, create two children using one-point crossover and
     return them."""
 
@@ -69,7 +59,7 @@ def onepoint_crossover(p_0, p_1, within_used=True):
     return [ind_0, ind_1]
 
 
-def subtree_crossover(p_0, p_1):
+def subtree(p_0, p_1):
     """Given two individuals, create two children using subtree crossover and
     return them."""
 

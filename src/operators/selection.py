@@ -2,17 +2,7 @@ from algorithm.parameters import params
 from random import sample
 
 
-def selection_wheel():
-    if params['SELECTION'] == "tournament":
-        params['SELECTION'] = tournament_selection
-    elif params['SELECTION'] == "truncation":
-        params['SELECTION'] = truncation_selection
-    else:
-        print("Error: Selection operator not specified correctly")
-        exit(2)
-
-
-def tournament_selection(population):
+def tournament(population):
     """Given an entire population, draw <tournament_size> competitors
     randomly and return the best."""
 
@@ -30,7 +20,7 @@ def tournament_selection(population):
 
 
 # Provided but no flag set. Need to append code to use this
-def truncation_selection(population):
+def truncation(population):
     """Given an entire population, return the best <proportion> of
     them."""
     population.sort(reverse=True)

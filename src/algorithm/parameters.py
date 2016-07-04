@@ -42,9 +42,9 @@ params = {
         # doesn't use trees to initialise individuals).
 
         # SELECTION
-        'SELECTION': "tournament",
-        # "tournament",
-        # "truncation",
+        'SELECTION': "selection.tournament",
+        # "selection.tournament"
+        # "selection.truncation",
         'TOURNAMENT_SIZE': 2,
         # For tournament selection
         'SELECTION_PROPORTION': 0.5,
@@ -53,22 +53,22 @@ params = {
         # Allow for selection of invalid individuals during selection process.
 
         # CROSSOVER
-        'CROSSOVER': "onepoint",
-        # "onepoint",
-        # "subtree",
+        'CROSSOVER': "crossover.onepoint",
+        # "crossover.onepoint",
+        # "crossover.subtree",
         'CROSSOVER_PROBABILITY': 0.75,
 
         # MUTATION
-        'MUTATION': "int_flip",
-        # "subtree",
-        # "int_flip",
+        'MUTATION': "mutation.int_flip",
+        # "mutation.subtree",
+        # "mutation.int_flip",
         'MUTATION_PROBABILITY': None,
         'MUTATION_EVENTS': 1,
 
         # REPLACEMENT
-        'REPLACEMENT': "generational",
-        # "generational",
-        # "steady_state",
+        'REPLACEMENT': "replacement.generational",
+        # "replacement.generational",
+        # "replacement.steady_state",
         'ELITE_SIZE': None,
 
         # DEBUGGING
@@ -119,13 +119,10 @@ params = {
 
 
 def set_params(command_line_args):
-    from utilities.helper_methods import return_percent
     from fitness.fitness_wheel import set_fitness_function, set_fitness_params
-    from operators.crossover import crossover_wheel
-    from operators.mutation import mutation_wheel
-    from operators.selection import selection_wheel
-    from operators.replacement import replacement_wheel
+    from operators import crossover, selection, mutation, replacement
     from utilities.initialise_run import initialise_run_params
+    from utilities.helper_methods import return_percent
     from utilities.help_message import help_message
     import getopt
 
@@ -273,13 +270,15 @@ def set_params(command_line_args):
     seed(params['RANDOM_SEED'])
 
     # Set GENOME_OPERATIONS automatically
-    if params['MUTATION'] == 'int_flip' and params['CROSSOVER'] == 'onepoint':
+    if params['MUTATION'] == 'mutation.int_flip' and \
+                    params['CROSSOVER'] == 'crossover.onepoint':
         params['GENOME_OPERATIONS'] = True
     else:
         params['GENOME_OPERATIONS'] = False
 
     # Set TREE_OPERATIONS automatically
-    if params['MUTATION'] == 'subtree' and params['CROSSOVER'] == 'subtree':
+    if params['MUTATION'] == 'mutation.subtree' and \
+                    params['CROSSOVER'] == 'crossover.subtree':
         params['TREE_OPERATIONS'] = True
     else:
         params['TREE_OPERATIONS'] = False
@@ -294,14 +293,7 @@ def set_params(command_line_args):
     initialise_run_params()
 
     # Set all parameters as specified in params
-    # Set Crossover
-    crossover_wheel()
-
-    # Set Mutation
-    mutation_wheel()
-
-    # Set Selection
-    selection_wheel()
-
-    # Set Replacement
-    replacement_wheel()
+    params['CROSSOVER'] = eval(params['CROSSOVER'])
+    params['MUTATION'] = eval(params['MUTATION'])
+    params['SELECTION'] = eval(params['SELECTION'])
+    params['REPLACEMENT'] = eval(params['REPLACEMENT'])

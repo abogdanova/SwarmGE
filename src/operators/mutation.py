@@ -4,23 +4,13 @@ from algorithm.parameters import params
 from representation import individual
 
 
-def mutation_wheel():
-    if params['MUTATION'] == "subtree":
-        params['MUTATION'] = subtree_mutation
-    elif params['MUTATION'] == "int_flip":
-        params['MUTATION'] = int_flip_mutation
-    else:
-        print("Error: Mutation operator not specified correctly")
-        exit(2)
-
-
 def mutation(pop):
     """ Perform mutation on a population """
 
     return list(map(params['MUTATION'], pop))
 
 
-def int_flip_mutation(ind):
+def int_flip(ind):
     """Mutate the individual by randomly choosing a new int with probability
     p_mut. Works per-codon, hence no need for "within_used" option."""
 
@@ -38,7 +28,7 @@ def int_flip_mutation(ind):
     return new_ind
 
 
-def subtree_mutation(ind):
+def subtree(ind):
     """Mutate the individual by replacing a randomly selected subtree with a
     new subtree. Guaranteed one event per individual if called."""
 
