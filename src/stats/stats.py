@@ -10,28 +10,27 @@ import time
 
 """Algorithm statistics"""
 stats = {
-
-"gen" : 0,
-"best_ever" : None,
-"total_inds" : 0,
-"regens" : 0,
-"invalids" : 0,
-"unique_inds" : len(trackers.cache),
-"unused_search" : 0,
-"ave_genome_length" : 0,
-"max_genome_length" : 0,
-"min_genome_length" : 0,
-"ave_used_codons" : 0,
-"max_used_codons" : 0,
-"min_used_codons" : 0,
-"ave_tree_depth" : 0,
-"max_tree_depth" : 0,
-"min_tree_depth" : 0,
-"ave_tree_nodes" : 0,
-"max_tree_nodes" : 0,
-"min_tree_nodes" : 0,
-"ave_fitness" : 0,
-"best_fitness" : 0
+    "gen": 0,
+    "best_ever": None,
+    "total_inds": 0,
+    "regens": 0,
+    "invalids": 0,
+    "unique_inds": len(trackers.cache),
+    "unused_search": 0,
+    "ave_genome_length": 0,
+    "max_genome_length": 0,
+    "min_genome_length": 0,
+    "ave_used_codons": 0,
+    "max_used_codons": 0,
+    "min_used_codons": 0,
+    "ave_tree_depth": 0,
+    "max_tree_depth": 0,
+    "min_tree_depth": 0,
+    "ave_tree_nodes": 0,
+    "max_tree_nodes": 0,
+    "min_tree_nodes": 0,
+    "ave_fitness": 0,
+    "best_fitness": 0
 }
 
 
@@ -43,8 +42,8 @@ def get_stats(individuals, END=False):
         # Time Stats
         trackers.time_list.append(time.clock())
         available = [i for i in individuals if not i.invalid]
-        stats['time_taken'] = timedelta(seconds=trackers.time_list[-1] -
-                                                trackers.time_list[-2])
+        stats['time_taken'] = \
+            timedelta(seconds=trackers.time_list[-1] - trackers.time_list[-2])
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
         stats['unique_inds'] = len(trackers.cache)
@@ -98,8 +97,8 @@ def get_stats(individuals, END=False):
 
     # Generate test fitness on regression problems
     if params['PROBLEM'] in ("regression", "classification") and \
-            (END or (params['COMPLETE_EVALS'] and
-                             stats['gen'] == params['GENERATIONS'])):
+            (END or (params['COMPLETE_EVALS']
+                     and stats['gen'] == params['GENERATIONS'])):
         stats['best_ever'].training_fitness = copy(stats['best_ever'].fitness)
         stats['best_ever'].evaluate(dist='test')
         stats['best_ever'].test_fitness = copy(stats['best_ever'].fitness)
@@ -149,7 +148,8 @@ def print_final_stats(total_time):
     """
 
     if params['PROBLEM'] in ("regression", "classification"):
-        print("\n\nBest:\n  Training fitness:\t", stats['best_ever'].training_fitness)
+        print("\n\nBest:\n  Training fitness:\t",
+              stats['best_ever'].training_fitness)
         print("  Test fitness:\t\t", stats['best_ever'].test_fitness)
     else:
         print("\n\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
@@ -160,7 +160,7 @@ def print_final_stats(total_time):
     print("\nTime taken:\t", total_time)
 
 
-def save_stats(END=False):
+def save_stats(end=False):
     """Write the results to a results file for later analysis"""
     if params['VERBOSE']:
         filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
@@ -170,7 +170,7 @@ def save_stats(END=False):
         savefile.write("\n")
         savefile.close()
 
-    elif END:
+    elif end:
         stats_list = [stats[stat] for stat in sorted(stats.keys())]
         trackers.stats_list.append(stats_list)
         filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
@@ -234,16 +234,18 @@ def save_best(name="best"):
     savefile.write("Genotype:\n" + str(stats['best_ever'].genome) + "\n")
     savefile.write("Tree:\n" + str(stats['best_ever'].tree) + "\n")
     if params['PROBLEM'] in ("regression", "classification"):
-        savefile.write("\nTraining fitness:\t" + str(stats['best_ever'].training_fitness))
-        savefile.write("\nTest fitness:\t" + str(stats['best_ever'].test_fitness))
+        savefile.write("\nTraining fitness:\t" +
+                       str(stats['best_ever'].training_fitness))
+        savefile.write("\nTest fitness:\t" +
+                       str(stats['best_ever'].test_fitness))
     else:
         savefile.write("\nFitness:\t" + str(stats['best_ever'].fitness))
     savefile.close()
 
 
 def save_best_midway(best_ever):
-    filename = "./results/" + str(params['TIME_STAMP']) + "/best_" + str(stats['gen']) +\
-               ".txt"
+    filename = "./results/" + str(params['TIME_STAMP']) + "/best_" + \
+               str(stats['gen']) + ".txt"
     savefile = open(filename, 'w')
     t1 = time.clock()
     trackers.time_list.append(t1)
@@ -254,8 +256,10 @@ def save_best_midway(best_ever):
     savefile.write("Genotype:\n" + str(best_ever.genome) + "\n")
     savefile.write("Tree:\n" + str(best_ever.tree) + "\n")
     if params['PROBLEM'] in ("regression", "classification"):
-        savefile.write("\nTraining fitness:\t" + str(stats['best_ever'].training_fitness))
-        savefile.write("\nTest fitness:\t" + str(stats['best_ever'].test_fitness))
+        savefile.write("\nTraining fitness:\t" +
+                       str(stats['best_ever'].training_fitness))
+        savefile.write("\nTest fitness:\t" +
+                       str(stats['best_ever'].test_fitness))
     else:
         savefile.write("\nFitness:\t" + str(stats['best_ever'].fitness))
     savefile.write("\nTotal time:\t" + str(time_taken))

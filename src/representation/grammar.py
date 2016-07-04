@@ -4,7 +4,7 @@ from re import search, findall
 from itertools import groupby
 
 
-class grammar(object):
+class Grammar(object):
     """ Context Free Grammar """
     NT = "NT"  # Non Terminal
     T = "T"  # Terminal
@@ -23,7 +23,8 @@ class grammar(object):
         self.check_depths()
         self.check_permutations()
         self.min_ramp = initialisers.get_min_ramp_depth(self)
-        self.crossover_NTs = [i for i in self.non_terminals if self.non_terminals[i]['b_factor'] > 1]
+        self.crossover_NTs = [i for i in self.non_terminals
+                              if self.non_terminals[i]['b_factor'] > 1]
 
     def read_bnf_file(self, file_name):
         """Read a grammar file in BNF format"""
@@ -53,18 +54,19 @@ class grammar(object):
                     tmp_productions = []
                     for production in [production.strip()
                                        for production in
-                                       productions.split(production_separator)]:
+                                       productions.split(
+                                           production_separator)]:
                         tmp_production = []
                         if not search(non_terminal_pattern, production):
                             self.terminals.append(production)
-                            tmp_production.append([production, self.T, 0, False])
+                            tmp_production.append([production, self.T,
+                                                   0, False])
                         else:
                             # Match non terminal or terminal pattern
                             # TODO does this handle quoted NT symbols?
                             for value in findall("<.+?>|[^<>]*", production):
                                 if value != '':
-                                    if not search(non_terminal_pattern,
-                                                     value):
+                                    if not search(non_terminal_pattern, value):
                                         symbol = [value, self.T, 0, False]
                                         self.terminals.append(value)
                                     else:
@@ -72,11 +74,12 @@ class grammar(object):
                                     tmp_production.append(symbol)
                         tmp_productions.append(tmp_production)
                     # Create a rule
-                    if not lhs in self.rules:
+                    if lhs not in self.rules:
                         self.rules[lhs] = tmp_productions
                         if len(tmp_productions) == 1:
-                            print("Warning: Grammar contains unit production for production rule", lhs)
-                            print("         Unit productions consume GE codons.")
+                            print("Warning: Grammar contains unit production "
+                                  "for production rule", lhs)
+                            print("       Unit productions consume GE codons.")
                     else:
                         raise ValueError("lhs should be unique", lhs)
                 else:
@@ -110,7 +113,7 @@ class grammar(object):
                     choices = self.rules[NT]
                     terms = 0
                     for choice in choices:
-                        if not (all([sym[1] == self.T for sym in choice]) == False):
+                        if all([sym[1] == self.T for sym in choice]):
                             terms += 1
                     if terms:
                         # this NT can then map directly to a T
@@ -120,23 +123,40 @@ class grammar(object):
                         # There are NTs remaining in the production choices
                         for choice in choices:
                             NT_s = [sym for sym in choice if sym[1] == self.NT]
-                            NT_choices = list(NT_s for NT_s,_ in groupby(NT_s))
+                            NT_choices = list(NT_s for NT_s,
+                                                       _ in groupby(NT_s))
                             if len(NT_choices) > 1:
                                 if all([self.non_terminals[item[0]]['expanded']
                                         for item in NT_choices]):
-                                    if vals['expanded'] and (vals['min_steps'] > max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1):
-                                        vals['min_steps'] = max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1
+                                    if vals['expanded'] and \
+                                            (vals['min_steps'] >
+                                                     max([self.non_terminals
+                                                          [item[0]]
+                                                          ['min_steps']
+                                                          for item in
+                                                          NT_choices]) + 1):
+                                        vals['min_steps'] = \
+                                            max([self.non_terminals[item[0]]
+                                                 ['min_steps'] for
+                                                 item in NT_choices]) + 1
                                     elif not vals['expanded']:
                                         vals['expanded'] = True
-                                        vals['min_steps'] = max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1
+                                        vals['min_steps'] = \
+                                            max([self.non_terminals[item[0]]
+                                                 ['min_steps']
+                                                 for item in NT_choices]) + 1
                             else:
                                 child = self.non_terminals[NT_choices[0][0]]
                                 if child['expanded']:
-                                    if vals['expanded'] and (vals['min_steps'] > child['min_steps'] + 1):
-                                        vals['min_steps'] = child['min_steps'] + 1
+                                    if vals['expanded'] and\
+                                            (vals['min_steps'] >
+                                                     child['min_steps'] + 1):
+                                        vals['min_steps'] = \
+                                            child['min_steps'] + 1
                                     else:
                                         vals['expanded'] = True
-                                        vals['min_steps'] = child['min_steps'] + 1
+                                        vals['min_steps'] = \
+                                            child['min_steps'] + 1
 
         for i in range(len(self.non_terminals)):
             for NT in self.non_terminals:
@@ -146,7 +166,7 @@ class grammar(object):
                     terms = 0
                     nonrecurs = 0
                     for choice in choices:
-                        if not (all([sym[1] == self.T for sym in choice]) == False):
+                        if all([sym[1] == self.T for sym in choice]):
                             # This production choice is all terminals
                             terms += 1
                         temp = [bit for bit in choice if bit[1] == 'NT']
@@ -170,7 +190,7 @@ class grammar(object):
         if self.start_rule[0] in self.non_terminals:
             self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
         else:
-            print ("Error: start rule not a non-terminal")
+            print("Error: start rule not a non-terminal")
             quit()
         self.max_arity = 0
         for NT in self.non_terminals:
@@ -218,14 +238,14 @@ class grammar(object):
         if depth < self.min_path:
             # There is a bug somewhere that is looking for a tree smaller than
             # any we can create
-            print ("Error: cannot check permutations for tree smaller than the minimum size")
+            print("Error: cannot check permutations for tree smaller than the "
+                  "minimum size")
             quit()
         if depth in self.permutations.keys():
             return self.permutations[depth]
         else:
             pos = 0
-            terminalSymbols = self.terminals
-            depthPerSymbolTrees = {}
+            depth_per_symbol_trees = {}
             productions = []
             for NT in self.non_terminals:
                 a = self.non_terminals[NT]
@@ -233,31 +253,32 @@ class grammar(object):
                     if any([prod[1] is self.NT for prod in rule]):
                         productions.append(rule)
 
-            startSymbols = self.rules[self.start_rule[0]]
+            start_symbols = self.rules[self.start_rule[0]]
 
             for prod in productions:
-                depthPerSymbolTrees[str(prod)] = {}
+                depth_per_symbol_trees[str(prod)] = {}
 
             for i in range(2, depth+1):
                 # Find all the possible permutations from depth of min_path up
                 # to a specified depth
                 for ntSymbol in productions:
-                    symPos = 1
+                    sym_pos = 1
                     for j in ntSymbol:
-                        symbolArityPos = 0
+                        symbol_arity_pos = 0
                         if j[1] is self.NT:
                             for child in self.rules[j[0]]:
-                                if len(child) == 1 and child[0][0] in self.terminals:
-                                    symbolArityPos += 1
+                                if len(child) == 1 and child[0][0] in \
+                                        self.terminals:
+                                    symbol_arity_pos += 1
                                 else:
-                                    if (i - 1) in depthPerSymbolTrees[str(child)].keys():
-                                        symbolArityPos += depthPerSymbolTrees[str(child)][i - 1]
-                            symPos *= symbolArityPos
-                    depthPerSymbolTrees[str(ntSymbol)][i] = symPos
+                                    if (i - 1) in depth_per_symbol_trees[str(child)].keys():
+                                        symbol_arity_pos += depth_per_symbol_trees[str(child)][i - 1]
+                            sym_pos *= symbol_arity_pos
+                    depth_per_symbol_trees[str(ntSymbol)][i] = sym_pos
 
-            for sy in startSymbols:
-                if str(sy) in depthPerSymbolTrees:
-                    pos += depthPerSymbolTrees[str(sy)][depth] if depth in depthPerSymbolTrees[str(sy)] else 0
+            for sy in start_symbols:
+                if str(sy) in depth_per_symbol_trees:
+                    pos += depth_per_symbol_trees[str(sy)][depth] if depth in depth_per_symbol_trees[str(sy)] else 0
                 else:
                     pos += 1
             self.permutations[depth] = pos

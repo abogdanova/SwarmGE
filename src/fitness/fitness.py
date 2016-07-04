@@ -18,7 +18,7 @@ def eval_or_exec(expr):
     expression (not a statement) and the latter does not return
     anything."""
 
-    #print(s)
+    # print(s)
     try:
         try:
             retval = eval(expr)

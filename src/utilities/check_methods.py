@@ -56,7 +56,8 @@ def verify_tree(ind_tree):
             quit()
 
         if ind_tree.root in params['BNF_GRAMMAR'].non_terminals:
-            NT_kids = [kid for kid in ind_tree.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+            NT_kids = [kid for kid in ind_tree.children if kid.root in
+                       params['BNF_GRAMMAR'].non_terminals]
             if not NT_kids:
                 n += 1
             else:
@@ -69,8 +70,8 @@ def verify_tree(ind_tree):
     orig_out = copy(ind_tree.get_output())
     orig_gen = copy(ind_tree.build_genome([]))
 
-    output, genome, ind_tree, nodes, invalid, depth, \
-    used_codons = genome_init(orig_gen)
+    output, genome, ind_tree, nodes, invalid, depth, used_codons = \
+        genome_init(orig_gen)
 
     if invalid:
         print("Invalid genome tree")

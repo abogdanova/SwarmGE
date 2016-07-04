@@ -1,5 +1,6 @@
 from algorithm.parameters import params
 from random import choice, randrange
+from representation.tree import Tree
 
 
 def genome_map(_input, max_wraps=0):
@@ -39,7 +40,7 @@ def genome_map(_input, max_wraps=0):
             # Derviation order is left to right(depth-first)
             children = []
             for prod in production_choices[current_production]:
-                children.append([prod, current_depth+ 1])
+                children.append([prod, current_depth + 1])
 
             NT_kids = [child for child in children if child[0][1] == "NT"]
             if any(NT_kids):
@@ -60,7 +61,8 @@ def genome_map(_input, max_wraps=0):
            used_input
 
 
-def tree_derivation(Tree, ind_tree, genome, method, nodes, depth, max_depth, depth_limit):
+def tree_derivation(ind_tree, genome, method, nodes, depth, max_depth,
+                    depth_limit):
     """ Derive a tree using a given method """
 
     nodes += 1
@@ -72,9 +74,8 @@ def tree_derivation(Tree, ind_tree, genome, method, nodes, depth, max_depth, dep
     chosen_prod = choice(available)
 
     prod_choice = productions.index(chosen_prod)
-    codon = randrange(len(productions),
-                             params['BNF_GRAMMAR'].codon_size,
-                             len(productions)) + prod_choice
+    codon = randrange(len(productions), params['BNF_GRAMMAR'].codon_size,
+                      len(productions)) + prod_choice
     ind_tree.codon = codon
     genome.append(codon)
     ind_tree.children = []
@@ -82,12 +83,13 @@ def tree_derivation(Tree, ind_tree, genome, method, nodes, depth, max_depth, dep
     for symbol in chosen_prod:
         if symbol[1] == params['BNF_GRAMMAR'].T:
             # if the right hand side is a terminal
-            ind_tree.children.append(Tree.Tree((symbol[0],), ind_tree))
+            ind_tree.children.append(Tree((symbol[0],), ind_tree))
         elif symbol[1] == params['BNF_GRAMMAR'].NT:
             # if the right hand side is a non-terminal
-            ind_tree.children.append(Tree.Tree((symbol[0],), ind_tree))
-            genome, nodes, d, max_depth = tree_derivation(Tree, ind_tree.children[-1], genome, method, nodes, depth, max_depth,
-                                                                           depth_limit - 1)
+            ind_tree.children.append(Tree((symbol[0],), ind_tree))
+            genome, nodes, d, max_depth = \
+                tree_derivation(ind_tree.children[-1], genome, method, nodes,
+                                depth, max_depth, depth_limit - 1)
 
     NT_kids = [kid for kid in ind_tree.children if kid.root in
                params['BNF_GRAMMAR'].non_terminals]
@@ -103,11 +105,13 @@ def tree_derivation(Tree, ind_tree, genome, method, nodes, depth, max_depth, dep
     return genome, nodes, depth, max_depth
 
 
-def genome_tree_derivation(Tree, ind_tree, genome, index, depth, max_depth, nodes):
+def genome_tree_derivation(ind_tree, genome, index, depth, max_depth, nodes):
     """ Builds a tree using production choices from a given genome. Not
         guaranteed to terminate.
     """
-    if index != "Incomplete" and index < len(genome) and max_depth <= params['MAX_TREE_DEPTH']:
+    if index != "Incomplete" and \
+                    index < len(genome) and\
+                    max_depth <= params['MAX_TREE_DEPTH']:
         nodes += 1
         depth += 1
 
@@ -124,16 +128,19 @@ def genome_tree_derivation(Tree, ind_tree, genome, index, depth, max_depth, node
         for i in range(len(chosen_prod)):
             symbol = chosen_prod[i]
             if symbol[1] == params['BNF_GRAMMAR'].T:
-                ind_tree.children.append(Tree.Tree((symbol[0],), ind_tree))
+                ind_tree.children.append(Tree((symbol[0],), ind_tree))
 
             elif symbol[1] == params['BNF_GRAMMAR'].NT:
-                ind_tree.children.append(Tree.Tree((symbol[0],), ind_tree))
-                index, nodes, d, max_depth = genome_tree_derivation(Tree, ind_tree.children[-1], genome, index, depth, max_depth, nodes)
+                ind_tree.children.append(Tree((symbol[0],), ind_tree))
+                index, nodes, d, max_depth = \
+                    genome_tree_derivation(ind_tree.children[-1], genome,
+                                           index, depth, max_depth, nodes)
     else:
         # Mapping incomplete
         return "Incomplete", "Incomplete", "Incomplete", "Incomplete"
 
-    NT_kids = [kid for kid in ind_tree.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+    NT_kids = [kid for kid in ind_tree.children if kid.root in
+               params['BNF_GRAMMAR'].non_terminals]
     if not NT_kids:
         # Then the branch terminates here
         depth += 1

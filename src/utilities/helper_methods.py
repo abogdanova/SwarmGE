@@ -1,5 +1,5 @@
 from algorithm.parameters import params
-from representation import tree
+from representation.tree import Tree
 import numpy as np
 
 
@@ -41,16 +41,17 @@ def return_percent(num, pop_size):
 
 def generate_tree_from_genome(genome):
     """ Returns a tree given an input of a genome. Faster than normal genome
-    initialisation as less information is returned. To be used when a tree needs
-    to be built quickly from a given genome."""
+    initialisation as less information is returned. To be used when a tree
+    needs to be built quickly from a given genome."""
 
-    new_tree = tree.Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
-                depth_limit=params['MAX_TREE_DEPTH'])
-    _ = new_tree.fast_genome_derivation(genome)
+    new_tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+                    depth_limit=params['MAX_TREE_DEPTH'])
+    new_tree.fast_genome_derivation(genome)
     return new_tree
 
 
-def get_Xy_train_test(filename, randomise=True, test_proportion=0.5, skip_header=0):
+def get_Xy_train_test(filename, randomise=True, test_proportion=0.5,
+                      skip_header=0):
     """Read in a table of numbers and split it into X (all columns up
     to last) and y (last column), then split it into training and
     testing subsets according to test_proportion. Shuffle if
@@ -58,8 +59,8 @@ def get_Xy_train_test(filename, randomise=True, test_proportion=0.5, skip_header
     Xy = np.genfromtxt(filename, skip_header=skip_header)
     if randomise:
         np.random.shuffle(Xy)
-    X = Xy[:,:-1] # all columns but last
-    y = Xy[:,-1] # last column
+    X = Xy[:, :-1]  # all columns but last
+    y = Xy[:, -1]  # last column
     idx = int((1.0 - test_proportion) * len(y))
     train_X = X[:idx]
     train_y = y[:idx]
@@ -73,9 +74,9 @@ def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     (all columns up to last) and y (last column)."""
     train_Xy = np.genfromtxt(train_filename, skip_header=skip_header)
     test_Xy = np.genfromtxt(test_filename, skip_header=skip_header)
-    train_X = train_Xy[:,:-1].transpose() # all columns but last
-    train_y = train_Xy[:,-1].transpose() # last column
-    test_X = test_Xy[:,:-1].transpose() # all columns but last
-    test_y = test_Xy[:,-1].transpose() # last column
+    train_X = train_Xy[:, :-1].transpose()  # all columns but last
+    train_y = train_Xy[:, -1].transpose()  # last column
+    test_X = test_Xy[:, :-1].transpose()  # all columns but last
+    test_y = test_Xy[:, -1].transpose()  # last column
 
     return train_X, train_y, test_X, test_y

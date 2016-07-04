@@ -21,7 +21,8 @@ def evaluate_fitness(individuals):
                     if params['LOOKUP_FITNESS']:
                         ind.fitness = cache[ind.phenotype]
                     elif params['LOOKUP_BAD_FITNESS']:
-                        ind.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
+                        ind.fitness = default_fitness(
+                            params['FITNESS_FUNCTION'].maximise)
                     elif params['MUTATE_DUPLICATES']:
                         while ind.phenotype in cache:
                             ind = params['MUTATION'](ind)

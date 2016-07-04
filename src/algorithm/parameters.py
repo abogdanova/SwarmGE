@@ -1,121 +1,122 @@
 from socket import gethostname
-hostname = gethostname().split('.')
-machine_name = hostname[0]
 from random import seed
 import time
 
+hostname = gethostname().split('.')
+machine_name = hostname[0]
+
+
 """Algorithm parameters"""
 params = {
+        # Evolutionary Parameters
+        'POPULATION_SIZE': 500,
+        'GENERATIONS': 50,
 
-# Evolutionary Parameters
-'POPULATION_SIZE' : 500,
-'GENERATIONS' : 50,
+        # Class of problem
+        'PROBLEM': "regression",
+        # "regression"
+        # "string_match"
 
-# Class of problem
-'PROBLEM' : "regression",
-    # "regression"
-    # "string_match"
+        # Select Regression Problem Suite
+        'SUITE': "Vladislavleva4",
+        # "Dow"
+        # "Keijzer6"
+        # "Vladislavleva4"
 
-# Select Regression Problem Suite
-'SUITE' : "Vladislavleva4",
-    # "Dow"
-    # "Keijzer6"
-    # "Vladislavleva4"
+        # Specify String for StringMatch Problem
+        'STRING_MATCH_TARGET': "ponyge_rocks",
 
-# Specify String for StringMatch Problem
-'STRING_MATCH_TARGET' : "ponyge_rocks",
+        # Set max sizes of individuals
+        'MAX_TREE_DEPTH': 17,
+        'CODON_SIZE': 100000,
+        'GENOME_LENGTH': 500,
 
-# Set max sizes of individuals
-'MAX_TREE_DEPTH' : 17,
-'CODON_SIZE' : 100000,
-'GENOME_LENGTH' : 500,
+        # INITIALISATION
+        'INITIALISATION': "rhh",
+        # "random"
+        # "rhh"
+        'MAX_INIT_DEPTH': 10,
+        # Set the maximum tree depth for initialisation.
+        'GENOME_INIT': False,
+        # If True, initialises individuals by generating random genomes (i.e.
+        # doesn't use trees to initialise individuals).
 
-# INITIALISATION
-'INITIALISATION' : "rhh",
-    # "random"
-    # "rhh"
-'MAX_INIT_DEPTH' : 10,
-    # Set the maximum tree depth for initialisation.
-'GENOME_INIT' : False,
-    # If True, initialises individuals by generating random genomes (i.e.
-    # doesn't use trees to initialise individuals).
+        # SELECTION
+        'SELECTION': "tournament",
+        # "tournament",
+        # "truncation",
+        'TOURNAMENT_SIZE': 2,
+        # For tournament selection
+        'SELECTION_PROPORTION': 0.5,
+        # For truncation selection
+        'INVALID_SELECTION': False,
+        # Allow for selection of invalid individuals during selection process.
 
-# SELECTION
-'SELECTION' : "tournament",
-    # "tournament",
-    # "truncation",
-'TOURNAMENT_SIZE' : 2,
-    # For tournament selection
-'SELECTION_PROPORTION' : 0.5,
-    # For truncation selection
-'INVALID_SELECTION' : False,
-    # Allow for selection of invalid individuals during selection process.
+        # CROSSOVER
+        'CROSSOVER': "onepoint",
+        # "onepoint",
+        # "subtree",
+        'CROSSOVER_PROBABILITY': 0.75,
 
-# CROSSOVER
-'CROSSOVER' : "onepoint",
-    # "onepoint",
-    # "subtree",
-'CROSSOVER_PROBABILITY' : 0.75,
+        # MUTATION
+        'MUTATION': "int_flip",
+        # "subtree",
+        # "int_flip",
+        'MUTATION_PROBABILITY': None,
+        'MUTATION_EVENTS': 1,
 
-# MUTATION
-'MUTATION' : "int_flip",
-    # "subtree",
-    # "int_flip",
-'MUTATION_PROBABILITY' : None,
-'MUTATION_EVENTS' : 1,
+        # REPLACEMENT
+        'REPLACEMENT': "generational",
+        # "generational",
+        # "steady_state",
+        'ELITE_SIZE': None,
 
-# REPLACEMENT
-'REPLACEMENT' : "generational",
-    # "generational",
-    # "steady_state",
-'ELITE_SIZE' : None,
+        # DEBUGGING
+        # Use this to turn on debugging mode. This mode doesn't write any files
+        # and should be used when you want to test new methods.
+        'DEBUG': False,
 
-# DEBUGGING
-    # Use this to turn on debugging mode. This mode doesn't write any files and
-    # should be used when you want to test new methods or grammars, etc.
-'DEBUG' : False,
+        # PRINTING
+        # Use this to print out basic statistics for each generation to the
+        # command line.
+        'VERBOSE': False,
 
-# PRINTING
-    # Use this to print out basic statistics for each generation to the command
-    # line.
-'VERBOSE' : False,
+        # SAVING
+        'SAVE_ALL': False,
+        # Use this to save the phenotype of the best individual from each
+        # generation. Can generate a lot of files. DEBUG must be False.
+        'SAVE_PLOTS': True,
+        # Saves a plot of the evolution of the best fitness result for each
+        # generation.
 
-# SAVING
-'SAVE_ALL' : False,
-    # Use this to save the phenotype of the best individual from each
-    # generation. Can generate a lot of files. DEBUG must be False.
-'SAVE_PLOTS' : True,
-    # Saves a plot of the evolution of the best fitness result for each
-    # generation.
+        # CACHING
+        'CACHE': False,
+        # The cache tracks unique individuals across evolution by saving a
+        # string of each phenotype in a big list of all phenotypes. Saves all
+        # fitness information on each individual. Gives you an idea of how much
+        # repetition is in standard GE/GP.
+        'LOOKUP_FITNESS': False,
+        # Uses the cache to look up the fitness of duplicate individuals. CACHE
+        #  must be set to True if you want to use this.
+        'LOOKUP_BAD_FITNESS': False,
+        # Uses the cache to give a bad fitness to duplicate individuals. CACHE
+        # must be True if you want to use this (obviously)"""
+        'MUTATE_DUPLICATES': False,
+        # Removes duplicate individuals from the population by replacing them
+        # with mutated versions of the original individual. Hopefully this will
+        # encourage diversity in the population.
+        'COMPLETE_EVALS': False,
+        # Using the cache doesn't execute the full number of fitness
+        # evaluations. Use this to continue the run in order to execute the
+        # full number of fitness evaluations.
 
-# CACHING
-'CACHE' : False,
-    # The cache tracks unique individuals across evolution by saving a string of
-    # each phenotype in a big list of all phenotypes. Saves all fitness
-    # information on each individual. Gives you an idea of how much repetition
-    # is in standard GE/GP.
-'LOOKUP_FITNESS' : False,
-    # Uses the cache to look up the fitness of duplicate individuals. CACHE must
-    # be set to True if you want to use this.
-'LOOKUP_BAD_FITNESS' : False,
-    # Uses the cache to give a bad fitness to duplicate individuals. CACHE must
-    # be True if you want to use this (obviously)"""
-'MUTATE_DUPLICATES' : False,
-    # Removes duplicate individuals from the population by replacing them with
-    # mutated versions of the original individual. Hopefully this will encourage
-    # diversity in the population.
-'COMPLETE_EVALS' : False,
-    # Using the cache doesn't execute the full number of fitness evaluations.
-    # Use this to continue the run in order to execute the full number of
-    # fitness evaluations.
+        # Set machine name (useful for doing multiple runs)
+        'MACHINE': machine_name,
 
-# Set machine name (useful for doing multiple runs)
-'MACHINE' : machine_name,
-
-# Set Random Seed
-'RANDOM_SEED': None
-
+        # Set Random Seed
+        'RANDOM_SEED': None
 }
+
 
 def set_params(command_line_args):
     from utilities.helper_methods import return_percent
@@ -129,7 +130,7 @@ def set_params(command_line_args):
     import getopt
 
     try:
-        OPTS, ARGS = getopt.getopt(command_line_args[1:], "",
+        opts, args = getopt.getopt(command_line_args[1:], "",
                                    ["help", "debug", "population=",
                                     "generations=", "initialisation=",
                                     "max_init_depth=", "genome_init",
@@ -151,7 +152,7 @@ def set_params(command_line_args):
         print(str(err))
         exit(2)
 
-    for opt, arg in OPTS:
+    for opt, arg in opts:
         if opt == "--help":
             help_message()
             exit()
@@ -211,7 +212,7 @@ def set_params(command_line_args):
                 print("Error: Please define mutation probability as float")
                 exit(2)
             if not 1 >= params['MUTATION_PROBABILITY'] >= 0:
-                print("Error: Mutation probability outside allowable range [0:1]")
+                print("Error: Mutation prob outside allowed range [0:1]")
                 exit(2)
 
         # REPLACEMENT
@@ -256,7 +257,7 @@ def set_params(command_line_args):
             params['LOOKUP_FITNESS'] = False
             params['COMPLETE_EVALS'] = True
         else:
-            assert False, "Unhandled Option, please use --help for available params"
+            assert False, "Unhandled Option, use --help for available params"
 
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger if no elite size is previously set.
@@ -272,21 +273,20 @@ def set_params(command_line_args):
     seed(params['RANDOM_SEED'])
 
     # Set GENOME_OPERATIONS automatically
-    if params['MUTATION'] == 'int_flip' and \
-                    params['CROSSOVER'] == 'onepoint':
+    if params['MUTATION'] == 'int_flip' and params['CROSSOVER'] == 'onepoint':
         params['GENOME_OPERATIONS'] = True
     else:
         params['GENOME_OPERATIONS'] = False
 
     # Set TREE_OPERATIONS automatically
-    if params['MUTATION'] == 'subtree' and \
-                    params['CROSSOVER'] == 'subtree':
+    if params['MUTATION'] == 'subtree' and params['CROSSOVER'] == 'subtree':
         params['TREE_OPERATIONS'] = True
     else:
         params['TREE_OPERATIONS'] = False
 
     # Set problem specifics
-    params['GRAMMAR_FILE'], params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
+    params['GRAMMAR_FILE'], \
+    params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
                                                       params['ALTERNATE'])
 

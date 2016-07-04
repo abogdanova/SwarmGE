@@ -1,6 +1,5 @@
 from algorithm.mapper import tree_derivation
 from random import randint, random, choice
-from representation import tree as Tree
 from algorithm.parameters import params
 from representation import individual
 
@@ -34,7 +33,7 @@ def int_flip_mutation(ind):
         if random() < p_mut:
             ind.genome[i] = randint(0, params['CODON_SIZE'])
 
-    new_ind = individual.individual(ind.genome, None)
+    new_ind = individual.Individual(ind.genome, None)
 
     return new_ind
 
@@ -62,7 +61,9 @@ def subtree_mutate(ind_tree):
     """
 
     # Find which nodes we can mutate from
-    targets = ind_tree.get_target_nodes([], target=params['BNF_GRAMMAR'].non_terminals)
+    targets = \
+        ind_tree.get_target_nodes([],
+                                  target=params['BNF_GRAMMAR'].non_terminals)
 
     # Pick a node
     number = choice(targets)
@@ -71,9 +72,10 @@ def subtree_mutate(ind_tree):
     new_tree = ind_tree.return_node_from_id(number, return_tree=None)
 
     # Set the depth limits for the new subtree
-    new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.get_current_depth()
+    new_tree.max_depth = params['MAX_TREE_DEPTH'] - \
+                         new_tree.get_current_depth()
 
     # Mutate a new subtree
-    tree_derivation(Tree, new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
+    tree_derivation(new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
 
     return ind_tree.get_output(), ind_tree.build_genome([]), ind_tree

@@ -24,7 +24,7 @@ def generational_replacement(new_pop, individuals):
     return new_pop[:params['GENERATION_SIZE']]
 
 
-#Provided but no flag set. Need to append code to use this
+# Provided but no flag set. Need to append code to use this
 def steady_state_replacement(new_pop, individuals):
     """Return individuals. If the best of new pop is better than the
     worst of individuals it is inserted into individuals"""

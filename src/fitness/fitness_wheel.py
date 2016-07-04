@@ -1,5 +1,5 @@
-from fitness.string_match import string_match
-from fitness.regression import regression
+from fitness.string_match import StringMatch
+from fitness.regression import Regression
 from utilities.error_metrics import inverse_f1_score
 
 
@@ -16,12 +16,12 @@ def set_fitness_params(problem, params):
 def set_fitness_function(problem, alternate=None):
     # Regression Problem
     if problem == "regression":
-        return regression(alternate)
+        return Regression(alternate)
     elif problem == "classification":
-        return regression(alternate, error=inverse_f1_score)
+        return Regression(alternate, error=inverse_f1_score)
     # String Match Problem
     elif problem == "string_match":
-        return string_match(alternate)
+        return StringMatch(alternate)
     elif problem == "new":
         print("new problem goes here")
         # parameters.FITNESS_FUNCTION = whatever

@@ -29,7 +29,7 @@ def tournament_selection(population):
     return winners
 
 
-#Provided but no flag set. Need to append code to use this
+# Provided but no flag set. Need to append code to use this
 def truncation_selection(population):
     """Given an entire population, return the best <proportion> of
     them."""

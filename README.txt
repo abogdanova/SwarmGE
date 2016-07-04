@@ -32,7 +32,7 @@ $ python ponyge.py
 
 This will run an example problem and generate a results folder. The folder
 contains several files showing the runs stats, producing graphs and
-documenting the parameters used, aswell as a file containing the best
+documenting the parameters used, as well as a file containing the best
 individuals. For a more verbose command line experience run the following
 
 $ cd src
@@ -100,9 +100,9 @@ the ripple effect from that change in arity. This also replicates non coding
 regions of genome as seen in nature.
 
 In summary, the merits for not consuming a codon for unit productions are
-not clearly defined in the literature. The benifits in consuming codons are
+not clearly defined in the literature. The benefits in consuming codons are
 a reduction in computation and improved speed with linear tree style operations.
-Other benifits are an increase in non-coding regions in the chromosome
+Other benefits are an increase in non-coding regions in the chromosome
 (more in line with nature) that through evolution of the grammar may then
 express useful information.
 

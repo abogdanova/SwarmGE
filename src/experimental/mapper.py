@@ -8,7 +8,8 @@ def pi_random_derivation(tree, index, max_depth=20):
         given depth. Uses position independent stuff.
     """
 
-    queue = [[tree, params['BNF_GRAMMAR'].non_terminals[tree.root]['recursive']]]
+    queue = [[tree,
+              params['BNF_GRAMMAR'].non_terminals[tree.root]['recursive']]]
 
     while queue:
         num = len(queue)
@@ -39,7 +40,7 @@ def pi_random_derivation(tree, index, max_depth=20):
             if len(productions) > 1:
                 prod_choice = productions.index(chosen_prod)
                 codon = randrange(0, params['BNF_GRAMMAR'].codon_size,
-                                         len(productions)) + prod_choice
+                                  len(productions)) + prod_choice
                 node.codon = codon
                 node.id = index
                 index += 1
@@ -51,7 +52,10 @@ def pi_random_derivation(tree, index, max_depth=20):
                 node.children.append(child)
                 if symbol[1] == params['BNF_GRAMMAR'].NT:
                     # if the right hand side is a non-terminal
-                    queue.insert(chosen+i, [child, params['BNF_GRAMMAR'].non_terminals[child.root]['recursive']])
+                    queue.insert(chosen+i,
+                                 [child,
+                                  params['BNF_GRAMMAR'].non_terminals
+                                  [child.root]['recursive']])
     genome = tree.build_genome([])
     return genome
 
@@ -90,13 +94,14 @@ def pi_grow(tree, index, max_depth=20):
                             available.append(production)
                     if not available:
                         for production in productions:
-                            if all(sym[3] for sym in production) == False:
+                            if not all(sym[3] for sym in production):
                                 available.append(production)
                 else:
                     for prod in productions:
                         depth = 0
                         for item in prod:
-                            if (item[1] == params['BNF_GRAMMAR'].NT) and (item[2] > depth):
+                            if (item[1] == params['BNF_GRAMMAR'].NT) and \
+                                    (item[2] > depth):
                                 depth = item[2]
                         if depth < remaining_depth:
                             available.append(prod)
@@ -107,14 +112,16 @@ def pi_grow(tree, index, max_depth=20):
                     for prod in productions:
                         depth = 0
                         for item in prod:
-                            if (item[1] == params['BNF_GRAMMAR'].NT) and (item[2] > depth):
+                            if (item[1] == params['BNF_GRAMMAR'].NT) and \
+                                    (item[2] > depth):
                                 depth = item[2]
                         if depth < remaining_depth:
                             available.append(prod)
             chosen_prod = choice(available)
             if len(productions) > 1:
                 prod_choice = productions.index(chosen_prod)
-                codon = randrange(0, params['BNF_GRAMMAR'].codon_size, len(productions)) + prod_choice
+                codon = randrange(0, params['BNF_GRAMMAR'].codon_size,
+                                  len(productions)) + prod_choice
                 node.codon = codon
                 node.id = index
                 index += 1
@@ -122,7 +129,7 @@ def pi_grow(tree, index, max_depth=20):
 
             for i in range(len(chosen_prod)):
                 symbol = chosen_prod[i]
-                child = Tree((symbol[0],),node)
+                child = Tree((symbol[0],), node)
                 node.children.append(child)
                 if symbol[1] == params['BNF_GRAMMAR'].NT:
                     # if the right hand side is a non-terminal

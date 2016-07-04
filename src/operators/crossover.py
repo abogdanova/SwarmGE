@@ -20,8 +20,8 @@ def crossover(parents):
     while len(cross_pop) < params['GENERATION_SIZE']:
         inds_in = sample(parents, 2)
 
-        ind_0 = individual.individual(inds_in[0].genome, None)
-        ind_1 = individual.individual(inds_in[1].genome, None)
+        ind_0 = individual.Individual(inds_in[0].genome, None)
+        ind_1 = individual.Individual(inds_in[1].genome, None)
 
         if ind_0.invalid or ind_1.invalid:
             print("Error, invalid inds selected for crossover")
@@ -63,8 +63,8 @@ def onepoint_crossover(p_0, p_1, within_used=True):
         c_0, c_1 = c_p_0[:], c_p_1[:]
 
     # Put the new chromosomes into new individuals
-    ind_0 = individual.individual(c_0, None)
-    ind_1 = individual.individual(c_1, None)
+    ind_0 = individual.Individual(c_0, None)
+    ind_1 = individual.Individual(c_1, None)
 
     return [ind_0, ind_1]
 
@@ -77,16 +77,18 @@ def subtree_crossover(p_0, p_1):
         ind0 = p_1
         ind1 = p_0
     else:
-        tail_0, tail_1 = p_0.genome[p_0.used_codons:], p_1.genome[p_1.used_codons:]
-        tree_0, genome_0, tree_1, genome_1 = do_subtree_crossover(p_0.tree, p_1.tree)
+        tail_0, tail_1 = p_0.genome[p_0.used_codons:], \
+                         p_1.genome[p_1.used_codons:]
+        tree_0, genome_0, tree_1, genome_1 = do_subtree_crossover(p_0.tree,
+                                                                  p_1.tree)
 
-        ind0 = individual.individual(genome_0, tree_0)
+        ind0 = individual.Individual(genome_0, tree_0)
         ind0.genome = genome_0 + tail_0
         ind0.used_codons = len(genome_0)
         ind0.depth, ind0.nodes = tree_0.get_tree_info(tree_0)
         ind0.depth += 1
 
-        ind1 = individual.individual(genome_1, tree_1)
+        ind1 = individual.Individual(genome_1, tree_1)
         ind1.genome = genome_1 + tail_1
         ind1.used_codons = len(genome_1)
         ind1.depth, ind1.nodes = tree_1.get_tree_info(tree_1)
@@ -166,7 +168,8 @@ def do_subtree_crossover(tree1, tree2):
 
     def intersect(l1, l2):
         intersection = l1.intersection(l2)
-        intersection = [i for i in intersection if i in params['BNF_GRAMMAR'].crossover_NTs]
+        intersection = [i for i in intersection if i in
+                        params['BNF_GRAMMAR'].crossover_NTs]
         return sorted(intersection)
 
     labels1, labels2 = get_labels(tree1, tree2)
@@ -181,5 +184,5 @@ def do_subtree_crossover(tree1, tree2):
         # Cross over entire trees
         ret_tree1, ret_tree2 = tree2, tree1
 
-    return ret_tree1, ret_tree1.build_genome([]), ret_tree2, \
-           ret_tree2.build_genome([])
+    return ret_tree1, ret_tree1.build_genome([]), \
+           ret_tree2, ret_tree2.build_genome([])

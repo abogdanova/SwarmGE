@@ -1,17 +1,21 @@
 import numpy as np
 from sklearn.metrics.classification import f1_score
 
+
 def mae(y, yhat):
     """Calculate mean absolute error between inputs."""
     return np.mean(np.abs(y - yhat))
+
 
 def rmse(y, yhat):
     """Calculate root mean square error between inputs."""
     return np.sqrt(np.mean(np.square(y - yhat)))
 
+
 def mse(y, yhat):
     """Calculate mean square error between inputs."""
     return np.mean(np.square(y - yhat))
+
 
 def hinge(y, yhat):
     """Hinge loss is a suitable loss function for classification.  Here y
@@ -19,6 +23,7 @@ def hinge(y, yhat):
     individual, ie a real value. The classifier will use sign(yhat) as
     its prediction."""
     return np.max(0, 1 - y * yhat)
+
 
 # TODO should we depend on scikit-learn? it's an extra dependency, but
 # anyone doing anything like this in Python should have it. We would

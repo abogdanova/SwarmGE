@@ -1,4 +1,4 @@
-from stats.stats import stats, save_best_midway, get_stats
+from stats.stats import stats, get_stats
 from operators.initialisers import generate_initial_pop
 from algorithm import step, evaluate_fitness
 from algorithm.parameters import params

@@ -5,7 +5,7 @@ from operators import initialisers
 from random import randint
 
 
-class individual(object):
+class Individual(object):
     """A GE individual"""
 
     def __init__(self, genome, ind_tree, invalid=False, max_depth=20):
@@ -15,27 +15,30 @@ class individual(object):
             if params['GENOME_INIT']:
                 self.genome = [randint(0, params['CODON_SIZE']) for _ in
                                range(params['GENOME_LENGTH'])]
-                self.phenotype, genome, self.tree, self.nodes, \
-                self.invalid, self.depth, \
-                self.used_codons = initialisers.genome_init(self.genome)
-                self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
+                self.phenotype, genome, self.tree, self.nodes, self.invalid, \
+                    self.depth, self.used_codons = \
+                    initialisers.genome_init(self.genome)
+                self.fitness = \
+                    default_fitness(params['FITNESS_FUNCTION'].maximise)
             else:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
-                self.depth, self.used_codons = initialisers.tree_init(max_depth,
-                                                                      "random")
-                self.genome = genome + [randint(0, params['CODON_SIZE']) for _
-                                        in range(int(self.used_codons/2))]
-                self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
+                    self.depth, self.used_codons = \
+                    initialisers.tree_init(max_depth, "random")
+                self.genome = genome + [randint(0, params['CODON_SIZE'])
+                                        for _ in
+                                        range(int(self.used_codons/2))]
+                self.fitness = \
+                    default_fitness(params['FITNESS_FUNCTION'].maximise)
 
         elif genome and (ind_tree is None):
             # Need to generate a tree
             self.genome = list(genome)
             if params['GENOME_OPERATIONS']:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
-                self.depth, self.used_codons = genome_map(genome)
+                    self.depth, self.used_codons = genome_map(genome)
             else:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
-                self.depth, self.used_codons = \
+                    self.depth, self.used_codons = \
                     initialisers.genome_init(list(genome))
 
         elif ind_tree and (genome is None):

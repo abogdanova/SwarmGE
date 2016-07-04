@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 
 # PonyGE
-# Copyright (c) 2009 Erik Hemberg, James McDermott, Michael Fenton and David Fagan
+# Copyright (c) 2009 Erik Hemberg, James McDermott,
+#                   Michael Fenton and David Fagan
 # Hereby licensed under the GNU GPL v3.
 """ Python GE implementation """
 
@@ -20,7 +21,7 @@ def mane():
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
                                                       params['ALTERNATE'])
     # Set Grammar File
-    params['BNF_GRAMMAR'] = grammar.grammar(params['GRAMMAR_FILE'])
+    params['BNF_GRAMMAR'] = grammar.Grammar(params['GRAMMAR_FILE'])
 
     # Run evolution
     individuals = search_loop.search_loop_wheel()

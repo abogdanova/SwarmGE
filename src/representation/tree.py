@@ -53,7 +53,7 @@ class Tree:
             max_d = child.get_max_tree_depth(child, max_d)
         return max_d
 
-    def get_tree_info(self, current, number=0, max_D=0):
+    def get_tree_info(self, current, number=0, max_depth=0):
         """ Get the number of nodes and the max depth of the tree.
         """
 
@@ -64,16 +64,20 @@ class Tree:
                 current.depth = current.parent.depth + 1
             else:
                 current.depth = 1
-            if current.depth > max_D:
-                max_D = current.depth
-            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+            if current.depth > max_depth:
+                max_depth = current.depth
+            NT_kids = [kid for kid in
+                       self.children if kid.root in
+                       params['BNF_GRAMMAR'].non_terminals]
             if not NT_kids:
                 number += 1
             else:
                 for child in NT_kids:
-                    max_D, number = child.get_tree_info(child, number, max_D)
+                    max_depth, number = child.get_tree_info(child,
+                                                            number,
+                                                            max_depth)
 
-        return max_D, number
+        return max_depth, number
 
     def get_target_nodes(self, array, target=None):
         """ Returns the ids of all NT nodes which match the target NT list in a
@@ -83,7 +87,8 @@ class Tree:
         if self.root in params['BNF_GRAMMAR'].non_terminals:
             if self.root in target:
                 array.append(self.id)
-            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+            NT_kids = [kid for kid in self.children if kid.root in
+                       params['BNF_GRAMMAR'].non_terminals]
             if NT_kids:
                 for child in NT_kids:
                     array = child.get_target_nodes(array, target=target)
@@ -105,12 +110,15 @@ class Tree:
         if self.id == node_id:
             return_tree = self
         elif self.root in params['BNF_GRAMMAR'].non_terminals:
-            NT_kids = [kid for kid in self.children if kid.root in params['BNF_GRAMMAR'].non_terminals]
+            NT_kids = [kid for kid in self.children if kid.root in
+                       params['BNF_GRAMMAR'].non_terminals]
             # We only want to look at children who are NTs themselves. If the
             # kids are Ts then we don't need to look in their tree.
             if NT_kids:
                 for child in NT_kids:
-                    return_tree = child.return_node_from_id(node_id, return_tree=return_tree)
+                    return_tree = \
+                        child.return_node_from_id(node_id,
+                                                  return_tree=return_tree)
         return return_tree
 
     def get_labels(self, labels):
@@ -124,8 +132,7 @@ class Tree:
         print(self)
 
     def build_genome(self, genome):
-        """ Goes through a tree and builds a genome from all codons in the subtree.
-        """
+    # Goes through a tree and builds a genome from all codons in the subtree.
 
         if self.codon:
             genome.append(self.codon)
@@ -155,7 +162,7 @@ class Tree:
                 elif symbol[1] == params['BNF_GRAMMAR'].NT:
                     self.children.append(Tree((symbol[0],), self))
                     index = self.children[-1].fast_genome_derivation(genome,
-                                     index)
+                                                                     index)
         else:
             # Mapping incomplete
             return "Incomplete"
@@ -171,8 +178,10 @@ class Tree:
             if remaining_depth > params['BNF_GRAMMAR'].max_arity:
                 available = productions
             elif remaining_depth <= 0:
-                min_path = min([max([item[2] for item in prod]) for prod in productions])
-                shortest = [prod for prod in productions if max([item[2] for item in prod]) == min_path]
+                min_path = min([max([item[2] for item in prod]) for
+                                prod in productions])
+                shortest = [prod for prod in productions if
+                            max([item[2] for item in prod]) == min_path]
                 available = shortest
             else:
                 for prod in productions:
@@ -180,8 +189,10 @@ class Tree:
                     if prod_depth < remaining_depth:
                         available.append(prod)
                 if not available:
-                    min_path = min([max([item[2] for item in prod]) for prod in productions])
-                    shortest = [prod for prod in productions if max([item[2] for item in prod]) == min_path]
+                    min_path = min([max([item[2] for item in prod]) for
+                                    prod in productions])
+                    shortest = [prod for prod in productions if
+                                max([item[2] for item in prod]) == min_path]
                     available = shortest
 
         elif method == "full":
@@ -191,7 +202,7 @@ class Tree:
                         available.append(production)
                 if not available:
                     for production in productions:
-                        if all(sym[3] for sym in production) == False:
+                        if not all(sym[3] for sym in production):
                             available.append(production)
             else:
                 for prod in productions:
@@ -203,7 +214,8 @@ class Tree:
                     for prod in productions:
                         prod_depth = 0
                         for item in prod:
-                            if (item[1] == params['BNF_GRAMMAR'].NT) and (item[2] > prod_depth):
+                            if (item[1] == params['BNF_GRAMMAR'].NT) and \
+                                    (item[2] > prod_depth):
                                 prod_depth = item[2]
                         if prod_depth < remaining_depth:
                             available.append(prod)

@@ -1,30 +1,31 @@
-import matplotlib
-
-matplotlib.use('Agg')
 from random import seed
-import matplotlib.pyplot as plt
-plt.rc('font', family='Times New Roman')
 from re import search, findall
 from datetime import datetime
 from itertools import groupby
 from math import floor
 from representation import tree
 from utilities import helper_methods
+import matplotlib
+import matplotlib.pyplot as plt
 
+
+plt.rc('font', family='Times New Roman')
+matplotlib.use('Agg')
 CODON_SIZE = 100000
 
 now = datetime.now()
-SEED = now.microsecond # 637553#
-print ("Seed:\t", SEED)
+SEED = now.microsecond  # 637553#
+print("Seed:\t", SEED)
 seed(SEED)
 
 SAVE = True
 """ Turn on if you want to save graphs of the individuals"""
 
+
 class Grammar(object):
     """ Context Free Grammar """
-    NT = "NT" # Non Terminal
-    T = "T" # Terminal
+    NT = "NT"  # Non Terminal
+    T = "T"  # Terminal
 
     def __init__(self, file_name):
         if file_name.endswith("pybnf"):
@@ -58,25 +59,33 @@ class Grammar(object):
                     lhs = lhs.strip()
                     if not search(non_terminal_pattern, lhs):
                         raise ValueError("lhs is not a NT:", lhs)
-                    self.non_terminals[str(lhs)] = {"id":lhs, "min_steps":9999999999999, "expanded":False, 'recursive':True, 'permutations':None, 'b_factor':0}
+                    self.non_terminals[str(lhs)] = \
+                        {"id": lhs,
+                         "min_steps": 9999999999999,
+                         "expanded": False,
+                         'recursive': True,
+                         'permutations': None,
+                         'b_factor': 0}
                     if self.start_rule is None:
                         self.start_rule = (lhs, self.NT)
                     # Find terminals
                     tmp_productions = []
-                    for production in [production.strip()
-                                       for production in
-                                       productions.split(production_separator)]:
+                    for production in \
+                            [production.strip()
+                             for production in
+                             productions.split(production_separator)]:
                         tmp_production = []
                         if not search(non_terminal_pattern, production):
                             self.terminals.append(production)
-                            tmp_production.append([production, self.T, 0, False])
+                            tmp_production.append([production,
+                                                   self.T,
+                                                   0, False])
                         else:
                             # Match non terminal or terminal pattern
                             # TODO does this handle quoted NT symbols?
                             for value in findall("<.+?>|[^<>]*", production):
                                 if value != '':
-                                    if not search(non_terminal_pattern,
-                                                     value):
+                                    if not search(non_terminal_pattern, value):
                                         symbol = [value, self.T, 0, False]
                                         self.terminals.append(value)
                                     else:
@@ -84,7 +93,7 @@ class Grammar(object):
                                     tmp_production.append(symbol)
                         tmp_productions.append(tmp_production)
                     # Create a rule
-                    if not lhs in self.rules:
+                    if lhs not in self.rules:
                         self.rules[lhs] = tmp_productions
                     else:
                         raise ValueError("lhs should be unique", lhs)
@@ -119,7 +128,7 @@ class Grammar(object):
                     choices = self.rules[NT]
                     terms = 0
                     for choice in choices:
-                        if not (all([sym[1] == self.T for sym in choice]) == False):
+                        if not all([sym[1] == self.T for sym in choice]):
                             terms += 1
                     if terms:
                         # this NT can then map directly to a T
@@ -128,8 +137,9 @@ class Grammar(object):
                     else:
                         # There are NTs remaining in the production choices
                         for choice in choices:
+                            # noinspection PyPep8Naming,PyPep8Naming
                             NT_s = [sym for sym in choice if sym[1] == self.NT]
-                            NT_choices = list(NT_s for NT_s,_ in groupby(NT_s))
+                            NT_choices = list(NT_s for NT_s, _ in groupby(NT_s))
                             if len(NT_choices) > 1:
                                 if all([self.non_terminals[item[0]]['expanded']
                                         for item in NT_choices]):
@@ -137,7 +147,8 @@ class Grammar(object):
                                         vals['min_steps'] = max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1
                                     elif not vals['expanded']:
                                         vals['expanded'] = True
-                                        vals['min_steps'] = max([self.non_terminals[item[0]]['min_steps'] for item in NT_choices]) + 1
+                                        vals['min_steps'] = max([self.non_terminals[item[0]]['min_steps']
+                                                                 for item in NT_choices]) + 1
                             else:
                                 child = self.non_terminals[NT_choices[0][0]]
                                 if child['expanded']:
@@ -227,14 +238,14 @@ class Grammar(object):
         if depth < self.min_path:
             # There is a bug somewhere that is looking for a tree smaller than
             # any we can create
-            print ("Error: cannot check permutations for tree smaller than the minimum size")
+            print("Error: cannot check permutations for tree smaller than the "
+                  "minimum size")
             quit()
         if depth in self.permutations.keys():
             return self.permutations[depth]
         else:
             pos = 0
-            terminalSymbols = self.terminals
-            depthPerSymbolTrees = {}
+            depth_per_sym_trees = {}
             productions = []
             for NT in self.non_terminals:
                 a = self.non_terminals[NT]
@@ -242,31 +253,36 @@ class Grammar(object):
                     if any([prod[1] is self.NT for prod in rule]):
                         productions.append(rule)
 
-            startSymbols = self.rules[self.start_rule[0]]
+            start_symbols = self.rules[self.start_rule[0]]
 
             for prod in productions:
-                depthPerSymbolTrees[str(prod)] = {}
+                depth_per_sym_trees[str(prod)] = {}
 
             for i in range(2, depth+1):
                 # Find all the possible permutations from depth of min_path up
                 # to a specified depth
                 for ntSymbol in productions:
-                    symPos = 1
+                    sym_pos = 1
                     for j in ntSymbol:
-                        symbolArityPos = 0
+                        sym_arity_pos = 0
                         if j[1] is self.NT:
                             for child in self.rules[j[0]]:
-                                if len(child) == 1 and child[0][0] in self.terminals:
-                                    symbolArityPos += 1
+                                if len(child) == 1 and child[0][0] in\
+                                        self.terminals:
+                                    sym_arity_pos += 1
                                 else:
-                                    if (i - 1) in depthPerSymbolTrees[str(child)].keys():
-                                        symbolArityPos += depthPerSymbolTrees[str(child)][i - 1]
-                            symPos *= symbolArityPos
-                    depthPerSymbolTrees[str(ntSymbol)][i] = symPos
+                                    if (i - 1) in \
+                                            depth_per_sym_trees[str(child)]\
+                                                    .keys():
+                                        sym_arity_pos += \
+                                            depth_per_sym_trees[str(child)][i - 1]
+                            sym_pos *= sym_arity_pos
+                    depth_per_sym_trees[str(ntSymbol)][i] = sym_pos
 
-            for sy in startSymbols:
-                if str(sy) in depthPerSymbolTrees:
-                    pos += depthPerSymbolTrees[str(sy)][depth] if depth in depthPerSymbolTrees[str(sy)] else 0
+            for sy in start_symbols:
+                if str(sy) in depth_per_sym_trees:
+                    pos += depth_per_sym_trees[str(sy)][depth] if\
+                        depth in depth_per_sym_trees[str(sy)] else 0
                 else:
                     pos += 1
             self.permutations[depth] = pos
@@ -298,14 +314,16 @@ class Grammar(object):
             else:
                 production_choices = self.rules[current_symbol[0]]
                 # Select a production
-                current_production = _input[used_input % len(_input)] % len(production_choices)
+                current_production = _input[used_input % len(_input)] % \
+                                     len(production_choices)
                 # Use an input if there was more then 1 choice
                 if len(production_choices) > 1:
                     used_input += 1
                 # Derviation order is left to right(depth-first)
-                unexpanded_symbols = production_choices[current_production] + unexpanded_symbols
+                unexpanded_symbols = production_choices[current_production] + \
+                                     unexpanded_symbols
 
-        #Not completly expanded
+        # Not completly expanded
         if len(unexpanded_symbols) > 0:
             return None, used_input
 
@@ -313,6 +331,7 @@ class Grammar(object):
         if self.python_mode:
             output = helper_methods.python_filter(output)
         return output, used_input
+
 
 def get_min_ramp_depth(size, grammar):
     """ Find the minimum depth at which ramping can start where we can have
@@ -337,49 +356,62 @@ def get_min_ramp_depth(size, grammar):
 
 bnf_grammar = Grammar("grammars/Keijzer6.bnf")
 
-print (get_min_ramp_depth(100000, bnf_grammar))
+print(get_min_ramp_depth(100000, bnf_grammar))
 
-genome = [71557, 78983, 6936, 94335, 11033, 25537, 38955, 98913, 15088, 37863, 63685, 18624, 31850, 95985, 2693, 83403, 22772, 5721, 68714, 89495, 86318, 12724, 417, 69911, 88845, 23565, 56800, 8611, 44617, 9866, 75489, 36, 56477, 83105, 40146, 91800, 23401, 57877, 19486, 19364, 66408, 88421, 89404, 92370, 10957, 32679, 65316, 90767, 7506, 47455, 74928, 91953, 96159, 8644, 22424, 88524, 93489, 93577, 86196, 1044, 45637, 18977, 3451, 99300, 95769, 33068, 40826, 93951, 79954, 14367, 77172, 98048, 11769, 45637, 78034]
+genome = [71557, 78983, 6936, 94335, 11033, 25537, 38955, 98913, 15088, 37863,
+          63685, 18624, 31850, 95985, 2693, 83403, 22772, 5721, 68714, 89495,
+          86318, 12724, 417, 69911, 88845, 23565, 56800, 8611, 44617, 9866,
+          75489, 36, 56477, 83105, 40146, 91800, 23401, 57877, 19486, 19364,
+          66408, 88421, 89404, 92370, 10957, 32679, 65316, 90767, 7506, 47455,
+          74928, 91953, 96159, 8644, 22424, 88524, 93489, 93577, 86196, 1044,
+          45637, 18977, 3451, 99300, 95769, 33068, 40826, 93951, 79954, 14367,
+          77172, 98048, 11769, 45637, 78034]
 
-#phenotype0, used_codons_0, orig_tree_0, array_0 = tree.genome_init(bnf_grammar, genome)
+# phenotype0, used_codons_0, orig_tree_0, array_0 = \
+#     tree.genome_init(bnf_grammar, genome)
 
-phenotype1, genome1, orig_tree_1, nodes_1, check_1 = tree.full_init(bnf_grammar, 10, SAVE)
+phenotype1, genome1, orig_tree_1, nodes_1, check_1 = \
+    tree.full_init(bnf_grammar, 10, SAVE)
 
-phenotype2, genome2, orig_tree_2, nodes_2, check_2 = tree.random_init(bnf_grammar, 10, SAVE)
+phenotype2, genome2, orig_tree_2, nodes_2, check_2 = \
+    tree.random_init(bnf_grammar, 10, SAVE)
 
-phenotype2_5, genome2_5, orig_tree_2_5, nodes_2_5, check2_5 = tree.pi_random_init(bnf_grammar, 10, SAVE)
+phenotype2_5, genome2_5, orig_tree_2_5, nodes_2_5, check2_5 = \
+    tree.pi_random_init(bnf_grammar, 10, SAVE)
 
-phenotype3, genome3, orig_tree_3, nodes_3, check_3 = tree.grow_init(bnf_grammar, 10, SAVE)
+phenotype3, genome3, orig_tree_3, nodes_3, check_3 = \
+    tree.grow_init(bnf_grammar, 10, SAVE)
 
-phenotype4, genome4, orig_tree_4, nodes_4, check_4 = tree.pi_grow_init(bnf_grammar, 10, SAVE)
+phenotype4, genome4, orig_tree_4, nodes_4, check_4 = \
+    tree.pi_grow_init(bnf_grammar, 10, SAVE)
 
-print ("\nPhenotype 1:\tFull init:\t", phenotype1)
-print ("            \tIndex count\t\t", nodes_1)
-print ("            \tNode count\t", orig_tree_1.get_nodes(0))
-print ("            \tGenome length\t", len(genome1))
+print("\nPhenotype 1:\tFull init:\t", phenotype1)
+print("            \tIndex count\t\t", nodes_1)
+print("            \tNode count\t", orig_tree_1.get_nodes(0))
+print("            \tGenome length\t", len(genome1))
 
-print ("\nPhenotype 2:\tRandom init:\t", phenotype2)
-print ("            \tIndex count\t\t", nodes_2)
-print ("            \tNode count\t", orig_tree_2.get_nodes(0))
-print ("            \tGenome length\t", len(genome2))
+print("\nPhenotype 2:\tRandom init:\t", phenotype2)
+print("            \tIndex count\t\t", nodes_2)
+print("            \tNode count\t", orig_tree_2.get_nodes(0))
+print("            \tGenome length\t", len(genome2))
 
-#print ("\nPhenotype 2.5:\tPI random init:\t", phenotype2_5))
-#print ("            \tNode Count\t\t", fitnesses_2_5[0])
-#print ("            \tPhenotype length\t", fitnesses_2_5[1])
-#print ("            \tRoot Bias\t\t", round(fitnesses_2_5[2], 2))
-#print ("            \tSlope\t\t\t", fitnesses_2_5[3])
-#print ("            \tMax Depth:\t", fitnesses_2_5[4])
+# print("\nPhenotype 2.5:\tPI random init:\t", phenotype2_5))
+# print("            \tNode Count\t\t", fitnesses_2_5[0])
+# print("            \tPhenotype length\t", fitnesses_2_5[1])
+# print("            \tRoot Bias\t\t", round(fitnesses_2_5[2], 2))
+# print("            \tSlope\t\t\t", fitnesses_2_5[3])
+# print("            \tMax Depth:\t", fitnesses_2_5[4])
 
-#print ("\nPhenotype 3:\tGrow init:\t", phenotype3)
-#print ("            \tNode Count\t\t", fitnesses_3[0])
-#print ("            \tPhenotype length\t", fitnesses_3[1])
-#print ("            \tRoot Bias\t\t", round(fitnesses_3[2], 2))
-#print ("            \tSlope\t\t\t", fitnesses_3[3])
-#print ("            \tMax Depth:\t", fitnesses_3[4])
+# print("\nPhenotype 3:\tGrow init:\t", phenotype3)
+# print("            \tNode Count\t\t", fitnesses_3[0])
+# print("            \tPhenotype length\t", fitnesses_3[1])
+# print("            \tRoot Bias\t\t", round(fitnesses_3[2], 2))
+# print("            \tSlope\t\t\t", fitnesses_3[3])
+# print("            \tMax Depth:\t", fitnesses_3[4])
 
-#print ("\nPhenotype 4:\tPI Grow init:\t", phenotype4)
-#print ("            \tNode Count\t\t", fitnesses_4[0])
-#print ("            \tPhenotype length\t", fitnesses_4[1])
-#print ("            \tRoot Bias\t\t", round(fitnesses_4[2], 2))
-#print ("            \tSlope\t\t\t", fitnesses_4[3])
-#print ("            \tMax Depth:\t", fitnesses_4[4])
+# print("\nPhenotype 4:\tPI Grow init:\t", phenotype4)
+# print("            \tNode Count\t\t", fitnesses_4[0])
+# print("            \tPhenotype length\t", fitnesses_4[1])
+# print("            \tRoot Bias\t\t", round(fitnesses_4[2], 2))
+# print("            \tSlope\t\t\t", fitnesses_4[3])
+# print("            \tMax Depth:\t", fitnesses_4[4])
