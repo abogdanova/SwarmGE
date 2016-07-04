@@ -1,5 +1,5 @@
-import numpy as np
 from sklearn.metrics.classification import f1_score
+import numpy as np
 
 
 def mae(y, yhat):
@@ -25,9 +25,7 @@ def hinge(y, yhat):
     return np.max(0, 1 - y * yhat)
 
 
-# TODO should we depend on scikit-learn? it's an extra dependency, but
-# anyone doing anything like this in Python should have it. We would
-# use its utils, error metrics, etc
+# TODO should we depend on scikit-learn? it's an extra dependency, but anyone doing anything like this in Python should have it. We would use its utils, error metrics, etc
 def inverse_f1_score(y, yhat):
     """The F_1 score is a metric for classification which tries to balance
     precision and recall, ie both true positives and true negatives.

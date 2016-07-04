@@ -19,7 +19,7 @@ Requirements
 ------------
 
 PonyGE runs under Python 3.x.
-Using matplotlib, numpy and scipy
+Using matplotlib, numpy, scipy, scikit-learn (sklearn)
 
 Running PonyGE
 --------------
@@ -38,8 +38,8 @@ individuals. For a more verbose command line experience run the following
 $ cd src
 $ python ponyge.py --verbose
 
-Each line of the output corresponds to a generation in the evolution, and prints
-out all statistics on the current run (if --verbose is specified). Upon
+Each line of the output corresponds to a generation in the evolution, and
+prints out all statistics on the current run (if --verbose is specified). Upon
 completion of a run, the best individual is printed to the command line, along
 with summary statistics.
 
@@ -101,10 +101,10 @@ regions of genome as seen in nature.
 
 In summary, the merits for not consuming a codon for unit productions are
 not clearly defined in the literature. The benefits in consuming codons are
-a reduction in computation and improved speed with linear tree style operations.
-Other benefits are an increase in non-coding regions in the chromosome
-(more in line with nature) that through evolution of the grammar may then
-express useful information.
+a reduction in computation and improved speed with linear tree style
+operations. Other benefits are an increase in non-coding regions in the
+chromosome (more in line with nature) that through evolution of the grammar may
+then express useful information.
 
 Reference
 ---------
