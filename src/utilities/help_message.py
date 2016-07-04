@@ -24,7 +24,7 @@ def help_message():
              "\t--genome_length: \t\tSets the maximum length for chromosomes "
              "to be initialised to, requires int value",
              "\t--selection: \t\tSets the selection to be used, requires "
-             "string such as tournament",
+             "string such as selection.tournament",
              "\t--invalid_selection: \t\tAllow for the selection of invalid "
              "individuals during selection",
              "\t--selection_proportion: \t\tSets the proportion for truncation"
@@ -32,13 +32,13 @@ def help_message():
              "\t--tournament_size: \t\tSets the number of indivs to contest "
              "tournament, requires int",
              "\t--crossover: \t\tSets the type of crossover to be used, "
-             "requires string such as subtree",
+             "requires string such as crossover.subtree",
              "\t--crossover_prob: \t\tSets the crossover probability, requires"
              " float such as 0.9",
              "\t--replacement: \t\tSets the replacement strategy, requires "
-             "string such as generational",
+             "string such as replacement.generational",
              "\t--mutation: \t\tSets the mutation to be used, requires string"
-             " such as int_flip",
+             " such as mutation.int_flip",
              "\t--mutation_probability: \t\tSets the rate of mutation "
              "probability for linear genomes",
              "\t--mutation_events: \t\tSets the number of mutation events "
