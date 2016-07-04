@@ -145,7 +145,7 @@ def set_params(command_line_args):
                                     "invalid_selection"])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
-              "Run puthon ponyge.py --help for more info")
+              "Run python ponyge.py --help for more info")
         print(str(err))
         exit(2)
 

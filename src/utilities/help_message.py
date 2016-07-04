@@ -64,7 +64,7 @@ def help_message():
              "fitnesses. Automatically set to true with cache turned on.",
              "\t--lookup_bad_fitness: \t\tGives duplicate phenotypes a bad "
              "fitness when encountered, requires cache.",
-             "\t--mutate_duplicates: \t\tReplaces duplicate idividuals with "
+             "\t--mutate_duplicates: \t\tReplaces duplicate individuals with "
              "mutated versions. Requires cache.",
              "\t--complete_evals: \t\tAdvanced feature to reuse save "
              "computation from use of cache.",
