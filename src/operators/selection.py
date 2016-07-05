@@ -2,6 +2,15 @@ from algorithm.parameters import params
 from random import sample
 
 
+def selection(population):
+    """
+    Perform selection on a population
+    :param population: input population
+    :return: selected population
+    """
+    return params['SELECTION'](population)
+
+
 def tournament(population):
     """Given an entire population, draw <tournament_size> competitors
     randomly and return the best."""

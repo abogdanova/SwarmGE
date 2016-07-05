@@ -1,7 +1,8 @@
 from algorithm.evaluate_fitness import evaluate_fitness
 from operators.crossover import crossover
 from operators.mutation import mutation
-from algorithm.parameters import params
+from operators.replacement import replacement
+from operators.selection import selection
 
 
 def step(individuals):
@@ -9,7 +10,7 @@ def step(individuals):
     the EA iteration"""
 
     # Select parents
-    parents = params['SELECTION'](individuals)
+    parents = selection(individuals)
 
     # Crossover parents and add to the new population
     cross_pop = crossover(parents)
@@ -21,6 +22,6 @@ def step(individuals):
     new_pop = evaluate_fitness(new_pop)
 
     # Replace the sorted individuals with the new populations
-    individuals = params['REPLACEMENT'](new_pop, individuals)
+    individuals = replacement(new_pop, individuals)
 
     return individuals

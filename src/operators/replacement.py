@@ -2,6 +2,18 @@ from algorithm.parameters import params
 from copy import copy
 
 
+def replacement(new_pop, individuals):
+    """
+    Given a new population and an old population, performs replacement using
+    specified replacement operator
+    :param new_pop: Newly generate population (after selection, variation &
+    evaluation).
+    :param individuals: Previous generation population
+    :return: Replaced population
+    """
+    return params['REPLACEMENT'](new_pop, individuals)
+
+
 def generational(new_pop, individuals):
     """Return new pop. The ELITE_SIZE best individuals are appended
     to new pop if they are better than the worst individuals in new
