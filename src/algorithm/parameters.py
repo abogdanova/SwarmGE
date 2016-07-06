@@ -117,13 +117,11 @@ params = {
         'RANDOM_SEED': None
 }
 
-
 def set_params(command_line_args):
     from fitness.fitness_wheel import set_fitness_function, set_fitness_params
     from utilities.initialise_run import initialise_run_params
     from utilities.helper_methods import return_percent
     from utilities.help_message import help_message
-    import operators
     import getopt
 
     try:
@@ -292,8 +290,31 @@ def set_params(command_line_args):
     # Initialise run lists and folders
     initialise_run_params()
 
+    # import any modules needed for our specified operators which we'll eval
+    # below
+    import_str = make_import_str([
+        params['CROSSOVER'],
+        params['MUTATION'],
+        params['SELECTION'],
+        params['REPLACEMENT']
+        ])
+    exec(import_str)
+
     # Set all parameters as specified in params
     params['CROSSOVER'] = eval(params['CROSSOVER'])
     params['MUTATION'] = eval(params['MUTATION'])
     params['SELECTION'] = eval(params['SELECTION'])
     params['REPLACEMENT'] = eval(params['REPLACEMENT'])
+
+def make_import_str(fns):
+    """fns will be a list of strings representing the full dotted path to
+    a function which we wish to access, eg
+    operators.selection.tournament. We need to run import
+    operators.selection. So we lop off the last component of each fn,
+    put 'import' in front, and return a string."""
+    imports = []
+    for fn in fns:
+        # "operators.selection.tournament" -> "import operators.selection"
+        parts = fn.split(".")
+        imports.append("import " + ".".join(parts[:-1]))
+    return "\n".join(imports)
