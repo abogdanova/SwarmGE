@@ -290,21 +290,14 @@ def set_params(command_line_args):
     # Initialise run lists and folders
     initialise_run_params()
 
-    # import any modules needed for our specified operators which we'll eval
-    # below
-    import_str = make_import_str([
-        params['CROSSOVER'],
-        params['MUTATION'],
-        params['SELECTION'],
-        params['REPLACEMENT']
-        ])
+    # For these ops we let the param equal the function itself.
+    special_ops = ['CROSSOVER', 'MUTATION', 'SELECTION', 'REPLACEMENT']
+    # We need to do an appropriate import...
+    import_str = make_import_str([params[op] for op in special_ops])
     exec(import_str)
-
-    # Set all parameters as specified in params
-    params['CROSSOVER'] = eval(params['CROSSOVER'])
-    params['MUTATION'] = eval(params['MUTATION'])
-    params['SELECTION'] = eval(params['SELECTION'])
-    params['REPLACEMENT'] = eval(params['REPLACEMENT'])
+    # ... and then eval the param.
+    for op in special_ops:
+        params[op] = eval(params[op])
 
 def make_import_str(fns):
     """fns will be a list of strings representing the full dotted path to
