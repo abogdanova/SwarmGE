@@ -1,4 +1,4 @@
-from operators.initialisers import genome_init
+from operators.initialisation import genome_init
 from algorithm.parameters import params
 from copy import copy
 

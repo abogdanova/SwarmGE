@@ -32,9 +32,9 @@ params = {
         'GENOME_LENGTH': 500,
 
         # INITIALISATION
-        'INITIALISATION': "rhh",
-        # "random"
-        # "rhh"
+        'INITIALISATION': "operators.initialisation.rhh",
+        # "operators.initialisation.random_init"
+        # "operators.initialisation.rhh"
         'MAX_INIT_DEPTH': 10,
         # Set the maximum tree depth for initialisation.
         'GENOME_INIT': False,
@@ -120,6 +120,7 @@ params = {
 def set_params(command_line_args):
     from fitness.fitness_wheel import set_fitness_function, set_fitness_params
     from utilities.initialise_run import initialise_run_params
+    from utilities.initialise_run import set_param_imports
     from utilities.helper_methods import return_percent
     from utilities.help_message import help_message
     import getopt
@@ -199,16 +200,16 @@ def set_params(command_line_args):
                 params['MUTATION_EVENTS'] = int(arg)
             except:
                 print("Error: Please define mutation events as int")
-                exit(2)
+                quit()
         elif opt == "--mutation_probability":
             try:
                 params['MUTATION_PROBABILITY'] = float(arg)
             except:
                 print("Error: Please define mutation probability as float")
-                exit(2)
+                quit()
             if not 1 >= params['MUTATION_PROBABILITY'] >= 0:
                 print("Error: Mutation prob outside allowed range [0:1]")
-                exit(2)
+                quit()
 
         # REPLACEMENT
         elif opt == "--replacement":
@@ -267,19 +268,14 @@ def set_params(command_line_args):
         params['RANDOM_SEED'] = int(time.clock()*1000000)
     seed(params['RANDOM_SEED'])
 
-    # Set GENOME_OPERATIONS automatically
-    if params['MUTATION'] == 'operators.mutation.int_flip' and \
-                    params['CROSSOVER'] == 'operators.crossover.onepoint':
+    # Set GENOME_OPERATIONS automatically for faster linear operations
+    if (params['MUTATION'] == 'operators.mutation.int_flip' or
+                params['MUTATION'] == 'int_flip') and \
+            (params['CROSSOVER'] == 'operators.crossover.onepoint' or
+                     params['CROSSOVER'] == 'onepoint'):
         params['GENOME_OPERATIONS'] = True
     else:
         params['GENOME_OPERATIONS'] = False
-
-    # Set TREE_OPERATIONS automatically
-    if params['MUTATION'] == 'operators.mutation.subtree' and \
-                    params['CROSSOVER'] == 'operators.crossover.subtree':
-        params['TREE_OPERATIONS'] = True
-    else:
-        params['TREE_OPERATIONS'] = False
 
     # Set problem specifics
     params['GRAMMAR_FILE'], \
@@ -290,24 +286,5 @@ def set_params(command_line_args):
     # Initialise run lists and folders
     initialise_run_params()
 
-    # For these ops we let the param equal the function itself.
-    special_ops = ['CROSSOVER', 'MUTATION', 'SELECTION', 'REPLACEMENT']
-    # We need to do an appropriate import...
-    import_str = make_import_str([params[op] for op in special_ops])
-    exec(import_str)
-    # ... and then eval the param.
-    for op in special_ops:
-        params[op] = eval(params[op])
-
-def make_import_str(fns):
-    """fns will be a list of strings representing the full dotted path to
-    a function which we wish to access, eg
-    operators.selection.tournament. We need to run import
-    operators.selection. So we lop off the last component of each fn,
-    put 'import' in front, and return a string."""
-    imports = []
-    for fn in fns:
-        # "operators.selection.tournament" -> "import operators.selection"
-        parts = fn.split(".")
-        imports.append("import " + ".".join(parts[:-1]))
-    return "\n".join(imports)
+    # Set correct param imports for specified function options
+    set_param_imports()

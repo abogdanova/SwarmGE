@@ -1,7 +1,7 @@
 from fitness.fitness import default_fitness
 from algorithm.parameters import params
 from algorithm.mapper import genome_map
-from operators import initialisers
+from operators import initialisation
 from random import randint
 
 
@@ -17,13 +17,13 @@ class Individual(object):
                                range(params['GENOME_LENGTH'])]
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
                     self.depth, self.used_codons = \
-                    initialisers.genome_init(self.genome)
+                    initialisation.genome_init(self.genome)
                 self.fitness = \
                     default_fitness(params['FITNESS_FUNCTION'].maximise)
             else:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
                     self.depth, self.used_codons = \
-                    initialisers.tree_init(max_depth, "random")
+                    initialisation.tree_init(max_depth, "random")
                 self.genome = genome + [randint(0, params['CODON_SIZE'])
                                         for _ in
                                         range(int(self.used_codons/2))]
@@ -39,7 +39,7 @@ class Individual(object):
             else:
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
                     self.depth, self.used_codons = \
-                    initialisers.genome_init(list(genome))
+                    initialisation.genome_init(list(genome))
 
         elif ind_tree and (genome is None):
             # Need to generate a genome

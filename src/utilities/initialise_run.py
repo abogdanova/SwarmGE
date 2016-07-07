@@ -38,3 +38,41 @@ def initialise_run_params():
         print("Seed:\t", params['RANDOM_SEED'], "\n")
     else:
         generate_folders_and_files()
+
+
+def make_import_str(fns):
+    """
+    :param fns: a paired list of operators and the specified function from the
+    option parser. Strings either represent the full dotted path to the
+    function which we wish to access, eg operators.selection.tournament, or
+    just the function name directly (in which case we default to the specified
+    functions in the default location for each operators)
+    :return: a string of imports of correct modules,
+    eg import operators.selection
+    """
+
+    imports = []
+    for fn in fns:
+        operator, function = fn[0], fn[1]
+        parts = fn[1].split(".")
+        if len(parts) == 1:
+            # Default to operators.operator location
+            imports.append("import operators." + operator.lower())
+            params[operator] = "operators." + operator.lower() + "." + parts[0]
+        else:
+            # "operators.selection.tournament" -> "import operators.selection"
+            imports.append("import " + ".".join(parts[:-1]))
+    return "\n".join(imports)
+
+
+def set_param_imports():
+
+    # For these ops we let the param equal the function itself.
+    special_ops = ['INITIALISATION', 'SELECTION', 'CROSSOVER', 'MUTATION',
+                   'REPLACEMENT']
+    # We need to do an appropriate import...
+    import_str = make_import_str([[op, params[op]] for op in special_ops])
+    exec(import_str)
+    # ... and then eval the param.
+    for op in special_ops:
+        params[op] = eval(params[op])

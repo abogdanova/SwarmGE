@@ -1,5 +1,5 @@
 from algorithm.parameters import params
-from operators import initialisers
+from operators import initialisation
 from re import search, findall
 from itertools import groupby
 
@@ -22,7 +22,7 @@ class Grammar(object):
         self.read_bnf_file(file_name)
         self.check_depths()
         self.check_permutations()
-        self.min_ramp = initialisers.get_min_ramp_depth(self)
+        self.min_ramp = initialisation.get_min_ramp_depth(self)
         self.crossover_NTs = [i for i in self.non_terminals
                               if self.non_terminals[i]['b_factor'] > 1]
 

@@ -1,6 +1,5 @@
-from stats.stats import stats, get_stats
-from operators.initialisers import generate_initial_pop
 from algorithm import step, evaluate_fitness
+from stats.stats import stats, get_stats
 from algorithm.parameters import params
 from utilities.trackers import cache
 
@@ -17,7 +16,7 @@ def search_loop():
     """Loop over max generations"""
 
     # Initialise population
-    individuals = generate_initial_pop()
+    individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
 
     # Evaluate initial population
     individuals = evaluate_fitness.evaluate_fitness(individuals)
@@ -42,7 +41,7 @@ def search_loop_complete_evals():
     """Loop over total evaluations"""
 
     # Initialise population
-    individuals = generate_initial_pop()
+    individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
 
     # Evaluate initial population
     individuals = evaluate_fitness.evaluate_fitness(individuals)
