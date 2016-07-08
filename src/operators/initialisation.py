@@ -16,8 +16,6 @@ def rhh(size):
         initialisation) and return. Individuals have a genome created for them
     """
 
-    # TODO can make initialisation faster for genome operations
-
     depths = range(params['BNF_GRAMMAR'].min_ramp + 1,
                    params['MAX_INIT_DEPTH']+1)
     population = []
