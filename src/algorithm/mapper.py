@@ -6,11 +6,12 @@ from representation.tree import Tree
 def genome_map(_input, max_wraps=0):
     """ The genotype to phenotype mapping process. Map input via rules to
     output. Returns output and used_input. """
-    # TODO check tree depths to see if correct
+
     from utilities.helper_methods import python_filter
-    used_input, current_depth, current_max_depth, nodes = 0, 0, 0, 1
+    # Depth, max_depth, and nodes start from 1 to account for starting root
+    used_input, current_depth, current_max_depth, nodes = 0, 1, 1, 1
     wraps, output, production_choices = -1, [], []
-    unexpanded_symbols = [(params['BNF_GRAMMAR'].start_rule, 0)]
+    unexpanded_symbols = [(params['BNF_GRAMMAR'].start_rule, 1)]
 
     while (wraps < max_wraps) and \
             (len(unexpanded_symbols) > 0) and \
@@ -29,7 +30,6 @@ def genome_map(_input, max_wraps=0):
         # Set output if it is a terminal
         if current_symbol[1] != params['BNF_GRAMMAR'].NT:
             output.append(current_symbol[0])
-
         else:
             production_choices = params['BNF_GRAMMAR'].rules[current_symbol[0]]
             # Select a production
@@ -49,15 +49,16 @@ def genome_map(_input, max_wraps=0):
                 nodes += 1
             unexpanded_symbols = children + unexpanded_symbols
 
+    output = "".join(output)
+
     if len(unexpanded_symbols) > 0:
         # Not completly expanded, invalid solution.
-        return output, _input, None, nodes, True, current_max_depth + 1, \
+        return output, _input, None, nodes, True, current_max_depth, \
                used_input
 
-    output = "".join(output)
     if params['BNF_GRAMMAR'].python_mode:
         output = python_filter(output)
-    return output, _input, None, nodes, False, current_max_depth + 1, \
+    return output, _input, None, nodes, False, current_max_depth, \
            used_input
 
 
@@ -105,16 +106,26 @@ def tree_derivation(ind_tree, genome, method, nodes, depth, max_depth,
     return genome, nodes, depth, max_depth
 
 
-def genome_tree_derivation(ind_tree, genome, index, depth, max_depth, nodes):
+def genome_tree_map(genome):
+
+    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),),
+                None, depth_limit=params['MAX_TREE_DEPTH'])
+    used_codons, nodes, depth, max_depth, invalid = \
+        genome_tree_derivation(tree, genome, 0, 0, 0, 0)
+
+    return tree.get_output(), genome, tree, nodes, invalid, max_depth, \
+           used_codons
+
+
+def genome_tree_derivation(ind_tree, genome, index, depth, max_depth, nodes,
+                           invalid=False):
     """ Builds a tree using production choices from a given genome. Not
         guaranteed to terminate.
     """
-    if index != "Incomplete" and \
-                    index < len(genome) and\
+    if not invalid and index < len(genome) and\
                     max_depth <= params['MAX_TREE_DEPTH']:
         nodes += 1
         depth += 1
-
         ind_tree.id, ind_tree.depth = nodes, depth
 
         productions = params['BNF_GRAMMAR'].rules[ind_tree.root]
@@ -132,12 +143,13 @@ def genome_tree_derivation(ind_tree, genome, index, depth, max_depth, nodes):
 
             elif symbol[1] == params['BNF_GRAMMAR'].NT:
                 ind_tree.children.append(Tree((symbol[0],), ind_tree))
-                index, nodes, d, max_depth = \
+                index, nodes, d, max_depth, invalid = \
                     genome_tree_derivation(ind_tree.children[-1], genome,
-                                           index, depth, max_depth, nodes)
+                                           index, depth, max_depth, nodes,
+                                           invalid)
     else:
         # Mapping incomplete
-        return "Incomplete", "Incomplete", "Incomplete", "Incomplete"
+        return index, nodes, depth, max_depth, True
 
     NT_kids = [kid for kid in ind_tree.children if kid.root in
                params['BNF_GRAMMAR'].non_terminals]
@@ -146,6 +158,9 @@ def genome_tree_derivation(ind_tree, genome, index, depth, max_depth, nodes):
         depth += 1
         nodes += 1
 
-    if max_depth != "Incomplete" and (depth > max_depth):
-        max_depth = depth
-    return index, nodes, depth, max_depth
+    if not invalid:
+        if (depth > max_depth):
+            max_depth = depth
+        if max_depth > params['MAX_TREE_DEPTH']:
+            invalid = True
+    return index, nodes, depth, max_depth, invalid

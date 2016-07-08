@@ -16,6 +16,8 @@ def rhh(size):
         initialisation) and return. Individuals have a genome created for them
     """
 
+    # TODO can make initialisation faster for genome operations
+
     depths = range(params['BNF_GRAMMAR'].min_ramp + 1,
                    params['MAX_INIT_DEPTH']+1)
     population = []
@@ -106,22 +108,6 @@ def get_min_ramp_depth(grammar):
             ramp = i
             break
     return ramp
-
-
-def genome_init(genome):
-
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),),
-                None, depth_limit=params['MAX_TREE_DEPTH'])
-    used_codons, nodes, depth, max_depth = \
-        mapper.genome_tree_derivation(tree, genome, 0, 0, 0, 0)
-
-    invalid = False
-    if any([i == "Incomplete" for i in [used_codons,
-                                        nodes, depth, max_depth]]) or\
-            tree.check_expansion():
-        invalid = True
-    return tree.get_output(), \
-           genome, tree, nodes, invalid, max_depth, used_codons
 
 
 def pi_random_init(depth):
