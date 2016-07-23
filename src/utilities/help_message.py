@@ -70,6 +70,8 @@ def help_message():
                                       "target string"],
                ["\t--verbose:", "Turns on the verbose output of the program in"
                                 " terms of command line and extra files"],
+               ["\t--silent:", "Prevents any output from being printed to "
+                               "the command line."],
                ["\t--elite_size:", "Sets the number of elites to be used, "
                                    "requires int"],
                ["\t--save_all:", "Saves the best phenotypes at each "
@@ -79,6 +81,10 @@ def help_message():
                ["\t--lookup_fitness:", "Uses the cache to lookup duplicate "
                                        "fitnesses. Automatically set to true "
                                        "with cache turned on."],
+               ["\t--dont_lookup_fitness:", "Turns on the cache to track "
+                                            "duplicate individuals, but does "
+                                            "not use the cache to save "
+                                            "fitness evaluations."],
                ["\t--lookup_bad_fitness:", "Gives duplicate phenotypes a bad "
                                            "fitness when encountered, requires"
                                            " cache."],

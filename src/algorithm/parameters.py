@@ -80,6 +80,8 @@ params = {
         # Use this to print out basic statistics for each generation to the
         # command line.
         'VERBOSE': False,
+        # Use this to prevent anything being printed to the command line.
+        'SILENT': False,
 
         # SAVING
         'SAVE_ALL': False,
@@ -141,7 +143,8 @@ def set_params(command_line_args):
                                     "save_plots", "cache", "lookup_fitness",
                                     "lookup_bad_fitness", "mutate_duplicates",
                                     "complete_evals", "genome_length=",
-                                    "invalid_selection"])
+                                    "invalid_selection", "silent",
+                                    "dont_lookup_fitness"])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run python ponyge.py --help for more info")
@@ -234,6 +237,8 @@ def set_params(command_line_args):
             params['DEBUG'] = True
         elif opt == "--verbose":
             params['VERBOSE'] = True
+        elif opt == "--silent":
+            params['SILENT'] = True
         elif opt == "--save_all":
             params['SAVE_ALL'] = True
         elif opt == "--save_plots":
@@ -243,6 +248,9 @@ def set_params(command_line_args):
         elif opt == "--cache":
             params['CACHE'] = True
             params['LOOKUP_FITNESS'] = True
+        elif opt == "--dont_lookup_fitness":
+            params['CACHE'] = True
+            params['LOOKUP_FITNESS'] = False
         elif opt == "--lookup_bad_fitness":
             params['LOOKUP_FITNESS'] = False
             params['LOOKUP_BAD_FITNESS'] = True

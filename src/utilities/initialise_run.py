@@ -3,6 +3,7 @@ from algorithm.parameters import params
 from utilities import trackers
 from datetime import datetime
 from sys import version_info
+from stats import stats
 import time
 
 
@@ -24,14 +25,14 @@ def initialise_run_params():
     :return: Nothing
     """
 
-    #
     time1 = datetime.now()
     trackers.time_list.append(time.clock())
     hms = "%02d%02d%02d" % (time1.hour, time1.minute, time1.second)
     params['TIME_STAMP'] = (str(time1.year)[2:] + "_" + str(time1.month) +
                             "_" + str(time1.day) + "_" + hms +
                             "_" + str(time1.microsecond))
-    print("\nStart:\t", time1, "\n")
+    if not params['SILENT']:
+        print("\nStart:\t", time1, "\n")
 
     # Generate save folders and files
     if params['DEBUG']:
@@ -70,9 +71,13 @@ def set_param_imports():
     # For these ops we let the param equal the function itself.
     special_ops = ['INITIALISATION', 'SELECTION', 'CROSSOVER', 'MUTATION',
                    'REPLACEMENT']
-    # We need to do an appropriate import...
-    import_str = make_import_str([[op, params[op]] for op in special_ops])
-    exec(import_str)
-    # ... and then eval the param.
-    for op in special_ops:
-        params[op] = eval(params[op])
+    if all([callable(params[op]) for op in special_ops]):
+        # params are already functions
+        pass
+    else:
+        # We need to do an appropriate import...
+        import_str = make_import_str([[op, params[op]] for op in special_ops])
+        exec(import_str)
+        # ... and then eval the param.
+        for op in special_ops:
+            params[op] = eval(params[op])

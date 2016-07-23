@@ -10,27 +10,28 @@ import time
 
 """Algorithm statistics"""
 stats = {
-    "gen": 0,
-    "best_ever": None,
-    "total_inds": 0,
-    "regens": 0,
-    "invalids": 0,
-    "unique_inds": len(trackers.cache),
-    "unused_search": 0,
-    "ave_genome_length": 0,
-    "max_genome_length": 0,
-    "min_genome_length": 0,
-    "ave_used_codons": 0,
-    "max_used_codons": 0,
-    "min_used_codons": 0,
-    "ave_tree_depth": 0,
-    "max_tree_depth": 0,
-    "min_tree_depth": 0,
-    "ave_tree_nodes": 0,
-    "max_tree_nodes": 0,
-    "min_tree_nodes": 0,
-    "ave_fitness": 0,
-    "best_fitness": 0
+        "gen": 0,
+        "best_ever": None,
+        "total_inds": 0,
+        "regens": 0,
+        "invalids": 0,
+        "unique_inds": len(trackers.cache),
+        "unused_search": 0,
+        "ave_genome_length": 0,
+        "max_genome_length": 0,
+        "min_genome_length": 0,
+        "ave_used_codons": 0,
+        "max_used_codons": 0,
+        "min_used_codons": 0,
+        "ave_tree_depth": 0,
+        "max_tree_depth": 0,
+        "min_tree_depth": 0,
+        "ave_tree_nodes": 0,
+        "max_tree_nodes": 0,
+        "min_tree_nodes": 0,
+        "ave_fitness": 0,
+        "best_fitness": 0,
+        "time_taken": 0
 }
 
 
@@ -90,7 +91,7 @@ def get_stats(individuals, END=False):
     if params['VERBOSE']:
         if not END:
             print_stats()
-    else:
+    elif not params['SILENT']:
         perc = stats['gen'] / (params['GENERATIONS']+1) * 100
         stdout.write("Evolution: %d%% complete\r" % perc)
         stdout.flush()
@@ -112,14 +113,15 @@ def get_stats(individuals, END=False):
     if not params['DEBUG']:
         save_stats(END)
         if params['SAVE_ALL']:
-            save_best(stats['gen'])
+            save_best(END, stats['gen'])
         elif params['VERBOSE'] or END:
-            save_best("best")
+            save_best(END, "best")
 
     if END:
         total_time = timedelta(seconds=(trackers.time_list[-1] -
                                         trackers.time_list[0]))
-        print_final_stats(total_time)
+        if not params['SILENT']:
+            print_final_stats(total_time)
         if not params['DEBUG']:
             save_final_stats(total_time)
 
@@ -171,8 +173,6 @@ def save_stats(end=False):
         savefile.close()
 
     elif end:
-        stats_list = [stats[stat] for stat in sorted(stats.keys())]
-        trackers.stats_list.append(stats_list)
         filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
         savefile = open(filename, 'a')
         for item in trackers.stats_list:
@@ -207,7 +207,7 @@ def save_final_stats(total_time):
 
     filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
     savefile = open(filename, 'a')
-    savefile.write("Total time taken\t" + str(total_time))
+    savefile.write("Total time taken: \t" + str(total_time))
     savefile.close()
 
 
@@ -224,7 +224,7 @@ def save_params():
     savefile.close()
 
 
-def save_best(name="best"):
+def save_best(end=False, name="best"):
 
     filename = "./results/" + str(params['TIME_STAMP']) + "/" + str(name) + \
                ".txt"
@@ -234,12 +234,15 @@ def save_best(name="best"):
     savefile.write("Genotype:\n" + str(stats['best_ever'].genome) + "\n")
     savefile.write("Tree:\n" + str(stats['best_ever'].tree) + "\n")
     if params['PROBLEM'] in ("regression", "classification"):
-        savefile.write("\nTraining fitness:\t" +
-                       str(stats['best_ever'].training_fitness))
-        savefile.write("\nTest fitness:\t" +
-                       str(stats['best_ever'].test_fitness))
+        if end:
+            savefile.write("\nTraining fitness:\n" +
+                           str(stats['best_ever'].training_fitness))
+            savefile.write("\nTest fitness:\n" +
+                           str(stats['best_ever'].test_fitness))
+        else:
+            savefile.write("\nFitness:\n" + str(stats['best_ever'].fitness))
     else:
-        savefile.write("\nFitness:\t" + str(stats['best_ever'].fitness))
+        savefile.write("\nFitness:\n" + str(stats['best_ever'].fitness))
     savefile.close()
 
 
