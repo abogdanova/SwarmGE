@@ -12,6 +12,9 @@ params = {
         'POPULATION_SIZE': 500,
         'GENERATIONS': 50,
 
+        # Set optional experiment name
+        'EXPERIMENT_NAME': None,
+
         # Class of problem
         'PROBLEM': "regression",
         # "regression"
@@ -144,7 +147,7 @@ def set_params(command_line_args):
                                     "lookup_bad_fitness", "mutate_duplicates",
                                     "complete_evals", "genome_length=",
                                     "invalid_selection", "silent",
-                                    "dont_lookup_fitness"])
+                                    "dont_lookup_fitness", "experiment_name="])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run python ponyge.py --help for more info")
@@ -229,6 +232,8 @@ def set_params(command_line_args):
             params['SUITE'] = arg
         elif opt == "--target_string":
             params['STRING_MATCH_TARGET'] = arg
+        elif opt == "--experiment_name":
+            params['EXPERIMENT_NAME'] = arg
 
         # OPTIONS
         elif opt == "--random_seed":

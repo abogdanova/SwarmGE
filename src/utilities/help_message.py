@@ -66,6 +66,11 @@ def help_message():
                                 "such as regression"],
                ["\t--problem_suite:", "For use with regression problems, "
                                       "requires string such as Dow"],
+               ["\t--experiment_name:", "Optional parameter to save results "
+                                        "in /results/[EXPERIMENT_NAME] "
+                                        "folder. If not specified then "
+                                        "results are saved in default "
+                                        "/results folder."],
                ["\t--target_string:", "For string match problem, requires "
                                       "target string"],
                ["\t--verbose:", "Turns on the verbose output of the program in"

@@ -19,7 +19,7 @@ def save_best_fitness_plot():
     ax1.plot(best_fitness_list)
     ax1.set_ylabel('fitness', fontsize=14)
     ax1.set_xlabel('Generation', fontsize=14)
-    plt.savefig(getcwd()+'/results/'+str(params['TIME_STAMP'])+'/fitness.pdf')
+    plt.savefig(params['FILE_PATH']+str(params['TIME_STAMP'])+'/fitness.pdf')
     plt.close()
 
 
@@ -56,7 +56,7 @@ def save_average_fitness_plot(filename):
     stdmin = ave - std
     r = range(1, max_gens + 1)
 
-    fig = plt.figure()  # figsize=[20,15])
+    fig = plt.figure() # figsize=[20,15])
     ax1 = fig.add_subplot(1, 1, 1)
 
     ax1.plot(r, ave, color="blue")

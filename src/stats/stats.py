@@ -165,7 +165,7 @@ def print_final_stats(total_time):
 def save_stats(end=False):
     """Write the results to a results file for later analysis"""
     if params['VERBOSE']:
-        filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
+        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
         savefile = open(filename, 'a')
         for stat in stats:
             savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
@@ -173,7 +173,7 @@ def save_stats(end=False):
         savefile.close()
 
     elif end:
-        filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
+        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
         savefile = open(filename, 'a')
         for item in trackers.stats_list:
             for stat in item:
@@ -192,7 +192,7 @@ def save_stats_headers():
     :return: Nothing.
     """
 
-    filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
     savefile = open(filename, 'w')
     for stat in sorted(stats.keys()):
         savefile.write(str(stat) + "\t")
@@ -205,7 +205,7 @@ def save_final_stats(total_time):
     Appends the total time taken for a run to the stats file.
     """
 
-    filename = "./results/" + str(params['TIME_STAMP']) + "/stats.csv"
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
     savefile = open(filename, 'a')
     savefile.write("Total time taken: \t" + str(total_time))
     savefile.close()
@@ -217,7 +217,7 @@ def save_params():
     :return: Nothing
     """
 
-    filename = "./results/" + str(params['TIME_STAMP']) + "/parameters.txt"
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/parameters.txt"
     savefile = open(filename, 'w')
     for param in params:
         savefile.write(str(param) + " : \t" + str(params[param]) + "\n")
@@ -226,7 +226,7 @@ def save_params():
 
 def save_best(end=False, name="best"):
 
-    filename = "./results/" + str(params['TIME_STAMP']) + "/" + str(name) + \
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/" + str(name) + \
                ".txt"
     savefile = open(filename, 'w')
     savefile.write("Generation:\n" + str(stats['gen']) + "\n\n")
@@ -247,7 +247,7 @@ def save_best(end=False, name="best"):
 
 
 def save_best_midway(best_ever):
-    filename = "./results/" + str(params['TIME_STAMP']) + "/best_" + \
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/best_" + \
                str(stats['gen']) + ".txt"
     savefile = open(filename, 'w')
     t1 = time.clock()
@@ -274,13 +274,17 @@ def generate_folders_and_files():
     Generates necessary folders and files for saving statistics and parameters.
     """
 
+    if params['EXPERIMENT_NAME']:
+        params['FILE_PATH'] = getcwd() + "/results/" + params[
+            'EXPERIMENT_NAME'] + "/"
+    else:
+        params['FILE_PATH'] = getcwd() + "/results/"
+
     # Generate save folders
-    file_path = getcwd()
-    if not path.isdir(str(file_path) + "/results"):
-        mkdir(str(file_path) + "/results")
-    if not path.isdir(str(file_path) + "/results/" +
-                      str(params['TIME_STAMP'])):
-        mkdir(str(file_path) + "/Results/" + str(params['TIME_STAMP']))
+    if not path.isdir(params['FILE_PATH']):
+        mkdir(params['FILE_PATH'])
+    if not path.isdir(params['FILE_PATH'] + str(params['TIME_STAMP'])):
+        mkdir(params['FILE_PATH'] + str(params['TIME_STAMP']))
 
     save_params()
     save_stats_headers()
