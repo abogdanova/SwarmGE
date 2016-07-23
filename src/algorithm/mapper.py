@@ -53,7 +53,7 @@ def genome_map(_input, max_wraps=0):
 
     if len(unexpanded_symbols) > 0:
         # Not completly expanded, invalid solution.
-        return output, _input, None, nodes, True, current_max_depth, \
+        return None, _input, None, nodes, True, current_max_depth, \
                used_input
 
     if params['BNF_GRAMMAR'].python_mode:
@@ -112,8 +112,11 @@ def genome_tree_map(genome):
                 None, depth_limit=params['MAX_TREE_DEPTH'])
     used_codons, nodes, depth, max_depth, invalid = \
         genome_tree_derivation(tree, genome, 0, 0, 0, 0)
-
-    return tree.get_output(), genome, tree, nodes, invalid, max_depth, \
+    if invalid:
+        return None, genome, tree, nodes, invalid, max_depth, \
+           used_codons
+    else:
+        return tree.get_output(), genome, tree, nodes, invalid, max_depth, \
            used_codons
 
 
