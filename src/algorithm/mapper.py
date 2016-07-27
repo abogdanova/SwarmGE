@@ -1,6 +1,7 @@
 from algorithm.parameters import params
 from random import choice, randrange
 from representation.tree import Tree
+from collections import deque
 
 
 def genome_map(_input, max_wraps=0):
@@ -10,8 +11,9 @@ def genome_map(_input, max_wraps=0):
     from utilities.helper_methods import python_filter
     # Depth, max_depth, and nodes start from 1 to account for starting root
     used_input, current_depth, current_max_depth, nodes = 0, 1, 1, 1
-    wraps, output, production_choices = -1, [], []
-    unexpanded_symbols = [(params['BNF_GRAMMAR'].start_rule, 1)]
+    wraps, output, production_choices = -1, deque(), []
+    unexpanded_symbols = deque([(params['BNF_GRAMMAR'].start_rule,
+                                            1)])
 
     while (wraps < max_wraps) and \
             (len(unexpanded_symbols) > 0) and \
@@ -23,7 +25,7 @@ def genome_map(_input, max_wraps=0):
             wraps += 1
 
         # Expand a production
-        current_item = unexpanded_symbols.pop(0)
+        current_item = unexpanded_symbols.popleft()
         current_symbol, current_depth = current_item[0], current_item[1]
         if current_max_depth < current_depth:
             current_max_depth = current_depth
@@ -38,9 +40,8 @@ def genome_map(_input, max_wraps=0):
             # Use an input
             used_input += 1
             # Derviation order is left to right(depth-first)
-            children = []
-            for prod in production_choices[current_production]:
-                children.append([prod, current_depth + 1])
+            children = deque()
+            (children.append([prod, current_depth + 1]) for prod in production_choices[current_production])
 
             NT_kids = [child for child in children if child[0][1] == "NT"]
             if any(NT_kids):
