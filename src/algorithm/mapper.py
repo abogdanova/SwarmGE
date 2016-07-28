@@ -10,16 +10,18 @@ def genome_map(_input, max_wraps=0):
 
     from utilities.helper_methods import python_filter
     # Depth, max_depth, and nodes start from 1 to account for starting root
+    MAX_TREE_DEPTH = params['MAX_TREE_DEPTH']
+    NT_SYMBOL = params['BNF_GRAMMAR'].NT
+    BNF_GRAMMAR = params['BNF_GRAMMAR']
+    n_input = len(_input)
     used_input, current_depth, current_max_depth, nodes = 0, 1, 1, 1
-    wraps, output, production_choices = -1, deque(), []
-    unexpanded_symbols = deque([(params['BNF_GRAMMAR'].start_rule,
-                                            1)])
-
+    wraps, output = -1, deque()
+    unexpanded_symbols = deque([(BNF_GRAMMAR.start_rule, 1)])
     while (wraps < max_wraps) and \
-            (len(unexpanded_symbols) > 0) and \
-            (current_max_depth <= params['MAX_TREE_DEPTH']):
+            (unexpanded_symbols) and \
+            (current_max_depth <= MAX_TREE_DEPTH):
         # Wrap
-        if used_input % len(_input) == 0 and \
+        if used_input % n_input == 0 and \
                         used_input > 0 and \
                 any([i[0][1] == "NT" for i in unexpanded_symbols]):
             wraps += 1
@@ -29,26 +31,40 @@ def genome_map(_input, max_wraps=0):
         current_symbol, current_depth = current_item[0], current_item[1]
         if current_max_depth < current_depth:
             current_max_depth = current_depth
+
         # Set output if it is a terminal
-        if current_symbol[1] != params['BNF_GRAMMAR'].NT:
+        if current_symbol[1] != NT_SYMBOL:
             output.append(current_symbol[0])
         else:
-            production_choices = params['BNF_GRAMMAR'].rules[current_symbol[0]]
+            production_choices = BNF_GRAMMAR.rules[current_symbol[0]]
             # Select a production
-            current_production = _input[used_input % len(_input)] % \
+            # TODO store the length of production choices to avoid len call?
+            current_production = _input[used_input % n_input] % \
                                  len(production_choices)
             # Use an input
             used_input += 1
             # Derviation order is left to right(depth-first)
+            # TODO is a list comprehension faster? (Only if the loop for
+            # counting NT for each production can be avoided, by using a
+            # lookup instead
             children = deque()
-            (children.append([prod, current_depth + 1]) for prod in production_choices[current_production])
+            NT_count = 0
+            for prod in production_choices[current_production]:
+                child = [prod, current_depth + 1]
+                # Extendleft reverses the order, thus reverse adding
+                # WARNING loss of readability and coupling of lines?
+                children.appendleft(child)
+                # TODO store number of NT to avoid counting and simply do
+                # lookup instead?
+                if child[0][1] == "NT":
+                    NT_count += 1
 
-            NT_kids = [child for child in children if child[0][1] == "NT"]
-            if any(NT_kids):
-                nodes += len(NT_kids)
+            unexpanded_symbols.extendleft(children)
+
+            if NT_count > 0:
+                nodes += NT_count
             else:
                 nodes += 1
-            unexpanded_symbols = children + unexpanded_symbols
 
     output = "".join(output)
 
@@ -57,8 +73,9 @@ def genome_map(_input, max_wraps=0):
         return None, _input, None, nodes, True, current_max_depth, \
                used_input
 
-    if params['BNF_GRAMMAR'].python_mode:
+    if BNF_GRAMMAR.python_mode:
         output = python_filter(output)
+
     return output, _input, None, nodes, False, current_max_depth, \
            used_input
 
