@@ -54,7 +54,11 @@ def save_plot_from_file(filename, stat_name):
 
     # Read in the data
     data = pd.read_csv(filename, sep="\t")
-    stat = list(data[stat_name])
+    try:
+        stat = list(data[stat_name])
+    except KeyError:
+        print("\nError: stat", stat_name, "does not exist")
+        quit()
 
     # Plot the data
     fig = plt.figure()

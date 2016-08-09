@@ -167,7 +167,7 @@ def save_stats(end=False):
     if params['VERBOSE']:
         filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
         savefile = open(filename, 'a')
-        for stat in stats:
+        for stat in sorted(stats.keys()):
             savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
         savefile.write("\n")
         savefile.close()
@@ -176,14 +176,13 @@ def save_stats(end=False):
         filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
         savefile = open(filename, 'a')
         for item in trackers.stats_list:
-            for stat in item:
-                savefile.write(str(stat) + "\t")
+            for stat in sorted(item.keys()):
+                savefile.write(str(item[stat]) + "\t")
             savefile.write("\n")
         savefile.close()
 
     else:
-        stats_list = [stats[stat] for stat in sorted(stats.keys())]
-        trackers.stats_list.append(stats_list)
+        trackers.stats_list.append(copy(stats))
 
 
 def save_stats_headers():
