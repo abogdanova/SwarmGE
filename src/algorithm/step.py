@@ -1,4 +1,4 @@
-from algorithm.evaluate_fitness import evaluate_fitness
+from algorithm.evaluate_fitness import evaluation
 from operators.crossover import crossover
 from operators.mutation import mutation
 from operators.replacement import replacement
@@ -19,7 +19,7 @@ def step(individuals):
     new_pop = mutation(cross_pop)
 
     # Evaluate the fitness of the new population
-    new_pop = evaluate_fitness(new_pop)
+    new_pop = evaluation(new_pop)
 
     # Replace the sorted individuals with the new populations
     individuals = replacement(new_pop, individuals)

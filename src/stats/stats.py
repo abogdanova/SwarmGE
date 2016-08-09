@@ -86,7 +86,8 @@ def get_stats(individuals, END=False):
 
     # Save fitness plot information
     if params['SAVE_PLOTS'] and not params['DEBUG']:
-        trackers.best_fitness_list.append(stats['best_ever'].fitness)
+        if not END:
+            trackers.best_fitness_list.append(stats['best_ever'].fitness)
         if params['VERBOSE'] or END:
             save_best_fitness_plot()
 

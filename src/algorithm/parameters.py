@@ -1,3 +1,4 @@
+from multiprocessing import cpu_count
 from socket import gethostname
 from random import seed
 import time
@@ -94,6 +95,11 @@ params = {
         # Saves a plot of the evolution of the best fitness result for each
         # generation.
 
+        # MULTIPROCESSING
+        'MULTICORE': True,
+        # Multiprocessing of phenotype evaluations.
+        'CORES': cpu_count() - 1,
+
         # CACHING
         'CACHE': False,
         # The cache tracks unique individuals across evolution by saving a
@@ -148,7 +154,8 @@ def set_params(command_line_args):
                                     "lookup_bad_fitness", "mutate_duplicates",
                                     "complete_evals", "genome_length=",
                                     "invalid_selection", "silent",
-                                    "dont_lookup_fitness", "experiment_name="])
+                                    "dont_lookup_fitness", "experiment_name=",
+                                    "multicore", "cores="])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run python ponyge.py --help for more info")
@@ -192,6 +199,12 @@ def set_params(command_line_args):
             params['TOURNAMENT_SIZE'] = int(arg)
         elif opt == "--selection_proportion":
             params['SELECTION_PROPORTION'] = float(arg)
+
+        # EVALUATION
+        elif opt == "--multicore":
+            params['MULTIPCORE'] = True
+        elif opt == "--cores":
+            params['CORES'] = int(arg)
 
         # CROSSOVER
         elif opt == "--crossover":

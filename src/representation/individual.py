@@ -78,4 +78,5 @@ class Individual(object):
         else:
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype)
 
-        # print("\n", self.fitness, "\t", self.phenotype)
+        if params['MULTICORE']:
+            return self

@@ -1,5 +1,5 @@
 from utilities.trackers import best_fitness_list
-from os import getcwd
+import pandas as pd
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -14,16 +14,63 @@ def save_best_fitness_plot():
     """
     from algorithm.parameters import params
 
-    fig = plt.figure()  # figsize=[20,15])
+    fig = plt.figure()
     ax1 = fig.add_subplot(1, 1, 1)
     ax1.plot(best_fitness_list)
     ax1.set_ylabel('fitness', fontsize=14)
     ax1.set_xlabel('Generation', fontsize=14)
-    plt.savefig(params['FILE_PATH']+str(params['TIME_STAMP'])+'/fitness.pdf')
+    plt.title("Best fitness")
+    plt.savefig(
+        params['FILE_PATH'] + str(params['TIME_STAMP']) + '/fitness.pdf')
     plt.close()
 
 
-def save_average_fitness_plot(filename):
+def save_plot_from_data(data, name):
+    """
+    Saves a plot of a given set of data.
+    :param data: the data to be plotted
+    :param name: the name of the data to be plotted.
+    :return: Nothing.
+    """
+    from algorithm.parameters import params
+
+    # Plot the data
+    fig = plt.figure()
+    ax1 = fig.add_subplot(1, 1, 1)
+    ax1.plot(data)
+    plt.title(name)
+    plt.savefig(
+        params['FILE_PATH'] + str(params['TIME_STAMP']) + '/' + name + '.pdf')
+    plt.close()
+
+
+def save_plot_from_file(filename, stat_name):
+    """
+    Saves a plot of a given stat from the stats file.
+    :param filename: a full specified path to a .csv stats file.
+    :param stat_name: the stat of interest for plotting.
+    :return: Nothing.
+    """
+
+    # Read in the data
+    data = pd.read_csv(filename, sep="\t")
+    stat = list(data[stat_name])
+
+    # Plot the data
+    fig = plt.figure()
+    ax1 = fig.add_subplot(1, 1, 1)
+    ax1.plot(stat)
+    plt.title(stat_name)
+
+    # Get save path
+    save_path = "/".join(filename.split("/")[:-1])
+
+    # Save plot
+    plt.savefig(save_path + '/' + stat_name + '.pdf')
+    plt.close()
+
+
+def save_average_fitness_plot_across_runs(filename):
     """
     Saves an average plot of multiple runs. Input file data must be of the
     format:
@@ -56,7 +103,7 @@ def save_average_fitness_plot(filename):
     stdmin = ave - std
     r = range(1, max_gens + 1)
 
-    fig = plt.figure() # figsize=[20,15])
+    fig = plt.figure()
     ax1 = fig.add_subplot(1, 1, 1)
 
     ax1.plot(r, ave, color="blue")
