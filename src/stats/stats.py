@@ -31,7 +31,8 @@ stats = {
         "min_tree_nodes": 0,
         "ave_fitness": 0,
         "best_fitness": 0,
-        "time_taken": 0
+        "time_taken": 0,
+        "total_time": 0
 }
 
 
@@ -45,6 +46,8 @@ def get_stats(individuals, END=False):
         available = [i for i in individuals if not i.invalid]
         stats['time_taken'] = \
             timedelta(seconds=trackers.time_list[-1] - trackers.time_list[-2])
+        stats['total_time'] = timedelta(seconds=(trackers.time_list[-1] -
+                                        trackers.time_list[0]))
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
         stats['unique_inds'] = len(trackers.cache)
@@ -118,12 +121,8 @@ def get_stats(individuals, END=False):
             save_best(END, "best")
 
     if END:
-        total_time = timedelta(seconds=(trackers.time_list[-1] -
-                                        trackers.time_list[0]))
         if not params['SILENT']:
-            print_final_stats(total_time)
-        if not params['DEBUG']:
-            save_final_stats(total_time)
+            print_final_stats()
 
 
 def ave(x):
@@ -144,7 +143,7 @@ def print_stats():
     print("\n")
 
 
-def print_final_stats(total_time):
+def print_final_stats():
     """
     Prints a final review of the overall evolutionary process
     """
@@ -159,7 +158,7 @@ def print_final_stats(total_time):
     print("  Genome:", stats['best_ever'].genome)
     for stat in sorted(stats.keys()):
         print(" ", stat, ": \t", stats[stat])
-    print("\nTime taken:\t", total_time)
+    print("\nTime taken:\t", stats['total_time'])
 
 
 def save_stats(end=False):
@@ -200,14 +199,14 @@ def save_stats_headers():
     savefile.close()
 
 
-def save_final_stats(total_time):
+def save_final_stats():
     """
     Appends the total time taken for a run to the stats file.
     """
 
     filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
     savefile = open(filename, 'a')
-    savefile.write("Total time taken: \t" + str(total_time))
+    savefile.write("Total time taken: \t" + str(stats['total_time']))
     savefile.close()
 
 
@@ -219,7 +218,7 @@ def save_params():
 
     filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/parameters.txt"
     savefile = open(filename, 'w')
-    for param in params:
+    for param in sorted(params.keys()):
         savefile.write(str(param) + " : \t" + str(params[param]) + "\n")
     savefile.close()
 

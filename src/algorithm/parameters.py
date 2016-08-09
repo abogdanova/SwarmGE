@@ -122,6 +122,7 @@ params = {
         'RANDOM_SEED': None
 }
 
+
 def set_params(command_line_args):
     from fitness.fitness_wheel import set_fitness_function, set_fitness_params
     from utilities.initialise_run import initialise_run_params
