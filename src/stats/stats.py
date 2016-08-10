@@ -164,7 +164,7 @@ def print_final_stats():
 def save_stats(end=False):
     """Write the results to a results file for later analysis"""
     if params['VERBOSE']:
-        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
+        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
         savefile = open(filename, 'a')
         for stat in sorted(stats.keys()):
             savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
@@ -172,7 +172,7 @@ def save_stats(end=False):
         savefile.close()
 
     elif end:
-        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
+        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
         savefile = open(filename, 'a')
         for item in trackers.stats_list:
             for stat in sorted(item.keys()):
@@ -190,7 +190,7 @@ def save_stats_headers():
     :return: Nothing.
     """
 
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
     savefile = open(filename, 'w')
     for stat in sorted(stats.keys()):
         savefile.write(str(stat) + "\t")
@@ -203,7 +203,7 @@ def save_final_stats():
     Appends the total time taken for a run to the stats file.
     """
 
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.csv"
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
     savefile = open(filename, 'a')
     savefile.write("Total time taken: \t" + str(stats['total_time']))
     savefile.close()

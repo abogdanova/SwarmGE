@@ -74,7 +74,7 @@ def save_plot_from_file(filename, stat_name):
     plt.close()
 
 
-def save_average_fitness_plot_across_runs(filename):
+def save_average_plot_across_runs(filename):
     """
     Saves an average plot of multiple runs. Input file data must be of the
     format:
@@ -88,15 +88,17 @@ def save_average_fitness_plot_across_runs(filename):
         run0_gen(n-1)   run1_gen(n-1)   .   .   .   run(n-1)_gen(n-1)
         run0_gen(n)     run1_gen(n)     .   .   .   run(n-1)_gen(n)
 
-    No headers are required in the file. (i.e. this program will not execute
-    correctly if there are headers present. THIS WILL BE FIXED EVENTUALLY!
+    The required file can be generated using
+        
+        stats.parse_stats.parse_stat_from_runs()
 
-    Generated graphs are:
-        .pdf of average fitness with standard deviation
+    Generates a .pdf graph of average value with standard deviation.
     :param filename: the full file name of a .csv file containing the fitnesses
     of each generation of multiple runs. Must be comma separated.
     :return: Nothing.
     """
+
+    stat_name = filename.split("/")[-1].split(".")[0]
 
     data = np.genfromtxt(filename, delimiter=',')[:, :-1]
     ave = np.nanmean(data, axis=1)
@@ -114,8 +116,9 @@ def save_average_fitness_plot_across_runs(filename):
     plt.xlim(0, max_gens + 1)
     ax1.fill_between(r, stdmin, stdmax, color="DodgerBlue", alpha=0.5)
 
+    plt.title("Average " + stat_name)
     plt.xlabel('Generation', fontsize=14)
-    plt.ylabel('Average Fitness', fontsize=14)
+    plt.ylabel('Average ' + stat_name, fontsize=14)
     new_filename = filename.split(".")[0]
     plt.savefig(str(new_filename) + ".pdf")
     plt.close()

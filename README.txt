@@ -63,12 +63,13 @@ of run statistics. By default, runs save a plot of best fitness (unless --debug
 is specified). Additionally, users can save plots from pre-existing stats.tsv
 files (i.e. stats files generated upon completion of a run) using:
 
-utilities.save_plot.save_plot_from_file(file_name, stat_name)
+    utilities.save_plot.save_plot_from_file(file_name, stat_name)
 
 where:
 
-file_name = "./results/folder_name/stats.tsv" (the full file path to the file)
-stat_name = a valid key from the stats.stats.stats dictionary.
+    file_name = "./results/folder_name/stats.tsv" (the full file path to the
+                file)
+    stat_name = a valid key from the stats.stats.stats dictionary.
 
 This will generate a plot of the given stat and save it in the same location as
 the original stats file.
@@ -76,23 +77,23 @@ the original stats file.
 
 Alternatively, users can directly pass data in to:
 
-utilities.save_plot.save_plot_from_data(stat_data, stat_name)
+    utilities.save_plot.save_plot_from_data(stat_data, stat_name)
 
 where:
 
-stat_data = some list of data, i.e.
-            [data[stat_name] for data in utilities.trackers.stats_list]
-stat_name = a valid key from the stats.stats.stats dictionary.
+    stat_data = some list of data, i.e. [data[stat_name] for data in
+                                         utilities.trackers.stats_list]
+    stat_name = a valid key from the stats.stats.stats dictionary.
 
 
-Finally, a function is given for generating a plot of the average fitness
+Finally, a function is given for generating a plot of the average stat values
 across multiple runs, as given by:
 
-utilities.save_plot.save_average_fitness_plot_across_runs(file_name)
+    utilities.save_plot.save_average_plot_across_runs(file_name)
 
 where:
 
-file_name = the full file path to a comma-separated summary results file.
+    file_name = the full file path to a comma-separated summary results file.
 
 Note: The summary results file must be comma-separated, and of the form:
 
@@ -105,7 +106,14 @@ Note: The summary results file must be comma-separated, and of the form:
         run0_gen(n-1)   run1_gen(n-1)   .   .   .   run(n-1)_gen(n-1)
         run0_gen(n)     run1_gen(n)     .   .   .   run(n-1)_gen(n)
 
-#TODO: Currently no functions exist which will create such a summary file.
+Summary files can be generated using
+
+    stats.parse_stats.parse_stat_from_runs(experiment_name, stat_name)
+
+where:
+
+    experiment_name = the name of the collecting folder holding multiple runs
+    stat_name       = a valid key from the stats.stats.stats dictionary.
 
 
 Writing grammars
