@@ -3,7 +3,6 @@ from algorithm.parameters import params
 from utilities import trackers
 from datetime import datetime
 from sys import version_info
-from stats import stats
 import time
 
 

@@ -62,17 +62,17 @@ def help_message():
                                     "value"],
                ["\t--bnf_grammar:", "Sets the grammar to be used, requires "
                                     "string"],
-               ["\t--problem:", "Sets the problem to be used, requires string "
-                                "such as regression"],
-               ["\t--problem_suite:", "For use with regression problems, "
-                                      "requires string such as Dow"],
+               ["\t--problem:", "Sets the problem to be used. Requires string "
+                                "such as 'regression'"],
+               ["\t--problem_suite:", "For use with regression problems. "
+                                      "Requires string such as 'Dow'"],
                ["\t--experiment_name:", "Optional parameter to save results "
                                         "in /results/[EXPERIMENT_NAME] "
                                         "folder. If not specified then "
                                         "results are saved in default "
                                         "/results folder."],
-               ["\t--target_string:", "For string match problem, requires "
-                                      "target string"],
+               ["\t--target_string:", "For string match problem. Requires "
+                                      "target string."],
                ["\t--verbose:", "Turns on the verbose output of the program in"
                                 " terms of command line and extra files"],
                ["\t--silent:", "Prevents any output from being printed to "
@@ -82,6 +82,9 @@ def help_message():
                ["\t--save_all:", "Saves the best phenotypes at each "
                                  "generation"],
                ["\t--save_plots:", "Saves plots for best fitness"],
+               ["\t--multicore:", "Turns on multicore evaluation"],
+               ["\t--cores:", "Specify the number of cores to be used for "
+                              "multicore evaluation. Requires int."],
                ["\t--cache:", "Tracks unique phenotypes."],
                ["\t--lookup_fitness:", "Uses the cache to lookup duplicate "
                                        "fitnesses. Automatically set to true "
@@ -110,7 +113,7 @@ def help_message():
     for line in lines_1:
         print(line)
     col_width = max(len(line[0]) for line in lines_2)
-    for line in lines_2:
+    for line in sorted(lines_2):
         print(" ".join(words.ljust(col_width) for words in line))
     for line in lines_3:
         print(line)
