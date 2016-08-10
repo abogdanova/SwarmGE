@@ -12,14 +12,18 @@ grown to a stage where a more formal structured approach was needed.
 PonyGE2 is copyright (C) 2009-2016
 Erik Hemberg <erik.hemberg@gmail.com>,
 James McDermott <jamesmichaelmcdermott@gmail.com>,
-David Fagan <fagan.david@gmail.com>,
-Michael Fenton <michaelfenton1@gmail.com>.
+Michael Fenton <michaelfenton1@gmail.com>,
+David Fagan <fagan.david@gmail.com>.
+
 
 Requirements
 ------------
 
 PonyGE runs under Python 3.x.
-Using matplotlib, numpy, scipy, scikit-learn (sklearn)
+Using matplotlib, numpy, scipy, scikit-learn (sklearn), pandas
+
+All requirements can be satisfied with Anaconda.
+
 
 Running PonyGE
 --------------
@@ -31,7 +35,7 @@ $ cd src
 $ python ponyge.py
 
 This will run an example problem and generate a results folder. The folder
-contains several files showing the runs stats, producing graphs and
+contains several files showing the run's stats, producing graphs and
 documenting the parameters used, as well as a file containing the best
 individuals. For a more verbose command line experience run the following
 
@@ -39,14 +43,69 @@ $ cd src
 $ python ponyge.py --verbose
 
 Each line of the output corresponds to a generation in the evolution, and
-prints out all statistics on the current run (if --verbose is specified). Upon
-completion of a run, the best individual is printed to the command line, along
-with summary statistics.
+prints out all statistics on the current run (only if --verbose is specified).
+Upon completion of a run, the best individual is printed to the command line,
+along with summary statistics.
 
 There are a number of flags that can be used for passing values via
 the command-line. To see a full list of these just run the following
 
 $ python ponyge.py --help
+
+
+Post-run Analysis
+-----------------
+
+We don't provide any experiment managers other than the ability to save runs
+to specific folders using the --experiment_name handle. However, there are a
+number of functions available in utilities.save_plot which allow for plotting
+of run statistics. By default, runs save a plot of best fitness (unless --debug
+is specified). Additionally, users can save plots from pre-existing stats.tsv
+files (i.e. stats files generated upon completion of a run) using:
+
+utilities.save_plot.save_plot_from_file(file_name, stat_name)
+
+where:
+
+file_name = "./results/folder_name/stats.tsv" (the full file path to the file)
+stat_name = a valid key from the stats.stats.stats dictionary.
+
+This will generate a plot of the given stat and save it in the same location as
+the original stats file.
+
+
+Alternatively, users can directly pass data in to:
+
+utilities.save_plot.save_plot_from_data(stat_data, stat_name)
+
+where:
+
+stat_data = some list of data, i.e.
+            [data[stat_name] for data in utilities.trackers.stats_list]
+stat_name = a valid key from the stats.stats.stats dictionary.
+
+
+Finally, a function is given for generating a plot of the average fitness
+across multiple runs, as given by:
+
+utilities.save_plot.save_average_fitness_plot_across_runs(file_name)
+
+where:
+
+file_name = the full file path to a comma-separated summary results file.
+
+Note: The summary results file must be comma-separated, and of the form:
+
+        run0_gen0       run1_gen0       .   .   .   run(n-1)_gen0
+        run0_gen1       run1_gen1       .   .   .   run(n-1)_gen1
+        run0_gen2       run1_gen2       .   .   .   run(n-1)_gen2
+        .               .               .   .   .   .
+        .               .               .   .   .   .
+        .               .               .   .   .   .
+        run0_gen(n-1)   run1_gen(n-1)   .   .   .   run(n-1)_gen(n-1)
+        run0_gen(n)     run1_gen(n)     .   .   .   run(n-1)_gen(n)
+
+#TODO: Currently no functions exist which will create such a summary file.
 
 
 Writing grammars
@@ -63,6 +122,7 @@ enclosed by angle brackets <>. For example:
 You can use an "or" symbol or angle bracket in a production. Escape it
 using a backslash: \|, \<, \>. You can use the "goes-to" symbol in a
 production without escaping it.
+
 
 #FIXME Need to finalise a suite of problems for PonyGE2
 Example Problems
@@ -81,32 +141,31 @@ GRAMMAR_FILE, FITNESS_FUNCTION = "grammars/letter.bnf", \
 StringMatch("golden")
 
 
-Note on unit productions!!!!
+Note on unit productions
 ------------------------------------
 
-Traditionally GE would not consume a codon for unit productions. This
-was a design decision taken by O'Neill et al. In PonyGE2 unit productions
-consume codons. The logic being that it helps to do linear tree style
-operations.
-
-No only that but the checks needed for unit productions during
-the running of the algorithm can add up to millions of checks that aren't
-needed if we just consume codons for unit productions.
+Traditionally GE would not consume a codon for unit productions. This was a
+design decision taken by O'Neill et al. In PonyGE2 unit productions consume
+codons. The logic being that it helps to do linear tree-style operations.
+Furthermore, the checks needed for unit productions during the running of the
+algorithm can add up to millions of checks that aren't needed if we just
+consume codons for unit productions.
 
 The original design decision on unit productions was also taken before the
 introduction of evolvable grammars whereby the arity of a unit production
-could change over time and in this case consuming codons will help to limit
-the ripple effect from that change in arity. This also replicates non coding
+could change over time. In this case consuming codons will help to limit the
+ripple effect from that change in arity. This also replicates non coding
 regions of genome as seen in nature.
 
-In summary, the merits for not consuming a codon for unit productions are
-not clearly defined in the literature. The benefits in consuming codons are
-a reduction in computation and improved speed with linear tree style
-operations. Other benefits are an increase in non-coding regions in the
-chromosome (more in line with nature) that through evolution of the grammar may
-then express useful information.
+In summary, the merits for not consuming a codon for unit productions are not
+clearly defined in the literature. The benefits in consuming codons are a
+reduction in computation and improved speed with linear tree style operations.
+Other benefits are an increase in non-coding regions in the chromosome (more
+in line with nature) that through evolution of the grammar may then express
+useful information.
 
-Reference
+
+References
 ---------
 
 Michael O'Neill and Conor Ryan, "Grammatical Evolution: Evolutionary

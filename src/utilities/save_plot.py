@@ -98,7 +98,7 @@ def save_average_fitness_plot_across_runs(filename):
     :return: Nothing.
     """
 
-    data = np.genfromtxt(filename, delimiter=',')[:,:-1]
+    data = np.genfromtxt(filename, delimiter=',')[:, :-1]
     ave = np.nanmean(data, axis=1)
     std = np.nanstd(data, axis=1)
     max_gens = len(ave)

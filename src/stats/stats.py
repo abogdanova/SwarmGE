@@ -121,9 +121,8 @@ def get_stats(individuals, END=False):
         elif params['VERBOSE'] or END:
             save_best(END, "best")
 
-    if END:
-        if not params['SILENT']:
-            print_final_stats()
+    if END and not params['SILENT']:
+        print_final_stats()
 
 
 def ave(x):
