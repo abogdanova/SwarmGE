@@ -96,7 +96,7 @@ params = {
         # generation.
 
         # MULTIPROCESSING
-        'MULTICORE': True,
+        'MULTICORE': False,
         # Multiprocessing of phenotype evaluations.
         'CORES': cpu_count() - 1,
 
