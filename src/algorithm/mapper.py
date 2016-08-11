@@ -23,7 +23,7 @@ def genome_map(_input, max_wraps=0):
         # Wrap
         if used_input % n_input == 0 and \
                         used_input > 0 and \
-                any([i[0][1] == "NT" for i in unexpanded_symbols]):
+                any([i[0][1] == NT_SYMBOL for i in unexpanded_symbols]):
             wraps += 1
 
         # Expand a production
@@ -56,7 +56,7 @@ def genome_map(_input, max_wraps=0):
                 children.appendleft(child)
                 # TODO store number of NT to avoid counting and simply do
                 # lookup instead?
-                if child[0][1] == "NT":
+                if child[0][1] == NT_SYMBOL:
                     NT_count += 1
 
             unexpanded_symbols.extendleft(children)
@@ -159,10 +159,10 @@ def genome_tree_derivation(ind_tree, genome, index, depth, max_depth, nodes,
 
         for i in range(len(chosen_prod)):
             symbol = chosen_prod[i]
-            if symbol[1] == params['BNF_GRAMMAR'].T:
+            if symbol[1] == "T":
                 ind_tree.children.append(Tree((symbol[0],), ind_tree))
 
-            elif symbol[1] == params['BNF_GRAMMAR'].NT:
+            elif symbol[1] == "NT":
                 ind_tree.children.append(Tree((symbol[0],), ind_tree))
                 index, nodes, d, max_depth, invalid = \
                     genome_tree_derivation(ind_tree.children[-1], genome,

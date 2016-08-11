@@ -1,4 +1,4 @@
-from utilities.save_plot import save_best_fitness_plot
+from utilities.save_plots import save_best_fitness_plot
 from algorithm.parameters import params
 from os import path, mkdir, getcwd
 from datetime import timedelta
