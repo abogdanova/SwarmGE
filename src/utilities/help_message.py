@@ -6,8 +6,8 @@ def help_message():
                "for a more detailed explanation of each argument and possible "
                "values:"]
 
-    lines_2 = [["\t--help:", "Shows this help message"],
-               ["\t--debug:", "Disables saving of all ancillary files"],
+    lines_2 = [["\t--help:", "Shows this help message."],
+               ["\t--debug:", "Disables saving of all ancillary files."],
                ["\t--population:", "Sets the population size, requires int "
                                    "value"],
                ["\t--generations:", "Sets the number of generations, requires"

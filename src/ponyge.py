@@ -30,7 +30,7 @@ def mane():
     individuals = search_loop.search_loop_wheel()
 
     # Print final review
-    get_stats(individuals, END=True)
+    get_stats(individuals, end=True)
 
     # Returns only needed if running experiment manager
     return params['TIME_STAMP'], stats['best_ever'].fitness

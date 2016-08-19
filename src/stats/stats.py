@@ -36,10 +36,10 @@ stats = {
 }
 
 
-def get_stats(individuals, END=False):
+def get_stats(individuals, end=False):
     """Generate the statistics for an evolutionary run"""
 
-    if END or params['VERBOSE'] or not params['DEBUG']:
+    if end or params['VERBOSE'] or not params['DEBUG']:
 
         # Time Stats
         trackers.time_list.append(time.clock())
@@ -86,14 +86,14 @@ def get_stats(individuals, END=False):
 
     # Save fitness plot information
     if params['SAVE_PLOTS'] and not params['DEBUG']:
-        if not END:
+        if not end:
             trackers.best_fitness_list.append(stats['best_ever'].fitness)
-        if params['VERBOSE'] or END:
+        if params['VERBOSE'] or end:
             save_best_fitness_plot()
 
     # Print statistics
     if params['VERBOSE']:
-        if not END:
+        if not end:
             print_stats()
     elif not params['SILENT']:
         perc = stats['gen'] / (params['GENERATIONS']+1) * 100
@@ -102,7 +102,7 @@ def get_stats(individuals, END=False):
 
     # Generate test fitness on regression problems
     if params['PROBLEM'] in ("regression", "classification") and \
-            (END or (params['COMPLETE_EVALS']
+            (end or (params['COMPLETE_EVALS']
                      and stats['gen'] == params['GENERATIONS'])):
         stats['best_ever'].training_fitness = copy(stats['best_ever'].fitness)
         stats['best_ever'].evaluate(dist='test')
@@ -115,13 +115,13 @@ def get_stats(individuals, END=False):
 
     # Save statistics
     if not params['DEBUG']:
-        save_stats(END)
+        save_stats(end)
         if params['SAVE_ALL']:
-            save_best(END, stats['gen'])
-        elif params['VERBOSE'] or END:
-            save_best(END, "best")
+            save_best(end, stats['gen'])
+        elif params['VERBOSE'] or end:
+            save_best(end, "best")
 
-    if END and not params['SILENT']:
+    if end and not params['SILENT']:
         print_final_stats()
 
 
@@ -164,7 +164,8 @@ def print_final_stats():
 def save_stats(end=False):
     """Write the results to a results file for later analysis"""
     if params['VERBOSE']:
-        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
+        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
+                   "/stats.tsv"
         savefile = open(filename, 'a')
         for stat in sorted(stats.keys()):
             savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
@@ -172,7 +173,8 @@ def save_stats(end=False):
         savefile.close()
 
     elif end:
-        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
+        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
+                   "/stats.tsv"
         savefile = open(filename, 'a')
         for item in trackers.stats_list:
             for stat in sorted(item.keys()):
@@ -215,17 +217,22 @@ def save_params():
     :return: Nothing
     """
 
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/parameters.txt"
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
+               "/parameters.txt"
     savefile = open(filename, 'w')
+
+    col_width = max(len(param) for param in params.keys())
     for param in sorted(params.keys()):
-        savefile.write(str(param) + " : \t" + str(params[param]) + "\n")
+        savefile.write(str(param) + ": ")
+        spaces = [" " for _ in range(col_width - len(param))]
+        savefile.write("".join(spaces) + str(params[param]) + "\n")
     savefile.close()
 
 
 def save_best(end=False, name="best"):
 
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/" + str(name) + \
-               ".txt"
+    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/" + \
+               str(name) + ".txt"
     savefile = open(filename, 'w')
     savefile.write("Generation:\n" + str(stats['gen']) + "\n\n")
     savefile.write("Phenotype:\n" + str(stats['best_ever'].phenotype) + "\n\n")

@@ -53,8 +53,8 @@ the command-line. To see a full list of these just run the following
 $ python ponyge.py --help
 
 
-Post-run Analysis
------------------
+Post-run Analysis - Single Runs
+-------------------------------
 
 We don't provide any experiment managers other than the ability to save runs
 to specific folders using the --experiment_name handle. However, there are a
@@ -86,34 +86,19 @@ where:
     stat_name = a valid key from the stats.stats.stats dictionary.
 
 
-Finally, a function is given for generating a plot of the average stat values
-across multiple runs, as given by:
+Post-run Analysis - Multiple Runs
+---------------------------------
 
-    utilities.save_plot.save_average_plot_across_runs(file_name)
+If multiple runs are saved in a folder using the --experiment_name handle, a
+file is given for generating plots of the average stat values across these
+multiple runs, as given by:
 
-where:
+    stats.parse_stats.py
 
-    file_name = the full file path to a comma-separated summary results file.
+There are a number of flags that must be used for passing values via
+the command-line. To see a full list of these just run the following
 
-Note: The summary results file must be comma-separated, and of the form:
-
-        run0_gen0       run1_gen0       .   .   .   run(n-1)_gen0
-        run0_gen1       run1_gen1       .   .   .   run(n-1)_gen1
-        run0_gen2       run1_gen2       .   .   .   run(n-1)_gen2
-        .               .               .   .   .   .
-        .               .               .   .   .   .
-        .               .               .   .   .   .
-        run0_gen(n-1)   run1_gen(n-1)   .   .   .   run(n-1)_gen(n-1)
-        run0_gen(n)     run1_gen(n)     .   .   .   run(n-1)_gen(n)
-
-Summary files can be generated using
-
-    stats.parse_stats.parse_stat_from_runs(experiment_name, stat_name)
-
-where:
-
-    experiment_name = the name of the collecting folder holding multiple runs
-    stat_name       = a valid key from the stats.stats.stats dictionary.
+$ python stats/parse_stats.py --help
 
 
 Writing grammars
