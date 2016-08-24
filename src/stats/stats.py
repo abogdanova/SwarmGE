@@ -44,6 +44,7 @@ def get_stats(individuals, end=False):
         # Time Stats
         trackers.time_list.append(time.clock())
         available = [i for i in individuals if not i.invalid]
+        # TODO: Should we save time stats as raw seconds? Easier for parsing.
         stats['time_taken'] = \
             timedelta(seconds=trackers.time_list[-1] - trackers.time_list[-2])
         stats['total_time'] = timedelta(seconds=(trackers.time_list[-1] -

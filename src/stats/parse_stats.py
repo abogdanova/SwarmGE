@@ -1,4 +1,5 @@
 from os import getcwd, listdir
+from datetime import datetime
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -130,12 +131,7 @@ def parse_stat_from_runs(experiment_name, stats, graph):
     runs = [run for run in listdir(path) if "." not in run]
     
     for stat in stats:
-        if stat in ["total_time", "time_taken"]:
-            print("Error: Current version does not support graphing of time"
-                  " stats.")
-            # TODO: Add support for graphing time
-            quit()
-        elif stat == "best_ever":
+        if stat == "best_ever":
             print("Error: Cannot graph instances of individual class. Do not"
                   " specify 'best_ever' as stat to be parsed.")
             quit()
@@ -148,6 +144,14 @@ def parse_stat_from_runs(experiment_name, stats, graph):
             except KeyError:
                 print("Error: stat", stat, "does not exist")
                 quit()
+
+        if stat in ["total_time", "time_taken"]:
+            zero = datetime.strptime("1900-01-01 0:00:00.000000",
+                                     "%Y-%m-%d %H:%M:%S.%f")
+            for i, run in enumerate(summary_stats):
+                summary_stats[i] = [(datetime.strptime(time,
+                                                       "%H:%M:%S.%f") - zero).total_seconds()
+                                    for time in run]
                 
         summary_stats = np.asarray(summary_stats)
         summary_stats = np.transpose(summary_stats)
