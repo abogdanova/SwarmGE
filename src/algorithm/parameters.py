@@ -20,6 +20,7 @@ params = {
         'PROBLEM': "regression",
         # "regression"
         # "string_match"
+        # "classification"
 
         # Select Regression Problem Suite
         'SUITE': "Vladislavleva4",

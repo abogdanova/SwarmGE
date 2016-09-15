@@ -132,10 +132,11 @@ useful information.
 Example Problems
 ----------------
 
-Two example problems are currently provided:
+Three example problems are currently provided:
 
     - String-match
     - Regression
+    - Classification
 
 A brief description is given below of each problem, along with the command-line
 arguments necessary to call each problem. It is not necessary to specify the
@@ -169,6 +170,12 @@ To use it, specify the following command-line arguments:
 
 --problem regression
 --problem_suite PROBLEM_SUITE (e.g. Keijzer6, Vladislavleva4)
+
+
+Classification
+--------------
+
+#TODO Explain classificaiton problem here
 
 
 -----------------
