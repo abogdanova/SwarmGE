@@ -170,7 +170,6 @@ def set_params(command_line_args):
         # POPULATION OPTIONS
         elif opt == "--population":
             params['POPULATION_SIZE'] = int(arg)
-            params['GENERATION_SIZE'] = int(arg)
         elif opt == "--generations":
             params['GENERATIONS'] = int(arg)
 
@@ -288,7 +287,8 @@ def set_params(command_line_args):
         params['ELITE_SIZE'] = return_percent(1, params['POPULATION_SIZE'])
 
     # Set the size of a generation
-    params['GENERATION_SIZE'] = params['POPULATION_SIZE']
+    params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - params[
+        'ELITE_SIZE']
 
     # Set random seed
     if params['RANDOM_SEED'] is None:
