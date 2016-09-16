@@ -17,7 +17,7 @@ class Individual(object):
                                range(params['GENOME_LENGTH'])]
                 self.phenotype, genome, self.tree, self.nodes, self.invalid, \
                     self.depth, self.used_codons = \
-                    genome_tree_map(list(genome))
+                    genome_tree_map(list(self.genome))
                 self.fitness = \
                     default_fitness(params['FITNESS_FUNCTION'].maximise)
             else:

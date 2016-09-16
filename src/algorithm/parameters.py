@@ -189,6 +189,7 @@ def set_params(command_line_args):
             params['MAX_INIT_DEPTH'] = int(arg)
         elif opt == "--genome_init":
             params['GENOME_INIT'] = True
+            params['INITIALISATION'] = "operators.initialisation.random_init"
 
         # SELECTION
         elif opt == "--selection":
