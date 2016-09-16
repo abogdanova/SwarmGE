@@ -1,6 +1,6 @@
+from re import search, findall, finditer, DOTALL, MULTILINE
 from algorithm.parameters import params
 from operators import initialisation
-from re import search, findall
 from itertools import groupby
 
 
@@ -8,7 +8,7 @@ class Grammar(object):
     """ Context Free Grammar """
     NT = "NT"  # Non Terminal
     T = "T"  # Terminal
-
+    
     def __init__(self, file_name):
         if file_name.endswith("pybnf"):
             self.python_mode = True
@@ -19,6 +19,9 @@ class Grammar(object):
         self.non_terminals, self.terminals = {}, []
         self.start_rule = None
         self.codon_size = params['CODON_SIZE']
+        self.ruleregex = '(?P<rulename><\S+>)\s*::=\s*(?P<production>(?:(?=\#)\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)'
+        self.productionregex = '(?=\#)(?:\#.*$)|(?!\#)\s*(?P<production>(?:[^\'\"\|\#]+|\'.*?\'|".*?")+)'
+        self.productionpartsregex = '\ *([\r\n]+)\ *|([^\'"<\r\n]+)|\'(.*?)\'|"(.*?)"|(?P<subrule><[^>|\s]+>)|([<]+)'
         self.read_bnf_file(file_name)
         self.check_depths()
         self.check_permutations()
@@ -27,6 +30,60 @@ class Grammar(object):
                               if self.non_terminals[i]['b_factor'] > 1]
 
     def read_bnf_file(self, file_name):
+        """Read a grammar file in BNF format"""
+
+        # Read the grammar file
+        with open(file_name, 'r') as bnf:
+            content = bnf.read()
+            for rule in finditer(self.ruleregex, content, DOTALL):
+                if self.start_rule is None:
+                    self.start_rule = (rule.group('rulename'), self.NT)
+                self.non_terminals[rule.group('rulename')] = {
+                    'id': rule.group('rulename'),
+                    'min_steps': 9999999999999,
+                    'expanded': False,
+                    'recursive': True,
+                    'permutations': None,
+                    'b_factor': 0}
+                tmp_productions = []
+                for p in finditer(self.productionregex,
+                                  rule.group('production'), MULTILINE):
+                    if p.group('production') is None or p.group(
+                            'production').isspace():
+                        continue
+                    tmp_production = []
+                    terminalparts = ''
+                    for sub_p in finditer(self.productionpartsregex,
+                                          p.group('production').strip()):
+                        if sub_p.group('subrule'):
+                            if terminalparts:
+                                symbol = [terminalparts, self.T, 0, False]
+                                tmp_production.append(symbol)
+                                self.terminals.append(terminalparts)
+                                terminalparts = ''
+                            tmp_production.append(
+                                [sub_p.group('subrule'), self.NT])
+                        else:
+                            terminalparts += ''.join(
+                                [part for part in sub_p.groups() if part])
+                
+                    if terminalparts:
+                        symbol = [terminalparts, self.T, 0, False]
+                        tmp_production.append(symbol)
+                        self.terminals.append(terminalparts)
+                    tmp_productions.append(tmp_production)
+            
+                if not rule.group('rulename') in self.rules:
+                    self.rules[rule.group('rulename')] = tmp_productions
+                    if len(tmp_productions) == 1:
+                        print("Warning: Grammar contains unit production "
+                              "for production rule", rule.group('rulename'))
+                        print("       Unit productions consume GE codons.")
+                else:
+                    raise ValueError("lhs should be unique",
+                                     rule.group('rulename'))
+
+    def old_read_bnf_file(self, file_name):
         """Read a grammar file in BNF format"""
         # <.+?> Non greedy match of anything between brackets
         non_terminal_pattern = "(<.+?>)"

@@ -205,8 +205,8 @@ is to match a target word.
 
 To use it, specify the following command-line arguments:
 
---problem string_match
---target_string TYPE_TARGET_STRING (e.g. golden, ponyge_rocks)
+    "--problem string_match"
+    "--target_string TYPE_TARGET_STRING" (e.g. golden, ponyge_rocks)
 
 
 Regression
@@ -221,8 +221,8 @@ This is the default problem for PonyGE.
 
 To use it, specify the following command-line arguments:
 
---problem regression
---problem_suite PROBLEM_SUITE (e.g. Keijzer6, Vladislavleva4)
+    "--problem regression"
+    "--problem_suite PROBLEM_SUITE" (e.g. Keijzer6, Vladislavleva4)
 
 
 Classification
