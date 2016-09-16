@@ -72,15 +72,68 @@ About PonyGE2
 
 #TODO: Fill out this section heftily.
 
-As standard, PonyGE2 is composed of the following basic elements:
+A full breakdown of the currently implemented elements in PonyGE2 is provided
+below. This includes a brief description of each individual component and how
+to activate them. PonyGE2 automatically parses the correct path for all
+operators, meaning you don't have to specify the full direct path but only
+the name of the desired operator, e.g. "--crossover subtree" instead of
+"--crossover operators.crossover.subtree". However, it is still possible to
+specify the full correct path if you so desire. Specifying the full direct path
+allows you to create new operators and place them wherever you like.
 
     - Initialisation
+      --------------
+        There are two main ways to initialise a GE individual: by generating a
+        genome, or by generating a subtree. Generation of a genome can only be
+        done by creating a random genome string and as such individuals cannot
+        be controlled. Subtree generation on the other hand can be forced to
+        conform to specified limits, e.g. depth limits. This is implemented in
+        ramped half-half initialisation (also called Sensible initialisation).
+        It is also possible to initialise a population using randomly generated
+        subtrees, which is similar in theory to random genome initialisation
+        except there is far less bias than random genome initialisation as a
+        result of the number of production choices in the grammar.
+
+        - Genome
+            - Random
+                Activate with "--genome_init"
+        - Subtree
+            - Random
+                Activate with "--initialisation random_init"
+            - Ramped Half-Half
+                Activate with "--initialisation rhh"
+
     - Selection
+      ---------
+        - Tournament
+            Activate with "--selection tournament"
+        - Truncation
+            *** NOT FULLY IMPLEMENTED ***
+            Activate with "--selection truncation"
+
     - Variation
+      ---------
         - Crossover
+            - Onepoint
+                Activate with "--crossover onepoint"
+            - Subtree
+                Activate with "--crossover subtree"
         - Mutation
+            - Int Flip
+                Activate with "--mutation int_flip"
+            - Subtree
+                Activate with "--mutation subtree"
+
     - Evaluation
+      ----------
+
     - Replacement
+      -----------
+        - Generational
+            Activate with "--replacement generational"
+        - Steady State
+            *** NOT FULLY IMPLEMENTED ***
+            Activate with "--replacement steady_state"
 
 
 Writing grammars

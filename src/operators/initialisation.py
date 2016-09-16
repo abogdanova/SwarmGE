@@ -7,13 +7,20 @@ from math import floor
 
 
 def random_init(size):
-    """Randomly create a population of size and return"""
+    """
+    Randomly create a population of size and return.
+    :param size: The size of the required population.
+    :return: A full population composed of randomly generated individuals.
+    """
     return [individual.Individual(None, None) for _ in range(size)]
 
 
 def rhh(size):
-    """ Create a population of size using ramped half and half (or sensible
-        initialisation) and return. Individuals have a genome created for them
+    """
+    Create a population of size using ramped half and half (or sensible
+    initialisation) and return.
+    :param size: The size of the required population.
+    :return: A full population of individuals.
     """
 
     depths = range(params['BNF_GRAMMAR'].min_ramp + 1,
