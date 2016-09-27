@@ -5,7 +5,12 @@ from utilities.trackers import cache
 
 
 def search_loop_wheel():
-    """Allows the user to select different main search functions."""
+    """
+    Allows the user to select different main search functions.
+    
+    :return: The returns of the main search loop function.
+    """
+    
     if params['COMPLETE_EVALS']:
         return search_loop_complete_evals()
     else:
@@ -13,7 +18,13 @@ def search_loop_wheel():
 
 
 def search_loop():
-    """Loop over max generations"""
+    """
+    This is a standard search process for an evolutionary algorithm. Loop over
+    a given number of generations.
+    
+    :return: The final population after the evolutionary process has run for
+    the specified number of generations.
+    """
 
     # Initialise population
     individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
@@ -38,7 +49,15 @@ def search_loop():
 
 
 def search_loop_complete_evals():
-    """Loop over total evaluations"""
+    """
+    This is a non-standard search process for an evolutionary algorithm. Loop
+    over a given number of total fitness evaluations rather than a set
+    number of generations. May run for more generations than are set in
+    params['GENERATIONS'].
+    
+    :return: The final population after the evolutionary process has run for
+    the specified number of fitness evaluations.
+    """
 
     # Initialise population
     individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
@@ -49,7 +68,7 @@ def search_loop_complete_evals():
     # Generate statistics for run so far
     get_stats(individuals)
 
-    # Runs for a specified number of evaluations
+    # Runs for a specified number of fitness evaluations
     while len(cache) < (params['GENERATIONS'] * params['POPULATION_SIZE']):
 
         stats['gen'] += 1

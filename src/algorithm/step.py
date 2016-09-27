@@ -6,22 +6,31 @@ from operators.selection import selection
 
 
 def step(individuals):
-    """Return individuals and best ever individual from a step of
-    the EA iteration"""
+    """
+    Runs a single generation of the evolutionary algorithm process:
+        Selection
+        Variation
+        Evaluation
+        Replacement
+    
+    :param individuals: The current generation, upon which a single
+    evolutionary generation will be imposed.
+    :return: The next generation of the population.
+    """
 
-    # Select parents
+    # Select parents from the original population.
     parents = selection(individuals)
 
-    # Crossover parents and add to the new population
+    # Crossover parents and add to the new population.
     cross_pop = crossover(parents)
 
-    # Mutate the new population
+    # Mutate the new population.
     new_pop = mutation(cross_pop)
 
-    # Evaluate the fitness of the new population
+    # Evaluate the fitness of the new population.
     new_pop = evaluation(new_pop)
 
-    # Replace the sorted individuals with the new populations
+    # Replace the old population with the new population.
     individuals = replacement(new_pop, individuals)
 
     return individuals

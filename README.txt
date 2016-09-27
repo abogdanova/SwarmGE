@@ -81,6 +81,41 @@ the name of the desired operator, e.g. "--crossover subtree" instead of
 specify the full correct path if you so desire. Specifying the full direct path
 allows you to create new operators and place them wherever you like.
 
+Evolutionary Parameters:
+
+    - Population Size
+      ---------------
+        The size of the population. The default value is 500. This value can
+        be changed with the flag:
+
+        "--population_size [INT]"
+
+        where [INT] is an integer which specifies the population size.
+        Higher population sizes can improve performance on difficult
+        problems, but require more computational effort and may lead to
+        premature convergence.
+
+    - Generations
+      -----------
+        The number of generations the evolutionary algorithm will run for.
+        The default value is 50. This value can be changed with the flag:
+
+        "--generations [INT]"
+
+        where [INT] is an integer which specifies the number of generations.
+        Higher numbers of generations can improve performance, but will lead
+        to longer run-times.
+
+The typical breakdown of a population-based evolutionary algorithm is:
+
+    Initialisation
+    Selection
+    Variation
+    Evaluation
+    Replacement
+
+These steps are expanded on in detail hereafter.
+
     - Initialisation
       --------------
         There are two main ways to initialise a GE individual: by generating a
@@ -106,7 +141,7 @@ allows you to create new operators and place them wherever you like.
     - Selection
       ---------
         Only valid individuals are selected by default. However, this can be
-        changed by calling the flag:
+        changed with the flag:
 
         "--invalid_selection"
 
