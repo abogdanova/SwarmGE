@@ -199,7 +199,15 @@ def set_params(command_line_args):
         elif opt == "--tournament_size":
             params['TOURNAMENT_SIZE'] = int(arg)
         elif opt == "--selection_proportion":
-            params['SELECTION_PROPORTION'] = float(arg)
+            try:
+                params['SELECTION_PROPORTION'] = float(arg)
+            except:
+                print("Error: Please define selection proportion as float")
+                quit()
+            if not 1 >= params['SELECTION_PROPORTION'] >= 0:
+                print("Error: Selection proportion outside allowed range ["
+                      "0:1]")
+                quit()
 
         # EVALUATION
         elif opt == "--multicore":

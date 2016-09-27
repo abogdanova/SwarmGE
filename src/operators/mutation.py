@@ -27,6 +27,8 @@ def int_flip(ind):
     if params['MUTATION_PROBABILITY']:
         p_mut = params['MUTATION_PROBABILITY']
     else:
+        # Default mutation events per individual is 1. Raising this number
+        # will influence the mutation probability for each codon.
         p_mut = params['MUTATION_EVENTS']/len(ind.genome)
 
     # Mutation probability works per-codon over the entire genome (not just

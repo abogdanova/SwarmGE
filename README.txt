@@ -105,11 +105,29 @@ allows you to create new operators and place them wherever you like.
 
     - Selection
       ---------
+        Only valid individuals are selected by default. However, this can be
+        changed by calling the flag:
+
+        "--invalid_selection"
+
         - Tournament
             Activate with "--selection tournament"
+
+            Tournament size is set by default at 2. This value can be changed
+            with the flag:
+
+            "--tournament_size [INT]"
+
+            where [INT] is an integer which specifies the tournament size.
         - Truncation
-            *** NOT FULLY IMPLEMENTED ***
             Activate with "--selection truncation"
+
+            Selection proportion is set by default at 0.5. This value can be
+            changed with the flag:
+
+            "--selection_proportion [NUM]"
+
+            where [NUM] is a float between 0 and 1.
 
     - Variation
       ---------
@@ -119,8 +137,30 @@ allows you to create new operators and place them wherever you like.
             - Subtree
                 Activate with "--crossover subtree"
         - Mutation
+            The ability to specify the number of mutation events per
+            individual is provided. This works for both genome mutation and
+            subtree mutation. The default number of mutation events is 1 per
+            individual. This value can be changed with  the flag:
+
+            "--mutation_events [INT]"
+
+            where [INT] is an integer which specifies the number of mutation
+            events per individual. Note that for subtree mutation exactly
+            this number of mutation events will occur, but for integer flip
+            mutation this will only affect the probability of mutation
+            events occurring.
+
             - Int Flip
                 Activate with "--mutation int_flip"
+
+                Default mutation probability is 1 over the length of the
+                genome. This can be changed with the flag:
+
+                "--mutation_probability [NUM]"
+
+                where [NUM] is a float between 0 and 1. This will change
+                the mutation probability for each codon to the probability
+                specified.
             - Subtree
                 Activate with "--mutation subtree"
 
@@ -206,7 +246,8 @@ is to match a target word.
 To use it, specify the following command-line arguments:
 
     "--problem string_match"
-    "--target_string TYPE_TARGET_STRING" (e.g. golden, ponyge_rocks)
+    "--target_string [TYPE_TARGET_STRING]"
+        e.g. --target_string golden, --target_string ponyge_rocks
 
 
 Regression
@@ -222,7 +263,8 @@ This is the default problem for PonyGE.
 To use it, specify the following command-line arguments:
 
     "--problem regression"
-    "--problem_suite PROBLEM_SUITE" (e.g. Keijzer6, Vladislavleva4)
+    "--problem_suite [PROBLEM_SUITE]"
+        e.g. --problem_suite Keijzer6, --problem_suite Vladislavleva4
 
 
 Classification

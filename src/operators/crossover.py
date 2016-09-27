@@ -4,15 +4,31 @@ from representation import individual
 
 
 def crossover(parents):
-    """ Perform crossover on a population """
+    """
+    Perform crossover on a population of individuals. The size of the crossover
+    population is defined as params['GENERATION_SIZE'] rather than params[
+    'POPULATION_SIZE']. This saves on wasted evaluations and prevents search
+    from evaluating too many individuals.
+    :param parents: A population of parent individuals on which crossover is to
+    be performed.
+    :return: A population of fully crossed over individuals.
+    """
 
+    # Initialise an empty population
     cross_pop = []
     while len(cross_pop) < params['GENERATION_SIZE']:
+        
+        # Randomly choose two parents from the parent population
         inds_in = sample(parents, 2)
 
+        # Re-initialise these parents to create copies of the originals.
+        # This is necessary as the original parents remain in the parent
+        # population and changes will affect the originals unless they are
+        # cloned through re-initialisation.
         ind_0 = individual.Individual(inds_in[0].genome, None)
         ind_1 = individual.Individual(inds_in[1].genome, None)
 
+        # Crossover cannot be performed on invalid individuals.
         if ind_0.invalid or ind_1.invalid:
             print("Error, invalid inds selected for crossover")
             exit(2)
