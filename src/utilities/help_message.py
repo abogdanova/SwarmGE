@@ -44,8 +44,9 @@ def help_message():
                                   "requires string such as 'subtree' or "
                                   "direct path string such as "
                                   "'operators.crossover.subtree'"],
-               ["\t--crossover_prob:", "Sets the crossover probability, "
-                                       "requires float, e.g. 0.9"],
+               ["\t--crossover_probability:", "Sets the crossover "
+                                              "probability, requires float, "
+                                              "e.g. 0.9"],
                ["\t--replacement:", "Sets the replacement strategy, requires "
                                     "string such as 'generational' or direct"
                                     "path string such as "

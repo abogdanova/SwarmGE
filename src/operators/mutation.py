@@ -8,6 +8,7 @@ def mutation(pop):
     """
     Perform mutation on a population of individuals. Calls mutation operator as
     specified in params dictionary.
+    
     :param pop: A population of individuals to be mutated.
     :return: A fully mutated population.
     """
@@ -19,6 +20,7 @@ def int_flip(ind):
     """
     Mutate the genome of an individual by randomly choosing a new int with
     probability p_mut. Works per-codon.
+    
     :param ind: An individual to be mutated.
     :return: A mutated individual.
     """
@@ -47,6 +49,7 @@ def subtree(ind):
     """
     Mutate the individual by replacing a randomly selected subtree with a
     new subtree. Guaranteed one event per individual if called.
+    
     :param ind: An individual to be mutated.
     :return: A mutated individual.
     """
@@ -72,6 +75,7 @@ def subtree_mutate(ind_tree):
     Creates a list of all nodes and picks one node at random to mutate.
     Because we have a list of all nodes, we can (but currently don't) choose
     what kind of nodes to mutate on. Handy.
+    
     :param ind_tree: The full tree of an individual.
     :return: The full mutated tree and the associated genome.
     """

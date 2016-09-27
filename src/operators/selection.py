@@ -4,10 +4,13 @@ from random import sample
 
 def selection(population):
     """
-    Perform selection on a population
+    Perform selection on a population in order to select a population of
+    individuals for variation.
+    
     :param population: input population
     :return: selected population
     """
+    
     return params['SELECTION'](population)
 
 
@@ -45,6 +48,7 @@ def tournament(population):
 def truncation(population):
     """
     Given an entire population, return the best <proportion> of them.
+    
     :param population: A population from which to select individuals.
     :return: The best <proportion> of the given population.
     """

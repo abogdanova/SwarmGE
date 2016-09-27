@@ -140,7 +140,7 @@ allows you to create new operators and place them wherever you like.
             The ability to specify the number of mutation events per
             individual is provided. This works for both genome mutation and
             subtree mutation. The default number of mutation events is 1 per
-            individual. This value can be changed with  the flag:
+            individual. This value can be changed with the flag:
 
             "--mutation_events [INT]"
 
@@ -171,8 +171,17 @@ allows you to create new operators and place them wherever you like.
       -----------
         - Generational
             Activate with "--replacement generational"
+
+            Elites can be saved between generations. The default number of
+            elites is 2. This value can be changed with the flag:
+
+            "--elite_size [INT]"
+
+            where [INT] is an integer which specifies the number of elites
+            to be saved between generations. Elites are saved between
+            generations regardless of whether or not they are better or worse
+            than the new population.
         - Steady State
-            *** NOT FULLY IMPLEMENTED ***
             Activate with "--replacement steady_state"
 
 

@@ -1,7 +1,6 @@
-from algorithm.mapper import mapper, genome_map, map_tree_from_genome
 from fitness.fitness import default_fitness
 from algorithm.parameters import params
-from random import randint
+from algorithm.mapper import mapper
 
 
 class Individual(object):
