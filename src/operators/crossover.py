@@ -74,15 +74,9 @@ def subtree(p_0, p_1):
 
         ind0 = individual.Individual(genome_0, tree_0)
         ind0.genome = genome_0 + tail_0
-        ind0.used_codons = len(genome_0)
-        ind0.depth, ind0.nodes = tree_0.get_tree_info(tree_0)
-        ind0.depth += 1
 
         ind1 = individual.Individual(genome_1, tree_1)
         ind1.genome = genome_1 + tail_1
-        ind1.used_codons = len(genome_1)
-        ind1.depth, ind1.nodes = tree_1.get_tree_info(tree_1)
-        ind1.depth += 1
 
     return [ind0, ind1]
 

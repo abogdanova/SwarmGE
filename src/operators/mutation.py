@@ -32,6 +32,8 @@ def subtree(ind):
     """Mutate the individual by replacing a randomly selected subtree with a
     new subtree. Guaranteed one event per individual if called."""
 
+    #TODO: Need to change subtree_mutate to be compatible with the mapper
+
     for i in range(params['MUTATION_EVENTS']):
         tail = ind.genome[ind.used_codons:]
         ind.phenotype, genome, ind.tree = subtree_mutate(ind.tree)
