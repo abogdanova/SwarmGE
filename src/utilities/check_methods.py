@@ -61,7 +61,7 @@ def check_mapping(genome):
     :return: nothing if everything goes ok
     """
 
-    p1, g1, t1, n1, i1, d1, c1 = mapper.genome_tree_map(genome)
+    p1, g1, t1, n1, i1, d1, c1 = mapper.map_tree_from_genome(genome)
     p2, g2, t2, n2, i2, d2, c2 = mapper.genome_map(genome)
 
     if not i1:
@@ -149,7 +149,7 @@ def verify_tree(ind_tree):
     orig_gen = copy(ind_tree.build_genome([]))
 
     output, genome, ind_tree, nodes, invalid, depth, used_codons = \
-        mapper.genome_tree_map(orig_gen)
+        mapper.map_tree_from_genome(orig_gen)
 
     if invalid:
         print("Invalid genome tree")
