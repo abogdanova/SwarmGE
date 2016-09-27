@@ -208,7 +208,8 @@ These steps are expanded on in detail hereafter.
             Activate with "--replacement generational"
 
             Elites can be saved between generations. The default number of
-            elites is 2. This value can be changed with the flag:
+            elites is 1 percent of the population size. This value can be
+            changed with the flag:
 
             "--elite_size [INT]"
 

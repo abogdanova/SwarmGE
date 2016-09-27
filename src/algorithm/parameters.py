@@ -169,6 +169,17 @@ def check_float(param, arg):
 
 
 def set_params(command_line_args):
+    """
+    This function parses all command line arguments specified by the user.
+    If certain parameters are not set then defaults are used (e.g. random
+    seeds, elite size). Sets the correct imports given command line
+    arguments. Sets correct grammar file and fitness function. Also
+    initialises save folders and tracker lists in utilities.trackers.
+    
+    :param command_line_args: Command line arguments specified by the user.
+    :return: Nothing.
+    """
+    
     from fitness.fitness_wheel import set_fitness_function, set_fitness_params
     from utilities.initialise_run import initialise_run_params
     from utilities.initialise_run import set_param_imports
