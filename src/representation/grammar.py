@@ -1,4 +1,4 @@
-from re import search, findall, finditer, DOTALL, MULTILINE
+from re import finditer, DOTALL, MULTILINE
 from algorithm.parameters import params
 from operators import initialisation
 from itertools import groupby
@@ -65,7 +65,8 @@ class Grammar(object):
                                 [sub_p.group('subrule'), self.NT])
                         else:
                             terminalparts += ''.join(
-                                [part for part in sub_p.groups() if part])
+                                [part.encode().decode('unicode-escape') for
+                                 part in sub_p.groups() if part])
                 
                     if terminalparts:
                         symbol = [terminalparts, self.T, 0, False]
@@ -82,65 +83,6 @@ class Grammar(object):
                 else:
                     raise ValueError("lhs should be unique",
                                      rule.group('rulename'))
-
-    def old_read_bnf_file(self, file_name):
-        """Read a grammar file in BNF format"""
-        # <.+?> Non greedy match of anything between brackets
-        non_terminal_pattern = "(<.+?>)"
-        rule_separator = "::="
-        production_separator = "|"
-
-        # Read the grammar file
-        for line in open(file_name, 'r'):
-            if not line.startswith("#") and line.strip() != "":
-                # Split rules. Everything must be on one line
-                if line.find(rule_separator):
-                    lhs, productions = line.split(rule_separator)
-                    lhs = lhs.strip()
-                    if not search(non_terminal_pattern, lhs):
-                        raise ValueError("lhs is not a NT:", lhs)
-                    self.non_terminals[str(lhs)] = {"id": lhs,
-                                                    "min_steps": 9999999999999,
-                                                    "expanded": False,
-                                                    'recursive': True,
-                                                    'permutations': None,
-                                                    'b_factor': 0}
-                    if self.start_rule is None:
-                        self.start_rule = (lhs, self.NT)
-                    # Find terminals
-                    tmp_productions = []
-                    for production in [production.strip()
-                                       for production in
-                                       productions.split(
-                                           production_separator)]:
-                        tmp_production = []
-                        if not search(non_terminal_pattern, production):
-                            self.terminals.append(production)
-                            tmp_production.append([production, self.T,
-                                                   0, False])
-                        else:
-                            # Match non terminal or terminal pattern
-                            # TODO does this handle quoted NT symbols?
-                            for value in findall("<.+?>|[^<>]*", production):
-                                if value != '':
-                                    if not search(non_terminal_pattern, value):
-                                        symbol = [value, self.T, 0, False]
-                                        self.terminals.append(value)
-                                    else:
-                                        symbol = [value, self.NT]
-                                    tmp_production.append(symbol)
-                        tmp_productions.append(tmp_production)
-                    # Create a rule
-                    if lhs not in self.rules:
-                        self.rules[lhs] = tmp_productions
-                        if len(tmp_productions) == 1:
-                            print("Warning: Grammar contains unit production "
-                                  "for production rule", lhs)
-                            print("       Unit productions consume GE codons.")
-                    else:
-                        raise ValueError("lhs should be unique", lhs)
-                else:
-                    raise ValueError("Each rule must be on one line")
 
     def check_depths(self):
         """ Run through a grammar and find out the minimum distance from each

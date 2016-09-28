@@ -185,6 +185,7 @@ def set_params(command_line_args):
     from utilities.initialise_run import set_param_imports
     from utilities.helper_methods import return_percent
     from utilities.help_message import help_message
+    from representation import grammar
     import getopt
 
     try:
@@ -347,6 +348,11 @@ def set_params(command_line_args):
     # Set problem specifics
     params['GRAMMAR_FILE'], \
     params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
+
+    # Set Grammar File
+    params['BNF_GRAMMAR'] = grammar.Grammar(params['GRAMMAR_FILE'])
+    
+    # Set Fitness Function
     params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
                                                       params['ALTERNATE'])
 
