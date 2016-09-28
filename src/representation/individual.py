@@ -6,10 +6,13 @@ from algorithm.mapper import mapper
 class Individual(object):
     """A GE individual"""
 
-    def __init__(self, genome, ind_tree):
+    def __init__(self, genome, ind_tree, map=True):
 
-        self.phenotype, self.genome, self.tree, self.nodes, self.invalid, \
-        self.depth, self.used_codons = mapper(genome, ind_tree)
+        if map:
+            self.phenotype, self.genome, self.tree, self.nodes, self.invalid, \
+            self.depth, self.used_codons = mapper(genome, ind_tree)
+        else:
+            self.genome, self.tree = genome, ind_tree
         self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
         self.name = None
 
