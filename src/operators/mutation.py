@@ -1,7 +1,8 @@
-from algorithm.mapper import tree_derivation
 from random import randint, random, choice
+
 from algorithm.parameters import params
 from representation import individual
+from representation.tree import generate_tree
 
 
 def mutation(pop):
@@ -96,6 +97,6 @@ def subtree_mutate(ind_tree):
                          new_tree.get_current_depth()
 
     # Mutate a new subtree
-    tree_derivation(new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
+    generate_tree(new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
 
     return ind_tree.build_genome([]), ind_tree

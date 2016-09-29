@@ -1,4 +1,5 @@
 from algorithm.parameters import params
+from random import choice, randrange
 
 
 class Tree:
@@ -239,3 +240,47 @@ class Tree:
                 # Current node is not completely expanded
                 check = True
         return check
+
+
+def generate_tree(ind_tree, genome, method, nodes, depth, max_depth,
+                  depth_limit):
+    """ Derive a tree using a given method """
+
+    nodes += 1
+    depth += 1
+    ind_tree.id, ind_tree.depth = nodes, depth
+
+    productions = params['BNF_GRAMMAR'].rules[ind_tree.root]
+    available = ind_tree.legal_productions(method, depth_limit, productions)
+    chosen_prod = choice(available)
+
+    prod_choice = productions.index(chosen_prod)
+    codon = randrange(len(productions), params['BNF_GRAMMAR'].codon_size,
+                      len(productions)) + prod_choice
+    ind_tree.codon = codon
+    genome.append(codon)
+    ind_tree.children = []
+
+    for symbol in chosen_prod:
+        if symbol[1] == params['BNF_GRAMMAR'].T:
+            # if the right hand side is a terminal
+            ind_tree.children.append(Tree((symbol[0],), ind_tree))
+        elif symbol[1] == params['BNF_GRAMMAR'].NT:
+            # if the right hand side is a non-terminal
+            ind_tree.children.append(Tree((symbol[0],), ind_tree))
+            genome, nodes, d, max_depth = \
+                generate_tree(ind_tree.children[-1], genome, method, nodes,
+                              depth, max_depth, depth_limit - 1)
+
+    NT_kids = [kid for kid in ind_tree.children if kid.root in
+               params['BNF_GRAMMAR'].non_terminals]
+
+    if not NT_kids:
+        # Then the branch terminates here
+        depth += 1
+        nodes += 1
+
+    if depth > max_depth:
+        max_depth = depth
+
+    return genome, nodes, depth, max_depth

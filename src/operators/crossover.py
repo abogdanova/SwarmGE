@@ -1,4 +1,5 @@
 from random import randint, random, sample, choice
+
 from algorithm.parameters import params
 from representation import individual
 
