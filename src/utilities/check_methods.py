@@ -62,7 +62,7 @@ def check_mapping(genome):
     """
 
     p1, g1, t1, n1, i1, d1, c1 = mapper.map_tree_from_genome(genome)
-    p2, g2, t2, n2, i2, d2, c2 = mapper.genome_map(genome)
+    p2, g2, t2, n2, i2, d2, c2 = mapper.map_ind_from_genome(genome)
 
     if not i1:
         if (i1 == i2):

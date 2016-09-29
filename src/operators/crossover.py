@@ -10,16 +10,17 @@ def crossover(parents):
     population is defined as params['GENERATION_SIZE'] rather than params[
     'POPULATION_SIZE']. This saves on wasted evaluations and prevents search
     from evaluating too many individuals.
+    
     :param parents: A population of parent individuals on which crossover is to
     be performed.
     :return: A population of fully crossed over individuals.
     """
 
-    # Initialise an empty population
+    # Initialise an empty population.
     cross_pop = []
     while len(cross_pop) < params['GENERATION_SIZE']:
         
-        # Randomly choose two parents from the parent population
+        # Randomly choose two parents from the parent population.
         inds_in = sample(parents, 2)
 
         # Re-initialise these parents to create copies of the originals.
@@ -34,22 +35,33 @@ def crossover(parents):
             print("Error, invalid inds selected for crossover")
             exit(2)
 
+        # Perform crossover on ind_0 and ind_1.
         inds = params['CROSSOVER'](ind_0, ind_1)
+        
         if any([ind.invalid for ind in inds]):
-            # we have an invalid, need to do crossover again
+            # We have an invalid, need to do crossover again.
             pass
+        
         elif any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
-            # Tree is too big, need to do crossover again
+            # Tree is too big, need to do crossover again.
             pass
+        
         else:
+            # Crossover was successful, extend the new population.
             cross_pop.extend(inds)
 
     return cross_pop
 
 
 def onepoint(p_0, p_1, within_used=True):
-    """Given two individuals, create two children using one-point crossover and
-    return them."""
+    """
+    Given two individuals, create two children using one-point crossover and
+    return them.
+    :param p_0:
+    :param p_1:
+    :param within_used:
+    :return:
+    """
 
     # Get the chromosomes
     c_p_0, c_p_1 = p_0.genome, p_1.genome

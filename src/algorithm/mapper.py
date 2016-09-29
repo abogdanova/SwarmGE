@@ -35,10 +35,10 @@ def mapper(genome, ind_tree):
         else:
             if params['GENOME_OPERATIONS']:
                 # Can generate tree information faster using
-                # algorithm.mapper.genome_map() if we don't need to store the
+                # algorithm.mapper.map_ind_from_genome() if we don't need to store the
                 # whole tree.
                 phenotype, genome, ind_tree, nodes, invalid, depth, \
-                used_codons = genome_map(genome)
+                used_codons = map_ind_from_genome(genome)
             else:
                 # Build the tree using algorithm.mapper.map_tree_from_genome().
                 phenotype, genome, ind_tree, nodes, invalid, depth, \
@@ -72,7 +72,7 @@ def mapper(genome, ind_tree):
     return phenotype, genome, ind_tree, nodes, invalid, depth, used_codons
 
 
-def genome_map(_input, max_wraps=0):
+def map_ind_from_genome(_input, max_wraps=0):
     """ The genotype to phenotype mapping process. Map input via rules to
     output. Returns output and used_input. """
 
@@ -151,18 +151,25 @@ def genome_map(_input, max_wraps=0):
 def map_tree_from_genome(genome):
     """
     Maps a full tree from a given genome.
+    
     :param genome: A genome to be mapped.
     :return: All components necessary for a fully mapped individual.
     """
 
+    # Initialise an instance of the tree class
     tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),),
                 None, depth_limit=params['MAX_TREE_DEPTH'])
+    
+    # Map tree from the given genome
     used_codons, nodes, depth, max_depth, invalid = \
         genome_tree_derivation(tree, genome, 0, 0, 0, 0)
+    
     if invalid:
+        # Return "None" phenotype if invalid
         return None, genome, tree, nodes, invalid, max_depth, \
            used_codons
     else:
+        # Build phenotype and return
         return tree.get_output(), genome, tree, nodes, invalid, max_depth, \
            used_codons
 
