@@ -1,5 +1,4 @@
 from random import randint, random, sample, choice
-
 from algorithm.parameters import params
 from representation import individual
 
@@ -56,14 +55,25 @@ def crossover(parents):
 def onepoint(p_0, p_1, within_used=True):
     """
     Given two individuals, create two children using one-point crossover and
-    return them.
-    :param p_0:
-    :param p_1:
-    :param within_used:
-    :return:
+    return them. A different point is selected on each genome for crossover
+    to occur. Crossover points are selected within the used portion of the
+    genome by default (i.e. crossover does not occur in the tail of the
+    individual).
+    
+    Onepoint crossover in Grammatical Evolution is explained further in:
+        O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003.
+        Crossover in grammatical evolution.
+        Genetic programming and evolvable machines, 4(1), pp.67-93.
+        DOI: 10.1023/A:1021877127167
+    
+    :param p_0: Parent 0
+    :param p_1: Parent 1
+    :param within_used: Boolean flag for selecting whether or not crossover
+    is performed within the used portion of the genome. Default set to True.
+    :return: A list of crossed-over individuals.
     """
 
-    # Get the chromosomes
+    # Get the chromosomes.
     c_p_0, c_p_1 = p_0.genome, p_1.genome
 
     # Uniformly generate crossover points. If within_used==True,
@@ -72,16 +82,18 @@ def onepoint(p_0, p_1, within_used=True):
         max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
     else:
         max_p_0, max_p_1 = len(c_p_0), len(c_p_1)
+        
+    # Select unique points on each genome for crossover to occur.
     pt_p_0, pt_p_1 = randint(1, max_p_0), randint(1, max_p_1)
 
-    # Make new chromosomes by crossover: these slices perform copies
+    # Make new chromosomes by crossover: these slices perform copies.
     if random() < params['CROSSOVER_PROBABILITY']:
         c_0 = c_p_0[:pt_p_0] + c_p_1[pt_p_1:]
         c_1 = c_p_1[:pt_p_1] + c_p_0[pt_p_0:]
     else:
         c_0, c_1 = c_p_0[:], c_p_1[:]
 
-    # Put the new chromosomes into new individuals
+    # Put the new chromosomes into new individuals.
     ind_0 = individual.Individual(c_0, None)
     ind_1 = individual.Individual(c_1, None)
 
@@ -89,113 +101,174 @@ def onepoint(p_0, p_1, within_used=True):
 
 
 def subtree(p_0, p_1):
-    """Given two individuals, create two children using subtree crossover and
-    return them."""
+    """
+    Given two individuals, create two children using subtree crossover and
+    return them. Candidate subtrees are selected based on matching
+    non-terminal nodes rather than matching terminal nodes.
+    
+    :param p_0: Parent 0.
+    :param p_1: Parent 1.
+    :return: A list of crossed-over individuals.
+    """
+
+    def do_crossover(tree0, tree1, intersection):
+        """
+        Given two instances of the representation.tree.Tree class (
+        derivation trees of individuals) and a list of intersecting
+        non-terminal nodes across both trees, performs subtree crossover on
+        these trees.
+        
+        :param tree0: The derivation tree of individual 0.
+        :param tree1: The derivation tree of individual 1.
+        :param intersection: The sorted list of all non-terminal nodes that are
+        in both derivation trees.
+        :return: The new derivation trees after subtree crossover has been
+        performed.
+        """
+    
+        # Randomly choose a non-terminal from the set of permissible
+        # intersecting non-terminals.
+        crossover_choice = choice(intersection)
+    
+        # Find the indexes of all nodes in tree0 that match the chosen
+        # crossover node.
+        indexes_0 = tree0.get_target_nodes([], target=[crossover_choice])
+        indexes_0 = list(set(indexes_0))
+        
+        # Randomly pick an index and return the corresponding subtree at
+        # that index.
+        number_0 = choice(indexes_0)
+        t0 = tree0.return_node_from_id(number_0, return_tree=None)
+
+        # Find the indexes of all nodes in tree1 that match the chosen
+        # crossover node.
+        indexes_1 = tree1.get_target_nodes([], target=[crossover_choice])
+        indexes_1 = list(set(indexes_1))
+
+        # Randomly pick an index and return the corresponding subtree at
+        # that index.
+        number_1 = choice(indexes_1)
+        t1 = tree1.return_node_from_id(number_1, return_tree=None)
+    
+        # Get the depths of both chosen subtrees.
+        d0 = t0.get_current_depth()
+        d1 = t1.get_current_depth()
+    
+        if d0 == 1 and d1 == 1:
+            # Crossover is between the entire tree of both tree0 and tree1.
+            
+            return t1, t0
+        
+        elif d0 == 1:
+            # Only t0 is the entire of tree0.
+            # Get the original parent of subtree t1.
+            p1 = t1.parent
+            tree0 = t1
+
+            # Swap over the subtrees between parents.
+            i1 = p1.children.index(t1)
+            p1.children[i1] = t0
+
+            # Set the parents of the crossed-over subtrees as their new
+            # parents. Since the entire tree of t1 is now a whole
+            # individual, it has no parent.
+            t0.parent = p1
+            t1.parent = None
+    
+        elif d1 == 1:
+            # Only t1 is the entire of tree1.
+            # Get the original parent of subtree t0.
+            p0 = t0.parent
+            tree1 = t0
+
+            # Swap over the subtrees between parents.
+            i0 = p0.children.index(t0)
+            p0.children[i0] = t1
+
+            # Set the parents of the crossed-over subtrees as their new
+            # parents. Since the entire tree of t0 is now a whole
+            # individual, it has no parent.
+            t1.parent = p0
+            t0.parent = None
+    
+        else:
+            # The crossover node for both trees is not the entire tree.
+            # Get the original parents of both chosen subtrees.
+            p0 = t0.parent
+            p1 = t1.parent
+        
+            # For the parent nodes of the original subtrees, get the indexes
+            # of the original subtrees.
+            i0 = p0.children.index(t0)
+            i1 = p1.children.index(t1)
+        
+            # Swap over the subtrees between parents.
+            p0.children[i0] = t1
+            p1.children[i1] = t0
+        
+            # Set the parents of the crossed-over subtrees as their new
+            # parents.
+            t1.parent = p0
+            t0.parent = p1
+    
+        return tree0, tree1
+
+    def intersect(l0, l1):
+        """
+        Returns the intersection of two sets of labels of nodes of
+        derivation trees. Only returns matching non-terminal nodes across
+        both derivation trees.
+        
+        :param l0: The labels of all nodes of tree 0.
+        :param l1: The labels of all nodes of tree 1.
+        :return: The sorted list of all non-terminal nodes that are in both
+        derivation trees.
+        """
+        
+        # Find all intersecting elements of both sets l0 and l1.
+        intersection = l0.intersection(l1)
+        
+        # Find only the non-terminals present in the intersecting set of
+        # labels.
+        intersection = [i for i in intersection if i in
+                        params['BNF_GRAMMAR'].crossover_NTs]
+        
+        return sorted(intersection)
 
     if random() > params['CROSSOVER_PROBABILITY']:
+        # Crossover is not to be performed, return entire individuals.
         ind0 = p_1
         ind1 = p_0
+    
     else:
+        # Crossover is to be performed. Save tail of each genome.
         tail_0, tail_1 = p_0.genome[p_0.used_codons:], \
                          p_1.genome[p_1.used_codons:]
-        tree_0, genome_0, tree_1, genome_1 = do_subtree_crossover(p_0.tree,
-                                                                  p_1.tree)
+        
+        # Get the set of labels of non terminals for each tree.
+        labels1 = p_0.tree.get_labels(set())
+        labels2 = p_1.tree.get_labels(set())
 
-        ind0 = individual.Individual(genome_0, tree_0)
+        # Find overlapping non-terminals across both trees.
+        intersection = intersect(labels1, labels2)
+
+        if len(intersection) != 0:
+            # There are overlapping NTs, cross over parts of trees.
+            ret_tree0, ret_tree1 = do_crossover(p_0.tree, p_1.tree,
+                                                intersection)
+        else:
+            # There are no overlapping NTs, cross over entire trees.
+            ret_tree0, ret_tree1 = p_1.tree, p_0.tree
+        
+        # Build new genomes
+        genome_0 = ret_tree0.build_genome([])
+        genome_1 = ret_tree1.build_genome([])
+
+        # Initialise new individuals and add the original tails.
+        ind0 = individual.Individual(genome_0, ret_tree0)
         ind0.genome = genome_0 + tail_0
 
-        ind1 = individual.Individual(genome_1, tree_1)
+        ind1 = individual.Individual(genome_1, ret_tree1)
         ind1.genome = genome_1 + tail_1
 
     return [ind0, ind1]
-
-
-def do_subtree_crossover(tree1, tree2):
-
-    def do_crossover(tree1, tree2, intersection):
-
-        crossover_choice = choice(intersection)
-
-        indexes_1 = tree1.get_target_nodes([], target=[crossover_choice])
-        indexes_1 = list(set(indexes_1))
-        number1 = choice(indexes_1)
-        t1 = tree1.return_node_from_id(number1, return_tree=None)
-
-        indexes_2 = tree2.get_target_nodes([], target=[crossover_choice])
-        indexes_2 = list(set(indexes_2))
-        number2 = choice(indexes_2)
-        t2 = tree2.return_node_from_id(number2, return_tree=None)
-
-        d1 = t1.get_current_depth()
-        d2 = t2.get_current_depth()
-
-        # when the crossover is between the entire tree of both tree1 and tree2
-        if d1 == 1 and d2 == 1:
-            return t2, t1
-        # when only t1 is the entire tree1
-        elif d1 == 1:
-            p2 = t2.parent
-            tree1 = t2
-            try:
-                p2.children.index(t2)
-            except ValueError:
-                print("Error: child not in parent.")
-                quit()
-            i2 = p2.children.index(t2)
-            p2.children[i2] = t1
-            t1.parent = p2
-            t2.parent = None
-
-        # when only t2 is the entire tree2
-        elif d2 == 1:
-            p1 = t1.parent
-            tree2 = t1
-            try:
-                p1.children.index(t1)
-            except ValueError:
-                print("Error: child not in parent")
-                quit()
-            i1 = p1.children.index(t1)
-            p1.children[i1] = t2
-            t2.parent = p1
-            t1.parent = None
-
-        # when the crossover node for both trees is not the entire tree
-        else:
-            p1 = t1.parent
-            p2 = t2.parent
-
-            i1 = p1.children.index(t1)
-            i2 = p2.children.index(t2)
-
-            p1.children[i1] = t2
-            p2.children[i2] = t1
-
-            t2.parent = p1
-            t1.parent = p2
-
-        return tree1, tree2
-
-    def get_labels(t1, t2):
-        return t1.get_labels(set()), t2.get_labels(set())
-
-    def intersect(l1, l2):
-        intersection = l1.intersection(l2)
-        intersection = [i for i in intersection if i in
-                        params['BNF_GRAMMAR'].crossover_NTs]
-        return sorted(intersection)
-
-    labels1, labels2 = get_labels(tree1, tree2)
-
-    intersection = intersect(labels1, labels2)
-
-    if len(intersection) != 0:
-        # Cross over parts of trees
-        ret_tree1, ret_tree2 = do_crossover(tree1, tree2, intersection)
-
-    else:
-        # Cross over entire trees
-        ret_tree1, ret_tree2 = tree2, tree1
-
-    return ret_tree1, ret_tree1.build_genome([]), \
-           ret_tree2, ret_tree2.build_genome([])

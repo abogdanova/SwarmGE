@@ -1,8 +1,7 @@
+from representation.tree import generate_tree
 from random import randint, random, choice
-
 from algorithm.parameters import params
 from representation import individual
-from representation.tree import generate_tree
 
 
 def mutation(pop):
@@ -49,11 +48,41 @@ def int_flip(ind):
 def subtree(ind):
     """
     Mutate the individual by replacing a randomly selected subtree with a
-    new subtree. Guaranteed one event per individual if called.
+    new randomly generated subtree. Guaranteed one event per individual, unless
+    params['MUTATION_EVENTS'] is specified as a higher number.
     
     :param ind: An individual to be mutated.
     :return: A mutated individual.
     """
+
+    def subtree_mutate(ind_tree):
+        """
+        Creates a list of all nodes and picks one node at random to mutate.
+        Because we have a list of all nodes, we can (but currently don't)
+        choose what kind of nodes to mutate on. Handy.
+
+        :param ind_tree: The full tree of an individual.
+        :return: The full mutated tree and the associated genome.
+        """
+    
+        # Find which nodes we can mutate from
+        targets = ind_tree.get_target_nodes([], target=params[
+                                          'BNF_GRAMMAR'].non_terminals)
+    
+        # Pick a node
+        number = choice(targets)
+    
+        # Get the subtree
+        new_tree = ind_tree.return_node_from_id(number, return_tree=None)
+    
+        # Set the depth limits for the new subtree
+        new_tree.max_depth = params['MAX_TREE_DEPTH'] - \
+                             new_tree.get_current_depth()
+    
+        # Mutate a new subtree
+        generate_tree(new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
+    
+        return ind_tree.build_genome([]), ind_tree
 
     # Save the tail of the genome.
     tail = ind.genome[ind.used_codons:]
@@ -69,34 +98,3 @@ def subtree(ind):
     ind.genome = genome + tail
 
     return ind
-
-
-def subtree_mutate(ind_tree):
-    """
-    Creates a list of all nodes and picks one node at random to mutate.
-    Because we have a list of all nodes, we can (but currently don't) choose
-    what kind of nodes to mutate on. Handy.
-    
-    :param ind_tree: The full tree of an individual.
-    :return: The full mutated tree and the associated genome.
-    """
-
-    # Find which nodes we can mutate from
-    targets = \
-        ind_tree.get_target_nodes([],
-                                  target=params['BNF_GRAMMAR'].non_terminals)
-
-    # Pick a node
-    number = choice(targets)
-
-    # Get the subtree
-    new_tree = ind_tree.return_node_from_id(number, return_tree=None)
-
-    # Set the depth limits for the new subtree
-    new_tree.max_depth = params['MAX_TREE_DEPTH'] - \
-                         new_tree.get_current_depth()
-
-    # Mutate a new subtree
-    generate_tree(new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
-
-    return ind_tree.build_genome([]), ind_tree

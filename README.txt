@@ -83,8 +83,8 @@ allows you to create new operators and place them wherever you like.
 
 Evolutionary Parameters:
 
-    - Population Size
-      ---------------
+    Population Size
+    ---------------
         The size of the population. The default value is 500. This value can
         be changed with the flag:
 
@@ -95,8 +95,8 @@ Evolutionary Parameters:
         problems, but require more computational effort and may lead to
         premature convergence.
 
-    - Generations
-      -----------
+    Generations
+    -----------
         The number of generations the evolutionary algorithm will run for.
         The default value is 50. This value can be changed with the flag:
 
@@ -116,8 +116,8 @@ The typical breakdown of a population-based evolutionary algorithm is:
 
 These steps are expanded on in detail hereafter.
 
-    - Initialisation
-      --------------
+    Initialisation
+    --------------
         There are two main ways to initialise a GE individual: by generating a
         genome, or by generating a subtree. Generation of a genome can only be
         done by creating a random genome string and as such individuals cannot
@@ -130,16 +130,20 @@ These steps are expanded on in detail hereafter.
         result of the number of production choices in the grammar.
 
         - Genome
+
             - Random
                 Activate with "--genome_init"
+
         - Subtree
+
             - Random
                 Activate with "--initialisation random_init"
+
             - Ramped Half-Half
                 Activate with "--initialisation rhh"
 
-    - Selection
-      ---------
+    Selection
+    ---------
         Only valid individuals are selected by default. However, this can be
         changed with the flag:
 
@@ -154,6 +158,7 @@ These steps are expanded on in detail hereafter.
             "--tournament_size [INT]"
 
             where [INT] is an integer which specifies the tournament size.
+
         - Truncation
             Activate with "--selection truncation"
 
@@ -164,13 +169,43 @@ These steps are expanded on in detail hereafter.
 
             where [NUM] is a float between 0 and 1.
 
-    - Variation
-      ---------
+    Variation
+    ---------
         - Crossover
+            Crossover directly swaps genetic material between two chosen
+            individuals. The probability of crossover occurring is set with
+            the flag:
+
+            "--crossover_probability [NUM]"
+
+            where [NUM] is a float between 0 and 1. The default value for
+            crossover is 0.75.
+
             - Onepoint
                 Activate with "--crossover onepoint"
+
+                Given two individuals, create two children using one-point
+                crossover and return them. A different point is selected on
+                each genome for crossover to occur. Crossover points are
+                selected within the used portion of the genome by default (i.e.
+                crossover does not occur in the tail of the individual).
+
+                Onepoint crossover in Grammatical Evolution is explained
+                further in:
+
+                    O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003.
+                    "Crossover in grammatical evolution."
+                    Genetic programming and evolvable machines, 4(1), pp.67-93.
+                    DOI: 10.1023/A:1021877127167
+
             - Subtree
                 Activate with "--crossover subtree"
+
+                Given two individuals, create two children using subtree
+                crossover and return them. Candidate subtrees are selected
+                based on matching non-terminal nodes rather than matching
+                terminal nodes.
+
         - Mutation
             The ability to specify the number of mutation events per
             individual is provided. This works for both genome mutation and
@@ -196,14 +231,20 @@ These steps are expanded on in detail hereafter.
                 where [NUM] is a float between 0 and 1. This will change
                 the mutation probability for each codon to the probability
                 specified.
+
             - Subtree
                 Activate with "--mutation subtree"
 
-    - Evaluation
-      ----------
+                Mutate the individual by replacing a randomly selected subtree
+                with a new randomly generated subtree. Guaranteed one event
+                per individual, unless params['MUTATION_EVENTS'] is specified
+                as a higher number.
 
-    - Replacement
-      -----------
+    Evaluation
+    ----------
+
+    Replacement
+    -----------
         - Generational
             Activate with "--replacement generational"
 
@@ -217,6 +258,7 @@ These steps are expanded on in detail hereafter.
             to be saved between generations. Elites are saved between
             generations regardless of whether or not they are better or worse
             than the new population.
+
         - Steady State
             Activate with "--replacement steady_state"
 
