@@ -1,7 +1,7 @@
-from math import floor
 from re import finditer, DOTALL, MULTILINE
 from algorithm.parameters import params
 from itertools import groupby
+from math import floor
 
 
 class Grammar(object):

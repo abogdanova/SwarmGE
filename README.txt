@@ -132,15 +132,21 @@ These steps are expanded on in detail hereafter.
         - Genome
 
             - Random
-                Activate with "--genome_init"
+                Activate with:
+
+                "--genome_init"
 
         - Subtree
 
             - Random
-                Activate with "--initialisation random_init"
+                Activate with:
+
+                "--initialisation random_init"
 
             - Ramped Half-Half
-                Activate with "--initialisation rhh"
+                Activate with:
+
+                "--initialisation rhh"
 
     Selection
     ---------
@@ -150,7 +156,9 @@ These steps are expanded on in detail hereafter.
         "--invalid_selection"
 
         - Tournament
-            Activate with "--selection tournament"
+            Activate with:
+
+            "--selection tournament"
 
             Tournament size is set by default at 2. This value can be changed
             with the flag:
@@ -160,7 +168,9 @@ These steps are expanded on in detail hereafter.
             where [INT] is an integer which specifies the tournament size.
 
         - Truncation
-            Activate with "--selection truncation"
+            Activate with:
+
+            "--selection truncation"
 
             Selection proportion is set by default at 0.5. This value can be
             changed with the flag:
@@ -182,7 +192,9 @@ These steps are expanded on in detail hereafter.
             crossover is 0.75.
 
             - Onepoint
-                Activate with "--crossover onepoint"
+                Activate with:
+
+                "--crossover onepoint"
 
                 Given two individuals, create two children using one-point
                 crossover and return them. A different point is selected on
@@ -199,7 +211,9 @@ These steps are expanded on in detail hereafter.
                     DOI: 10.1023/A:1021877127167
 
             - Subtree
-                Activate with "--crossover subtree"
+                Activate with:
+
+                "--crossover subtree"
 
                 Given two individuals, create two children using subtree
                 crossover and return them. Candidate subtrees are selected
@@ -221,7 +235,9 @@ These steps are expanded on in detail hereafter.
             events occurring.
 
             - Int Flip
-                Activate with "--mutation int_flip"
+                Activate with:
+
+                "--mutation int_flip"
 
                 Default mutation probability is 1 over the length of the
                 genome. This can be changed with the flag:
@@ -235,7 +251,9 @@ These steps are expanded on in detail hereafter.
                 limit mutation to only the effective length of the genome.
 
             - Subtree
-                Activate with "--mutation subtree"
+                Activate with:
+
+                "--mutation subtree"
 
                 Mutate the individual by replacing a randomly selected subtree
                 with a new randomly generated subtree. Guaranteed one event
@@ -244,6 +262,83 @@ These steps are expanded on in detail hereafter.
 
     Evaluation
     ----------
+        - Multicore evaluation
+            Evaluation of a population of individuals can be done in series
+            (single core evaluation) or in parallel (multi core evaluation).
+            Multicore evaluation can be activated with the flag:
+
+            "--multicore"
+
+            Additionally, the number of processor cores used for multicore
+            evaluation can be controlled with the flag:
+
+            "--cores [INT]"
+
+            where [INT] is an integer which specifies the number of cores used
+            for fitness evaluations. The default value is to use all
+            available cores.
+
+            NOTE that multicore evaluations may not necessarily improve
+            computational runtime for small problems as a certain overhead is
+            necessary to run the multicore evaluation process.
+
+            NOTE also that for smaller problems fitness evaluations may not
+            necessarily present a bottleneck in terms of computational
+            run-time. It is advised to use a python profiler to ascertain
+            whether or not fitness evaluations present such a bottleneck. If
+            this is the case, multicore evaluation  may improve the run-time
+             of a single evolutionary run.
+
+            NOTE also that when running batches of multiple experiments, it
+            will always be faster to run multiple single-core experiments in
+            parallel, rather than multiple multi-core experiments in series.
+
+        - Caching
+            Caching is provided in PonyGE2 to save on fitness evaluations
+            and to track the number of unique solutions encountered during
+            an evolutionary run. Cached individuals have their fitness stored
+            in a dictionary called utilities.trackers.cache. Dictionary keys
+            are the string of the phenotype. Caching can be activated with
+            the flag:
+
+            "--cache"
+
+            There are currently three options for use with the cache:
+                - Fitness Lookup
+                    This is the default case when caching is activated.
+                    Individuals which have already been evaluated have their
+                    previous fitness read directly from the cache, thus
+                    saving fitness evaluations. Fitness lookup can be
+                    de-activated with:
+
+                    "--dont_lookup_fitness"
+
+                - Fitness Penalty
+                    Individuals which have already been evaluated are given
+                    a default bad fitness. Activate with:
+
+                    "--lookup_bad_fitness"
+
+                - Mutate Duplicates
+                    Individuals which have already been evaluated are
+                    mutated to produce new unique individuals which have not
+                    been encountered yet by the search process. Activate with:
+
+                    "--mutate_duplicates"
+
+            Finally, it could be said that using a cache to lookup the
+            fitness of duplicate individuals deprives the evolutionary
+            algorithm of potential fitness evaluations, thus leading to a
+            reduced overall number of fitness evaluations over the course of
+            an evolutionary run. If desired, it is possible to run PonyGE
+            for a specified total number of fitness evaluations rather than
+            for a specified number of total generations. This can be
+            activated with the flag:
+
+            "--complete_evals"
+
+            With this specified, PonyGE will run until the length of the
+            cache reaches params['POPULATION_SIZE'] * params['GENERATIONS'].
 
     Replacement
     -----------

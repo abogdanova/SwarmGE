@@ -1,6 +1,6 @@
-from algorithm import step, evaluate_fitness
 from stats.stats import stats, get_stats
 from algorithm.parameters import params
+from algorithm import step, evaluation
 from utilities.trackers import cache
 
 
@@ -30,7 +30,7 @@ def search_loop():
     individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
 
     # Evaluate initial population
-    individuals = evaluate_fitness.evaluate_fitness(individuals)
+    individuals = evaluation.evaluate_fitness(individuals)
 
     # Generate statistics for run so far
     get_stats(individuals)
@@ -63,7 +63,7 @@ def search_loop_complete_evals():
     individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
 
     # Evaluate initial population
-    individuals = evaluate_fitness.evaluate_fitness(individuals)
+    individuals = evaluation.evaluate_fitness(individuals)
 
     # Generate statistics for run so far
     get_stats(individuals)

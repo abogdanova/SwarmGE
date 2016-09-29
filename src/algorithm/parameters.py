@@ -99,7 +99,7 @@ params = {
         # MULTIPROCESSING
         'MULTICORE': False,
         # Multiprocessing of phenotype evaluations.
-        'CORES': cpu_count() - 1,
+        'CORES': cpu_count(),
 
         # CACHING
         'CACHE': False,
@@ -308,7 +308,6 @@ def set_params(command_line_args):
             params['CACHE'] = True
             params['LOOKUP_FITNESS'] = True
         elif opt == "--dont_lookup_fitness":
-            params['CACHE'] = True
             params['LOOKUP_FITNESS'] = False
         elif opt == "--lookup_bad_fitness":
             params['LOOKUP_FITNESS'] = False
@@ -317,7 +316,6 @@ def set_params(command_line_args):
             params['LOOKUP_FITNESS'] = False
             params['MUTATE_DUPLICATES'] = True
         elif opt == "--complete_evals":
-            params['LOOKUP_FITNESS'] = False
             params['COMPLETE_EVALS'] = True
         else:
             assert False, "Unhandled Option, use --help for available params"

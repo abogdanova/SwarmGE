@@ -43,6 +43,7 @@ def mapper(genome, ind_tree):
                 # Build the tree using algorithm.mapper.map_tree_from_genome().
                 phenotype, genome, ind_tree, nodes, invalid, depth, \
                 used_codons = map_tree_from_genome(genome)
+    
     else:
         if ind_tree:
             # Need to generate a genome from the fully mapped tree.

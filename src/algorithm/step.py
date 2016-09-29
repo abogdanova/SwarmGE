@@ -1,8 +1,8 @@
-from algorithm.evaluate_fitness import evaluation
+from operators.replacement import replacement
+from algorithm.evaluation import evaluation
+from operators.selection import selection
 from operators.crossover import crossover
 from operators.mutation import mutation
-from operators.replacement import replacement
-from operators.selection import selection
 
 
 def step(individuals):
