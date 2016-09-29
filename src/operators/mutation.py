@@ -16,14 +16,24 @@ def mutation(pop):
     return list(map(params['MUTATION'], pop))
 
 
-def int_flip(ind):
+def int_flip(ind, within_used=False):
     """
     Mutate the genome of an individual by randomly choosing a new int with
-    probability p_mut. Works per-codon.
+    probability p_mut. Works per-codon. Mutation is performed over the
+    entire length of the genome by default, but the flag within_used is
+    provided to limit mutation to only the effective length of the genome.
     
     :param ind: An individual to be mutated.
+    :param within_used: Boolean flag for selecting whether or not mutation
+    is performed within the used portion of the genome. Default set to False.
     :return: A mutated individual.
     """
+
+    # Set effective genome length over which mutation will be performed.
+    if within_used:
+        eff_length = len(ind.genome[:ind.used_codons])
+    else:
+        eff_length = len(ind.genome)
 
     # Set mutation probability. Default is 1 over the length of the genome.
     if params['MUTATION_PROBABILITY']:
@@ -31,13 +41,14 @@ def int_flip(ind):
     else:
         # Default mutation events per individual is 1. Raising this number
         # will influence the mutation probability for each codon.
-        p_mut = params['MUTATION_EVENTS']/len(ind.genome)
+        p_mut = params['MUTATION_EVENTS']/eff_length
 
-    # Mutation probability works per-codon over the entire genome (not just
-    # the used length).
-    for i in range(len(ind.genome)):
-        if random() < p_mut:
-            ind.genome[i] = randint(0, params['CODON_SIZE'])
+    if within_used:
+        # Mutation probability works per-codon over the portion of the
+        # genome as defined by the within_used flag.
+        for i in range(eff_length):
+            if random() < p_mut:
+                ind.genome[i] = randint(0, params['CODON_SIZE'])
 
     # Re-build a new individaul with the newly mutated genetic information.
     new_ind = individual.Individual(ind.genome, None)

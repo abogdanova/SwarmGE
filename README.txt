@@ -230,7 +230,9 @@ These steps are expanded on in detail hereafter.
 
                 where [NUM] is a float between 0 and 1. This will change
                 the mutation probability for each codon to the probability
-                specified.
+                specified. Mutation is performed over the entire length of the
+                genome by default, but the flag within_used is provided to
+                limit mutation to only the effective length of the genome.
 
             - Subtree
                 Activate with "--mutation subtree"
