@@ -1,14 +1,15 @@
-from re import finditer, DOTALL, MULTILINE
-from algorithm.parameters import params
-from itertools import groupby
+from sys import maxsize
 from math import floor
+from re import finditer, DOTALL, MULTILINE
+
+from algorithm.parameters import params
 
 
 class Grammar(object):
     """ Context Free Grammar """
     NT = "NT"  # Non Terminal
     T = "T"  # Terminal
-    
+
     def __init__(self, file_name):
         if file_name.endswith("pybnf"):
             self.python_mode = True
@@ -32,29 +33,31 @@ class Grammar(object):
     def read_bnf_file(self, file_name):
         """Read a grammar file in BNF format"""
 
-        # Read the grammar file
+        # Read the whole grammar file
         with open(file_name, 'r') as bnf:
             content = bnf.read()
+            # Find all rules in the grammar
             for rule in finditer(self.ruleregex, content, DOTALL):
+                # Set the first rule found as start rule
                 if self.start_rule is None:
                     self.start_rule = (rule.group('rulename'), self.NT)
+                # create and add new rule
                 self.non_terminals[rule.group('rulename')] = {
                     'id': rule.group('rulename'),
-                    'min_steps': 9999999999999,
+                    'min_steps': maxsize,
                     'expanded': False,
                     'recursive': True,
                     'permutations': None,
                     'b_factor': 0}
                 tmp_productions = []
-                for p in finditer(self.productionregex,
-                                  rule.group('production'), MULTILINE):
-                    if p.group('production') is None or p.group(
-                            'production').isspace():
+                # Split production choices of a rule
+                for p in finditer(self.productionregex, rule.group('production'), MULTILINE):
+                    if p.group('production') is None or p.group('production').isspace():
                         continue
                     tmp_production = []
                     terminalparts = ''
-                    for sub_p in finditer(self.productionpartsregex,
-                                          p.group('production').strip()):
+                    # Split production into terminal and non terminal symbols
+                    for sub_p in finditer(self.productionpartsregex, p.group('production').strip()):
                         if sub_p.group('subrule'):
                             if terminalparts:
                                 symbol = [terminalparts, self.T, 0, False]
@@ -64,16 +67,16 @@ class Grammar(object):
                             tmp_production.append(
                                 [sub_p.group('subrule'), self.NT])
                         else:
+                            # Unescape special characters (\n, \t etc.)
                             terminalparts += ''.join(
-                                [part.encode().decode('unicode-escape') for
-                                 part in sub_p.groups() if part])
-                
+                                [part.encode().decode('unicode-escape') for part in sub_p.groups() if part])
+
                     if terminalparts:
                         symbol = [terminalparts, self.T, 0, False]
                         tmp_production.append(symbol)
                         self.terminals.append(terminalparts)
                     tmp_productions.append(tmp_production)
-            
+
                 if not rule.group('rulename') in self.rules:
                     self.rules[rule.group('rulename')] = tmp_productions
                     if len(tmp_productions) == 1:
@@ -81,110 +84,14 @@ class Grammar(object):
                               "for production rule", rule.group('rulename'))
                         print("       Unit productions consume GE codons.")
                 else:
-                    raise ValueError("lhs should be unique",
-                                     rule.group('rulename'))
+                    raise ValueError("lhs should be unique", rule.group('rulename'))
 
     def check_depths(self):
-        """ Run through a grammar and find out the minimum distance from each
-            NT to the nearest T. Useful for initialisation methods where we
-            need to know how far away we are from fully expanding a tree
-            relative to where we are in the tree and what the depth limit is.
-
-            For each NT in self.non_terminals we have:
-             - 'id':        the NT itself
-             - 'min_steps': its minimum distance to the nearest T (i.e. its
-                            minimum distance to full expansion
-             - 'expanded':  a boolean indicator for whether or not it is fully
-                            expanded
-             - 'b_factor':  the branching factor of the NT (now many choices
-                            does  the rule have)
-             - 'recursive': is the NT recursive
-             - 'permutations':  the number of possible permutations and
-                                combinations that this NT can produce
-                                (excluding recursive rules)
+        """
+        Check the properties of all rules and set the properties accordingly.
         """
 
-        for i in range(len(self.non_terminals)):
-            for NT in self.non_terminals:
-                vals = self.non_terminals[NT]
-                vals['b_factor'] = len(self.rules[NT])
-                if not vals['expanded']:
-                    choices = self.rules[NT]
-                    terms = 0
-                    for choice in choices:
-                        if all([sym[1] == self.T for sym in choice]):
-                            terms += 1
-                    if terms:
-                        # this NT can then map directly to a T
-                        vals['min_steps'] = 1
-                        vals['expanded'] = True
-                    else:
-                        # There are NTs remaining in the production choices
-                        for choice in choices:
-                            NT_s = [sym for sym in choice if sym[1] == self.NT]
-                            NT_choices = list(NT_s for NT_s,
-                                                       _ in groupby(NT_s))
-                            if len(NT_choices) > 1:
-                                if all([self.non_terminals[item[0]]['expanded']
-                                        for item in NT_choices]):
-                                    if vals['expanded'] and \
-                                            (vals['min_steps'] >
-                                                     max([self.non_terminals
-                                                          [item[0]]
-                                                          ['min_steps']
-                                                          for item in
-                                                          NT_choices]) + 1):
-                                        vals['min_steps'] = \
-                                            max([self.non_terminals[item[0]]
-                                                 ['min_steps'] for
-                                                 item in NT_choices]) + 1
-                                    elif not vals['expanded']:
-                                        vals['expanded'] = True
-                                        vals['min_steps'] = \
-                                            max([self.non_terminals[item[0]]
-                                                 ['min_steps']
-                                                 for item in NT_choices]) + 1
-                            else:
-                                child = self.non_terminals[NT_choices[0][0]]
-                                if child['expanded']:
-                                    if vals['expanded'] and\
-                                            (vals['min_steps'] >
-                                                     child['min_steps'] + 1):
-                                        vals['min_steps'] = \
-                                            child['min_steps'] + 1
-                                    elif not vals['expanded']:
-                                        vals['expanded'] = True
-                                        vals['min_steps'] = \
-                                            child['min_steps'] + 1
-
-        for i in range(len(self.non_terminals)):
-            for NT in self.non_terminals:
-                vals = self.non_terminals[NT]
-                if vals['recursive']:
-                    choices = self.rules[NT]
-                    terms = 0
-                    nonrecurs = 0
-                    for choice in choices:
-                        if all([sym[1] == self.T for sym in choice]):
-                            # This production choice is all terminals
-                            terms += 1
-                        temp = [bit for bit in choice if bit[1] == 'NT']
-                        orary = 0
-                        for bit in temp:
-                            if not self.non_terminals[bit[0]]['recursive']:
-                                orary += 1
-                        if (orary == len(temp)) and temp:
-                            # then all NTs in this production choice are not
-                            # recursive
-                            nonrecurs += 1
-                    if terms == len(choices):
-                        # this means all the production choices for this NT are
-                        # terminals, it most definitely isn't recursive.
-                        vals['recursive'] = False
-                    elif (terms + nonrecurs) == len(choices):
-                        # this means all the production choices for this NT are
-                        # not recursive; it isn't recursive by proxy.
-                        vals['recursive'] = False
+        self.calc_nt_properties(self.start_rule[0], [])
 
         if self.start_rule[0] in self.non_terminals:
             self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
@@ -204,6 +111,47 @@ class Grammar(object):
                 for sym in [i for i in prod if i[1] == self.NT]:
                     sym.append(self.non_terminals[sym[0]]['recursive'])
 
+    def calc_nt_properties(self, cur_symbol, seen):
+        """
+        Traverses the grammar recursively and sets the properties of each rule
+
+        :param cur_symbol: symbol to check
+        :param seen: Contains already checked symbols in the current traversal
+        :return: tuple containing depth of the cur_symbol and if cur_symbol is recursive
+        """
+        if cur_symbol not in self.non_terminals.keys():
+            return 0, False
+
+        if cur_symbol in seen:
+            return maxsize, True
+
+        nt = self.non_terminals[cur_symbol]
+        if nt['expanded']:
+            return nt['min_steps'], nt['recursive']
+
+        seen.append(cur_symbol)
+        choices = self.rules[cur_symbol]
+        recursive = False
+        min_cur_symbol_depth = maxsize
+        for choice in choices:
+            max_choice_depth = 0
+            for symbol in choice:
+                symbol_depth, recursive_symbol = self.calc_nt_properties(symbol[0], seen)
+                max_choice_depth = symbol_depth if symbol_depth > max_choice_depth else max_choice_depth
+                recursive = recursive or recursive_symbol
+
+            min_cur_symbol_depth = max_choice_depth if max_choice_depth < min_cur_symbol_depth else min_cur_symbol_depth
+
+        if min_cur_symbol_depth >= maxsize:
+            raise Exception('No depth could be calculated for symbol', cur_symbol)
+
+        nt['b_factor'] = len(self.rules[cur_symbol])
+        nt['expanded'] = True
+        nt['min_steps'] = min_cur_symbol_depth + 1
+        nt['recursive'] = recursive
+        seen.remove(cur_symbol)
+        return nt['min_steps'], nt['recursive']
+
     def check_permutations(self, ramps=5):
         """ Calculates how many possible derivation tree combinations can be
             created from the given grammar at a specified depth. Only returns
@@ -213,7 +161,7 @@ class Grammar(object):
 
         perms_list = []
         if self.max_arity > self.min_path:
-            for i in range(max((self.max_arity+1 - self.min_path), ramps)):
+            for i in range(max((self.max_arity + 1 - self.min_path), ramps)):
                 x = self.check_all_permutations(i + self.min_path)
                 perms_list.append(x)
                 if i > 0:
@@ -257,7 +205,7 @@ class Grammar(object):
             for prod in productions:
                 depth_per_symbol_trees[str(prod)] = {}
 
-            for i in range(2, depth+1):
+            for i in range(2, depth + 1):
                 # Find all the possible permutations from depth of min_path up
                 # to a specified depth
                 for ntSymbol in productions:
@@ -301,20 +249,20 @@ def get_min_ramp_depth(grammar):
     size = params['POPULATION_SIZE']
 
     # Specify the range of ramping depths
-    depths = range(grammar.min_path, max_tree_deth+1)
+    depths = range(grammar.min_path, max_tree_deth + 1)
 
     if size % 2:
         # Population size is odd
         size += 1
 
-    if size/2 < len(depths):
+    if size / 2 < len(depths):
         # The population size is too small to fully cover all ramping
         # depths. Only ramp to the number of depths we can reach.
-        depths = depths[:int(size/2)]
+        depths = depths[:int(size / 2)]
 
     # Find the minimum number of unique solutions required to generate
     # sufficient individuals at each depth.
-    unique_start = int(floor(size/len(depths)))
+    unique_start = int(floor(size / len(depths)))
     ramp = None
 
     for i in sorted(grammar.permutations.keys()):

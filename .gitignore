@@ -4,3 +4,4 @@ __pycache__/
 results/
 Banknote.csv
 Banknote_shuf.csv
+.idea/
