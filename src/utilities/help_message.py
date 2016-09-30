@@ -34,6 +34,9 @@ def help_message():
                                        "value"],
                ["\t--codon_size:", "Sets the range from 0 to condon_size to "
                                    "be used in genome, requires int value"],
+               ["\t--max_wraps:", "Sets the maximum number of times the "
+                                  "genome mapping process can wrap over the "
+                                  "length of the genome. Requires int value."],
                ["\t--genome_length:", "Sets the maximum length for "
                                       "chromosomes to be initialised to, "
                                       "requires int value"],

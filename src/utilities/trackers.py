@@ -1,6 +1,5 @@
-"""Utilities for tracking progress of runs,
- including time taken per generation,
- fitness plots, fitness caches, etc."""
+"""Utilities for tracking progress of runs, including time taken per
+generation, fitness plots, fitness caches, etc."""
 
 cache = {}
 # This dict stores the cache for an evolutionary run. The key for each entry

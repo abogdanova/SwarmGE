@@ -22,7 +22,8 @@ The PonyGE2 development team can be contacted at:
     James McDermott <jamesmichaelmcdermott@gmail.com>,
     Erik Hemberg <erik.hemberg@gmail.com>,
     Michael Fenton <michaelfenton1@gmail.com>,
-    David Fagan <fagan.david@gmail.com>.
+    David Fagan <fagan.david@gmail.com>,
+    Stefan Forstenlechner.
 
 PonyGE2 is copyright (C) 2009-2016
 

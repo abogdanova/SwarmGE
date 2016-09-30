@@ -1,11 +1,11 @@
+from operators.initialisation import generate_ind_tree
 from algorithm.parameters import params
 from representation.tree import Tree
-from operators import initialisation
 from collections import deque
 from random import randint
 
 
-def mapper(genome, ind_tree):
+def mapper(genome, tree):
     """
     Wheel for mapping. Calls the correct mapper for a given input. Checks
     the params dict to ensure the correct type of individual is being created.
@@ -16,79 +16,141 @@ def mapper(genome, ind_tree):
     generated individaul is generated.
 
     :param genome: Genome of an individual.
-    :param ind_tree: Tree of an individual.
+    :param tree: Tree of an individual.
     :return: All components necessary for a fully mapped individual.
     """
 
-    if genome:
-        genome = list(genome)  # This is a fast way of creating a new unique
-        # copy of the genome (prevents cross-contamination of information
-        # between individuals).
+    phenotype, nodes, invalid, depth, used_codons = None, None, None, None, \
+        None
 
-        if ind_tree:
-            # Don't need to change anything.
-            phenotype = ind_tree.get_output()
-            used_codons = len(genome)
-            depth, nodes = ind_tree.get_tree_info(ind_tree)
-            depth += 1
-            invalid = ind_tree.check_expansion()
-        else:
+    if genome:
+        # We have a genome and need to map an individual from that genome.
+        
+        genome = list(genome)
+        # This is a fast way of creating a new unique copy of the genome
+        # (prevents cross-contamination of information between individuals).
+
+        if not tree:
+            # We have a genome but no tree. We need to map an individual
+            # from the genome and generate all tree-related info.
+            
             if params['GENOME_OPERATIONS']:
                 # Can generate tree information faster using
-                # algorithm.mapper.map_ind_from_genome() if we don't need to store the
-                # whole tree.
-                phenotype, genome, ind_tree, nodes, invalid, depth, \
-                used_codons = map_ind_from_genome(genome)
+                # algorithm.mapper.map_ind_from_genome() if we don't need to
+                # store the whole tree.
+                phenotype, genome, tree, nodes, invalid, depth, \
+                    used_codons = map_ind_from_genome(genome)
+            
             else:
                 # Build the tree using algorithm.mapper.map_tree_from_genome().
-                phenotype, genome, ind_tree, nodes, invalid, depth, \
-                used_codons = map_tree_from_genome(genome)
-    
+                phenotype, genome, tree, nodes, invalid, depth, \
+                    used_codons = map_tree_from_genome(genome)
+
     else:
-        if ind_tree:
-            # Need to generate a genome from the fully mapped tree.
-            phenotype = ind_tree.get_output()
-            genome = ind_tree.build_genome([])
+        # We do not have a genome.
+
+        if tree:
+            # We have a tree but need to generate a genome from the
+            # fully mapped tree.
+            genome = tree.build_genome([])
+
+            # Generate genome tail.
             used_codons = len(genome)
             genome = genome + [randint(0, params['CODON_SIZE']) for _ in
-                                    range(int(used_codons / 2))]
-            depth, nodes = ind_tree.get_tree_info(ind_tree)
-            depth += 1
-            invalid = ind_tree.check_expansion()
+                               range(int(used_codons / 2))]
+
         else:
+            # We have neither a genome nor a tree. We need to generate a new
+            # random individual.
+
             if params['GENOME_INIT']:
-                # Initialise a new individual from a randomly generated genome.
+                # We need to initialise a new individual from a randomly
+                # generated genome.
+
+                # Generate a random genome
                 genome = [randint(0, params['CODON_SIZE']) for _ in
-                               range(params['GENOME_LENGTH'])]
-                phenotype, genome, tree, nodes, invalid, \
-                depth, used_codons = map_tree_from_genome(list(genome))
+                          range(params['GENOME_LENGTH'])]
+
+                if params['GENOME_OPERATIONS']:
+                    # Initialise a new individual from a randomly generated
+                    # genome without generating a tree. Faster.
+                                        
+                    # Map the genome to all parameters needed for an
+                    # individual.
+                    phenotype, genome, tree, nodes, invalid, \
+                        depth, used_codons = map_ind_from_genome(list(genome))
+
+                else:
+                    # Initialise a new individual from a randomly generated
+                    # genome by mapping using the tree class.
+                    
+                    # Map the genome to all parameters needed for an
+                    # individual.
+                    phenotype, genome, tree, nodes, invalid, \
+                        depth, used_codons = map_tree_from_genome(list(genome))
+
             else:
-                # Initialise a new individual from a randomly generated tree.
-                phenotype, genome, tree, nodes, invalid, \
-                depth, used_codons = initialisation.tree_init(params['MAX_TREE_DEPTH'], "random")
-                genome = genome + [randint(0, params['CODON_SIZE'])
-                                        for _ in
-                                        range(int(used_codons / 2))]
+                # We need to initialise a new individual from a randomly
+                # generated tree.
+                ind = generate_ind_tree(params['MAX_TREE_DEPTH'], "random")
 
-    return phenotype, genome, ind_tree, nodes, invalid, depth, used_codons
+                # Extract all parameters needed for an individual.
+                phenotype, genome, tree, nodes, invalid, depth, \
+                    used_codons = ind.phenotype, ind.genome, ind.tree, \
+                    ind.nodes, ind.invalid, ind.depth, ind.used_codons
+
+    if not phenotype and not invalid:
+        # If we have no phenotype we need to ensure that the solution is not
+        # invalid, as invalid solutions have a "None" phenotype.
+        phenotype = tree.get_output()
+
+    if not used_codons:
+        # The number of used codons is the length of the genome.
+        used_codons = len(genome)
+
+    if invalid == None:
+        # Need to ensure that invalid is None and not False. Can't say "if
+        # not invalid" as that will catch when invalid is False.
+        invalid = tree.check_expansion()
+
+    if not depth and not nodes:
+        # Need to get the depth of the tree and and its number of nodes.
+        depth, nodes = tree.get_tree_info(tree)
+        depth += 1
+
+    return phenotype, genome, tree, nodes, invalid, depth, used_codons
 
 
-def map_ind_from_genome(_input, max_wraps=0):
-    """ The genotype to phenotype mapping process. Map input via rules to
-    output. Returns output and used_input. """
+def map_ind_from_genome(genome):
+    """
+    The genotype to phenotype mapping process. Map input via rules to
+    output. Returns output and used_input.
+    
+    :param genome:
+    :param max_wraps:
+    :return:
+    """
 
     from utilities.helper_methods import python_filter
+    
+    # Create local variables to avoide multiple dictionary lookups
+    MAX_TREE_DEPTH, max_wraps = params['MAX_TREE_DEPTH'], params['MAX_WRAPS']
+    NT_SYMBOL, BNF_GRAMMAR = params['BNF_GRAMMAR'].NT, params['BNF_GRAMMAR']
+
+    n_input = len(genome)
+
     # Depth, max_depth, and nodes start from 1 to account for starting root
-    MAX_TREE_DEPTH = params['MAX_TREE_DEPTH']
-    NT_SYMBOL = params['BNF_GRAMMAR'].NT
-    BNF_GRAMMAR = params['BNF_GRAMMAR']
-    n_input = len(_input)
-    used_input, current_depth, current_max_depth, nodes = 0, 1, 1, 1
-    wraps, output = -1, deque()
+    # Initialise number of wraps at -1 (since
+    used_input, current_depth, max_depth, nodes, wraps = 0, 1, 1, 1, -1
+    
+    output = deque()
+    
+    # Initialise the list of unexpanded non-terminals with the start rule.
     unexpanded_symbols = deque([(BNF_GRAMMAR.start_rule, 1)])
+    
     while (wraps < max_wraps) and \
             (unexpanded_symbols) and \
-            (current_max_depth <= MAX_TREE_DEPTH):
+            (max_depth <= MAX_TREE_DEPTH):
         # Wrap
         if used_input % n_input == 0 and \
                         used_input > 0 and \
@@ -98,8 +160,8 @@ def map_ind_from_genome(_input, max_wraps=0):
         # Expand a production
         current_item = unexpanded_symbols.popleft()
         current_symbol, current_depth = current_item[0], current_item[1]
-        if current_max_depth < current_depth:
-            current_max_depth = current_depth
+        if max_depth < current_depth:
+            max_depth = current_depth
 
         # Set output if it is a terminal
         if current_symbol[1] != NT_SYMBOL:
@@ -108,7 +170,7 @@ def map_ind_from_genome(_input, max_wraps=0):
             production_choices = BNF_GRAMMAR.rules[current_symbol[0]]
             # Select a production
             # TODO store the length of production choices to avoid len call?
-            current_production = _input[used_input % n_input] % \
+            current_production = genome[used_input % n_input] % \
                                  len(production_choices)
             # Use an input
             used_input += 1
@@ -135,18 +197,21 @@ def map_ind_from_genome(_input, max_wraps=0):
             else:
                 nodes += 1
 
+    # Generate phenotype string.
     output = "".join(output)
 
     if len(unexpanded_symbols) > 0:
-        # Not completly expanded, invalid solution.
-        return None, _input, None, nodes, True, current_max_depth, \
-               used_input
+        # All non-terminals have not been completely expanded, invalid
+        # solution.
+        
+        return None, genome, None, nodes, True, max_depth, used_input
 
     if BNF_GRAMMAR.python_mode:
+        # Grammar contains python code
+
         output = python_filter(output)
 
-    return output, _input, None, nodes, False, current_max_depth, \
-           used_input
+    return output, genome, None, nodes, False, max_depth, used_input
 
 
 def map_tree_from_genome(genome):

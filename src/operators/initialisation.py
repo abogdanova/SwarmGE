@@ -103,22 +103,22 @@ def rhh(size):
         return population
     
 
-def generate_ind_tree(depth, method):
+def generate_ind_tree(max_depth, method):
     """
     Generate an individual using a given subtree initialisation method.
 
-    :param depth: The maximum depth for the initialised subtree.
+    :param max_depth: The maximum depth for the initialised subtree.
     :param method: The method of subtree initialisation required.
     :return:
     """
 
     # Initialise an instance of the tree class
     ind_tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
-                max_depth=depth - 1, depth_limit=depth - 1)
+                    max_depth=max_depth - 1, depth_limit=max_depth - 1)
 
     # Generate a tree
-    genome, nodes, d, tree_depth = generate_tree(ind_tree, [], method,
-                                                0, 0, 0, depth - 1)
+    genome, nodes, _, depth = generate_tree(ind_tree, [], method,
+                                                0, 0, 0, max_depth - 1)
 
     # Ensure the generated tree is valid (i.e. all non-terminals have been
     # fully expanded).
@@ -130,12 +130,11 @@ def generate_ind_tree(depth, method):
     phenotype, invalid, used_cod = ind_tree.get_output(), False, len(genome)
 
     # Initialise individual
-    ind = individual.Individual(genome, ind_tree, map=False)
+    ind = individual.Individual(genome, ind_tree, map_ind=False)
 
     # Set individual parameters
     ind.phenotype, ind.nodes = phenotype, nodes
-    ind.depth, ind.used_codons = tree_depth, used_cod
-    ind.invalid = invalid
+    ind.depth, ind.used_codons, ind.invalid = depth, used_cod, invalid
 
     # Generate random tail for genome.
     ind.genome = genome + [randint(0, params['CODON_SIZE']) for

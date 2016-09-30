@@ -35,6 +35,7 @@ params = {
         'MAX_TREE_DEPTH': 17,
         'CODON_SIZE': 100000,
         'GENOME_LENGTH': 500,
+        'MAX_WRAPS': 0,
 
         # INITIALISATION
         'INITIALISATION': "operators.initialisation.rhh",
@@ -206,7 +207,7 @@ def set_params(command_line_args):
                                     "complete_evals", "genome_length=",
                                     "invalid_selection", "silent",
                                     "dont_lookup_fitness", "experiment_name=",
-                                    "multicore", "cores="])
+                                    "multicore", "cores=", "max_wraps="])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run python ponyge.py --help for more info")
@@ -231,6 +232,8 @@ def set_params(command_line_args):
             check_int('CODON_SIZE', arg)
         elif opt == "--genome_length":
             check_int('GENOME_LENGTH', arg)
+        elif opt == "--max_wraps":
+            check_int('MAX_WRAPS', arg)
 
         # INITIALISATION
         elif opt == "--initialisation":
