@@ -48,7 +48,7 @@ def pi_random_derivation(tree, index, max_depth=20):
 
             for i in range(len(chosen_prod)):
                 symbol = chosen_prod[i]
-                child = Tree((symbol[0],), node)
+                child = Tree(symbol[0], node)
                 node.children.append(child)
                 if symbol[1] == params['BNF_GRAMMAR'].NT:
                     # if the right hand side is a non-terminal
@@ -129,7 +129,7 @@ def pi_grow(tree, index, max_depth=20):
 
             for i in range(len(chosen_prod)):
                 symbol = chosen_prod[i]
-                child = Tree((symbol[0],), node)
+                child = Tree(symbol[0], node)
                 node.children.append(child)
                 if symbol[1] == params['BNF_GRAMMAR'].NT:
                     # if the right hand side is a non-terminal

@@ -44,7 +44,7 @@ def generate_tree_from_genome(genome):
     initialisation as less information is returned. To be used when a tree
     needs to be built quickly from a given genome."""
 
-    new_tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+    new_tree = Tree(str(params['BNF_GRAMMAR'].start_rule[0]), None,
                     depth_limit=params['MAX_TREE_DEPTH'])
     new_tree.fast_genome_derivation(genome)
     return new_tree

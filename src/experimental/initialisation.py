@@ -3,7 +3,7 @@ from representation.tree import Tree
 
 def pi_random_init(depth):
 
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),),
+    tree = Tree(str(params['BNF_GRAMMAR'].start_rule[0]),
                 None, max_depth=depth, depth_limit=depth)
     genome = tree.pi_random_derivation(0, max_depth=depth)
     if tree.check_expansion():
@@ -14,7 +14,7 @@ def pi_random_init(depth):
 
 def pi_grow_init(depth):
 
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+    tree = Tree(str(params['BNF_GRAMMAR'].start_rule[0]), None,
                 max_depth=depth, depth_limit=depth)
     genome = tree.pi_grow(0, max_depth=depth)
     if tree.check_expansion():

@@ -22,12 +22,11 @@ def crossover(parents):
         # Randomly choose two parents from the parent population.
         inds_in = sample(parents, 2)
 
-        # Re-initialise these parents to create copies of the originals.
-        # This is necessary as the original parents remain in the parent
-        # population and changes will affect the originals unless they are
-        # cloned through re-initialisation.
-        ind_0 = individual.Individual(inds_in[0].genome, None)
-        ind_1 = individual.Individual(inds_in[1].genome, None)
+        # Create copies of the original parents. This is necessary as the
+        # original parents remain in the parent population and changes will
+        # affect the originals unless they are cloned.
+        ind_0 = inds_in[0].deep_copy()
+        ind_1 = inds_in[1].deep_copy()
 
         # Crossover cannot be performed on invalid individuals.
         if ind_0.invalid or ind_1.invalid:
@@ -111,7 +110,7 @@ def subtree(p_0, p_1):
     :return: A list of crossed-over individuals.
     """
 
-    def do_crossover(tree0, tree1, intersection):
+    def do_crossover(tree0, tree1, shared_nodes):
         """
         Given two instances of the representation.tree.Tree class (
         derivation trees of individuals) and a list of intersecting
@@ -120,7 +119,7 @@ def subtree(p_0, p_1):
         
         :param tree0: The derivation tree of individual 0.
         :param tree1: The derivation tree of individual 1.
-        :param intersection: The sorted list of all non-terminal nodes that are
+        :param shared_nodes: The sorted list of all non-terminal nodes that are
         in both derivation trees.
         :return: The new derivation trees after subtree crossover has been
         performed.
@@ -128,7 +127,7 @@ def subtree(p_0, p_1):
     
         # Randomly choose a non-terminal from the set of permissible
         # intersecting non-terminals.
-        crossover_choice = choice(intersection)
+        crossover_choice = choice(shared_nodes)
     
         # Find the indexes of all nodes in tree0 that match the chosen
         # crossover node.
@@ -226,14 +225,13 @@ def subtree(p_0, p_1):
         """
         
         # Find all intersecting elements of both sets l0 and l1.
-        intersection = l0.intersection(l1)
+        shared_nodes = l0.intersection(l1)
         
         # Find only the non-terminals present in the intersecting set of
         # labels.
-        intersection = [i for i in intersection if i in
-                        params['BNF_GRAMMAR'].crossover_NTs]
+        shared_nodes = [i for i in shared_nodes if i in params['BNF_GRAMMAR'].crossover_NTs]
         
-        return sorted(intersection)
+        return sorted(shared_nodes)
 
     if random() > params['CROSSOVER_PROBABILITY']:
         # Crossover is not to be performed, return entire individuals.
@@ -250,25 +248,22 @@ def subtree(p_0, p_1):
         labels2 = p_1.tree.get_labels(set())
 
         # Find overlapping non-terminals across both trees.
-        intersection = intersect(labels1, labels2)
+        shared_nodes = intersect(labels1, labels2)
 
-        if len(intersection) != 0:
+        if len(shared_nodes) != 0:
             # There are overlapping NTs, cross over parts of trees.
             ret_tree0, ret_tree1 = do_crossover(p_0.tree, p_1.tree,
-                                                intersection)
+                                                shared_nodes)
         else:
             # There are no overlapping NTs, cross over entire trees.
             ret_tree0, ret_tree1 = p_1.tree, p_0.tree
-        
+
         # Build new genomes
-        genome_0 = ret_tree0.build_genome([])
-        genome_1 = ret_tree1.build_genome([])
+        genome_0 = ret_tree0.build_genome([]) + tail_0
+        genome_1 = ret_tree1.build_genome([]) + tail_1
 
-        # Initialise new individuals and add the original tails.
+        # Initialise new individuals.
         ind0 = individual.Individual(genome_0, ret_tree0)
-        ind0.genome = genome_0 + tail_0
-
         ind1 = individual.Individual(genome_1, ret_tree1)
-        ind1.genome = genome_1 + tail_1
 
     return [ind0, ind1]

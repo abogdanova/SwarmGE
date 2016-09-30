@@ -59,6 +59,28 @@ class Individual(object):
         """
         return ("Individual: " +
                 str(self.phenotype) + "; " + str(self.fitness))
+    
+    def deep_copy(self):
+        """
+        Copy an individual and return a unique version of that individual.
+        
+        :return: A unique copy of the individual.
+        """
+
+        if not params['GENOME_OPERATIONS']:
+            # Create a new unique copy of the tree.
+            new_tree = self.tree.__copy__()
+
+        else:
+            new_tree = None
+        
+        new_ind = Individual(list(self.genome), new_tree, map_ind=False)
+        
+        new_ind.phenotype, new_ind.invalid = self.phenotype, self.invalid
+        new_ind.depth, new_ind.nodes = self.depth, self.nodes
+        new_ind.used_codons = self.used_codons
+        
+        return new_ind
 
     def evaluate(self, dist="training"):
         """

@@ -11,17 +11,8 @@ class Tree:
         self.depth_limit = depth_limit
         self.id = None
         self.depth = 1
-        if len(expr) == 1:
-            self.root = expr[0]
-            self.children = []
-        else:
-            self.root = expr[0]
-            self.children = []
-            for child in expr[1:]:
-                if type(child) == tuple:
-                    self.children.append(Tree(child, self))
-                else:
-                    self.children.append(Tree((child,), self))
+        self.root = expr
+        self.children = []
 
     def __str__(self):
         result = "("
@@ -33,6 +24,25 @@ class Tree:
                 result += " " + str(child.root)
         result += ")"
         return result
+
+    def __copy__(self):
+        """
+        Creates a new unique copy of self.
+        
+        :return: A new unique copy of self.
+        """
+
+        tree_copy = Tree(self.root, self.parent, self.max_depth,
+                         self.depth_limit)
+        tree_copy.codon, tree_copy.id = self.codon, self.id
+        tree_copy.depth = self.depth
+                
+        for child in self.children:
+            new_child = child.__copy__()
+            new_child.parent = tree_copy
+            tree_copy.children.append(new_child)
+
+        return tree_copy
 
     def get_current_depth(self):
         """Get the depth of the current node."""
@@ -158,10 +168,10 @@ class Tree:
             for i in range(len(chosen_prod)):
                 symbol = chosen_prod[i]
                 if symbol[1] == params['BNF_GRAMMAR'].T:
-                    self.children.append(Tree((symbol[0],), self))
+                    self.children.append(Tree(symbol[0], self))
 
                 elif symbol[1] == params['BNF_GRAMMAR'].NT:
-                    self.children.append(Tree((symbol[0],), self))
+                    self.children.append(Tree(symbol[0], self))
                     index = self.children[-1].fast_genome_derivation(genome,
                                                                      index)
         else:
@@ -264,10 +274,10 @@ def generate_tree(ind_tree, genome, method, nodes, depth, max_depth,
     for symbol in chosen_prod:
         if symbol[1] == params['BNF_GRAMMAR'].T:
             # if the right hand side is a terminal
-            ind_tree.children.append(Tree((symbol[0],), ind_tree))
+            ind_tree.children.append(Tree(symbol[0], ind_tree))
         elif symbol[1] == params['BNF_GRAMMAR'].NT:
             # if the right hand side is a non-terminal
-            ind_tree.children.append(Tree((symbol[0],), ind_tree))
+            ind_tree.children.append(Tree(symbol[0], ind_tree))
             genome, nodes, d, max_depth = \
                 generate_tree(ind_tree.children[-1], genome, method, nodes,
                               depth, max_depth, depth_limit - 1)

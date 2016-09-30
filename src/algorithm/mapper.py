@@ -108,7 +108,7 @@ def mapper(genome, tree):
         # The number of used codons is the length of the genome.
         used_codons = len(genome)
 
-    if invalid == None:
+    if invalid is None:
         # Need to ensure that invalid is None and not False. Can't say "if
         # not invalid" as that will catch when invalid is False.
         invalid = tree.check_expansion()
@@ -123,19 +123,25 @@ def mapper(genome, tree):
 
 def map_ind_from_genome(genome):
     """
-    The genotype to phenotype mapping process. Map input via rules to
-    output. Returns output and used_input.
+    A fast genotype to phenotype mapping process. Map input via rules to
+    output. Does not require the recursive tree class, but still calculates
+    tree information, e.g. number of nodes and maximum depth.
     
-    :param genome:
-    :param max_wraps:
-    :return:
+    :param genome: A genome to be mapped.
+    :return: Output in the form of a phenotype string ('None' if invalid),
+             Genome,
+             None (this is reserved for the derivation tree),
+             The number of nodes in the derivation,
+             A boolean flag for whether or not the individual is invalid,
+             The maximum depth of any node in the tree, and
+             The number of used codons.
     """
 
     from utilities.helper_methods import python_filter
     
     # Create local variables to avoide multiple dictionary lookups
-    MAX_TREE_DEPTH, max_wraps = params['MAX_TREE_DEPTH'], params['MAX_WRAPS']
-    NT_SYMBOL, BNF_GRAMMAR = params['BNF_GRAMMAR'].NT, params['BNF_GRAMMAR']
+    max_tree_depth, max_wraps = params['MAX_TREE_DEPTH'], params['MAX_WRAPS']
+    nt_symbol, bnf_grammar = params['BNF_GRAMMAR'].NT, params['BNF_GRAMMAR']
 
     n_input = len(genome)
 
@@ -143,57 +149,79 @@ def map_ind_from_genome(genome):
     # Initialise number of wraps at -1 (since
     used_input, current_depth, max_depth, nodes, wraps = 0, 1, 1, 1, -1
     
+    # Initialise output as empty deque list (deque is a list-like container
+    # with fast appends and pops on either end).
     output = deque()
     
     # Initialise the list of unexpanded non-terminals with the start rule.
-    unexpanded_symbols = deque([(BNF_GRAMMAR.start_rule, 1)])
+    unexpanded_symbols = deque([(bnf_grammar.start_rule, 1)])
     
     while (wraps < max_wraps) and \
-            (unexpanded_symbols) and \
-            (max_depth <= MAX_TREE_DEPTH):
-        # Wrap
+            unexpanded_symbols and \
+            (max_depth <= max_tree_depth):
+        # While there are unexpanded non-terminals, and we are below our
+        # wrapping limit, and we haven't breached our maximum tree depth, we
+        # can continue to map the genome.
+        
         if used_input % n_input == 0 and \
                         used_input > 0 and \
-                any([i[0][1] == NT_SYMBOL for i in unexpanded_symbols]):
+                any([i[0][1] == nt_symbol for i in unexpanded_symbols]):
+            # If we have reached the end of the genome and unexpanded
+            # non-terminals remain, then we need to wrap back to the start
+            # of the genome again. Can break the while loop.
             wraps += 1
 
-        # Expand a production
+        # Expand a production from the list of unexpanded non-terminals.
         current_item = unexpanded_symbols.popleft()
         current_symbol, current_depth = current_item[0], current_item[1]
+        
         if max_depth < current_depth:
+            # Set the new maximum depth.
             max_depth = current_depth
 
-        # Set output if it is a terminal
-        if current_symbol[1] != NT_SYMBOL:
+        # Set output if it is a terminal.
+        if current_symbol[1] != nt_symbol:
             output.append(current_symbol[0])
+        
         else:
-            production_choices = BNF_GRAMMAR.rules[current_symbol[0]]
-            # Select a production
+            # Current item is a new non-terminal. Find associated production
+            # choices.
+            production_choices = bnf_grammar.rules[current_symbol[0]]
+            
+            # Select a production based on the next available codon in the
+            # genome.
             # TODO store the length of production choices to avoid len call?
             current_production = genome[used_input % n_input] % \
-                                 len(production_choices)
+                len(production_choices)
+            
             # Use an input
             used_input += 1
-            # Derviation order is left to right(depth-first)
-            # TODO is a list comprehension faster? (Only if the loop for
-            # counting NT for each production can be avoided, by using a
-            # lookup instead
+            
+            # TODO: Derviation order is left to right(depth-first). Is a
+            # list comprehension faster? (Only if the loop for counting NT for
+            # each production can be avoided, by using a lookup instead.
+            
+            # Initialise children as empty deque list.
             children = deque()
-            NT_count = 0
+            nt_count = 0
+            
             for prod in production_choices[current_production]:
+                # iterate over all elements of chosen production rule.
+                
                 child = [prod, current_depth + 1]
-                # Extendleft reverses the order, thus reverse adding
-                # WARNING loss of readability and coupling of lines?
+                
+                # Extendleft reverses the order, thus reverse adding.
                 children.appendleft(child)
                 # TODO store number of NT to avoid counting and simply do
                 # lookup instead?
-                if child[0][1] == NT_SYMBOL:
-                    NT_count += 1
-
+                if child[0][1] == nt_symbol:
+                    nt_count += 1
+            
+            # Add the new children to the list of unexpanded symbols.
             unexpanded_symbols.extendleft(children)
 
-            if NT_count > 0:
-                nodes += NT_count
+            if nt_count > 0:
+                nodes += nt_count
             else:
                 nodes += 1
 
@@ -206,7 +234,7 @@ def map_ind_from_genome(genome):
         
         return None, genome, None, nodes, True, max_depth, used_input
 
-    if BNF_GRAMMAR.python_mode:
+    if bnf_grammar.python_mode:
         # Grammar contains python code
 
         output = python_filter(output)
@@ -223,12 +251,12 @@ def map_tree_from_genome(genome):
     """
 
     # Initialise an instance of the tree class
-    tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),),
+    tree = Tree(str(params['BNF_GRAMMAR'].start_rule[0]),
                 None, depth_limit=params['MAX_TREE_DEPTH'])
     
     # Map tree from the given genome
     used_codons, nodes, depth, max_depth, invalid = \
-        genome_tree_derivation(tree, genome, 0, 0, 0, 0)
+        genome_tree_map(tree, genome, 0, 0, 0, 0)
     
     if invalid:
         # Return "None" phenotype if invalid
@@ -240,50 +268,104 @@ def map_tree_from_genome(genome):
            used_codons
 
 
-def genome_tree_derivation(ind_tree, genome, index, depth, max_depth, nodes,
-                           invalid=False):
-    """ Builds a tree using production choices from a given genome. Not
-        guaranteed to terminate.
+def genome_tree_map(tree, genome, index, depth, max_depth, nodes,
+                    invalid=False):
     """
-    if not invalid and index < len(genome) and\
-                    max_depth <= params['MAX_TREE_DEPTH']:
+    Recursive function which builds a tree using production choices from a
+    given genome. Not guaranteed to terminate.
+    
+    :param tree: An instance of the representation.tree.Tree class.
+    :param genome: A full genome.
+    :param index: The index of the current location on the genome.
+    :param depth: The current depth in the tree.
+    :param max_depth: The maximum overall depth in the tree so far.
+    :param nodes: The total number of nodes in the tree thus far.
+    :param invalid: A boolean flag indicating whether or not the individual
+    is invalid.
+    :return: index, the index of the current location on the genome,
+             nodes, the total number of nodes in the tree thus far,
+             depth, the current depth in the tree,
+             max_depth, the maximum overall depth in the tree,
+             invalid, a boolean flag indicating whether or not the
+             individual is invalid.
+    """
+    
+    if not invalid and index < len(genome) and \
+        max_depth <= params['MAX_TREE_DEPTH']:
+        # If the solution is not invalid thus far, and if we still have
+        # remaining codons in the genome, and if we have not exceeded our
+        # maximum depth, then we can continue to map the tree.
+        # TODO: Enable wrapping for genome_tree_map.
+        
+        # Increment and set number of nodes and current depth.
         nodes += 1
         depth += 1
-        ind_tree.id, ind_tree.depth = nodes, depth
+        tree.id, tree.depth = nodes, depth
 
-        productions = params['BNF_GRAMMAR'].rules[ind_tree.root]
-        ind_tree.codon = genome[index % len(genome)]
-        selection = ind_tree.codon % len(productions)
+        # Find all production choices that can be made by the current root
+        # non-terminal.
+        productions = params['BNF_GRAMMAR'].rules[tree.root]
+        
+        # Set the current codon value from the genome.
+        tree.codon = genome[index % len(genome)]
+        
+        # Select the index of the correct production from the list.
+        selection = tree.codon % len(productions)
+        
+        # Set the chosen production
         chosen_prod = productions[selection]
 
+        # Increment the index
         index += 1
-        ind_tree.children = []
+        
+        # Initialise an empty list of children.
+        tree.children = []
 
         for i in range(len(chosen_prod)):
+            # Add children to the derivation tree by creating a new instance
+            # of the representation.tree.Tree class for each child.
+            
             symbol = chosen_prod[i]
+            
             if symbol[1] == "T":
-                ind_tree.children.append(Tree((symbol[0],), ind_tree))
+                # Append the child to the parent node. Child is a terminal, do
+                # not recurse.
+                tree.children.append(Tree(symbol[0], tree))
 
             elif symbol[1] == "NT":
-                ind_tree.children.append(Tree((symbol[0],), ind_tree))
+                # Append the child to the parent node.
+                tree.children.append(Tree(symbol[0], tree))
+                
+                # Recurse by calling the function again to map the next
+                # non-terminal from the genome.
                 index, nodes, d, max_depth, invalid = \
-                    genome_tree_derivation(ind_tree.children[-1], genome,
-                                           index, depth, max_depth, nodes,
-                                           invalid)
+                    genome_tree_map(tree.children[-1], genome,
+                                    index, depth, max_depth, nodes,
+                                    invalid=invalid)
+    
     else:
-        # Mapping incomplete
+        # Mapping incomplete, solution is invalid.
         return index, nodes, depth, max_depth, True
 
-    NT_kids = [kid for kid in ind_tree.children if kid.root in
+    # Find all non-terminals in the chosen production choice.
+    NT_kids = [kid for kid in tree.children if kid.root in
                params['BNF_GRAMMAR'].non_terminals]
+    
     if not NT_kids:
-        # Then the branch terminates here
+        # There are no non-terminals in the chosen production choice, the
+        # branch terminates here.
         depth += 1
         nodes += 1
 
     if not invalid:
+        # The solution is valid thus far.
+        
         if (depth > max_depth):
+            # Set the new maximum depth.
             max_depth = depth
+        
         if max_depth > params['MAX_TREE_DEPTH']:
+            # If our maximum depth exceeds the limit, the solution is invalid.
             invalid = True
+    
     return index, nodes, depth, max_depth, invalid

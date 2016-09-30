@@ -113,7 +113,7 @@ def generate_ind_tree(max_depth, method):
     """
 
     # Initialise an instance of the tree class
-    ind_tree = Tree((str(params['BNF_GRAMMAR'].start_rule[0]),), None,
+    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule[0]), None,
                     max_depth=max_depth - 1, depth_limit=max_depth - 1)
 
     # Generate a tree
