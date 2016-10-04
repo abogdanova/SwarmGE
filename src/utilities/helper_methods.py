@@ -80,3 +80,80 @@ def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     test_y = test_Xy[:, -1].transpose()  # last column
 
     return train_X, train_y, test_X, test_y
+
+
+def check_expansion(tree, nt_keys):
+    """ Check if a given tree is completely expanded or not. Return boolean
+        True if the tree IS NOT completely expanded.
+    """
+    
+    check = False
+    if tree.root in nt_keys:
+        # Current node is a NT and should have children
+        if tree.children:
+            # Everything is as expected
+            for child in tree.children:
+                check = child.check_expansion(nt_keys)
+                if check:
+                    break
+        else:
+            # Current node is not completely expanded
+            check = True
+    
+    return check
+
+
+def build_genome(tree, genome):
+    """
+    Goes through a tree and builds a genome from all codons in the subtree.
+
+    :param genome: The list of all codons in a subtree.
+    :return: The fully built genome of a subtree.
+    """
+    
+    if tree.codon:
+        # If the current node has a codon, append it to the genome.
+        genome.append(tree.codon)
+    
+    for child in tree.children:
+        # Recurse on all children.
+        genome = child.build_genome(genome)
+    
+    return genome
+
+
+def get_tree_info(tree, current, number=0, max_depth=0):
+    """ Get the number of nodes and the max depth of the tree.
+    """
+    
+    number += 1
+    # if current.root in params['BNF_GRAMMAR'].non_terminals:
+    
+    if current.parent:
+        current.depth = current.parent.depth + 1
+    else:
+        current.depth = 1
+    if current.depth > max_depth:
+        max_depth = current.depth
+    NT_kids = [kid for kid in
+               tree.children if kid.root in
+               params['BNF_GRAMMAR'].non_terminals]
+    if not NT_kids:
+        number += 1
+    else:
+        for child in NT_kids:
+            max_depth, number = child.get_tree_info(child, number,
+                                                    max_depth)
+    
+    return max_depth, number
+
+
+def get_max_tree_depth(tree, max_d=1):
+    """ Returns the maximum depth of the tree from the current node. """
+    
+    curr_depth = tree.get_current_depth()
+    if curr_depth > max_d:
+        max_d = curr_depth
+    for child in tree.children:
+        max_d = child.get_max_tree_depth(child, max_d)
+    return max_d

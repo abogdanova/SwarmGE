@@ -49,17 +49,7 @@ def mapper(genome, tree):
     else:
         # We do not have a genome.
 
-        if tree:
-            # We have a tree but need to generate a genome from the
-            # fully mapped tree.
-            genome = tree.build_genome([])
-
-            # Generate genome tail.
-            used_codons = len(genome)
-            genome = genome + [randint(0, params['CODON_SIZE']) for _ in
-                               range(int(used_codons / 2))]
-
-        else:
+        if not tree:
             # We have neither a genome nor a tree. We need to generate a new
             # random individual.
 
@@ -99,24 +89,15 @@ def mapper(genome, tree):
                     used_codons = ind.phenotype, ind.genome, ind.tree, \
                     ind.nodes, ind.invalid, ind.depth, ind.used_codons
 
-    if not phenotype and not invalid:
-        # If we have no phenotype we need to ensure that the solution is not
-        # invalid, as invalid solutions have a "None" phenotype.
-        phenotype = tree.get_output()
-
-    if not used_codons:
-        # The number of used codons is the length of the genome.
-        used_codons = len(genome)
-
-    if invalid is None:
-        # Need to ensure that invalid is None and not False. Can't say "if
-        # not invalid" as that will catch when invalid is False.
-        invalid = tree.check_expansion()
-
-    if not depth and not nodes:
-        # Need to get the depth of the tree and and its number of nodes.
-        depth, nodes = tree.get_tree_info(tree)
+    if not used_codons or invalid is None or (not phenotype and not invalid)\
+            or not depth or not nodes:
+        input, output, invalid, depth, nodes = tree.build_tree_info(params[
+                                                                        'BNF_GRAMMAR'].non_terminals.keys(), [], [])
+        used_codons, phenotype = len(input), "".join(output)
         depth += 1
+
+    if not genome:
+        genome = input
 
     return phenotype, genome, tree, nodes, invalid, depth, used_codons
 

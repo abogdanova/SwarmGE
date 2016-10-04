@@ -47,7 +47,7 @@ def check_ind(ind):
             print("\nError: Nodes doesn't match tree nodes\n")
             print(n, "\n", nodes)
             quit()
-        elif i != ind.tree.check_expansion():
+        elif i != ind.tree.check_expansion(params['BNF_GRAMMAR'].non_terminals.keys()):
             print("\nError: Invalid doesn't match tree invalid\n")
             quit()
 
@@ -121,7 +121,7 @@ def verify_tree(ind_tree):
 
     check_genome_from_tree(ind_tree)
 
-    if ind_tree.check_expansion():
+    if ind_tree.check_expansion(params['BNF_GRAMMAR'].non_terminals.keys()):
         print("Invalid given tree")
         quit()
 

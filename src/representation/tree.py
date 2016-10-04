@@ -9,7 +9,6 @@ class Tree:
         self.max_depth = max_depth
         self.codon = None
         self.depth_limit = depth_limit
-        self.id = None
         self.depth = 1
         self.root = expr
         self.children = []
@@ -34,7 +33,7 @@ class Tree:
 
         tree_copy = Tree(self.root, self.parent, self.max_depth,
                          self.depth_limit)
-        tree_copy.codon, tree_copy.id = self.codon, self.id
+        tree_copy.codon = self.codon
         tree_copy.depth = self.depth
                 
         for child in self.children:
@@ -53,42 +52,6 @@ class Tree:
             count += 1
             current_parent = current_parent.parent
         return count
-
-    def get_max_tree_depth(self, current, max_d=1):
-        """ Returns the maximum depth of the tree from the current node. """
-
-        curr_depth = current.get_current_depth()
-        if curr_depth > max_d:
-            max_d = curr_depth
-        for child in current.children:
-            max_d = child.get_max_tree_depth(child, max_d)
-        return max_d
-
-    def get_tree_info(self, current, number=0, max_depth=0):
-        """ Get the number of nodes and the max depth of the tree.
-        """
-
-        number += 1
-        if current.root in params['BNF_GRAMMAR'].non_terminals:
-            current.id = number
-            if current.parent:
-                current.depth = current.parent.depth + 1
-            else:
-                current.depth = 1
-            if current.depth > max_depth:
-                max_depth = current.depth
-            NT_kids = [kid for kid in
-                       self.children if kid.root in
-                       params['BNF_GRAMMAR'].non_terminals]
-            if not NT_kids:
-                number += 1
-            else:
-                for child in NT_kids:
-                    max_depth, number = child.get_tree_info(child,
-                                                            number,
-                                                            max_depth)
-
-        return max_depth, number
 
     def get_target_nodes(self, array, target=None):
         """
@@ -118,40 +81,6 @@ class Tree:
         
         return array
 
-    def get_output(self):
-        """
-        Calls the recursive build_output(self) which returns a list of all
-        node roots. Joins this list to create the full phenotype of an
-        individual. This two-step process speeds things up as it only joins
-        the phenotype together once rather than at every node.
-        
-        :return: The complete built phenotype string of an individual.
-        """
-
-        def build_output(tree):
-            """
-            Recursively adds all node roots to a list which can be joined to
-            create the phenotype.
-
-            :return: The list of all node roots.
-            """
-            
-            output = []
-            for child in tree.children:
-                if not child.children:
-                    # If the current child has no children it is a terminal.
-                    # Append it to the output.
-                    output.append(child.root)
-                
-                else:
-                    # Otherwise it is a non-terminal. Recurse on all
-                    # non-terminals.
-                    output += build_output(child)
-
-            return output
-        
-        return "".join(build_output(self))
-
     def get_labels(self, labels):
         """
         Recurses through a tree and appends all node roots to a set.
@@ -170,54 +99,105 @@ class Tree:
         
         return labels
 
-    def print_tree(self):
-        print(self)
-
-    def build_genome(self, genome):
+    def get_output(self):
         """
-        Goes through a tree and builds a genome from all codons in the subtree.
+        Calls the recursive build_output(self) which returns a list of all
+        node roots. Joins this list to create the full phenotype of an
+        individual. This two-step process speeds things up as it only joins
+        the phenotype together once rather than at every node.
+
+        :return: The complete built phenotype string of an individual.
+        """
+    
+        def build_output(tree):
+            """
+            Recursively adds all node roots to a list which can be joined to
+            create the phenotype.
+
+            :return: The list of all node roots.
+            """
+        
+            output = []
+            for child in tree.children:
+                if not child.children:
+                    # If the current child has no children it is a terminal.
+                    # Append it to the output.
+                    output.append(child.root)
+            
+                else:
+                    # Otherwise it is a non-terminal. Recurse on all
+                    # non-terminals.
+                    output += build_output(child)
+        
+            return output
+    
+        return "".join(build_output(self))
+
+    def build_tree_info(self, nt_keys, genome, output, check=False,
+                        nodes=0, max_depth=0):
+        """
+        Recurses through a tree and returns all necessary information on a
+        tree required to generate an individual.
         
         :param genome: The list of all codons in a subtree.
-        :return: The fully built genome of a subtree.
-        """
-
-        if self.codon:
-            # If the current node has a codon, append it to the genome.
-            genome.append(self.codon)
-        
-        for child in self.children:
-            # Recurse on all children.
-            genome = child.build_genome(genome)
-        
-        return genome
-
-    def build_genome_output(self, genome, output):
-        """
-        Recurses through a tree and builds lists of all codons and terminal
-        nodes in the tree. These become the genome and phenotype of the
-        individual.
-        
-        :param genome: The list of all codons in a subtree.
-        :param output: The list of all terminal nodes in a subtree.
+        :param output: The list of all terminal nodes in a subtree. This is
+        joined to become the phenotype.
+        :param check: A boolean flag for whether a tree is fully expanded.
+        True if invalid (unexpanded).
+        :param nt_keys: The list of all non-terminals in the grammar.
+        :param nodes: the number of nodes in a tree.
+        :param max_depth: The maximum depth of any node in the tree.
         :return: The lists of all codons and terminal nodes in a subtree.
         """
+
+        # Increment number of nodes in tree and set current node id.
+        nodes += 1
         
+        if self.parent:
+            # If current node has a parent, increment current depth from
+            # parent depth.
+            self.depth = self.parent.depth + 1
+        
+        else:
+            # Current node is tree root, set depth to 1.
+            self.depth = 1
+        
+        if self.depth > max_depth:
+            # Set new max tree depth.
+            max_depth = self.depth
+
         if self.codon:
             # If the current node has a codon, append it to the genome.
             genome.append(self.codon)
+
+        # Find all non-terminal children of current node.
+        NT_children = [child for child in self.children if child.root in
+                       nt_keys]
+        
+        if not NT_children:
+            # The current node has only terminal children, increment number
+            # of tree nodes.
+            nodes += 1
 
         for child in self.children:
             # Recurse on all children.
 
             if not child.children:
                 # If the current child has no children it is a terminal.
-                # Append it to the output.
+                # Append it to the phenotype output.
                 output.append(child.root)
-            else:
                 
-                genome, output = child.build_genome_output(genome, output)
+                if child.root in nt_keys:
+                    # Current non-terminal node has no children; invalid tree.
+                    check = True
+            
+            else:
+                # The current child has children, recurse.
+                genome, output, check, max_depth, nodes = \
+                    child.build_tree_info(nt_keys, genome, output, check,
+                                          nodes, max_depth)
 
-        return genome, output
+        return genome, output, check, max_depth, nodes
 
     def fast_genome_derivation(self, genome, index=0):
         """ Builds a tree using production choices from a given genome. Not
@@ -300,32 +280,12 @@ class Tree:
                             available.append(prod)
         return available
 
-    def check_expansion(self):
-        """ Check if a given tree is completely expanded or not. Return boolean
-            True if the tree IS NOT completely expanded.
-        """
-
-        # TODO: pass in list of non-terminal keys instead of doing dict
-        # lookup every time.
-
-        check = False
-        if self.root in params['BNF_GRAMMAR'].non_terminals.keys():
-            # Current node is a NT and should have children
-            if self.children:
-                # Everything is as expected
-                for child in self.children:
-                    check = child.check_expansion()
-                    if check:
-                        break
-            else:
-                # Current node is not completely expanded
-                check = True
-        return check
-
 
 def generate_tree(ind_tree, genome, method, nodes, depth, max_depth,
                   depth_limit):
     """ Derive a tree using a given method """
+
+    # TODO: Add phenotype/output creation to this function.
 
     nodes += 1
     depth += 1

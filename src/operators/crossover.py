@@ -238,12 +238,34 @@ def subtree(p_0, p_1):
             # There are no overlapping NTs, cross over entire trees.
             ret_tree0, ret_tree1 = p_1.tree, p_0.tree
 
-        # Build new genomes
-        genome_0 = ret_tree0.build_genome([]) + tail_0
-        genome_1 = ret_tree1.build_genome([]) + tail_1
+        # Generate list of all non-terminals.
+        nt_keys = params['BNF_GRAMMAR'].non_terminals.keys()
 
+        # Build new individuals.
+        input_0, output_0, invalid_0, depth_0, nodes_0 = \
+            ret_tree0.build_tree_info(nt_keys, [], [])
+        used_codons_0, phenotype_0 = len(input_0), "".join(output_0)
+        depth_0 += 1
+        genome_0 = input_0 + tail_0
+
+        input_1, output_1, invalid_1, depth_1, nodes_1 = \
+            ret_tree1.build_tree_info(nt_keys, [], [])
+        used_codons_1, phenotype_1 = len(input_1), "".join(output_1)
+        depth_1 += 1
+        genome_1 = input_1 + tail_1
+        
         # Initialise new individuals.
-        ind0 = individual.Individual(genome_0, ret_tree0)
-        ind1 = individual.Individual(genome_1, ret_tree1)
+        ind0 = individual.Individual(genome_0, ret_tree0, map_ind=False)
+        ind1 = individual.Individual(genome_1, ret_tree1, map_ind=False)
+
+        # Set individual parameters
+        ind0.phenotype, ind0.nodes = phenotype_0, nodes_0
+        ind0.depth, ind0.used_codons = depth_0, used_codons_0
+        ind0.invalid = invalid_0
+
+        # Set individual parameters
+        ind1.phenotype, ind1.nodes = phenotype_1, nodes_1
+        ind1.depth, ind1.used_codons = depth_1, used_codons_1
+        ind1.invalid = invalid_1
 
     return [ind0, ind1]

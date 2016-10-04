@@ -120,12 +120,6 @@ def generate_ind_tree(max_depth, method):
     genome, nodes, _, depth = generate_tree(ind_tree, [], method, 0, 0, 0,
                                             max_depth - 1)
 
-    # Ensure the generated tree is valid (i.e. all non-terminals have been
-    # fully expanded).
-    if ind_tree.check_expansion():
-        print("tree.init generated an Invalid")
-        quit()
-
     # Get remaining individual information
     phenotype, invalid, used_cod = ind_tree.get_output(), False, len(genome)
 

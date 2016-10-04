@@ -90,19 +90,19 @@ def subtree(ind):
         # Mutate a new subtree.
         generate_tree(new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
     
-        return ind_tree.build_genome([]), ind_tree
+        return ind_tree
 
     # Save the tail of the genome.
     tail = ind.genome[ind.used_codons:]
     
     # Allows for multiple mutation events should that be desired.
     for i in range(params['MUTATION_EVENTS']):
-        genome, ind.tree = subtree_mutate(ind.tree)
+        ind.tree = subtree_mutate(ind.tree)
     
-    # Re-build a new individaul with the newly mutated genetic information.
-    ind = individual.Individual(genome, ind.tree)
+    # Re-build a new individual with the newly mutated genetic information.
+    ind = individual.Individual(None, ind.tree)
     
     # Add in the previous tail.
-    ind.genome = genome + tail
+    ind.genome = ind.genome + tail
 
     return ind
