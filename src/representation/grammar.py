@@ -14,27 +14,62 @@ class Grammar(object):
     T = "T"  # Terminal
 
     def __init__(self, file_name):
+        """
+        Initialises an instance of the grammar class. This instance is used
+        to parse a given file_name grammar.
+        
+        :param file_name: A specified BNF grammar file.
+        """
+        
         if file_name.endswith("pybnf"):
+            # Use python filter for parsing grammar output as grammar output
+            # contains indented python code.
             self.python_mode = True
+        
         else:
+            # No need to filter/interpret grammar output, individual
+            # phenotypes can be evaluated as normal.
             self.python_mode = False
-        self.rules = {}
-        self.permutations = {}
+        
+        # Initialise empty dict for all production rules in the grammar.
+        # Initialise empty dict of permutations of solutions possible at
+        # each derivation tree depth.
+        self.rules, self.permutations = {}, {}
+        
+        # Initialise dicts for terminals and non terminals.
         self.non_terminals, self.terminals = {}, []
         self.start_rule = None
         self.codon_size = params['CODON_SIZE']
+        
+        # Set regular expressions for parsing BNF grammar.
         self.ruleregex = '(?P<rulename><\S+>)\s*::=\s*(?P<production>(?:(?=\#)\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)'
         self.productionregex = '(?=\#)(?:\#.*$)|(?!\#)\s*(?P<production>(?:[^\'\"\|\#]+|\'.*?\'|".*?")+)'
         self.productionpartsregex = '\ *([\r\n]+)\ *|([^\'"<\r\n]+)|\'(.*?)\'|"(.*?)"|(?P<subrule><[^>|\s]+>)|([<]+)'
+        
+        # Read in BNF grammar, set production rules, terminals and
+        # non-terminals.
         self.read_bnf_file(file_name)
+        
+        # Check
         self.check_depths()
         self.check_permutations()
-        self.min_ramp = self.get_min_ramp_depth()
+        self.get_min_ramp_depth()
+        
+        # Find non-terminals that can be used for subtree crossover.
+        # Crossover is not permitted on unit productions.
+        # TODO: Check with James if we should allow crossover on unit
+        # productions.
         self.crossover_NTs = [i for i in self.non_terminals
                               if self.non_terminals[i]['b_factor'] > 1]
 
     def read_bnf_file(self, file_name):
-        """Read a grammar file in BNF format"""
+        """
+        Read a grammar file in BNF format. Parses the grammar and saves a
+        dict of all production rules and their possible choices.
+        
+        :param file_name: A specified BNF grammar file.
+        :return: Nothing.
+        """
 
         # Read the whole grammar file
         with open(file_name, 'r') as bnf:
@@ -273,7 +308,7 @@ class Grammar(object):
                 # set the minimum ramp depth and break out of the loop.
                 ramp = i
                 break
-        return ramp
+        self.min_ramp = ramp
 
     def __str__(self):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,

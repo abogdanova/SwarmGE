@@ -129,39 +129,24 @@ def subtree(p_0, p_1):
         # intersecting non-terminals.
         crossover_choice = choice(shared_nodes)
     
-        # Find the indexes of all nodes in tree0 that match the chosen
-        # crossover node.
-        indexes_0 = tree0.get_target_nodes([], target=[crossover_choice])
-        indexes_0 = list(set(indexes_0))
-        
-        # Randomly pick an index and return the corresponding subtree at
-        # that index.
-        number_0 = choice(indexes_0)
-        t0 = tree0.return_node_from_id(number_0, return_tree=None)
+        # Find all nodes in both trees that match the chosen crossover node.
+        nodes_0 = tree0.get_target_nodes([], target=[crossover_choice])
+        nodes_1 = tree1.get_target_nodes([], target=[crossover_choice])
 
-        # Find the indexes of all nodes in tree1 that match the chosen
-        # crossover node.
-        indexes_1 = tree1.get_target_nodes([], target=[crossover_choice])
-        indexes_1 = list(set(indexes_1))
+        # Randomly pick a node.
+        t0, t1 = choice(nodes_0), choice(nodes_1)
 
-        # Randomly pick an index and return the corresponding subtree at
-        # that index.
-        number_1 = choice(indexes_1)
-        t1 = tree1.return_node_from_id(number_1, return_tree=None)
+        # Check the parents of both chosen subtrees.
+        p0 = t0.parent
+        p1 = t1.parent
     
-        # Get the depths of both chosen subtrees.
-        d0 = t0.get_current_depth()
-        d1 = t1.get_current_depth()
-    
-        if d0 == 1 and d1 == 1:
+        if not p0 and not p1:
             # Crossover is between the entire tree of both tree0 and tree1.
             
             return t1, t0
         
-        elif d0 == 1:
+        elif not p0:
             # Only t0 is the entire of tree0.
-            # Get the original parent of subtree t1.
-            p1 = t1.parent
             tree0 = t1
 
             # Swap over the subtrees between parents.
@@ -174,10 +159,8 @@ def subtree(p_0, p_1):
             t0.parent = p1
             t1.parent = None
     
-        elif d1 == 1:
+        elif not p1:
             # Only t1 is the entire of tree1.
-            # Get the original parent of subtree t0.
-            p0 = t0.parent
             tree1 = t0
 
             # Swap over the subtrees between parents.
@@ -192,10 +175,7 @@ def subtree(p_0, p_1):
     
         else:
             # The crossover node for both trees is not the entire tree.
-            # Get the original parents of both chosen subtrees.
-            p0 = t0.parent
-            p1 = t1.parent
-        
+       
             # For the parent nodes of the original subtrees, get the indexes
             # of the original subtrees.
             i0 = p0.children.index(t0)

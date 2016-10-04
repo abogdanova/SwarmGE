@@ -76,21 +76,18 @@ def subtree(ind):
         :return: The full mutated tree and the associated genome.
         """
     
-        # Find which nodes we can mutate from
+        # Find the list of nodes we can mutate from.
         targets = ind_tree.get_target_nodes([], target=params[
                                           'BNF_GRAMMAR'].non_terminals)
-    
-        # Pick a node
-        number = choice(targets)
-    
-        # Get the subtree
-        new_tree = ind_tree.return_node_from_id(number, return_tree=None)
-    
-        # Set the depth limits for the new subtree
+        
+        # Pick a node.
+        new_tree = choice(targets)
+
+        # Set the depth limits for the new subtree.
         new_tree.max_depth = params['MAX_TREE_DEPTH'] - \
                              new_tree.get_current_depth()
     
-        # Mutate a new subtree
+        # Mutate a new subtree.
         generate_tree(new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
     
         return ind_tree.build_genome([]), ind_tree
