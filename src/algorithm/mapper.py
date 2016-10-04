@@ -290,12 +290,11 @@ def genome_tree_map(tree, genome, index, depth, max_depth, nodes,
              individual is invalid.
     """
     
-    if not invalid and index < len(genome) and \
+    if not invalid and index < len(genome) * (params['MAX_WRAPS'] + 1) and \
         max_depth <= params['MAX_TREE_DEPTH']:
         # If the solution is not invalid thus far, and if we still have
         # remaining codons in the genome, and if we have not exceeded our
         # maximum depth, then we can continue to map the tree.
-        # TODO: Enable wrapping for genome_tree_map.
         
         # Increment and set number of nodes and current depth.
         nodes += 1

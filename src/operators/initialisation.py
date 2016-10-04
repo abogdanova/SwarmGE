@@ -117,8 +117,8 @@ def generate_ind_tree(max_depth, method):
                     max_depth=max_depth - 1, depth_limit=max_depth - 1)
 
     # Generate a tree
-    genome, nodes, _, depth = generate_tree(ind_tree, [], method,
-                                                0, 0, 0, max_depth - 1)
+    genome, nodes, _, depth = generate_tree(ind_tree, [], method, 0, 0, 0,
+                                            max_depth - 1)
 
     # Ensure the generated tree is valid (i.e. all non-terminals have been
     # fully expanded).
