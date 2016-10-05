@@ -54,13 +54,6 @@ class Grammar(object):
         self.check_depths()
         self.check_permutations()
         self.get_min_ramp_depth()
-        
-        # Find non-terminals that can be used for subtree crossover.
-        # Crossover is not permitted on unit productions.
-        # TODO: Check with James if we should allow crossover on unit
-        # productions.
-        self.crossover_NTs = [i for i in self.non_terminals
-                              if self.non_terminals[i]['b_factor'] > 1]
 
     def read_bnf_file(self, file_name):
         """

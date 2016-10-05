@@ -209,7 +209,8 @@ def subtree(p_0, p_1):
         
         # Find only the non-terminals present in the intersecting set of
         # labels.
-        shared_nodes = [i for i in shared_nodes if i in params['BNF_GRAMMAR'].crossover_NTs]
+        shared_nodes = [i for i in shared_nodes if i in params[
+            'BNF_GRAMMAR'].non_terminals]
         
         return sorted(shared_nodes)
 
