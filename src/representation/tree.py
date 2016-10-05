@@ -4,9 +4,17 @@ from random import choice, randrange
 
 class Tree:
 
-    def __init__(self, expr, parent, max_depth=20, depth_limit=20):
+    def __init__(self, expr, parent, depth_limit=20):
+        """
+        Initialise an instance of the tree class.
+        
+        :param expr: A non-terminal from the params['BNF_GRAMMAR'].
+        :param parent: The parent of the current node. None if node is tree
+        root.
+        :param depth_limit: The maximum depth the tree can expand to.
+        """
+        
         self.parent = parent
-        self.max_depth = max_depth
         self.codon = None
         self.depth_limit = depth_limit
         self.depth = 1
@@ -14,14 +22,31 @@ class Tree:
         self.children = []
 
     def __str__(self):
+        """
+        Builds a string of the current tree.
+        
+        :return: A string of the current tree.
+        """
+        
+        # Initialise the output string.
         result = "("
+        
+        # Append the root of the current node to the output string.
         result += str(self.root)
+        
         for child in self.children:
+            # Iterate across all children.
+            
             if len(child.children) > 0:
+                # Recurse through all children.
                 result += " " + str(child)
+            
             else:
+                # Child is a terminal, append root to string.
                 result += " " + str(child.root)
+        
         result += ")"
+        
         return result
 
     def __copy__(self):
@@ -31,27 +56,23 @@ class Tree:
         :return: A new unique copy of self.
         """
 
-        tree_copy = Tree(self.root, self.parent, self.max_depth,
-                         self.depth_limit)
-        tree_copy.codon = self.codon
-        tree_copy.depth = self.depth
-                
+        # Copy current tree by initialising a new instance of the tree class.
+        tree_copy = Tree(self.root, self.parent, self.depth_limit)
+        
+        # Set node parameters.
+        tree_copy.codon, tree_copy.depth = self.codon, self.depth
+
         for child in self.children:
+            # Recurse through all children.
             new_child = child.__copy__()
+            
+            # Set the parent of the copied child as the copied parent.
             new_child.parent = tree_copy
+            
+            # Append the copied child to the copied parent.
             tree_copy.children.append(new_child)
 
         return tree_copy
-
-    def get_current_depth(self):
-        """Get the depth of the current node."""
-
-        count = 1
-        current_parent = self.parent
-        while current_parent is not None:
-            count += 1
-            current_parent = current_parent.parent
-        return count
 
     def get_target_nodes(self, array, target=None):
         """
@@ -81,7 +102,7 @@ class Tree:
         
         return array
 
-    def get_labels(self, labels):
+    def get_node_labels(self, labels):
         """
         Recurses through a tree and appends all node roots to a set.
         
@@ -94,47 +115,12 @@ class Tree:
 
         for child in self.children:
             # Recurse on all children.
-            
-            labels = child.get_labels(labels)
+            labels = child.get_node_labels(labels)
         
         return labels
 
-    def get_output(self):
-        """
-        Calls the recursive build_output(self) which returns a list of all
-        node roots. Joins this list to create the full phenotype of an
-        individual. This two-step process speeds things up as it only joins
-        the phenotype together once rather than at every node.
-
-        :return: The complete built phenotype string of an individual.
-        """
-    
-        def build_output(tree):
-            """
-            Recursively adds all node roots to a list which can be joined to
-            create the phenotype.
-
-            :return: The list of all node roots.
-            """
-        
-            output = []
-            for child in tree.children:
-                if not child.children:
-                    # If the current child has no children it is a terminal.
-                    # Append it to the output.
-                    output.append(child.root)
-            
-                else:
-                    # Otherwise it is a non-terminal. Recurse on all
-                    # non-terminals.
-                    output += build_output(child)
-        
-            return output
-    
-        return "".join(build_output(self))
-
-    def build_tree_info(self, nt_keys, genome, output, check=False,
-                        nodes=0, max_depth=0):
+    def get_tree_info(self, nt_keys, genome, output, invalid=False,
+                      max_depth=0, nodes=0):
         """
         Recurses through a tree and returns all necessary information on a
         tree required to generate an individual.
@@ -142,12 +128,12 @@ class Tree:
         :param genome: The list of all codons in a subtree.
         :param output: The list of all terminal nodes in a subtree. This is
         joined to become the phenotype.
-        :param check: A boolean flag for whether a tree is fully expanded.
+        :param invalid: A boolean flag for whether a tree is fully expanded.
         True if invalid (unexpanded).
         :param nt_keys: The list of all non-terminals in the grammar.
         :param nodes: the number of nodes in a tree.
         :param max_depth: The maximum depth of any node in the tree.
-        :return: The lists of all codons and terminal nodes in a subtree.
+        :return: genome, output, invalid, max_depth, nodes.
         """
 
         # Increment number of nodes in tree and set current node id.
@@ -189,131 +175,81 @@ class Tree:
                 
                 if child.root in nt_keys:
                     # Current non-terminal node has no children; invalid tree.
-                    check = True
+                    invalid = True
             
             else:
                 # The current child has children, recurse.
-                genome, output, check, max_depth, nodes = \
-                    child.build_tree_info(nt_keys, genome, output, check,
-                                          nodes, max_depth)
+                genome, output, invalid, max_depth, nodes = \
+                    child.get_tree_info(nt_keys, genome, output, invalid,
+                                        max_depth, nodes)
 
-        return genome, output, check, max_depth, nodes
-
-    def fast_genome_derivation(self, genome, index=0):
-        """ Builds a tree using production choices from a given genome. Not
-            guaranteed to terminate.
-        """
-
-        if index != "Incomplete" and index < len(genome):
-
-            productions = params['BNF_GRAMMAR'].rules[self.root]
-            selection = genome[index % len(genome)] % len(productions)
-            chosen_prod = productions[selection]
-            self.codon = genome[index % len(genome)]
-            index += 1
-            self.children = []
-
-            for i in range(len(chosen_prod)):
-                symbol = chosen_prod[i]
-                if symbol[1] == params['BNF_GRAMMAR'].T:
-                    self.children.append(Tree(symbol[0], self))
-
-                elif symbol[1] == params['BNF_GRAMMAR'].NT:
-                    self.children.append(Tree(symbol[0], self))
-                    index = self.children[-1].fast_genome_derivation(genome,
-                                                                     index)
-        else:
-            # Mapping incomplete
-            return "Incomplete"
-        return index
-
-    def legal_productions(self, method, remaining_depth, productions):
-        """ Returns the available production choices for a node given a depth
-            limit """
-
-        available = []
-
-        if method == "random":
-            if remaining_depth > params['BNF_GRAMMAR'].max_arity:
-                available = productions
-            elif remaining_depth <= 0:
-                min_path = min([max([item[2] for item in prod]) for
-                                prod in productions])
-                shortest = [prod for prod in productions if
-                            max([item[2] for item in prod]) == min_path]
-                available = shortest
-            else:
-                for prod in productions:
-                    prod_depth = max([item[2] for item in prod])
-                    if prod_depth < remaining_depth:
-                        available.append(prod)
-                if not available:
-                    min_path = min([max([item[2] for item in prod]) for
-                                    prod in productions])
-                    shortest = [prod for prod in productions if
-                                max([item[2] for item in prod]) == min_path]
-                    available = shortest
-
-        elif method == "full":
-            if remaining_depth > params['BNF_GRAMMAR'].max_arity:
-                for production in productions:
-                    if any(sym[3] for sym in production):
-                        available.append(production)
-                if not available:
-                    for production in productions:
-                        if not all(sym[3] for sym in production):
-                            available.append(production)
-            else:
-                for prod in productions:
-                    prod_depth = max([item[2] for item in prod])
-                    if prod_depth == remaining_depth - 1:
-                        available.append(prod)
-                if not available:
-                    # Then we don't have what we're looking for
-                    for prod in productions:
-                        prod_depth = 0
-                        for item in prod:
-                            if (item[1] == params['BNF_GRAMMAR'].NT) and \
-                                    (item[2] > prod_depth):
-                                prod_depth = item[2]
-                        if prod_depth < remaining_depth:
-                            available.append(prod)
-        return available
+        return genome, output, invalid, max_depth, nodes
 
 
-def generate_tree(ind_tree, genome, method, nodes, depth, max_depth,
+def generate_tree(tree, genome, output, method, nodes, depth, max_depth,
                   depth_limit):
-    """ Derive a tree using a given method """
+    """
+    Recursive function to derive a tree using a given method.
+    
+    :param tree: An instance of the Tree class.
+    :param genome: The list of all codons in a tree.
+    :param output: The list of all terminal nodes in a subtree. This is
+    joined to become the phenotype.
+    :param method: A string of the desired tree derivation method,
+    e.g. "full" or "random".
+    :param nodes: The total number of nodes in the tree.
+    :param depth: The depth of the current node.
+    :param max_depth: The maximum depth of any node in the tree.
+    :param depth_limit: The maximum depth the tree can expand to.
+    :return: genome, output, nodes, depth, max_depth.
+    """
 
-    # TODO: Add phenotype/output creation to this function.
-
+    # Increment nodes and depth, set depth of current node.
     nodes += 1
     depth += 1
-    ind_tree.id, ind_tree.depth = nodes, depth
+    tree.depth = depth
 
-    productions = params['BNF_GRAMMAR'].rules[ind_tree.root]
-    available = ind_tree.legal_productions(method, depth_limit, productions)
+    # Find the productions possible from the current root.
+    productions = params['BNF_GRAMMAR'].rules[tree.root]
+    
+    # Find which productions can be used based on the derivation method.
+    available = legal_productions(method, depth_limit, productions)
+    
+    # Pick a production choice.
     chosen_prod = choice(available)
 
-    prod_choice = productions.index(chosen_prod)
+    # Find the index of the chosen production and set a matching codon based
+    # on that index.
+    prod_index = productions.index(chosen_prod)
     codon = randrange(len(productions), params['BNF_GRAMMAR'].codon_size,
-                      len(productions)) + prod_choice
-    ind_tree.codon = codon
+                      len(productions)) + prod_index
+    
+    # Set the codon for the current node and append codon to the genome.
+    tree.codon = codon
     genome.append(codon)
-    ind_tree.children = []
+    
+    # Initialise empty list of children for current node.
+    tree.children = []
 
     for symbol in chosen_prod:
+        # Iterate over all symbols in the chosen production.
         if symbol[1] == params['BNF_GRAMMAR'].T:
-            # if the right hand side is a terminal
-            ind_tree.children.append(Tree(symbol[0], ind_tree))
+            # The symbol is a terminal. Append new node to children.
+            tree.children.append(Tree(symbol[0], tree))
+            
+            # Append the terminal to the output list.
+            output.append(symbol[0])
+        
         elif symbol[1] == params['BNF_GRAMMAR'].NT:
-            # if the right hand side is a non-terminal
-            ind_tree.children.append(Tree(symbol[0], ind_tree))
-            genome, nodes, d, max_depth = \
-                generate_tree(ind_tree.children[-1], genome, method, nodes,
-                              depth, max_depth, depth_limit - 1)
+            # The symbol is a non-terminal. Append new node to children.
+            tree.children.append(Tree(symbol[0], tree))
+            
+            # Recurse on the new node.
+            genome, output, nodes, d, max_depth = \
+                generate_tree(tree.children[-1], genome, output, method,
+                              nodes, depth, max_depth, depth_limit - 1)
 
-    NT_kids = [kid for kid in ind_tree.children if kid.root in
+    NT_kids = [kid for kid in tree.children if kid.root in
                params['BNF_GRAMMAR'].non_terminals]
 
     if not NT_kids:
@@ -324,4 +260,58 @@ def generate_tree(ind_tree, genome, method, nodes, depth, max_depth,
     if depth > max_depth:
         max_depth = depth
 
-    return genome, nodes, depth, max_depth
+    return genome, output, nodes, depth, max_depth
+
+
+def legal_productions(method, depth_limit, productions):
+    """ Returns the available production choices for a node given a depth
+        limit """
+    
+    available = []
+    
+    if method == "random":
+        if depth_limit > params['BNF_GRAMMAR'].max_arity:
+            available = productions
+        elif depth_limit <= 0:
+            min_path = min([max([item[2] for item in prod]) for
+                            prod in productions])
+            shortest = [prod for prod in productions if
+                        max([item[2] for item in prod]) == min_path]
+            available = shortest
+        else:
+            for prod in productions:
+                prod_depth = max([item[2] for item in prod])
+                if prod_depth < depth_limit:
+                    available.append(prod)
+            if not available:
+                min_path = min([max([item[2] for item in prod]) for
+                                prod in productions])
+                shortest = [prod for prod in productions if
+                            max([item[2] for item in prod]) == min_path]
+                available = shortest
+    
+    elif method == "full":
+        if depth_limit > params['BNF_GRAMMAR'].max_arity:
+            for production in productions:
+                if any(sym[3] for sym in production):
+                    available.append(production)
+            if not available:
+                for production in productions:
+                    if not all(sym[3] for sym in production):
+                        available.append(production)
+        else:
+            for prod in productions:
+                prod_depth = max([item[2] for item in prod])
+                if prod_depth == depth_limit - 1:
+                    available.append(prod)
+            if not available:
+                # Then we don't have what we're looking for
+                for prod in productions:
+                    prod_depth = 0
+                    for item in prod:
+                        if (item[1] == params['BNF_GRAMMAR'].NT) and \
+                                (item[2] > prod_depth):
+                            prod_depth = item[2]
+                    if prod_depth < depth_limit:
+                        available.append(prod)
+    return available

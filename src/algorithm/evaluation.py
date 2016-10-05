@@ -16,11 +16,10 @@ def evaluation(individuals):
     
     if params['MULTICORE']:
         # Perform multicore evaluation
-        
         return evaluate_fitness_multicore(individuals)
+    
     else:
         # Perform single core evaluation
-        
         return evaluate_fitness(individuals)
 
 

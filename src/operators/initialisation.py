@@ -114,14 +114,17 @@ def generate_ind_tree(max_depth, method):
 
     # Initialise an instance of the tree class
     ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule[0]), None,
-                    max_depth=max_depth - 1, depth_limit=max_depth - 1)
+                    depth_limit=max_depth - 1)
 
     # Generate a tree
-    genome, nodes, _, depth = generate_tree(ind_tree, [], method, 0, 0, 0,
+    genome, output, nodes, _, depth = generate_tree(ind_tree, [], [], method,
+                                                    0, 0, 0,
                                             max_depth - 1)
 
+
+
     # Get remaining individual information
-    phenotype, invalid, used_cod = ind_tree.get_output(), False, len(genome)
+    phenotype, invalid, used_cod = "".join(output), False, len(genome)
 
     # Initialise individual
     ind = individual.Individual(genome, ind_tree, map_ind=False)

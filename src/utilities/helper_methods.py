@@ -1,5 +1,4 @@
 from algorithm.parameters import params
-from representation.tree import Tree
 import numpy as np
 
 
@@ -37,17 +36,6 @@ def return_percent(num, pop_size):
         return num
     else:
         return percent
-
-
-def generate_tree_from_genome(genome):
-    """ Returns a tree given an input of a genome. Faster than normal genome
-    initialisation as less information is returned. To be used when a tree
-    needs to be built quickly from a given genome."""
-
-    new_tree = Tree(str(params['BNF_GRAMMAR'].start_rule[0]), None,
-                    depth_limit=params['MAX_TREE_DEPTH'])
-    new_tree.fast_genome_derivation(genome)
-    return new_tree
 
 
 def get_Xy_train_test(filename, randomise=True, test_proportion=0.5,
@@ -148,12 +136,80 @@ def get_tree_info(tree, current, number=0, max_depth=0):
     return max_depth, number
 
 
-def get_max_tree_depth(tree, max_d=1):
-    """ Returns the maximum depth of the tree from the current node. """
+def get_max_tree_depth(tree, max_depth=1):
+    """
+    Returns the maximum depth of the tree from the current node.
     
-    curr_depth = tree.get_current_depth()
-    if curr_depth > max_d:
-        max_d = curr_depth
+    :param tree: The tree we wish to find the maximum depth of.
+    :param max_depth: The maximum depth of the tree.
+    :return: The maximum depth of the tree.
+    """
+    
+    curr_depth = get_current_depth(tree)
+    if curr_depth > max_depth:
+        max_depth = curr_depth
     for child in tree.children:
-        max_d = child.get_max_tree_depth(child, max_d)
-    return max_d
+        max_depth = get_max_tree_depth(child, max_depth)
+    return max_depth
+
+
+def get_current_depth(tree):
+    """
+    Get the depth of the current node by climbing back up the tree until no
+    parents remain (i.e. the root node has been reached).
+
+    :return: The depth of the current node.
+    """
+    
+    # Set the initial depth at 1.
+    depth = 1
+    
+    # Set the current parent.
+    current_parent = tree.parent
+    
+    while current_parent is not None:
+        # Recurse until the root node of the tree has been reached.
+        
+        # Increment depth.
+        depth += 1
+        
+        # Set new parent.
+        current_parent = current_parent.parent
+    
+    return depth
+
+
+def get_output(ind_tree):
+    """
+    Calls the recursive build_output(self) which returns a list of all
+    node roots. Joins this list to create the full phenotype of an
+    individual. This two-step process speeds things up as it only joins
+    the phenotype together once rather than at every node.
+
+    :param ind_tree: a full tree for which the phenotype string is to be built.
+    :return: The complete built phenotype string of an individual.
+    """
+    
+    def build_output(tree):
+        """
+        Recursively adds all node roots to a list which can be joined to
+        create the phenotype.
+
+        :return: The list of all node roots.
+        """
+        
+        output = []
+        for child in tree.children:
+            if not child.children:
+                # If the current child has no children it is a terminal.
+                # Append it to the output.
+                output.append(child.root)
+            
+            else:
+                # Otherwise it is a non-terminal. Recurse on all
+                # non-terminals.
+                output += build_output(child)
+        
+        return output
+    
+    return "".join(build_output(ind_tree))

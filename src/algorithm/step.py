@@ -32,5 +32,5 @@ def step(individuals):
 
     # Replace the old population with the new population.
     individuals = replacement(new_pop, individuals)
-
+    
     return individuals

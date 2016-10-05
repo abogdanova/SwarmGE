@@ -16,7 +16,7 @@ def mutation(pop):
     return list(map(params['MUTATION'], pop))
 
 
-def int_flip(ind, within_used=False):
+def int_flip(ind, within_used=True):
     """
     Mutate the genome of an individual by randomly choosing a new int with
     probability p_mut. Works per-codon. Mutation is performed over the
@@ -25,7 +25,7 @@ def int_flip(ind, within_used=False):
     
     :param ind: An individual to be mutated.
     :param within_used: Boolean flag for selecting whether or not mutation
-    is performed within the used portion of the genome. Default set to False.
+    is performed within the used portion of the genome. Default set to True.
     :return: A mutated individual.
     """
 
@@ -43,14 +43,13 @@ def int_flip(ind, within_used=False):
         # will influence the mutation probability for each codon.
         p_mut = params['MUTATION_EVENTS']/eff_length
 
-    if within_used:
-        # Mutation probability works per-codon over the portion of the
-        # genome as defined by the within_used flag.
-        for i in range(eff_length):
-            if random() < p_mut:
-                ind.genome[i] = randint(0, params['CODON_SIZE'])
+    # Mutation probability works per-codon over the portion of the
+    # genome as defined by the within_used flag.
+    for i in range(eff_length):
+        if random() < p_mut:
+            ind.genome[i] = randint(0, params['CODON_SIZE'])
 
-    # Re-build a new individaul with the newly mutated genetic information.
+    # Re-build a new individual with the newly mutated genetic information.
     new_ind = individual.Individual(ind.genome, None)
 
     return new_ind
@@ -84,11 +83,10 @@ def subtree(ind):
         new_tree = choice(targets)
 
         # Set the depth limits for the new subtree.
-        new_tree.max_depth = params['MAX_TREE_DEPTH'] - \
-                             new_tree.get_current_depth()
+        new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
     
         # Mutate a new subtree.
-        generate_tree(new_tree, [], "random", 0, 0, 0, new_tree.max_depth)
+        generate_tree(new_tree, [], [], "random", 0, 0, 0, new_tree.max_depth)
     
         return ind_tree
 

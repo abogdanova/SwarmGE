@@ -220,12 +220,12 @@ def subtree(p_0, p_1):
     
     else:
         # Crossover is to be performed. Save tail of each genome.
-        tail_0, tail_1 = p_0.genome[p_0.used_codons:], \
-                         p_1.genome[p_1.used_codons:]
+        tail_0 = p_0.genome[p_0.used_codons:]
+        tail_1 = p_1.genome[p_1.used_codons:]
         
         # Get the set of labels of non terminals for each tree.
-        labels1 = p_0.tree.get_labels(set())
-        labels2 = p_1.tree.get_labels(set())
+        labels1 = p_0.tree.get_node_labels(set())
+        labels2 = p_1.tree.get_node_labels(set())
 
         # Find overlapping non-terminals across both trees.
         shared_nodes = intersect(labels1, labels2)
@@ -243,27 +243,25 @@ def subtree(p_0, p_1):
 
         # Build new individuals.
         input_0, output_0, invalid_0, depth_0, nodes_0 = \
-            ret_tree0.build_tree_info(nt_keys, [], [])
+            ret_tree0.get_tree_info(nt_keys, [], [])
         used_codons_0, phenotype_0 = len(input_0), "".join(output_0)
-        depth_0 += 1
-        genome_0 = input_0 + tail_0
+        genome_0, depth_0 = input_0 + tail_0, depth_0 + 1
 
         input_1, output_1, invalid_1, depth_1, nodes_1 = \
-            ret_tree1.build_tree_info(nt_keys, [], [])
+            ret_tree1.get_tree_info(nt_keys, [], [])
         used_codons_1, phenotype_1 = len(input_1), "".join(output_1)
-        depth_1 += 1
-        genome_1 = input_1 + tail_1
+        genome_1, depth_1 = input_1 + tail_1, depth_1 + 1
         
-        # Initialise new individuals.
+        # Initialise new individuals. No need to map as we have all info.
         ind0 = individual.Individual(genome_0, ret_tree0, map_ind=False)
         ind1 = individual.Individual(genome_1, ret_tree1, map_ind=False)
 
-        # Set individual parameters
+        # Set individual parameters.
         ind0.phenotype, ind0.nodes = phenotype_0, nodes_0
         ind0.depth, ind0.used_codons = depth_0, used_codons_0
         ind0.invalid = invalid_0
 
-        # Set individual parameters
+        # Set individual parameters.
         ind1.phenotype, ind1.nodes = phenotype_1, nodes_1
         ind1.depth, ind1.used_codons = depth_1, used_codons_1
         ind1.invalid = invalid_1
