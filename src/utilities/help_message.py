@@ -77,7 +77,10 @@ def help_message():
                ["\t--problem:", "Sets the problem to be used. Requires string "
                                 "such as 'regression'"],
                ["\t--problem_suite:", "For use with regression problems. "
-                                      "Requires string such as 'Dow'"],
+                                      "Requires string such as 'Dow'."],
+               ["\t--error_metric:", "Sets the error metric to be used with "
+                                     "regression style problems. Requires "
+                                     "string such as 'mse' or 'rmse'."],
                ["\t--experiment_name:", "Optional parameter to save results "
                                         "in /results/[EXPERIMENT_NAME] "
                                         "folder. If not specified then "

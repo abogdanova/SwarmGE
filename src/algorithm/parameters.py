@@ -8,6 +8,9 @@ machine_name = hostname[0]
 
 
 """Algorithm parameters"""
+
+# TODO: Change this whole shebang so that it reads the params in from a params text file. This will allow you to specify a different params file from the command line, thus replicating a set of results.
+
 params = {
         # Evolutionary Parameters
         'POPULATION_SIZE': 500,
@@ -27,7 +30,15 @@ params = {
         # "Dow"
         # "Keijzer6"
         # "Vladislavleva4"
-
+    
+        # Select Regression error metric
+        'ERROR_METRIC': "mse",
+        # "mse"
+        # "mae"
+        # "rmse"
+        # "hinge"
+        # "inverse_f1_score"
+    
         # Specify String for StringMatch Problem
         'STRING_MATCH_TARGET': "ponyge_rocks",
 
@@ -207,7 +218,8 @@ def set_params(command_line_args):
                                     "complete_evals", "genome_length=",
                                     "invalid_selection", "silent",
                                     "dont_lookup_fitness", "experiment_name=",
-                                    "multicore", "cores=", "max_wraps="])
+                                    "multicore", "cores=", "max_wraps=",
+                                    "error_metric="])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run python ponyge.py --help for more info")
@@ -285,12 +297,18 @@ def set_params(command_line_args):
             params['GRAMMAR_FILE'] = arg
         elif opt == "--problem":
             params['PROBLEM'] = arg
+            if arg == "classification":
+                # Set correct error metric for classification. Can be
+                # overwritten.
+                params['ERROR_METRIC'] = "inverse_f1_score"
         elif opt == "--problem_suite":
             params['SUITE'] = arg
         elif opt == "--target_string":
             params['STRING_MATCH_TARGET'] = arg
         elif opt == "--experiment_name":
             params['EXPERIMENT_NAME'] = arg
+        elif opt == "--error_metric":
+            params['ERROR_METRIC'] = arg
 
         # OPTIONS
         elif opt == "--random_seed":
@@ -337,7 +355,7 @@ def set_params(command_line_args):
         params['RANDOM_SEED'] = int(time.clock()*1000000)
     seed(params['RANDOM_SEED'])
 
-    # Set GENOME_OPERATIONS automatically for faster linear operations
+    # Set GENOME_OPERATIONS automatically for faster linear operations.
     if (params['MUTATION'] == 'operators.mutation.int_flip' or
                 params['MUTATION'] == 'int_flip') and \
             (params['CROSSOVER'] == 'operators.crossover.onepoint' or
@@ -346,19 +364,17 @@ def set_params(command_line_args):
     else:
         params['GENOME_OPERATIONS'] = False
 
-    # Set problem specifics
-    params['GRAMMAR_FILE'], \
-    params['ALTERNATE'] = set_fitness_params(params['PROBLEM'], params)
-
-    # Set Grammar File
-    params['BNF_GRAMMAR'] = grammar.Grammar(params['GRAMMAR_FILE'])
+    # Set grammar file and fitness parameters.
+    set_fitness_params()
     
-    # Set Fitness Function
-    params['FITNESS_FUNCTION'] = set_fitness_function(params['PROBLEM'],
-                                                      params['ALTERNATE'])
-
     # Initialise run lists and folders
     initialise_run_params()
-
-    # Set correct param imports for specified function options
+    
+    # Parse grammar file and set grammar class.
+    params['BNF_GRAMMAR'] = grammar.Grammar(params['GRAMMAR_FILE'])
+    
+    # Set correct param imports for specified function options.
     set_param_imports()
+    
+    # Set Fitness Function.
+    set_fitness_function()

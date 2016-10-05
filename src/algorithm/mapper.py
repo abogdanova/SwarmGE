@@ -180,9 +180,7 @@ def map_ind_from_genome(genome):
             # Use an input
             used_input += 1
             
-            # TODO: Derviation order is left to right(depth-first). Is a
-            # list comprehension faster? (Only if the loop for counting NT for
-            # each production can be avoided, by using a lookup instead.
+            # TODO: Derviation order is left to right(depth-first). Is a list comprehension faster? (Only if the loop for counting NT for each production can be avoided, by using a lookup instead.
             
             # Initialise children as empty deque list.
             children = deque()
@@ -195,8 +193,7 @@ def map_ind_from_genome(genome):
                 
                 # Extendleft reverses the order, thus reverse adding.
                 children.appendleft(child)
-                # TODO store number of NT to avoid counting and simply do
-                # lookup instead?
+                # TODO store number of NT to avoid counting and simply do lookup instead?
                 if child[0][1] == nt_symbol:
                     nt_count += 1
             

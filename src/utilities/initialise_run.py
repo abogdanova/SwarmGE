@@ -44,7 +44,7 @@ def initialise_run_params():
         generate_folders_and_files()
 
 
-def make_import_str(fns):
+def make_import_str(fns, location):
     """
     Takes in a paired list of operators and the specified function from the
     option parser. Strings either represent the full dotted path to the
@@ -57,6 +57,8 @@ def make_import_str(fns):
     function which we wish to access, eg operators.selection.tournament, or
     just the function name directly (in which case we default to the specified
     functions in the default location for each operators).
+    :param location: A string specifying the containing folder of the
+    functions listed in fns, e.g. "operators", "fitness", "utilities", etc.
     :return: a string of imports of correct modules,
     eg import operators.selection
     """
@@ -67,46 +69,56 @@ def make_import_str(fns):
         operator, function = fn[0], fn[1]
         parts = function.split(".")
         # Split the function into its component parts
+        
         if len(parts) == 1:
             # If the specified location is a single name, default to
             # operators.operator location
-            imports.append("import operators." + operator.lower())
-            params[operator] = "operators." + operator.lower() + "." + parts[0]
+            imports.append("import " + location + "." + operator.lower())
+            params[operator] = ".".join([location, operator.lower(), parts[0]])
+        
         else:
             # "operators.selection.tournament" -> "import operators.selection"
             imports.append("import " + ".".join(parts[:-1]))
+    
     return "\n".join(imports)
 
 
 def set_param_imports():
     """
     This function makes the command line experience easier for users. When
-    specifying operators listed in the special_ops list below, users do not
-    need to specify the full file path to the functions themselves. Users
-    can simply specify a single word, e.g.
+    specifying operators listed in the lists below, users do not need to
+    specify the full file path to the functions themselves. Users can simply
+    specify a single word, e.g.
         
         "--mutation subtree"
     
-    Using the special_ops dictionary, this will default to
+    Using the special_ops dictionary for example, this will default to
     "operators.mutation.subtree. Executes the correct imports for specified
     modules and then saves the correct parameters in the params dictionary.
     Users can still specify the full direct path to the operators if they so
     desire, allowing them to create new operators and save them wherever
     they like.
     
+    Function is set up to automatically set imports for operators and error
+    metrics.
+    
     :return: Nothing.
     """
     
     # For these ops we let the param equal the function itself.
-    special_ops = ['INITIALISATION', 'SELECTION', 'CROSSOVER', 'MUTATION',
-                   'REPLACEMENT']
-    if all([callable(params[op]) for op in special_ops]):
-        # params are already functions
-        pass
-    else:
-        # We need to do an appropriate import...
-        import_str = make_import_str([[op, params[op]] for op in special_ops])
-        exec(import_str)
-        # ... and then eval the param.
-        for op in special_ops:
-            params[op] = eval(params[op])
+    ops = {'operators': ['INITIALISATION', 'SELECTION', 'CROSSOVER',
+                         'MUTATION', 'REPLACEMENT'],
+           'utilities': ['ERROR_METRIC']}
+    for special_ops in ops:
+        if all([callable(params[op]) for op in ops[special_ops]]):
+            # params are already functions
+            pass
+        
+        else:
+            # We need to do an appropriate import...
+            import_str = make_import_str([[op, params[op]] for op in
+                                          ops[special_ops]], special_ops)
+            exec(import_str)
+            # ... and then eval the param.
+            for op in ops[special_ops]:
+                params[op] = eval(params[op])

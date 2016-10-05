@@ -1,6 +1,6 @@
-from sys import maxsize
 from math import floor
 from re import finditer, DOTALL, MULTILINE
+from sys import maxsize
 
 from algorithm.parameters import params
 
@@ -36,10 +36,9 @@ class Grammar(object):
         # each derivation tree depth.
         self.rules, self.permutations = {}, {}
         
-        # Initialise dicts for terminals and non terminals.
+        # Initialise dicts for terminals and non terminals, set params.
         self.non_terminals, self.terminals = {}, []
-        self.start_rule = None
-        self.codon_size = params['CODON_SIZE']
+        self.start_rule, self.codon_size = None, params['CODON_SIZE']
         
         # Set regular expressions for parsing BNF grammar.
         self.ruleregex = '(?P<rulename><\S+>)\s*::=\s*(?P<production>(?:(?=\#)\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)'
@@ -52,7 +51,13 @@ class Grammar(object):
         
         # Check
         self.check_depths()
+        
+        # Calculate the total number of derivation tree permutations and
+        # combinations that can be created by a grammar at a range of depths.
         self.check_permutations()
+        
+        # Set the minimum depth at which ramping can start where we can have
+        # unique solutions (no duplicates).
         self.get_min_ramp_depth()
 
     def read_bnf_file(self, file_name):
@@ -64,15 +69,18 @@ class Grammar(object):
         :return: Nothing.
         """
 
-        # Read the whole grammar file
         with open(file_name, 'r') as bnf:
+            # Read the whole grammar file.
             content = bnf.read()
-            # Find all rules in the grammar
+            
             for rule in finditer(self.ruleregex, content, DOTALL):
-                # Set the first rule found as start rule
+                # Find all rules in the grammar
+
                 if self.start_rule is None:
+                    # Set the first rule found as the start rule.
                     self.start_rule = (rule.group('rulename'), self.NT)
-                # create and add new rule
+                
+                # Create and add a new rule.
                 self.non_terminals[rule.group('rulename')] = {
                     'id': rule.group('rulename'),
                     'min_steps': maxsize,
@@ -80,63 +88,95 @@ class Grammar(object):
                     'recursive': True,
                     'permutations': None,
                     'b_factor': 0}
+                
+                # Initialise empty list of all production choices for this
+                # rule.
                 tmp_productions = []
-                # Split production choices of a rule
-                for p in finditer(self.productionregex, rule.group('production'), MULTILINE):
-                    if p.group('production') is None or p.group('production').isspace():
+
+                for p in finditer(self.productionregex,
+                                  rule.group('production'), MULTILINE):
+                    # Split production choices of a rule.
+
+                    if p.group('production') is None or p.group(
+                            'production').isspace():
+                        # Skip to the next iteration of the loop if the
+                        # current "p" production is None or blank space.
                         continue
-                    tmp_production = []
-                    terminalparts = ''
-                    # Split production into terminal and non terminal symbols
-                    for sub_p in finditer(self.productionpartsregex, p.group('production').strip()):
+                        
+                    tmp_production, terminalparts = [], ''
+
+                    for sub_p in finditer(self.productionpartsregex,
+                                          p.group('production').strip()):
+                        # Split production into terminal and non terminal
+                        # symbols.
+                        
                         if sub_p.group('subrule'):
                             if terminalparts:
+                                # Terminal symbol is to be appended to the
+                                # terminals dictionary.
                                 symbol = [terminalparts, self.T, 0, False]
                                 tmp_production.append(symbol)
                                 self.terminals.append(terminalparts)
                                 terminalparts = ''
+                            
                             tmp_production.append(
                                 [sub_p.group('subrule'), self.NT])
+                       
                         else:
                             # Unescape special characters (\n, \t etc.)
                             terminalparts += ''.join(
-                                [part.encode().decode('unicode-escape') for part in sub_p.groups() if part])
+                                [part.encode().decode('unicode-escape') for
+                                 part in sub_p.groups() if part])
 
                     if terminalparts:
+                        # Terminal symbol is to be appended to the terminals
+                        # dictionary.
                         symbol = [terminalparts, self.T, 0, False]
                         tmp_production.append(symbol)
                         self.terminals.append(terminalparts)
                     tmp_productions.append(tmp_production)
 
                 if not rule.group('rulename') in self.rules:
+                    # Add new production rule to the rules dictionary if not
+                    # already there.
                     self.rules[rule.group('rulename')] = tmp_productions
+                    
                     if len(tmp_productions) == 1:
+                        # Unit productions.
                         print("Warning: Grammar contains unit production "
                               "for production rule", rule.group('rulename'))
                         print("       Unit productions consume GE codons.")
                 else:
+                    # Conflicting rules with the same name.
                     raise ValueError("lhs should be unique", rule.group('rulename'))
 
     def check_depths(self):
         """
         Check the properties of all rules and set the properties accordingly.
+        
+        :return: Nothing.
         """
 
         self.calc_nt_properties(self.start_rule[0], [])
 
-        if self.start_rule[0] in self.non_terminals:
-            self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
-        else:
-            print("Error: start rule not a non-terminal")
-            quit()
+        # Set the minimum path of the grammar as the minimum steps to a
+        # terminal from the start rule.
+        self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
+        
+        # Initialise the maximum arity of the grammar to 0.
         self.max_arity = 0
+        
         for NT in self.non_terminals:
             if self.non_terminals[NT]['min_steps'] > self.max_arity:
+                # Set the maximum arity of the grammar as the longest path
+                # to a T from any NT.
                 self.max_arity = self.non_terminals[NT]['min_steps']
+        
         for rule in self.rules:
             for prod in self.rules[rule]:
                 for sym in [i for i in prod if i[1] == self.NT]:
                     sym.append(self.non_terminals[sym[0]]['min_steps'])
+        
         for rule in self.rules:
             for prod in self.rules[rule]:
                 for sym in [i for i in prod if i[1] == self.NT]:
@@ -144,11 +184,12 @@ class Grammar(object):
 
     def calc_nt_properties(self, cur_symbol, seen):
         """
-        Traverses the grammar recursively and sets the properties of each rule
+        Traverses the grammar recursively and sets the properties of each rule.
 
         :param cur_symbol: symbol to check
         :param seen: Contains already checked symbols in the current traversal
-        :return: tuple containing depth of the cur_symbol and if cur_symbol is recursive
+        :return: tuple containing depth of the cur_symbol and if cur_symbol is
+        recursive
         """
         if cur_symbol not in self.non_terminals.keys():
             return 0, False

@@ -1,4 +1,4 @@
-from fitness.fitness import default_fitness
+from fitness.default_fitness import default_fitness
 from algorithm.parameters import params
 from utilities.trackers import cache
 from multiprocessing import Pool

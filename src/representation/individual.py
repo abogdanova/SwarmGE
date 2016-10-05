@@ -1,4 +1,4 @@
-from fitness.fitness import default_fitness
+from fitness.default_fitness import default_fitness
 from algorithm.parameters import params
 from algorithm.mapper import mapper
 
@@ -74,8 +74,11 @@ class Individual(object):
         else:
             new_tree = None
         
+        # Create a copy of self by initialising a new individual.
         new_ind = Individual(list(self.genome), new_tree, map_ind=False)
         
+        # Set new individaul parameters (no need to map genome to new
+        # individual).
         new_ind.phenotype, new_ind.invalid = self.phenotype, self.invalid
         new_ind.depth, new_ind.nodes = self.depth, self.nodes
         new_ind.used_codons = self.used_codons

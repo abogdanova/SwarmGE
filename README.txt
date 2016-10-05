@@ -263,6 +263,9 @@ These steps are expanded on in detail hereafter.
 
     Evaluation
     ----------
+
+        # TODO: Talk about fitness functions here. The fitness function is set through --problem; i.e. the fitness function must have the same name as the problem at hand. New problem = new fitness function. Fitness functions are set automatically based on the problem name.
+
         - Multicore evaluation
             Evaluation of a population of individuals can be done in series
             (single core evaluation) or in parallel (multi core evaluation).
@@ -455,7 +458,7 @@ To use it, specify the following command-line arguments:
 Classification
 --------------
 
-#TODO Explain classificaiton problem here
+#TODO Explain classification problem here
 
 
 -----------------

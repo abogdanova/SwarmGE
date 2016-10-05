@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from utilities.error_metrics import mae, rmse, mse
+from utilities.error_metric import mae, rmse, mse
 from utilities.helper_methods import get_Xy_train_test
 from utilities.helper_methods import get_Xy_train_test_separate
 import sys

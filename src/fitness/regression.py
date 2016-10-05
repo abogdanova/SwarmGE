@@ -1,5 +1,5 @@
 from utilities.helper_methods import get_Xy_train_test_separate
-from utilities.error_metrics import mse
+from algorithm.parameters import params
 from os import listdir, getcwd
 from numpy import log, sqrt, abs
 from sys import maxsize
@@ -7,7 +7,7 @@ from math import isnan
 import numpy as np
 
 
-class Regression:
+class regression:
     """Fitness function for supervised learning, ie regression and
     classification problems. Given a set of training or test data,
     returns the error between y (true labels) and yhat (estimated
@@ -19,15 +19,11 @@ class Regression:
 
     maximise = False
 
-    def __init__(self, experiment, error=None):
+    def __init__(self, experiment):
         self.training_in, self.training_exp, self.test_in, self.test_exp = \
             get_data(experiment)
         self.n_vars = np.shape(self.test_in)[1]
-
-        if error is None:
-            self.error = mse
-        else:
-            self.error = error
+        self.error = params['ERROR_METRIC']
 
     def __call__(self, func, dist):
         # We can call regression objects,
