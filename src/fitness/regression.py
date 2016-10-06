@@ -2,6 +2,7 @@ from utilities.helper_methods import get_Xy_train_test_separate
 from algorithm.parameters import params
 from os import listdir, getcwd
 from numpy import log, sqrt, abs
+from utilities.error_metric import mse
 from sys import maxsize
 from math import isnan
 import numpy as np
@@ -23,7 +24,11 @@ class regression:
         self.training_in, self.training_exp, self.test_in, self.test_exp = \
             get_data(experiment)
         self.n_vars = np.shape(self.test_in)[1]
-        self.error = params['ERROR_METRIC']
+        if params['ERROR_METRIC'] == None:
+            self.error = mse
+        else:
+            self.error = params['ERROR_METRIC']
+        self.training_test = True
 
     def __call__(self, func, dist):
         # We can call regression objects,

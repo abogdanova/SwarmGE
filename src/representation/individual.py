@@ -92,19 +92,19 @@ class Individual(object):
         evaluation on either training or test distributions. Sets fitness
         value.
         
-        :param dist: An optional parameter for regression/classification
-        problems. Specifies the distribution (i.e. training or test) upon
-        which evaluation is to be performed.
+        :param dist: An optional parameter for problems with training/test
+        data. Specifies the distribution (i.e. training or test) upon which
+        evaluation is to be performed.
         :return: Nothing unless multicore evaluation is being used. In that
         case, returns self.
         """
 
-        if params['PROBLEM'] in ("regression", "classification"):
-            # The problem is regression, e.g. has training and test data.
-            # These fitness functions need an extra input parameter
-            # specifying the distribution upon which to be evaluated.
+        if hasattr(params['FITNESS_FUNCTION'], "training_test"):
+            # The problem has training and test data. These fitness functions
+            # need an extra input parameter specifying the distribution upon
+            # which to be evaluated.
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype, dist)
-        
+
         else:
             # Evaluate fitness using specified fitness function.
             self.fitness = params['FITNESS_FUNCTION'](self.phenotype)

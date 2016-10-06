@@ -64,8 +64,10 @@ def make_import_str(fns, location):
     """
 
     imports = []
-    for fn in fns:
-        # Extract pairs of operators and functions
+    for fn in [func for func in fns if func[1]]:
+        # Extract pairs of operators and functions, but only if functions
+        # are not 'None' (some default parameters e.g. error_metric may be
+        # set to 'None').
         operator, function = fn[0], fn[1]
         parts = function.split(".")
         # Split the function into its component parts
@@ -121,4 +123,5 @@ def set_param_imports():
             exec(import_str)
             # ... and then eval the param.
             for op in ops[special_ops]:
-                params[op] = eval(params[op])
+                if params[op]:
+                    params[op] = eval(params[op])

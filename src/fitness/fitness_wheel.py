@@ -9,12 +9,12 @@ def set_fitness_params():
     :return: Nothing.
     """
     
-    if params['PROBLEM'] in ("regression", "classification"):
+    if params['FITNESS_FUNCTION'] in ("regression", "classification"):
         # FITNESS_FUNC_INPUT is the problem suite.
         params['GRAMMAR_FILE'] = "grammars/" + params['SUITE'] + ".bnf"
         params['FITNESS_FUNC_INPUT'] = params['SUITE']
 
-    elif params['PROBLEM'] == "string_match":
+    elif params['FITNESS_FUNCTION'] == "string_match":
         # FITNESS_FUNC_INPUT is the string match target.
         params['GRAMMAR_FILE'] = "grammars/letter.bnf"
         params['FITNESS_FUNC_INPUT'] = params['STRING_MATCH_TARGET']
@@ -34,8 +34,8 @@ def set_fitness_function():
     """
     
     # Set the import for the required fitness function.
-    import_func = "from fitness." + params['PROBLEM'] + " import " + params[
-        'PROBLEM']
+    import_func = "from fitness." + params['FITNESS_FUNCTION'] + " import " + params[
+        'FITNESS_FUNCTION']
     
     # Import the required fitness function.
     exec(import_func)
@@ -44,4 +44,4 @@ def set_fitness_function():
     # params['FITNESS_FUNC_INPUT'] is the input required for initialisation
     # of the fitness function.
     params['FITNESS_FUNCTION'] = eval(
-        params['PROBLEM'] + "(params['FITNESS_FUNC_INPUT'])")
+        params['FITNESS_FUNCTION'] + "(params['FITNESS_FUNC_INPUT'])")

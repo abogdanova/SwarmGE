@@ -74,8 +74,9 @@ def help_message():
                                     "value"],
                ["\t--bnf_grammar:", "Sets the grammar to be used, requires "
                                     "string"],
-               ["\t--problem:", "Sets the problem to be used. Requires string "
-                                "such as 'regression'"],
+               ["\t--fitness_function:", "Sets the fitness function to be "
+                                         "used. Requires string such as "
+                                         "'regression'"],
                ["\t--problem_suite:", "For use with regression problems. "
                                       "Requires string such as 'Dow'."],
                ["\t--error_metric:", "Sets the error metric to be used with "

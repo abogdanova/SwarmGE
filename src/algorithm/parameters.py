@@ -8,9 +8,6 @@ machine_name = hostname[0]
 
 
 """Algorithm parameters"""
-
-# TODO: Change this whole shebang so that it reads the params in from a params text file. This will allow you to specify a different params file from the command line, thus replicating a set of results.
-
 params = {
         # Evolutionary Parameters
         'POPULATION_SIZE': 500,
@@ -20,7 +17,7 @@ params = {
         'EXPERIMENT_NAME': None,
 
         # Class of problem
-        'PROBLEM': "regression",
+        'FITNESS_FUNCTION': "regression",
         # "regression"
         # "string_match"
         # "classification"
@@ -32,7 +29,7 @@ params = {
         # "Vladislavleva4"
     
         # Select Regression error metric
-        'ERROR_METRIC': "mse",
+        'ERROR_METRIC': None,
         # "mse"
         # "mae"
         # "rmse"
@@ -142,6 +139,43 @@ params = {
 }
 
 
+def load_params(file_name):
+    """
+    Load in a params text file and set the params dictionary directly.
+     
+    :param file_name: The name/location of a parameters file.
+    :return: Nothing.
+    """
+
+    try:
+        open(file_name, "r")
+    except FileNotFoundError:
+        print("Error: Parameters file not found. Ensure full path and file\n"
+              "       extension is specified, e.g. "
+              "'parameters/regression.txt'.")
+        quit()
+
+    with open(file_name, 'r') as parameters:
+        # Read the whole parameters file.
+        content = parameters.readlines()
+
+        for line in content:
+            components = line.split(":")
+            key, value = components[0], components[1].strip()
+           
+            # Evaluate parameters.
+            try:
+                value = eval(value)
+            except:
+                # We can't evaluate, leave value as a string.
+                pass
+            
+            # Need to check to ensure we don't overwrite file paths and time
+            # stamps
+            if key not in ["TIME_STAMP", "FILE_PATH"]:
+                params[key] = value
+
+
 def check_int(param, arg):
     """
     Checks to ensure the given argument is indeed an int. If not, throws an
@@ -210,7 +244,7 @@ def set_params(command_line_args):
                                     "tournament_size=", "crossover=",
                                     "crossover_probability=", "replacement=",
                                     "mutation=", "mutation_events=",
-                                    "random_seed=", "bnf_grammar=", "problem=",
+                                    "random_seed=", "bnf_grammar=",
                                     "problem_suite=", "target_string=",
                                     "verbose", "elite_size=", "save_all",
                                     "save_plots", "cache", "lookup_fitness",
@@ -219,7 +253,8 @@ def set_params(command_line_args):
                                     "invalid_selection", "silent",
                                     "dont_lookup_fitness", "experiment_name=",
                                     "multicore", "cores=", "max_wraps=",
-                                    "error_metric="])
+                                    "error_metric=", "fitness_function=",
+                                    "parameters="])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run python ponyge.py --help for more info")
@@ -230,6 +265,10 @@ def set_params(command_line_args):
         if opt == "--help":
             help_message()
             exit()
+
+        # LOAD PARAMETERS FILE
+        elif opt == "--parameters":
+            load_params(arg)
 
         # POPULATION OPTIONS
         elif opt == "--population":
@@ -295,12 +334,8 @@ def set_params(command_line_args):
         # PROBLEM SPECIFICS
         elif opt == "--bnf_grammar":
             params['GRAMMAR_FILE'] = arg
-        elif opt == "--problem":
-            params['PROBLEM'] = arg
-            if arg == "classification":
-                # Set correct error metric for classification. Can be
-                # overwritten.
-                params['ERROR_METRIC'] = "inverse_f1_score"
+        elif opt == "--fitness_function":
+            params['FITNESS_FUNCTION'] = arg
         elif opt == "--problem_suite":
             params['SUITE'] = arg
         elif opt == "--target_string":
