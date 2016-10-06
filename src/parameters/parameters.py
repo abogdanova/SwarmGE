@@ -226,7 +226,7 @@ def set_params(command_line_args):
     :return: Nothing.
     """
     
-    from fitness.fitness_wheel import set_fitness_function, set_fitness_params
+    from fitness.fitness_wheel import set_fitness_params
     from utilities.initialise_run import initialise_run_params
     from utilities.initialise_run import set_param_imports
     from utilities.helper_methods import return_percent
@@ -408,8 +408,6 @@ def set_params(command_line_args):
     # Parse grammar file and set grammar class.
     params['BNF_GRAMMAR'] = grammar.Grammar(params['GRAMMAR_FILE'])
     
-    # Set correct param imports for specified function options.
+    # Set correct param imports for specified function options, including
+    # error metrics and fitness functions.
     set_param_imports()
-    
-    # Set Fitness Function.
-    set_fitness_function()

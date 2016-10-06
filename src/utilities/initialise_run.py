@@ -102,6 +102,10 @@ def set_param_imports():
     desire, allowing them to create new operators and save them wherever
     they like.
     
+    Sets the fitness function for a problem automatically. Fitness functions
+    are stored in fitness. Fitness functions must be classes, where the
+    class name matches the file name.
+    
     Function is set up to automatically set imports for operators and error
     metrics.
     
@@ -111,18 +115,34 @@ def set_param_imports():
     # For these ops we let the param equal the function itself.
     ops = {'operators': ['INITIALISATION', 'SELECTION', 'CROSSOVER',
                          'MUTATION', 'REPLACEMENT'],
-           'utilities': ['ERROR_METRIC']}
+           'utilities': ['ERROR_METRIC'],
+           'fitness': ['FITNESS_FUNCTION']}
     for special_ops in ops:
         if all([callable(params[op]) for op in ops[special_ops]]):
             # params are already functions
             pass
         
         else:
-            # We need to do an appropriate import...
-            import_str = make_import_str([[op, params[op]] for op in
-                                          ops[special_ops]], special_ops)
-            exec(import_str)
-            # ... and then eval the param.
-            for op in ops[special_ops]:
-                if params[op]:
-                    params[op] = eval(params[op])
+            if special_ops == "fitness":
+                import_func = "from fitness." + params[
+                    'FITNESS_FUNCTION'] + " import " + params[
+                                  'FITNESS_FUNCTION']
+    
+                # Import the required fitness function.
+                exec(import_func)
+    
+                # Set the fitness function in the params dictionary.
+                # params['FITNESS_FUNC_INPUT'] is the input required for
+                # initialisation of the fitness function.
+                params['FITNESS_FUNCTION'] = eval(
+                    params[
+                        'FITNESS_FUNCTION'] + "(params['FITNESS_FUNC_INPUT'])")
+            else:
+                # We need to do an appropriate import...
+                import_str = make_import_str([[op, params[op]] for op in
+                                              ops[special_ops]], special_ops)
+                exec(import_str)
+                # ... and then eval the param.
+                for op in ops[special_ops]:
+                    if params[op]:
+                        params[op] = eval(params[op])
