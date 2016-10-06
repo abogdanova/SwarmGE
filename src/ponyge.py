@@ -10,7 +10,7 @@ from utilities.initialise_run import check_python_version
 
 check_python_version()
 
-from algorithm.parameters import params, set_params
+from parameters.parameters import params, set_params
 from stats.stats import get_stats, stats
 from algorithm import search_loop
 import sys

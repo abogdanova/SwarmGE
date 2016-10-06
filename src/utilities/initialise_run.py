@@ -1,9 +1,10 @@
-from stats.stats import generate_folders_and_files
-from algorithm.parameters import params
-from utilities import trackers
+import time
 from datetime import datetime
 from sys import version_info
-import time
+
+from parameters.parameters import params
+from stats.stats import generate_folders_and_files
+from utilities import trackers
 
 
 def check_python_version():

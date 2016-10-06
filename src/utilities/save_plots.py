@@ -1,6 +1,8 @@
-from utilities.trackers import best_fitness_list
-import pandas as pd
 import matplotlib
+import pandas as pd
+
+from utilities.trackers import best_fitness_list
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.rc('font', family='Times New Roman')
@@ -11,7 +13,7 @@ def save_best_fitness_plot():
     Saves a plot of the current fitness
     :return: Nothing
     """
-    from algorithm.parameters import params
+    from parameters.parameters import params
 
     fig = plt.figure()
     ax1 = fig.add_subplot(1, 1, 1)
@@ -31,7 +33,7 @@ def save_plot_from_data(data, name):
     :param name: the name of the data to be plotted.
     :return: Nothing.
     """
-    from algorithm.parameters import params
+    from parameters.parameters import params
 
     # Plot the data
     fig = plt.figure()

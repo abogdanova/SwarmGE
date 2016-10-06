@@ -1,5 +1,6 @@
-from algorithm.parameters import params
 import numpy as np
+
+from parameters.parameters import params
 
 
 def python_filter(txt):

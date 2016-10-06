@@ -1,4 +1,4 @@
-from algorithm.parameters import params
+from parameters.parameters import params
 
 
 def replacement(new_pop, old_pop):

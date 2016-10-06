@@ -1,11 +1,13 @@
-from utilities.helper_methods import get_Xy_train_test_separate
-from algorithm.parameters import params
-from os import listdir, getcwd
-from numpy import log, sqrt, abs
-from utilities.error_metric import mse
-from sys import maxsize
 from math import isnan
+from os import listdir, getcwd
+from sys import maxsize
+
 import numpy as np
+from numpy import log, sqrt, abs
+
+from parameters.parameters import params
+from utilities.error_metric import mse
+from utilities.helper_methods import get_Xy_train_test_separate
 
 
 class regression:

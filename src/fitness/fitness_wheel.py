@@ -1,4 +1,4 @@
-from algorithm.parameters import params
+from parameters.parameters import params
 
 
 def set_fitness_params():

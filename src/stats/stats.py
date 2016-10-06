@@ -1,12 +1,12 @@
-from utilities.save_plots import save_best_fitness_plot
-from algorithm.parameters import params
-from os import path, mkdir, getcwd
-from datetime import timedelta
-from utilities import trackers
-from sys import stdout
-from copy import copy
 import time
+from copy import copy
+from datetime import timedelta
+from os import path, mkdir, getcwd
+from sys import stdout
 
+from parameters.parameters import params
+from utilities import trackers
+from utilities.save_plots import save_best_fitness_plot
 
 """Algorithm statistics"""
 stats = {

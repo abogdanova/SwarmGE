@@ -1,4 +1,4 @@
-from algorithm.parameters import params
+from parameters.parameters import params
 from representation.tree import Tree
 
 def pi_random_init(depth):

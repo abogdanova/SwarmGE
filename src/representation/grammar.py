@@ -2,7 +2,7 @@ from math import floor
 from re import finditer, DOTALL, MULTILINE
 from sys import maxsize
 
-from algorithm.parameters import params
+from parameters.parameters import params
 
 
 class Grammar(object):

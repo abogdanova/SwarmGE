@@ -1,6 +1,6 @@
-from fitness.default_fitness import default_fitness
-from algorithm.parameters import params
 from algorithm.mapper import mapper
+from fitness.default_fitness import default_fitness
+from parameters.parameters import params
 
 
 class Individual(object):

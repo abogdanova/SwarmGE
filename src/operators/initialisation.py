@@ -1,8 +1,9 @@
-from representation.tree import Tree, generate_tree
-from algorithm.parameters import params
-from representation import individual
-from random import shuffle, randint
 from math import floor
+from random import shuffle, randint
+
+from parameters.parameters import params
+from representation import individual
+from representation.tree import Tree, generate_tree
 
 
 def random_init(size):

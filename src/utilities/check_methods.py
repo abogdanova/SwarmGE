@@ -1,6 +1,7 @@
-from algorithm.parameters import params
-from algorithm import mapper
 from copy import copy
+
+from algorithm import mapper
+from parameters.parameters import params
 
 
 def check_ind(ind):

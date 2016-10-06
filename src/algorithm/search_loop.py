@@ -1,6 +1,6 @@
 from algorithm.step import step
-from algorithm.parameters import params
 from fitness.evaluation import evaluate_fitness
+from parameters.parameters import params
 from stats.stats import stats, get_stats
 from utilities.trackers import cache
 

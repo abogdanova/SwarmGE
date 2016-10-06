@@ -1,8 +1,9 @@
-from operators.initialisation import generate_ind_tree
-from algorithm.parameters import params
-from representation.tree import Tree
 from collections import deque
 from random import randint
+
+from operators.initialisation import generate_ind_tree
+from parameters.parameters import params
+from representation.tree import Tree
 
 
 def mapper(genome, tree):
