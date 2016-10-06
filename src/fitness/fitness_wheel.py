@@ -18,7 +18,7 @@ def set_fitness_params():
         # FITNESS_FUNC_INPUT is the string match target.
         params['GRAMMAR_FILE'] = "grammars/letter.bnf"
         params['FITNESS_FUNC_INPUT'] = params['STRING_MATCH_TARGET']
-    
+
     else:
         print("Error: Problem not specified correctly.")
         exit(2)
