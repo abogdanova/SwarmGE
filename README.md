@@ -607,24 +607,23 @@ your fitness function, and
 
 We don't provide any experiment managers other than the ability to save runs
 to specific folders using the `--experiment_name` handle. However, there are a
-number of functions available in utilities.save_plots which allow for plotting
-of run statistics.
+number of functions available in `utilities.save_plots` which allow for
+plotting of run statistics.
 
 
 ##Post-run Analysis - Single Runs
 -------------------------------
 
 By default, runs save a plot of best fitness (unless `--debug` is specified).
-Additionally, users can save plots from pre-existing `stats.tsv` files (i.e.
+Additionally, users can save plots from pre-existing stats.tsv files (i.e.
 stats files generated upon completion of a run) using:
 
     utilities.save_plot.save_plot_from_file(file_name, stat_name)
 
 where:
 
-    file_name = "./results/folder_name/stats.tsv" (the full file path to the
-                file)
-    stat_name = a valid key from the stats.stats.stats dictionary.
+file_name = "./results/folder_name/stats.tsv" (the full file path to the file)
+stat_name = a valid key from the `stats.stats.stats` dictionary.
 
 This will generate a plot of the given stat and save it in the same location as
 the original stats file.
@@ -636,9 +635,9 @@ Alternatively, users can directly pass data in to:
 
 where:
 
-    stat_data = some list of data, i.e. [data[stat_name] for data in
-                                         utilities.trackers.stats_list]
-    stat_name = a valid key from the stats.stats.stats dictionary.
+stat_data = some list of data, i.e. `[data[stat_name] for data in
+utilities.trackers.stats_list]`
+stat_name = a valid key from the `stats.stats.stats` dictionary.
 
 
 ##Post-run Analysis - Multiple Runs
