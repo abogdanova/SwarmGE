@@ -551,6 +551,8 @@ where [DATASET] is the name of the dataset.
 *__NOTE__ that when specifying the dataset you __do not__ need to specify the*
 *file path or the file extension.*
 
+##Parameters files
+
 Instead of passing in requirements from the command line, all three
 requirements specified above can be set in a unique parameters file. Then,
 only one flag needs to be passed in:
@@ -564,6 +566,8 @@ where [PARAMETERS_FILE] is the name of the desired parameters file.
 
 *__NOTE__ that you __do not__ need to specify the full file path to the*
 *parameters file.*
+
+##Editing Code to enable new problems
 
 Finally, to add in the new problem you may need to edit one or two functions:
 
