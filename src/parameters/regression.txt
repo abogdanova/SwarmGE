@@ -13,7 +13,7 @@ GENERATION_SIZE:       495
 GENOME_INIT:           False
 GENOME_LENGTH:         500
 GENOME_OPERATIONS:     False
-GRAMMAR_FILE:          grammars/Vladislavleva4.bnf
+GRAMMAR_FILE:          Vladislavleva4.bnf
 INITIALISATION:        rhh
 INVALID_SELECTION:     False
 LOOKUP_BAD_FITNESS:    False
