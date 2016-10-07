@@ -1,6 +1,8 @@
 ------------
-Introduction
+#Introduction
 ------------
+
+# TODO: Convert README.txt file to a markdown .md file for better formatting?
 
 Grammatical evolution (GE) is a population-based evolutionary algorithm, where
 a formal BNF-style grammar is used in the genotype to phenotype mapping
