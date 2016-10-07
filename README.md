@@ -85,27 +85,26 @@ allows you to create new operators and place them wherever you like.
 ##Population Size
 ---------------
 
-The size of the population. The default value is 500. This value can
-be changed with the flag:
+The size of the population. The default value is 500. This value can be
+changed with the flag:
 
     --population_size [INT]
 
-where [INT] is an integer which specifies the population size.
-Higher population sizes can improve performance on difficult
-problems, but require more computational effort and may lead to
-premature convergence.
+where [INT] is an integer which specifies the population size. Higher
+population sizes can improve performance on difficult problems, but require
+more computational effort and may lead to premature convergence.
 
 ##Generations
 -----------
 
-The number of generations the evolutionary algorithm will run for.
-The default value is 50. This value can be changed with the flag:
+The number of generations the evolutionary algorithm will run for. The default
+value is 50. This value can be changed with the flag:
 
     --generations [INT]
 
-where [INT] is an integer which specifies the number of generations.
-Higher numbers of generations can improve performance, but will lead
-to longer run-times.
+where [INT] is an integer which specifies the number of generations. Higher
+numbers of generations can improve performance, but will lead to longer
+run-times.
 
 The typical breakdown of a population-based evolutionary algorithm is:
 
@@ -120,16 +119,16 @@ These steps are expanded on in detail hereafter.
 ##Initialisation
 --------------
 
-There are two main ways to initialise a GE individual: by generating a
-genome, or by generating a subtree. Generation of a genome can only be
-done by creating a random genome string and as such individuals cannot
-be controlled. Subtree generation on the other hand can be forced to
-conform to specified limits, e.g. depth limits. This is implemented in
-ramped half-half initialisation (also called Sensible initialisation).
-It is also possible to initialise a population using randomly generated
-subtrees, which is similar in theory to random genome initialisation
-except there is far less bias than random genome initialisation as a
-result of the number of production choices in the grammar.
+There are two main ways to initialise a GE individual: by generating a genome,
+or by generating a subtree. Generation of a genome can only be done by creating
+a random genome string and as such individuals cannot be controlled. Subtree
+generation on the other hand can be forced to conform to specified limits,
+e.g. depth limits. This is implemented in ramped half-half initialisation
+(also called Sensible initialisation). It is also possible to initialise a
+population using randomly generated subtrees, which is similar in theory to
+random genome initialisation except there is far less bias than random
+genome initialisation as a result of the number of production choices in the
+grammar.
 
 ###Genome
 
@@ -156,8 +155,8 @@ Activate with:
 ##Selection
 ---------
 
-Only valid individuals are selected by default. However, this can be
-changed with the flag:
+Only valid individuals are selected by default. However, this can be changed
+with the flag:
 
     --invalid_selection
 
@@ -167,8 +166,8 @@ Activate with:
 
     --selection tournament
 
-Tournament size is set by default at 2. This value can be changed
-with the flag:
+Tournament size is set by default at 2. This value can be changed with the
+flag:
 
     --tournament_size [INT]
 
@@ -180,8 +179,8 @@ Activate with:
 
     --selection truncation
 
-Selection proportion is set by default at 0.5. This value can be
-changed with the flag:
+Selection proportion is set by default at 0.5. This value can be changed
+with the flag:
 
     --selection_proportion [NUM]
 
@@ -191,14 +190,13 @@ where [NUM] is a float between 0 and 1.
 ---------
 ###Crossover
 
-Crossover directly swaps genetic material between two chosen
-individuals. The probability of crossover occurring is set with
-the flag:
+Crossover directly swaps genetic material between two chosen individuals. The
+probability of crossover occurring is set with the flag:
 
     "--crossover_probability [NUM]
 
-where [NUM] is a float between 0 and 1. The default value for
-crossover is 0.75.
+where [NUM] is a float between 0 and 1. The default value for crossover is
+0.75.
 
 ####Onepoint
 
@@ -206,18 +204,13 @@ Activate with:
 
     --crossover onepoint
 
-Given two individuals, create two children using one-point
-crossover and return them. A different point is selected on
-each genome for crossover to occur. Crossover points are
-selected within the used portion of the genome by default (i.e.
-crossover does not occur in the tail of the individual).
+Given two individuals, create two children using one-point crossover and return
+them. A different point is selected on each genome for crossover to occur.
+Crossover points areselected within the used portion of the genome by default
+(i.e. crossover does not occur in the tail of the individual).
 
-Onepoint crossover in Grammatical Evolution is explained
-further in:
-
-O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003. "Crossover in
-grammatical evolution." Genetic programming and evolvable machines, 4(1),
-pp.67-93. DOI: 10.1023/A:1021877127167
+For a more in-depth discussion on onepoint crossover in Grammatical Evolution,
+see the list of references at the end of this document.
 
 ####Subtree
 
@@ -225,25 +218,23 @@ Activate with:
 
     --crossover subtree
 
-Given two individuals, create two children using subtree
-crossover and return them. Candidate subtrees are selected
-based on matching non-terminal nodes rather than matching
-terminal nodes.
+Given two individuals, create two children using subtree crossover and
+return them. Candidate subtrees are selected based on matching non-terminal
+nodes rather than matching terminal nodes.
 
 ###Mutation
 
-The ability to specify the number of mutation events per
-individual is provided. This works for both genome mutation and
-subtree mutation. The default number of mutation events is 1 per
-individual. This value can be changed with the flag:
+The ability to specify the number of mutation events per individual is
+provided. This works for both genome mutation and subtree mutation. The
+default number of mutation events is 1 per individual. This value can be
+changed with the flag:
 
     --mutation_events [INT]
 
-where [INT] is an integer which specifies the number of mutation
-events per individual. Note that for subtree mutation exactly
-this number of mutation events will occur, but for integer flip
-mutation this will only affect the probability of mutation
-events occurring.
+where [INT] is an integer which specifies the number of mutation events per
+individual. Note that for subtree mutation exactly this number of mutation
+events will occur, but for integer flip mutation this will only affect the
+probability of mutation events occurring.
 
 ####Int Flip
 
@@ -251,16 +242,16 @@ Activate with:
 
     --mutation int_flip
 
-Default mutation probability is 1 over the length of the
-genome. This can be changed with the flag:
+Default mutation probability is 1 over the length of the genome. This can be
+changed with the flag:
 
     --mutation_probability [NUM]
 
-where [NUM] is a float between 0 and 1. This will change
-the mutation probability for each codon to the probability
-specified. Mutation is performed over the entire length of the
-genome by default, but the flag within_used is provided to
-limit mutation to only the effective length of the genome.
+where [NUM] is a float between 0 and 1. This will change the mutation
+probability for each codon to the probability specified. Mutation is
+performed over the entire length of the genome by default, but the flag
+within_used is provided to limit mutation to only the effective length of
+the genome.
 
 ####Subtree
 
@@ -268,10 +259,9 @@ Activate with:
 
     --mutation subtree
 
-Mutate the individual by replacing a randomly selected subtree
-with a new randomly generated subtree. Guaranteed one event
-per individual, unless params['MUTATION_EVENTS'] is specified
-as a higher number.
+Mutate the individual by replacing a randomly selected subtree with a new
+randomly generated subtree. Guaranteed one event per individual, unless
+params['MUTATION_EVENTS'] is specified as a higher number.
 
 ##Evaluation
 ----------
@@ -280,44 +270,41 @@ as a higher number.
 
 ###Multicore evaluation
 
-Evaluation of a population of individuals can be done in series
-(single core evaluation) or in parallel (multi core evaluation).
-Multicore evaluation can be activated with the flag:
+Evaluation of a population of individuals can be done in series (single core
+evaluation) or in parallel (multi core evaluation). Multicore evaluation can
+be activated with the flag:
 
     --multicore
 
-Additionally, the number of processor cores used for multicore
-evaluation can be controlled with the flag:
+Additionally, the number of processor cores used for multicore evaluation
+can be controlled with the flag:
 
     --cores [INT]
 
-where [INT] is an integer which specifies the number of cores used
-for fitness evaluations. The default value is to use all
-available cores.
+where [INT] is an integer which specifies the number of cores used for fitness
+evaluations. The default value is to use all available cores.
 
-*__NOTE__ that multicore evaluations may not necessarily improve*
-*computational runtime for small problems as a certain overhead is*
-*necessary to run the multicore evaluation process.*
+*__NOTE__ that multicore evaluations may not necessarily improve computational*
+*runtime for small problems as a certain overhead is necessary to run the*
+*multicore evaluation process.*
 
 *__NOTE__ also that for smaller problems fitness evaluations may not*
-*necessarily present a bottleneck in terms of computational*
-*run-time. It is advised to use a python profiler to ascertain*
-*whether or not fitness evaluations present such a bottleneck. If*
-*this is the case, multicore evaluation  may improve the run-time*
-*of a single evolutionary run.*
+*necessarily present a bottleneck in terms of computational run-time. It is*
+*advised to use a python profiler to ascertain whether or not fitness*
+*evaluations present such a bottleneck. If this is the case, multicore*
+*evaluation  may improve the run-time of a single evolutionary run.*
 
-*__NOTE__ also that when running batches of multiple experiments, it*
-*will always be faster to run multiple single-core experiments in*
-*parallel, rather than multiple multi-core experiments in series.*
+*__NOTE__ also that when running batches of multiple experiments, it will*
+*always be faster to run multiple single-core experiments in parallel, rather*
+*than multiple multi-core experiments in series.*
 
 ###Caching
 
-Caching is provided in PonyGE2 to save on fitness evaluations
-and to track the number of unique solutions encountered during
-an evolutionary run. Cached individuals have their fitness stored
-in a dictionary called utilities.trackers.cache. Dictionary keys
-are the string of the phenotype. Caching can be activated with
-the flag:
+Caching is provided in PonyGE2 to save on fitness evaluations and to track the
+number of unique solutions encountered during an evolutionary run. Cached
+individuals have their fitness stored in a dictionary called utilities
+.trackers.cache. Dictionary keys are the string of the phenotype. Caching
+can be activated with the flag:
 
     --cache
 
@@ -325,42 +312,40 @@ There are currently three options for use with the cache:
 
 ####1. Fitness Lookup
 
-This is the default case when caching is activated.
-Individuals which have already been evaluated have their
-previous fitness read directly from the cache, thus
-saving fitness evaluations. Fitness lookup can be
+This is the default case when caching is activated. Individuals which have
+already been evaluated have their previous fitness read directly from the
+cache, thus saving fitness evaluations. Fitness lookup can be
 de-activated with:
 
     --dont_lookup_fitness
 
 ####2. Fitness Penalty
 
-Individuals which have already been evaluated are given
-a default bad fitness. Activate with:
+Individuals which have already been evaluated are given a default bad
+fitness. Activate with:
 
     --lookup_bad_fitness
 
 ####3. Mutate Duplicates
 
-Individuals which have already been evaluated are
-mutated to produce new unique individuals which have not
-been encountered yet by the search process. Activate with:
+Individuals which have already been evaluated are mutated to produce new
+unique individuals which have not been encountered yet by the search process.
+Activate with:
 
     --mutate_duplicates
 
-Finally, it could be said that using a cache to lookup the
-fitness of duplicate individuals deprives the evolutionary
-algorithm of potential fitness evaluations, thus leading to a
-reduced overall number of fitness evaluations over the course of
-an evolutionary run. If desired, it is possible to run PonyGE
-for a specified total number of fitness evaluations rather than
-for a specified number of total generations. This can be
-activated with the flag:
+Finally, it could be said that using a cache to lookup the fitness of duplicate
+individuals deprives the evolutionary algorithm of potential fitness
+evaluations, thus leading to a reduced overall number of fitness evaluations
+over the course of an evolutionary run. If desired, it is possible to run
+PonyGE for a specified total number of fitness evaluations rather than
+for a specified number of total generations. This can be activated with the
+flag:
 
     --complete_evals
 
-With this specified, PonyGE will run until the length of the
-cache reaches params['POPULATION_SIZE'] * params['GENERATIONS'].
+With this specified, PonyGE will run until the length of the cache reaches
+params['POPULATION_SIZE'] * params['GENERATIONS'].
 
 ##Replacement
 -----------
@@ -371,16 +356,14 @@ Activate with:
 
     --replacement generational
 
-Elites can be saved between generations. The default number of
-elites is 1 percent of the population size. This value can be
-changed with the flag:
+Elites can be saved between generations. The default number of elites is 1
+percent of the population size. This value can be changed with the flag:
 
     --elite_size [INT]
 
-where [INT] is an integer which specifies the number of elites
-to be saved between generations. Elites are saved between
-generations regardless of whether or not they are better or worse
-than the new population.
+where [INT] is an integer which specifies the number of elites to be saved
+between generations. Elites are saved between generations regardless of
+whether or not they are better or worse than the new population.
 
 ###Steady State
 
@@ -394,9 +377,9 @@ Activate with:
 
 Grammars are written in Backus-Naur form, aka BNF. See the examples in
 src/grammars. Each rule is composed of a left-hand side (a single
-non-terminal), followed by the "goes-to" symbol ::=, followed by a
-list of productions separated by the "or" symbol |. Non-terminals are
-enclosed by angle brackets <>. For example:
+non-terminal), followed by the "goes-to" symbol ::=, followed by a list of
+productions separated by the "or" symbol |. Non-terminals are enclosed by
+angle brackets <>. For example:
 
     <a> ::= <b>c | d
 
@@ -452,9 +435,9 @@ Three example problems are currently provided:
 3. Classification
 
 A brief description is given below of each problem, along with the command-line
-arguments necessary to call each problem. It is not necessary to specify the
-desired grammar for each individual problem as PonyGE does this automatically
-based on the given inputs.
+arguments necessary to call each problem. *__NOTE__ that it is necessary to*
+*specify the desired grammar for each problem. This can either be done with*
+*a unique parameters config file or by passing the command-line argument in.*
 
 
 ##String-match
@@ -465,11 +448,14 @@ is to match a target word.
 
 To use it, specify the following command-line arguments:
 
-    --problem string_match
+    --fitness_function string_match
     --target_string [TYPE_TARGET_STRING]
 
 e.g. --target_string golden, --target_string ponyge_rocks
 
+Alternatively, you can specify a direct parameters file with:
+
+    --parameters string_match.txt
 
 ##Regression
 ----------
@@ -483,17 +469,36 @@ This is the default problem for PonyGE.
 
 To use it, specify the following command-line arguments:
 
-    --problem regression
-    --problem_suite [PROBLEM_SUITE]
+    --fitness_function regression
+    --dataset [PROBLEM_SUITE]
 
-e.g. --problem_suite Keijzer6, --problem_suite Vladislavleva4
+e.g. --dataset Keijzer6, --dataset Vladislavleva4
 
+Alternatively, you can specify a direct parameters file with:
+
+    --parameters regression.txt
 
 ##Classification
 --------------
 
-######TODO Explain classification problem here
+Classification can be considered a special case of symbolic regression but
+with a different error metric. Like with regression, the grammar generates a
+symbolic function composed of standard mathematical operations and a set of
+variables. This function is then evaluated using a pre-defined set of inputs,
+given in the datasets folder. Each problem suite has a unique set of inputs.
+The aim is to minimise some classification error between the expected
+output of the function and the desired output specified in the datasets.
 
+To use it, specify the following command-line arguments:
+
+    --fitness_function classification
+    --dataset [PROBLEM_SUITE]
+
+e.g. --dataset Banknote
+
+Alternatively, you can specify a direct parameters file with:
+
+    --parameters classification.txt
 
 #Post-run Analysis
 -----------------
@@ -543,8 +548,8 @@ multiple runs, as given by:
 
     stats.parse_stats.py
 
-There are a number of flags that must be used for passing values via
-the command-line. To see a full list of these just run the following
+There are a number of flags that must be used for passing values via the
+command-line. To see a full list of these just run the following
 
     $ python stats/parse_stats.py --help
 
@@ -560,3 +565,7 @@ Michael O'Neill, Erik Hemberg, Conor Gilligan, Elliott Bartley, and
 James McDermott, "GEVA: Grammatical Evolution in Java", ACM
 SIGEVOlution, 2008. http://portal.acm.org/citation.cfm?id=1527066. Get
 GEVA: http://ncra.ucd.ie/Site/GEVA.html
+
+O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003. "Crossover in
+grammatical evolution." Genetic programming and evolvable machines, 4(1),
+pp.67-93. DOI: 10.1023/A:1021877127167
