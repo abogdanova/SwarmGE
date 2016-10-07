@@ -515,6 +515,8 @@ You simply need to write a **new fitness function** (if you don't want to use
 one already there) and add a **new grammar file**. You may also need to add a
 **new dataset** if you're using datasets.
 
+##Fitness Functions
+
 Fitness functions can be specified from the command line with the flag:
 
     --fitness_function [FIT_FUNC_NAME]
@@ -530,6 +532,8 @@ the*
 *function for your fitness function class in order for PonyGE to generate*
 *training and test fitnesses for your solutions.*
 
+##Grammar Files
+
 Grammar files can be specified from the command line with the flag:
 
     --bnf_grammar [GRAMMAR_FILE]
@@ -541,6 +545,8 @@ where [GRAMMAR_FILE] is the name of the grammar file.
 
 *__NOTE__ that you __do not need__ to specify the file path, e.g.*
 *"grammars/Keijzer6.bnf."*
+
+##Datasets
 
 Datasets can be specified from the command line with the flag:
 
