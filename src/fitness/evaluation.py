@@ -60,7 +60,7 @@ def evaluate_fitness(individuals):
                 elif params['MUTATE_DUPLICATES']:
                     # Mutate the individual to produce a new phenotype
                     # which has not been encountered yet.
-                    while ind.phenotype in cache:
+                    while (not ind.phenotype) or ind.phenotype in cache:
                         ind = params['MUTATION'](ind)
                         stats['regens'] += 1
 

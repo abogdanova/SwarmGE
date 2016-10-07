@@ -11,12 +11,15 @@ def set_fitness_params():
     
     if params['FITNESS_FUNCTION'] in ("regression", "classification"):
         # FITNESS_FUNC_INPUT is the problem suite.
-        params['GRAMMAR_FILE'] = "grammars/" + params['SUITE'] + ".bnf"
-        params['FITNESS_FUNC_INPUT'] = params['SUITE']
+        if not params['GRAMMAR_FILE']:
+            params['GRAMMAR_FILE'] = "grammars/" + \
+                params['DATASET'] + ".bnf"
+        params['FITNESS_FUNC_INPUT'] = params['DATASET']
 
     elif params['FITNESS_FUNCTION'] == "string_match":
         # FITNESS_FUNC_INPUT is the string match target.
-        params['GRAMMAR_FILE'] = "grammars/letter.bnf"
+        if not params['GRAMMAR_FILE']:
+            params['GRAMMAR_FILE'] = "grammars/letter.bnf"
         params['FITNESS_FUNC_INPUT'] = params['STRING_MATCH_TARGET']
 
     else:

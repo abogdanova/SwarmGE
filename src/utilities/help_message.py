@@ -77,8 +77,8 @@ def help_message():
                ["\t--fitness_function:", "Sets the fitness function to be "
                                          "used. Requires string such as "
                                          "'regression'"],
-               ["\t--problem_suite:", "For use with regression problems. "
-                                      "Requires string such as 'Dow'."],
+               ["\t--dataset:", "For use with problems that use a dataset. "
+                                "Requires string such as 'Dow'."],
                ["\t--error_metric:", "Sets the error metric to be used with "
                                      "regression style problems. Requires "
                                      "string such as 'mse' or 'rmse'."],

@@ -22,13 +22,16 @@ params = {
         # "string_match"
         # "classification"
 
-        # Select Regression Problem Suite
-        'SUITE': "Vladislavleva4",
+        # Select problem dataset
+        'DATASET': "Vladislavleva4",
         # "Dow"
         # "Keijzer6"
         # "Vladislavleva4"
+        
+        # Set grammar file
+        'GRAMMAR_FILE': None,
     
-        # Select Regression error metric
+        # Select error metric
         'ERROR_METRIC': None,
         # "mse"
         # "mae"
@@ -169,6 +172,9 @@ def load_params(file_name):
             except:
                 # We can't evaluate, leave value as a string.
                 pass
+            
+            # Set parameter
+            params[key] = value
 
 
 def check_int(param, arg):
@@ -240,7 +246,7 @@ def set_params(command_line_args):
                                     "crossover_probability=", "replacement=",
                                     "mutation=", "mutation_events=",
                                     "random_seed=", "bnf_grammar=",
-                                    "problem_suite=", "target_string=",
+                                    "dataset=", "target_string=",
                                     "verbose", "elite_size=", "save_all",
                                     "save_plots", "cache", "lookup_fitness",
                                     "lookup_bad_fitness", "mutate_duplicates",
@@ -331,8 +337,8 @@ def set_params(command_line_args):
             params['GRAMMAR_FILE'] = arg
         elif opt == "--fitness_function":
             params['FITNESS_FUNCTION'] = arg
-        elif opt == "--problem_suite":
-            params['SUITE'] = arg
+        elif opt == "--dataset":
+            params['DATASET'] = arg
         elif opt == "--target_string":
             params['STRING_MATCH_TARGET'] = arg
         elif opt == "--experiment_name":
