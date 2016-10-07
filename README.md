@@ -80,7 +80,7 @@ the name of the desired operator, e.g. "--crossover subtree" instead of
 specify the full correct path if you so desire. Specifying the full direct path
 allows you to create new operators and place them wherever you like.
 
-Evolutionary Parameters:
+##Evolutionary Parameters:
 
 ##Population Size
 ---------------
@@ -398,7 +398,7 @@ non-terminal), followed by the "goes-to" symbol ::=, followed by a
 list of productions separated by the "or" symbol |. Non-terminals are
 enclosed by angle brackets <>. For example:
 
-    \<a\> ::= \<b\>c | d
+    <a> ::= <b>c | d
 
 You can use an "or" symbol or angle bracket in a production. Escape it
 using a backslash: \\\|, \\\<, \\\>. You can use the "goes-to" symbol in a
