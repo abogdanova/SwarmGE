@@ -45,16 +45,16 @@ All requirements can be satisfied with Anaconda.
 We don't provide any setup script. You can run an example problem (the default
 is regression, see below) just by typing:
 
-$ cd src
-$ python ponyge.py
+    $ cd src
+    $ python ponyge.py
 
 This will run an example problem and generate a results folder. The folder
 contains several files showing the run's stats, producing graphs and
 documenting the parameters used, as well as a file containing the best
 individuals. For a more verbose command line experience run the following:
 
-$ cd src
-$ python ponyge.py --verbose
+    $ cd src
+    $ python ponyge.py --verbose
 
 Each line of the output corresponds to a generation in the evolution, and
 prints out all statistics on the current run (only if --verbose is specified).
@@ -64,7 +64,7 @@ along with summary statistics.
 There are a number of flags that can be used for passing values via the
 command-line. To see a full list of these just run the following:
 
-$ python ponyge.py --help
+    $ python ponyge.py --help
 
 
 -------------
@@ -84,10 +84,11 @@ Evolutionary Parameters:
 
 ##Population Size
 ---------------
+
 The size of the population. The default value is 500. This value can
 be changed with the flag:
 
-"--population_size [INT]"
+    --population_size [INT]
 
 where [INT] is an integer which specifies the population size.
 Higher population sizes can improve performance on difficult
@@ -96,10 +97,11 @@ premature convergence.
 
 ##Generations
 -----------
+
 The number of generations the evolutionary algorithm will run for.
 The default value is 50. This value can be changed with the flag:
 
-"--generations [INT]"
+    --generations [INT]
 
 where [INT] is an integer which specifies the number of generations.
 Higher numbers of generations can improve performance, but will lead
@@ -117,6 +119,7 @@ These steps are expanded on in detail hereafter.
 
 ##Initialisation
 --------------
+
 There are two main ways to initialise a GE individual: by generating a
 genome, or by generating a subtree. Generation of a genome can only be
 done by creating a random genome string and as such individuals cannot
@@ -130,102 +133,111 @@ result of the number of production choices in the grammar.
 
 ###Genome
 
-    - Random
-        Activate with:
+####Random
 
-        "--genome_init"
+Activate with:
 
-- Subtree
+    --genome_init
 
-    - Random
-        Activate with:
+###Subtree
 
-        "--initialisation random_init"
+####Random
 
-    - Ramped Half-Half
-        Activate with:
+Activate with:
 
-        "--initialisation rhh"
+    --initialisation random_init
+
+####Ramped Half-Half
+
+Activate with:
+
+    --initialisation rhh
 
 ##Selection
 ---------
+
 Only valid individuals are selected by default. However, this can be
 changed with the flag:
 
-"--invalid_selection"
+    --invalid_selection
 
-- Tournament
-    Activate with:
+###Tournament
 
-    "--selection tournament"
+Activate with:
 
-    Tournament size is set by default at 2. This value can be changed
-    with the flag:
+    --selection tournament
 
-    "--tournament_size [INT]"
+Tournament size is set by default at 2. This value can be changed
+with the flag:
 
-    where [INT] is an integer which specifies the tournament size.
+    --tournament_size [INT]
 
-- Truncation
-    Activate with:
+where [INT] is an integer which specifies the tournament size.
 
-    "--selection truncation"
+###Truncation
 
-    Selection proportion is set by default at 0.5. This value can be
-    changed with the flag:
+Activate with:
 
-    "--selection_proportion [NUM]"
+    --selection truncation
 
-    where [NUM] is a float between 0 and 1.
+Selection proportion is set by default at 0.5. This value can be
+changed with the flag:
+
+    --selection_proportion [NUM]
+
+where [NUM] is a float between 0 and 1.
 
 ##Variation
 ---------
 ###Crossover
+
 Crossover directly swaps genetic material between two chosen
 individuals. The probability of crossover occurring is set with
 the flag:
 
-"--crossover_probability [NUM]"
+    "--crossover_probability [NUM]
 
 where [NUM] is a float between 0 and 1. The default value for
 crossover is 0.75.
 
-- Onepoint
-    Activate with:
+####Onepoint
 
-    "--crossover onepoint"
+Activate with:
 
-    Given two individuals, create two children using one-point
-    crossover and return them. A different point is selected on
-    each genome for crossover to occur. Crossover points are
-    selected within the used portion of the genome by default (i.e.
-    crossover does not occur in the tail of the individual).
+    --crossover onepoint
 
-    Onepoint crossover in Grammatical Evolution is explained
-    further in:
+Given two individuals, create two children using one-point
+crossover and return them. A different point is selected on
+each genome for crossover to occur. Crossover points are
+selected within the used portion of the genome by default (i.e.
+crossover does not occur in the tail of the individual).
 
-        O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003.
-        "Crossover in grammatical evolution."
-        Genetic programming and evolvable machines, 4(1), pp.67-93.
-        DOI: 10.1023/A:1021877127167
+Onepoint crossover in Grammatical Evolution is explained
+further in:
 
-- Subtree
-    Activate with:
+O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003. "Crossover in
+grammatical evolution." Genetic programming and evolvable machines, 4(1),
+pp.67-93. DOI: 10.1023/A:1021877127167
 
-    "--crossover subtree"
+####Subtree
 
-    Given two individuals, create two children using subtree
-    crossover and return them. Candidate subtrees are selected
-    based on matching non-terminal nodes rather than matching
-    terminal nodes.
+Activate with:
+
+    --crossover subtree
+
+Given two individuals, create two children using subtree
+crossover and return them. Candidate subtrees are selected
+based on matching non-terminal nodes rather than matching
+terminal nodes.
 
 ###Mutation
+
 The ability to specify the number of mutation events per
 individual is provided. This works for both genome mutation and
 subtree mutation. The default number of mutation events is 1 per
 individual. This value can be changed with the flag:
 
-"--mutation_events [INT]"
+    --mutation_events [INT]
 
 where [INT] is an integer which specifies the number of mutation
 events per individual. Note that for subtree mutation exactly
@@ -233,31 +245,33 @@ this number of mutation events will occur, but for integer flip
 mutation this will only affect the probability of mutation
 events occurring.
 
-- Int Flip
-    Activate with:
+####Int Flip
 
-    "--mutation int_flip"
+Activate with:
 
-    Default mutation probability is 1 over the length of the
-    genome. This can be changed with the flag:
+    --mutation int_flip
 
-    "--mutation_probability [NUM]"
+Default mutation probability is 1 over the length of the
+genome. This can be changed with the flag:
 
-    where [NUM] is a float between 0 and 1. This will change
-    the mutation probability for each codon to the probability
-    specified. Mutation is performed over the entire length of the
-    genome by default, but the flag within_used is provided to
-    limit mutation to only the effective length of the genome.
+    --mutation_probability [NUM]
 
-- Subtree
-    Activate with:
+where [NUM] is a float between 0 and 1. This will change
+the mutation probability for each codon to the probability
+specified. Mutation is performed over the entire length of the
+genome by default, but the flag within_used is provided to
+limit mutation to only the effective length of the genome.
 
-    "--mutation subtree"
+####Subtree
 
-    Mutate the individual by replacing a randomly selected subtree
-    with a new randomly generated subtree. Guaranteed one event
-    per individual, unless params['MUTATION_EVENTS'] is specified
-    as a higher number.
+Activate with:
+
+    --mutation subtree
+
+Mutate the individual by replacing a randomly selected subtree
+with a new randomly generated subtree. Guaranteed one event
+per individual, unless params['MUTATION_EVENTS'] is specified
+as a higher number.
 
 ##Evaluation
 ----------
@@ -265,6 +279,7 @@ events occurring.
 ######TODO: Talk about fitness functions here. The fitness function is set through --fitness_function. New problem = new fitness function.
 
 ###Multicore evaluation
+
 Evaluation of a population of individuals can be done in series
 (single core evaluation) or in parallel (multi core evaluation).
 Multicore evaluation can be activated with the flag:
@@ -296,6 +311,7 @@ available cores.
 *parallel, rather than multiple multi-core experiments in series.*
 
 ###Caching
+
 Caching is provided in PonyGE2 to save on fitness evaluations
 and to track the number of unique solutions encountered during
 an evolutionary run. Cached individuals have their fitness stored
@@ -308,6 +324,7 @@ the flag:
 There are currently three options for use with the cache:
 
 ####1. Fitness Lookup
+
 This is the default case when caching is activated.
 Individuals which have already been evaluated have their
 previous fitness read directly from the cache, thus
@@ -317,12 +334,14 @@ de-activated with:
     --dont_lookup_fitness
 
 ####2. Fitness Penalty
+
 Individuals which have already been evaluated are given
 a default bad fitness. Activate with:
 
---lookup_bad_fitness
+    --lookup_bad_fitness
 
 ####3. Mutate Duplicates
+
 Individuals which have already been evaluated are
 mutated to produce new unique individuals which have not
 been encountered yet by the search process. Activate with:
@@ -345,6 +364,7 @@ cache reaches params['POPULATION_SIZE'] * params['GENERATIONS'].
 
 ##Replacement
 -----------
+
 ###Generational
 
 Activate with:
