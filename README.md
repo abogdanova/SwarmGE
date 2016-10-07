@@ -552,6 +552,20 @@ where [DATASET] is the name of the dataset.
 *__NOTE__ that when specifying the dataset you __do not__ need to specify the*
 *file path or the file extension.*
 
+Instead of passing in requirements from the command line, all three
+requirements specified above can be set in a unique parameters file. Then,
+only one flag needs to be passed in:
+
+    --parameters [PARAMETERS_FILE]
+
+where [PARAMETERS_FILE] is the name of the desired parameters file.
+
+*__NOTE__ that when specifying the parameters file you __must__ specify the*
+*full file extension, e.g. "classification.txt".*
+
+*__NOTE__ that you __do not__ need to specify the full file path to the*
+*parameters file.*
+
 Finally, to add in the new problem you may need to edit one or two functions:
 
 1. fitness.fitness_wheel.set_fitness_params, and/or
