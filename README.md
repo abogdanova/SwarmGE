@@ -345,21 +345,21 @@ cache reaches params['POPULATION_SIZE'] * params['GENERATIONS'].
 ##Replacement
 -----------
 1. Generational
-    Activate with "--replacement generational"
+Activate with "--replacement generational"
 
-    Elites can be saved between generations. The default number of
-    elites is 1 percent of the population size. This value can be
-    changed with the flag:
+Elites can be saved between generations. The default number of
+elites is 1 percent of the population size. This value can be
+changed with the flag:
 
-    "--elite_size [INT]"
+"--elite_size [INT]"
 
-    where [INT] is an integer which specifies the number of elites
-    to be saved between generations. Elites are saved between
-    generations regardless of whether or not they are better or worse
-    than the new population.
+where [INT] is an integer which specifies the number of elites
+to be saved between generations. Elites are saved between
+generations regardless of whether or not they are better or worse
+than the new population.
 
 2. Steady State
-    Activate with "--replacement steady_state"
+Activate with "--replacement steady_state"
 
 
 ##Writing grammars
@@ -371,10 +371,10 @@ non-terminal), followed by the "goes-to" symbol ::=, followed by a
 list of productions separated by the "or" symbol |. Non-terminals are
 enclosed by angle brackets <>. For example:
 
-<a> ::= <b>c | d
+\<a\> ::= \<b\>c | d
 
 You can use an "or" symbol or angle bracket in a production. Escape it
-using a backslash: \|, \<, \>. You can use the "goes-to" symbol in a
+using a backslash: \\\|, \\\<, \\\>. You can use the "goes-to" symbol in a
 production without escaping it.
 
 Along with the fitness function, grammars are one of the most problem-specific
