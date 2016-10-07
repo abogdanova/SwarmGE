@@ -2,8 +2,6 @@
 #Introduction
 ------------
 
-# TODO: Convert README.txt file to a markdown .md file for better formatting?
-
 Grammatical evolution (GE) is a population-based evolutionary algorithm, where
 a formal BNF-style grammar is used in the genotype to phenotype mapping
 process.
@@ -31,7 +29,7 @@ PonyGE2 is copyright (C) 2009-2016
 
 
 ------------
-Requirements
+#Requirements
 ------------
 
 PonyGE runs under Python 3.x.
@@ -41,7 +39,7 @@ All requirements can be satisfied with Anaconda.
 
 
 --------------
-Running PonyGE
+#Running PonyGE
 --------------
 
 We don't provide any setup script. You can run an example problem (the default
@@ -70,7 +68,7 @@ $ python ponyge.py --help
 
 
 -------------
-About PonyGE2
+#About PonyGE2
 -------------
 
 #TODO: Fill out this section heftily.
@@ -86,41 +84,41 @@ allows you to create new operators and place them wherever you like.
 
 Evolutionary Parameters:
 
-    Population Size
-    ---------------
-        The size of the population. The default value is 500. This value can
-        be changed with the flag:
+##Population Size
+---------------
+The size of the population. The default value is 500. This value can
+be changed with the flag:
 
-        "--population_size [INT]"
+"--population_size [INT]"
 
-        where [INT] is an integer which specifies the population size.
-        Higher population sizes can improve performance on difficult
-        problems, but require more computational effort and may lead to
-        premature convergence.
+where [INT] is an integer which specifies the population size.
+Higher population sizes can improve performance on difficult
+problems, but require more computational effort and may lead to
+premature convergence.
 
-    Generations
-    -----------
-        The number of generations the evolutionary algorithm will run for.
-        The default value is 50. This value can be changed with the flag:
+##Generations
+-----------
+The number of generations the evolutionary algorithm will run for.
+The default value is 50. This value can be changed with the flag:
 
-        "--generations [INT]"
+"--generations [INT]"
 
-        where [INT] is an integer which specifies the number of generations.
-        Higher numbers of generations can improve performance, but will lead
-        to longer run-times.
+where [INT] is an integer which specifies the number of generations.
+Higher numbers of generations can improve performance, but will lead
+to longer run-times.
 
 The typical breakdown of a population-based evolutionary algorithm is:
 
-    Initialisation
-    Selection
-    Variation
-    Evaluation
-    Replacement
+1. Initialisation
+2. Selection
+3. Variation
+4. Evaluation
+5. Replacement
 
 These steps are expanded on in detail hereafter.
 
-    Initialisation
-    --------------
+##Initialisation
+--------------
         There are two main ways to initialise a GE individual: by generating a
         genome, or by generating a subtree. Generation of a genome can only be
         done by creating a random genome string and as such individuals cannot
@@ -151,8 +149,8 @@ These steps are expanded on in detail hereafter.
 
                 "--initialisation rhh"
 
-    Selection
-    ---------
+##Selection
+---------
         Only valid individuals are selected by default. However, this can be
         changed with the flag:
 
@@ -182,8 +180,8 @@ These steps are expanded on in detail hereafter.
 
             where [NUM] is a float between 0 and 1.
 
-    Variation
-    ---------
+##Variation
+---------
         - Crossover
             Crossover directly swaps genetic material between two chosen
             individuals. The probability of crossover occurring is set with
@@ -263,8 +261,8 @@ These steps are expanded on in detail hereafter.
                 per individual, unless params['MUTATION_EVENTS'] is specified
                 as a higher number.
 
-    Evaluation
-    ----------
+##Evaluation
+----------
 
         # TODO: Talk about fitness functions here. The fitness function is set through --fitness_function. New problem = new fitness function.
 
@@ -346,8 +344,8 @@ These steps are expanded on in detail hereafter.
             With this specified, PonyGE will run until the length of the
             cache reaches params['POPULATION_SIZE'] * params['GENERATIONS'].
 
-    Replacement
-    -----------
+##Replacement
+-----------
         - Generational
             Activate with "--replacement generational"
 
@@ -366,7 +364,7 @@ These steps are expanded on in detail hereafter.
             Activate with "--replacement steady_state"
 
 
-Writing grammars
+##Writing grammars
 ----------------
 
 Grammars are written in Backus-Naur form, aka BNF. See the examples in
@@ -393,7 +391,7 @@ the flag:
 Note that the full file extension (e.g. ".bnf") must be specified.
 
 
-A note on unit productions
+##A note on unit productions
 --------------------------
 
 Traditionally GE would not consume a codon for unit productions. This was a
@@ -419,7 +417,7 @@ useful information.
 
 #FIXME Need to finalise a suite of problems for PonyGE2
 ----------------
-Example Problems
+#Example Problems
 ----------------
 
 Three example problems are currently provided:
@@ -434,7 +432,7 @@ desired grammar for each individual problem as PonyGE does this automatically
 based on the given inputs.
 
 
-String-match
+##String-match
 ------------
 
 The grammar specifies words as lists of vowels and consonants. The aim
@@ -447,7 +445,7 @@ To use it, specify the following command-line arguments:
         e.g. --target_string golden, --target_string ponyge_rocks
 
 
-Regression
+##Regression
 ----------
 
 The grammar generates a symbolic function composed of standard mathematical
@@ -464,14 +462,14 @@ To use it, specify the following command-line arguments:
         e.g. --problem_suite Keijzer6, --problem_suite Vladislavleva4
 
 
-Classification
+C##lassification
 --------------
 
 #TODO Explain classification problem here
 
 
 -----------------
-Post-run Analysis
+#Post-run Analysis
 -----------------
 
 We don't provide any experiment managers other than the ability to save runs
@@ -480,7 +478,7 @@ number of functions available in utilities.save_plots which allow for plotting
 of run statistics.
 
 
-Post-run Analysis - Single Runs
+##Post-run Analysis - Single Runs
 -------------------------------
 
 By default, runs save a plot of best fitness (unless --debug is specified).
@@ -510,7 +508,7 @@ where:
     stat_name = a valid key from the stats.stats.stats dictionary.
 
 
-Post-run Analysis - Multiple Runs
+##Post-run Analysis - Multiple Runs
 ---------------------------------
 
 If multiple runs are saved in a folder using the --experiment_name handle, a
@@ -525,7 +523,7 @@ the command-line. To see a full list of these just run the following
 $ python stats/parse_stats.py --help
 
 ----------
-References
+#References
 ----------
 
 Michael O'Neill and Conor Ryan, "Grammatical Evolution: Evolutionary
