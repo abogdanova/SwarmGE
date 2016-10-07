@@ -29,7 +29,12 @@ params = {
         # "Vladislavleva4"
         
         # Set grammar file
-        'GRAMMAR_FILE': None,
+        'GRAMMAR_FILE': "Vladislavleva4.bnf",
+        # "Vladislavleva4.bnf"
+        # "Keijzer6.bnf"
+        # "Dow.bnf"
+        # "Banknote.bnf"
+        # "letter.bnf"
     
         # Select error metric
         'ERROR_METRIC': None,
