@@ -57,9 +57,9 @@ individuals. For a more verbose command line experience run the following:
     $ python ponyge.py --verbose
 
 Each line of the output corresponds to a generation in the evolution, and
-prints out all statistics on the current run (only if --verbose is specified).
-Upon completion of a run, the best individual is printed to the command line,
-along with summary statistics.
+prints out all statistics on the current run (only if `--verbose` is
+specified). Upon completion of a run, the best individual is printed to the
+command line, along with summary statistics.
 
 There are a number of flags that can be used for passing values via the
 command-line. To see a full list of these just run the following:
@@ -100,7 +100,7 @@ changed with the flag:
 
     --population_size [INT]
 
-where [INT] is an integer which specifies the population size. Higher
+where `[INT]` is an integer which specifies the population size. Higher
 population sizes can improve performance on difficult problems, but require
 more computational effort and may lead to premature convergence.
 
@@ -112,7 +112,7 @@ value is 50. This value can be changed with the flag:
 
     --generations [INT]
 
-where [INT] is an integer which specifies the number of generations. Higher
+where `[INT]` is an integer which specifies the number of generations. Higher
 numbers of generations can improve performance, but will lead to longer
 run-times.
 
@@ -181,7 +181,7 @@ flag:
 
     --tournament_size [INT]
 
-where [INT] is an integer which specifies the tournament size.
+where `[INT]` is an integer which specifies the tournament size.
 
 ###Truncation
 
@@ -194,7 +194,7 @@ with the flag:
 
     --selection_proportion [NUM]
 
-where [NUM] is a float between 0 and 1.
+where `[NUM]` is a float between 0 and 1.
 
 ##Variation
 ---------
@@ -205,7 +205,7 @@ probability of crossover occurring is set with the flag:
 
     "--crossover_probability [NUM]
 
-where [NUM] is a float between 0 and 1. The default value for crossover is
+where `[NUM]` is a float between 0 and 1. The default value for crossover is
 0.75.
 
 ####Onepoint
@@ -241,7 +241,7 @@ changed with the flag:
 
     --mutation_events [INT]
 
-where [INT] is an integer which specifies the number of mutation events per
+where `[INT]` is an integer which specifies the number of mutation events per
 individual. Note that for subtree mutation exactly this number of mutation
 events will occur, but for integer flip mutation this will only affect the
 probability of mutation events occurring.
@@ -257,7 +257,7 @@ changed with the flag:
 
     --mutation_probability [NUM]
 
-where [NUM] is a float between 0 and 1. This will change the mutation
+where `[NUM]` is a float between 0 and 1. This will change the mutation
 probability for each codon to the probability specified. Mutation is
 performed over the entire length of the genome by default, but the flag
 within_used is provided to limit mutation to only the effective length of
@@ -271,7 +271,7 @@ Activate with:
 
 Mutate the individual by replacing a randomly selected subtree with a new
 randomly generated subtree. Guaranteed one event per individual, unless
-params['MUTATION_EVENTS'] is specified as a higher number.
+`params['MUTATION_EVENTS']` is specified as a higher number.
 
 ##Evaluation
 ----------
@@ -289,8 +289,8 @@ can be controlled with the flag:
 
     --cores [INT]
 
-where [INT] is an integer which specifies the number of cores used for fitness
-evaluations. The default value is to use all available cores.
+where `[INT]` is an integer which specifies the number of cores used for
+fitness evaluations. The default value is to use all available cores.
 
 *__NOTE__ that multicore evaluations may not necessarily improve computational*
 *runtime for small problems as a certain overhead is necessary to run the*
@@ -303,16 +303,16 @@ evaluations. The default value is to use all available cores.
 *evaluation  may improve the run-time of a single evolutionary run.*
 
 *__NOTE__ also that when running batches of multiple experiments, it will*
-*always be faster to run multiple single-core experiments in parallel, rather*
-*than multiple multi-core experiments in series.*
+*__always__ be faster to run multiple single-core experiments in parallel,*
+*rather than multiple multi-core experiments in series.*
 
 ###Caching
 
 Caching is provided in PonyGE2 to save on fitness evaluations and to track the
 number of unique solutions encountered during an evolutionary run. Cached
-individuals have their fitness stored in a dictionary called utilities
-.trackers.cache. Dictionary keys are the string of the phenotype. Caching
-can be activated with the flag:
+individuals have their fitness stored in a dictionary called
+`utilities.trackers.cache`. Dictionary keys are the string of the phenotype.
+Caching can be activated with the flag:
 
     --cache
 
@@ -353,7 +353,7 @@ flag:
     --complete_evals
 
 With this specified, PonyGE will run until the length of the cache reaches
-params['POPULATION_SIZE'] * params['GENERATIONS'].
+`params['POPULATION_SIZE']` * `params['GENERATIONS']`.
 
 ##Replacement
 -----------
@@ -369,7 +369,7 @@ percent of the population size. This value can be changed with the flag:
 
     --elite_size [INT]
 
-where [INT] is an integer which specifies the number of elites to be saved
+where `[INT]` is an integer which specifies the number of elites to be saved
 between generations. Elites are saved between generations regardless of
 whether or not they are better or worse than the new population.
 
@@ -385,7 +385,7 @@ Activate with:
 
 Grammars are written in Backus-Naur form, aka BNF. See the examples in
 src/grammars. Each rule is composed of a left-hand side (a single
-non-terminal), followed by the "goes-to" symbol ::=, followed by a list of
+non-terminal), followed by the "goes-to" symbol `::=`, followed by a list of
 productions separated by the "or" symbol |. Non-terminals are enclosed by
 angle brackets <>. For example:
 
