@@ -386,13 +386,13 @@ Activate with:
 Grammars are written in Backus-Naur form, aka BNF. See the examples in
 src/grammars. Each rule is composed of a left-hand side (a single
 non-terminal), followed by the "goes-to" symbol `::=`, followed by a list of
-productions separated by the "or" symbol |. Non-terminals are enclosed by
-angle brackets <>. For example:
+productions separated by the "or" symbol `|`. Non-terminals are enclosed by
+angle brackets `<>`. For example:
 
     <a> ::= <b>c | d
 
 You can use an "or" symbol or angle bracket in a production. Escape it
-using a backslash: \\\|, \\\<, \\\>. You can use the "goes-to" symbol in a
+using a backslash: `\|, \<, \>`. You can use the "goes-to" symbol in a
 production without escaping it.
 
 Along with the fitness function, grammars are one of the most problem-specific
@@ -404,7 +404,9 @@ the flag:
 
     --bnf_grammar [FILE_NAME.bnf]
 
-Note that the full file extension (e.g. ".bnf") must be specified.
+*__NOTE__ that the full file extension (e.g. ".bnf") must be specified.*
+
+*__NOTE__ that the full file path __does not__ need to be specified.*
 
 
 ##A note on unit productions
@@ -459,7 +461,7 @@ To use it, specify the following command-line arguments:
     --fitness_function string_match
     --target_string [TYPE_TARGET_STRING]
 
-e.g. --target_string golden, --target_string ponyge_rocks
+e.g. `--target_string golden, --target_string ponyge_rocks`
 
 Alternatively, you can specify a direct parameters file with:
 
@@ -480,7 +482,7 @@ To use it, specify the following command-line arguments:
     --fitness_function regression
     --dataset [PROBLEM_SUITE]
 
-e.g. --dataset Keijzer6, --dataset Vladislavleva4
+e.g. `--dataset Keijzer6, --dataset Vladislavleva4`
 
 Alternatively, you can specify a direct parameters file with:
 
@@ -502,7 +504,7 @@ To use it, specify the following command-line arguments:
     --fitness_function classification
     --dataset [PROBLEM_SUITE]
 
-e.g. --dataset Banknote
+e.g. `--dataset Banknote`
 
 Alternatively, you can specify a direct parameters file with:
 
@@ -531,14 +533,13 @@ Fitness functions can be specified from the command line with the flag:
 
     --fitness_function [FIT_FUNC_NAME]
 
-where [FIT_FUNC_NAME] is the name of the fitness function class.
+where `[FIT_FUNC_NAME]` is the name of the fitness function class.
 
-*__NOTE__ that fitness functions __must__ be a class with the same name as
-the*
-*file containing the class, e.g. fitness.regression.regression.*
+*__NOTE__ that fitness functions __must__ be a class with the same name as the*
+*file containing the class, e.g. `fitness.regression.regression`.*
 
 *__NOTE__ that any regression-style problems that include training and test*
-*data __require__ a __self.training_test = True__ attribute in the init*
+*data __require__ a `self.training_test = True` attribute in the init*
 *function for your fitness function class in order for PonyGE to generate*
 *training and test fitnesses for your solutions.*
 
@@ -548,7 +549,7 @@ Grammar files can be specified from the command line with the flag:
 
     --bnf_grammar [GRAMMAR_FILE]
 
-where [GRAMMAR_FILE] is the name of the grammar file.
+where `[GRAMMAR_FILE]` is the name of the grammar file.
 
 *__NOTE__ that when specifying the grammar file you __must__ specify the full*
 *file extension, e.g. "Keijzer6.bnf".*
@@ -562,7 +563,7 @@ Datasets can be specified from the command line with the flag:
 
     --dataset [DATASET]
 
-where [DATASET] is the name of the dataset.
+where `[DATASET]` is the name of the dataset.
 
 *__NOTE__ that when specifying the dataset you __do not__ need to specify the*
 *file path or the file extension.*
@@ -575,7 +576,7 @@ only one flag needs to be passed in:
 
     --parameters [PARAMETERS_FILE]
 
-where [PARAMETERS_FILE] is the name of the desired parameters file.
+where `[PARAMETERS_FILE]` is the name of the desired parameters file.
 
 *__NOTE__ that when specifying the parameters file you __must__ specify the*
 *full file extension, e.g. "classification.txt".*
@@ -587,25 +588,25 @@ where [PARAMETERS_FILE] is the name of the desired parameters file.
 
 Finally, to add in the new problem you may need to edit one or two functions:
 
-1. fitness.fitness_wheel.set_fitness_params, and/or
-2. representation.individual.Individual.evaluate
+1. `fitness.fitness_wheel.set_fitness_params`, and/or
+2. `representation.individual.Individual.evaluate`
 
 These functions are the only two remaining "if/else" catch functions in PonyGE.
 Essentially:
 
-1. set_fitness_params is where you specify the inputs needed for initialising
+1. `set_fitness_params` is where you specify the inputs needed for initialising
 your fitness function, and
-2. individual.evaluate is where you specify the inputs needed for evaluation.
+2. `individual.evaluate` is where you specify the inputs needed for evaluation.
 
-*__NOTE__ that it may not be necessary to edit individual.evaluate if you only*
-*pass in the phenotype to be evaluated.*
+*__NOTE__ that it may not be necessary to edit `individual.evaluate` if you*
+*only pass in the phenotype to be evaluated.*
 
 
 #Post-run Analysis
 -----------------
 
 We don't provide any experiment managers other than the ability to save runs
-to specific folders using the --experiment_name handle. However, there are a
+to specific folders using the `--experiment_name` handle. However, there are a
 number of functions available in utilities.save_plots which allow for plotting
 of run statistics.
 
@@ -613,8 +614,8 @@ of run statistics.
 ##Post-run Analysis - Single Runs
 -------------------------------
 
-By default, runs save a plot of best fitness (unless --debug is specified).
-Additionally, users can save plots from pre-existing stats.tsv files (i.e.
+By default, runs save a plot of best fitness (unless `--debug` is specified).
+Additionally, users can save plots from pre-existing `stats.tsv` files (i.e.
 stats files generated upon completion of a run) using:
 
     utilities.save_plot.save_plot_from_file(file_name, stat_name)
@@ -643,7 +644,7 @@ where:
 ##Post-run Analysis - Multiple Runs
 ---------------------------------
 
-If multiple runs are saved in a folder using the --experiment_name handle, a
+If multiple runs are saved in a folder using the `--experiment_name` handle, a
 file is given for generating plots of the average stat values across these
 multiple runs, as given by:
 
