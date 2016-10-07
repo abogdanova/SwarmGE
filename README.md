@@ -280,20 +280,20 @@ where [INT] is an integer which specifies the number of cores used
 for fitness evaluations. The default value is to use all
 available cores.
 
-*NOTE that multicore evaluations may not necessarily improve
-computational runtime for small problems as a certain overhead is
-necessary to run the multicore evaluation process.*
+*__NOTE__ that multicore evaluations may not necessarily improve*
+*computational runtime for small problems as a certain overhead is*
+*necessary to run the multicore evaluation process.*
 
-*NOTE also that for smaller problems fitness evaluations may not
-necessarily present a bottleneck in terms of computational
-run-time. It is advised to use a python profiler to ascertain
-whether or not fitness evaluations present such a bottleneck. If
-this is the case, multicore evaluation  may improve the run-time
-of a single evolutionary run.*
+*__NOTE__ also that for smaller problems fitness evaluations may not*
+*necessarily present a bottleneck in terms of computational*
+*run-time. It is advised to use a python profiler to ascertain*
+*whether or not fitness evaluations present such a bottleneck. If*
+*this is the case, multicore evaluation  may improve the run-time*
+*of a single evolutionary run.*
 
-*NOTE also that when running batches of multiple experiments, it
-will always be faster to run multiple single-core experiments in
-parallel, rather than multiple multi-core experiments in series.*
+*__NOTE__ also that when running batches of multiple experiments, it*
+*will always be faster to run multiple single-core experiments in*
+*parallel, rather than multiple multi-core experiments in series.*
 
 ###Caching
 Caching is provided in PonyGE2 to save on fitness evaluations
