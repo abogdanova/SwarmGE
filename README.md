@@ -425,7 +425,6 @@ useful information.
 ----------------
 
 ######FIXME Need to finalise a suite of problems for PonyGE2
-######TODO: Talk about fitness functions here. The fitness function is set through --fitness_function. New problem = new fitness function.
 
 Three example problems are currently provided:
 
