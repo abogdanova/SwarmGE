@@ -269,31 +269,31 @@ Evaluation of a population of individuals can be done in series
 (single core evaluation) or in parallel (multi core evaluation).
 Multicore evaluation can be activated with the flag:
 
-"--multicore"
+    --multicore
 
 Additionally, the number of processor cores used for multicore
 evaluation can be controlled with the flag:
 
-"--cores [INT]"
+    --cores [INT]
 
 where [INT] is an integer which specifies the number of cores used
 for fitness evaluations. The default value is to use all
 available cores.
 
-NOTE that multicore evaluations may not necessarily improve
+*NOTE that multicore evaluations may not necessarily improve
 computational runtime for small problems as a certain overhead is
-necessary to run the multicore evaluation process.
+necessary to run the multicore evaluation process.*
 
-NOTE also that for smaller problems fitness evaluations may not
+*NOTE also that for smaller problems fitness evaluations may not
 necessarily present a bottleneck in terms of computational
 run-time. It is advised to use a python profiler to ascertain
 whether or not fitness evaluations present such a bottleneck. If
 this is the case, multicore evaluation  may improve the run-time
- of a single evolutionary run.
+of a single evolutionary run.*
 
-NOTE also that when running batches of multiple experiments, it
+*NOTE also that when running batches of multiple experiments, it
 will always be faster to run multiple single-core experiments in
-parallel, rather than multiple multi-core experiments in series.
+parallel, rather than multiple multi-core experiments in series.*
 
 ###Caching
 Caching is provided in PonyGE2 to save on fitness evaluations
@@ -307,7 +307,7 @@ the flag:
 
 There are currently three options for use with the cache:
 
-####Fitness Lookup
+####1. Fitness Lookup
 This is the default case when caching is activated.
 Individuals which have already been evaluated have their
 previous fitness read directly from the cache, thus
@@ -316,13 +316,13 @@ de-activated with:
 
     --dont_lookup_fitness
 
-####Fitness Penalty
+####2. Fitness Penalty
 Individuals which have already been evaluated are given
 a default bad fitness. Activate with:
 
 --lookup_bad_fitness
 
-####Mutate Duplicates
+####3. Mutate Duplicates
 Individuals which have already been evaluated are
 mutated to produce new unique individuals which have not
 been encountered yet by the search process. Activate with:
@@ -420,10 +420,10 @@ in line with nature) that through evolution of the grammar may then express
 useful information.
 
 
-######FIXME Need to finalise a suite of problems for PonyGE2
-
 #Example Problems
 ----------------
+
+######FIXME Need to finalise a suite of problems for PonyGE2
 
 Three example problems are currently provided:
 
