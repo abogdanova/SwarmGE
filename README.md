@@ -344,7 +344,8 @@ cache reaches params['POPULATION_SIZE'] * params['GENERATIONS'].
 
 ##Replacement
 -----------
-1. Generational
+###Generational
+
 Activate with "--replacement generational"
 
 Elites can be saved between generations. The default number of
@@ -358,7 +359,8 @@ to be saved between generations. Elites are saved between
 generations regardless of whether or not they are better or worse
 than the new population.
 
-2. Steady State
+###Steady State
+
 Activate with "--replacement steady_state"
 
 
@@ -371,7 +373,7 @@ non-terminal), followed by the "goes-to" symbol ::=, followed by a
 list of productions separated by the "or" symbol |. Non-terminals are
 enclosed by angle brackets <>. For example:
 
-\<a\> ::= \<b\>c | d
+    \<a\> ::= \<b\>c | d
 
 You can use an "or" symbol or angle bracket in a production. Escape it
 using a backslash: \\\|, \\\<, \\\>. You can use the "goes-to" symbol in a
@@ -384,13 +386,13 @@ affected by the quality of the grammar used.
 All grammars are stored in the src/grammars folder. Grammars can be set with
 the flag:
 
-"--bnf_grammar [FILE_NAME.bnf]"
+    "--bnf_grammar [FILE_NAME.bnf]"
 
 Note that the full file extension (e.g. ".bnf") must be specified.
 
 
 ##A note on unit productions
---------------------------
+----------------------------
 
 Traditionally GE would not consume a codon for unit productions. This was a
 design decision taken by O'Neill et al. In PonyGE2 unit productions consume
@@ -413,16 +415,16 @@ in line with nature) that through evolution of the grammar may then express
 useful information.
 
 
-#FIXME Need to finalise a suite of problems for PonyGE2
-----------------
+######FIXME Need to finalise a suite of problems for PonyGE2
+
 #Example Problems
 ----------------
 
 Three example problems are currently provided:
 
-    - String-match
-    - Regression
-    - Classification
+1. String-match
+2. Regression
+3. Classification
 
 A brief description is given below of each problem, along with the command-line
 arguments necessary to call each problem. It is not necessary to specify the
@@ -440,7 +442,8 @@ To use it, specify the following command-line arguments:
 
     "--problem string_match"
     "--target_string [TYPE_TARGET_STRING]"
-        e.g. --target_string golden, --target_string ponyge_rocks
+
+e.g. --target_string golden, --target_string ponyge_rocks
 
 
 ##Regression
@@ -457,7 +460,8 @@ To use it, specify the following command-line arguments:
 
     "--problem regression"
     "--problem_suite [PROBLEM_SUITE]"
-        e.g. --problem_suite Keijzer6, --problem_suite Vladislavleva4
+
+e.g. --problem_suite Keijzer6, --problem_suite Vladislavleva4
 
 
 C##lassification
@@ -466,7 +470,6 @@ C##lassification
 #TODO Explain classification problem here
 
 
------------------
 #Post-run Analysis
 -----------------
 
@@ -520,7 +523,7 @@ the command-line. To see a full list of these just run the following
 
 $ python stats/parse_stats.py --help
 
-----------
+
 #References
 ----------
 
