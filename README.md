@@ -522,7 +522,7 @@ Fitness functions can be specified from the command line with the flag:
 
 where [FIT_FUNC_NAME] is the name of the fitness function class.
 
-*__NOTE__ that fitness functions must be a class with the same name as the*
+*__NOTE__ that fitness functions **must** be a class with the same name as the*
 *file containing the class, e.g. fitness.regression.regression.*
 
 *__NOTE__ that any regression-style problems that include training and test*
@@ -536,10 +536,10 @@ Grammar files can be specified from the command line with the flag:
 
 where [GRAMMAR_FILE] is the name of the grammar file.
 
-*__NOTE__ that when specifying the grammar file you must specify the full*
+*__NOTE__ that when specifying the grammar file you **must** specify the full*
 *file extension, e.g. "Keijzer6.bnf".*
 
-*__NOTE__ that you do not need to specify the file path, e.g.*
+*__NOTE__ that you **do not need** to specify the file path, e.g.*
 *"grammars/Keijzer6.bnf."*
 
 Datasets can be specified from the command line with the flag:
@@ -548,7 +548,7 @@ Datasets can be specified from the command line with the flag:
 
 where [DATASET] is the name of the dataset.
 
-*__NOTE__ that when specifying the dataset you _do not_ need to specify the*
+*__NOTE__ that when specifying the dataset you **do not** need to specify the*
 *file path or the file extension.*
 
 Finally, to add in the new problem you may need to edit one or two functions:
