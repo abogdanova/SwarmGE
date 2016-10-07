@@ -527,7 +527,7 @@ the*
 *file containing the class, e.g. fitness.regression.regression.*
 
 *__NOTE__ that any regression-style problems that include training and test*
-*data will require a **self.training_test = True** attribute in the init*
+*data __require__ a **self.training_test = True** attribute in the init*
 *function for your fitness function class in order for PonyGE to generate*
 *training and test fitnesses for your solutions.*
 
