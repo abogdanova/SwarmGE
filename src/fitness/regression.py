@@ -28,6 +28,7 @@ class regression:
         self.n_vars = np.shape(self.test_in)[1]
         if params['ERROR_METRIC'] == None:
             self.error = mse
+            params['ERROR_METRIC'] = self.error
         else:
             self.error = params['ERROR_METRIC']
         self.training_test = True

@@ -12,7 +12,7 @@ check_python_version()
 
 from parameters.parameters import params, set_params
 from stats.stats import get_stats, stats
-from algorithm import search_loop
+from algorithm.search_loop import search_loop_wheel
 import sys
 
 
@@ -20,7 +20,7 @@ def mane():
     """ Run program """
     
     # Run evolution
-    individuals = search_loop.search_loop_wheel()
+    individuals = search_loop_wheel()
     
     # Print final review
     get_stats(individuals, end=True)

@@ -28,10 +28,10 @@ def evaluate_fitness(individuals):
     :return: A population of fully evaluated individuals.
     """
 
+    results, pool = [], None
     if params['MULTICORE']:
         # Initialise a pool of jobs for multicore process workers.
         pool = Pool(processes=params['CORES'])  # , maxtasksperchild=1)
-        results = []
 
     for ind in individuals:
         # Iterate over all individuals in the population.
@@ -43,61 +43,28 @@ def evaluate_fitness(individuals):
         
         else:
             # Valid individuals can be evaluated.
-            if params['CACHE']:
-                # Use the fitness cache in utilities.trackers.cache.
-                if ind.phenotype not in cache:
-                    # The phenotype string of the individual does not appear
-                    # in the cache, it must be evaluated and added to the
+            if params['CACHE'] and ind.phenotype in cache:
+                # The individual has been encountered before in
+                # the utilities.trackers.cache.
+
+                if params['LOOKUP_FITNESS']:
+                    # Set the fitness as the previous fitness from the
                     # cache.
-                    if params['MULTICORE']:
-                        # Add the individual to the pool of jobs.
-                        results.append(pool.apply_async(ind.evaluate, ()))
-                    else:
-                        ind.evaluate()
-                        cache[ind.phenotype] = ind.fitness
-                
-                else:
-                    # The phenotype string of the individual has already
-                    # appeared in the cache.
-                    if params['LOOKUP_FITNESS']:
-                        # Set the fitness as the previous fitness from the
-                        # cache.
-                        ind.fitness = cache[ind.phenotype]
+                    ind.fitness = cache[ind.phenotype]
 
-                    elif params['LOOKUP_BAD_FITNESS']:
-                        # Give the individual a bad default fitness.
-                        ind.fitness = default_fitness(
-                            params['FITNESS_FUNCTION'].maximise)
+                elif params['LOOKUP_BAD_FITNESS']:
+                    # Give the individual a bad default fitness.
+                    ind.fitness = default_fitness(
+                        params['FITNESS_FUNCTION'].maximise)
 
-                    elif params['MUTATE_DUPLICATES']:
-                        # Mutate the individual to produce a new phenotype
-                        # which has not been encountered yet.
-                        while ind.phenotype in cache:
-                            ind = params['MUTATION'](ind)
-                            stats['regens'] += 1
+                elif params['MUTATE_DUPLICATES']:
+                    # Mutate the individual to produce a new phenotype
+                    # which has not been encountered yet.
+                    while ind.phenotype in cache:
+                        ind = params['MUTATION'](ind)
+                        stats['regens'] += 1
 
-                        if params['MULTICORE']:
-                            # Add the individual to the pool of jobs.
-                            results.append(pool.apply_async(ind.evaluate, ()))
-                        else:
-                            # Evaluate the new individual and add it to the cache.
-                            ind.evaluate()
-                            cache[ind.phenotype] = ind.fitness
-                    
-                    else:
-                        if params['MULTICORE']:
-                            # Add the individual to the pool of jobs.
-                            results.append(pool.apply_async(ind.evaluate, ()))
-                        else:
-                            # Evaluate the individual.
-                            ind.evaluate()
-            else:
-                if params['MULTICORE']:
-                    # Add the individual to the pool of jobs.
-                    results.append(pool.apply_async(ind.evaluate, ()))
-                else:
-                    # Evaluate the individual.
-                    ind.evaluate()
+            results = eval_or_append(ind, results, pool)
 
     if params['MULTICORE']:
         for result in results:
@@ -112,3 +79,32 @@ def evaluate_fitness(individuals):
             cache[ind.phenotype] = ind.fitness
 
     return individuals
+
+
+def eval_or_append(ind, results, pool):
+    """
+    Evaluates an individual if sequential evaluation is being used. If
+    multi-core parallel evaluation is being used, adds the individual to the
+    pool to be evaluated.
+    
+    :param ind: An individual to be evaluated.
+    :param results: A list of individuals to be evaluated by the multicore
+    pool of workers.
+    :param pool: A pool of workers for multicore evaluation.
+    :return: The evaluated individual or the list of individuals to be
+    evaluated.
+    """
+
+    if params['MULTICORE']:
+        # Add the individual to the pool of jobs.
+        results.append(pool.apply_async(ind.evaluate, ()))
+        return results
+    else:
+        # Evaluate the individual.
+        ind.evaluate()
+        
+        if params['CACHE']:
+            # The phenotype string of the individual does not appear
+            # in the cache, it must be evaluated and added to the
+            # cache.
+            cache[ind.phenotype] = ind.fitness

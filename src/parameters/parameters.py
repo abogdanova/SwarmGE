@@ -169,11 +169,6 @@ def load_params(file_name):
             except:
                 # We can't evaluate, leave value as a string.
                 pass
-            
-            # Need to check to ensure we don't overwrite file paths and time
-            # stamps
-            if key not in ["TIME_STAMP", "FILE_PATH"]:
-                params[key] = value
 
 
 def check_int(param, arg):
@@ -401,13 +396,13 @@ def set_params(command_line_args):
 
     # Set grammar file and fitness parameters.
     set_fitness_params()
+
+    # Set correct param imports for specified function options, including
+    # error metrics and fitness functions.
+    set_param_imports()
     
     # Initialise run lists and folders
     initialise_run_params()
     
     # Parse grammar file and set grammar class.
     params['BNF_GRAMMAR'] = grammar.Grammar(params['GRAMMAR_FILE'])
-    
-    # Set correct param imports for specified function options, including
-    # error metrics and fitness functions.
-    set_param_imports()

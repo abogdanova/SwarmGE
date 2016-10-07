@@ -119,10 +119,7 @@ def generate_ind_tree(max_depth, method):
 
     # Generate a tree
     genome, output, nodes, _, depth = generate_tree(ind_tree, [], [], method,
-                                                    0, 0, 0,
-                                            max_depth - 1)
-
-
+                                                    0, 0, 0, max_depth - 1)
 
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)

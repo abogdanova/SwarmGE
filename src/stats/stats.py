@@ -3,6 +3,7 @@ from copy import copy
 from datetime import timedelta
 from os import path, mkdir, getcwd
 from sys import stdout
+import types
 
 from parameters.parameters import params
 from utilities import trackers
@@ -89,6 +90,7 @@ def get_stats(individuals, end=False):
     if params['SAVE_PLOTS'] and not params['DEBUG']:
         if not end:
             trackers.best_fitness_list.append(stats['best_ever'].fitness)
+       
         if params['VERBOSE'] or end:
             save_best_fitness_plot()
 
@@ -96,6 +98,7 @@ def get_stats(individuals, end=False):
     if params['VERBOSE']:
         if not end:
             print_stats()
+    
     elif not params['SILENT']:
         perc = stats['gen'] / (params['GENERATIONS']+1) * 100
         stdout.write("Evolution: %d%% complete\r" % perc)
@@ -214,19 +217,36 @@ def save_final_stats():
 
 def save_params():
     """
-    Save evolutionary parameters
+    Save evolutionary parameters in a parameters.txt file. Automatically
+    parse function and class names.
+    
     :return: Nothing
     """
 
+    # Generate file path and name.
     filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
                "/parameters.txt"
     savefile = open(filename, 'w')
 
+    # Justify whitespaces for pretty printing/saving.
     col_width = max(len(param) for param in params.keys())
+    
     for param in sorted(params.keys()):
         savefile.write(str(param) + ": ")
         spaces = [" " for _ in range(col_width - len(param))]
-        savefile.write("".join(spaces) + str(params[param]) + "\n")
+        
+        if isinstance(params[param], types.FunctionType):
+            # Object is a function, save function name.
+            savefile.write("".join(spaces) + str(params[
+                                                     param].__name__) + "\n")
+        elif hasattr(params[param], '__call__'):
+            # Object is a class instance, save name of class instance.
+            savefile.write("".join(spaces) + str(params[
+                                                     param].__class__.__name__) + "\n")
+        else:
+            # Write object as normal.
+            savefile.write("".join(spaces) + str(params[param]) + "\n")
+
     savefile.close()
 
 
