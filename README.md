@@ -73,14 +73,24 @@ command-line. To see a full list of these just run the following:
 
 A full breakdown of the currently implemented elements in PonyGE2 is provided
 below. This includes a brief description of each individual component and how
-to activate them. PonyGE2 automatically parses the correct path for all
-operators, meaning you don't have to specify the full direct path but only
-the name of the desired operator, e.g. "--crossover subtree" instead of
-"--crossover operators.crossover.subtree". However, it is still possible to
-specify the full correct path if you so desire. Specifying the full direct path
-allows you to create new operators and place them wherever you like.
+to activate them.
 
-##Evolutionary Parameters:
+#Evolutionary Parameters:
+------------------------
+
+PonyGE2 automatically parses the correct path for all operators, meaning you
+don't have to specify the full direct path but only the name of the desired
+operator, e.g.
+
+    --crossover subtree
+
+instead of
+
+    --crossover operators.crossover.subtree
+
+However, it is still possible to specify the full correct path if you so
+desire. Specifying the full direct path allows you to create new operators
+and place them wherever you like.
 
 ##Population Size
 ---------------
