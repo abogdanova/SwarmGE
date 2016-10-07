@@ -264,7 +264,7 @@ These steps are expanded on in detail hereafter.
     Evaluation
     ----------
 
-        # TODO: Talk about fitness functions here. The fitness function is set through --problem; i.e. the fitness function must have the same name as the problem at hand. New problem = new fitness function. Fitness functions are set automatically based on the problem name.
+        # TODO: Talk about fitness functions here. The fitness function is set through --fitness_function. New problem = new fitness function.
 
         - Multicore evaluation
             Evaluation of a population of individuals can be done in series
@@ -382,6 +382,13 @@ production without escaping it.
 Along with the fitness function, grammars are one of the most problem-specific
 components of the PonyGE2 algorithm. The performance of PonyGE2 can be vastly
 affected by the quality of the grammar used.
+
+All grammars are stored in the src/grammars folder. Grammars can be set with
+the flag:
+
+"--bnf_grammar [FILE_NAME.bnf]"
+
+Note that the full file extension (e.g. ".bnf") must be specified.
 
 
 A note on unit productions
