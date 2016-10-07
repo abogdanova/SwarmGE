@@ -303,30 +303,31 @@ in a dictionary called utilities.trackers.cache. Dictionary keys
 are the string of the phenotype. Caching can be activated with
 the flag:
 
-"--cache"
+    --cache
 
 There are currently three options for use with the cache:
-    - Fitness Lookup
-        This is the default case when caching is activated.
-        Individuals which have already been evaluated have their
-        previous fitness read directly from the cache, thus
-        saving fitness evaluations. Fitness lookup can be
-        de-activated with:
 
-        "--dont_lookup_fitness"
+####Fitness Lookup
+This is the default case when caching is activated.
+Individuals which have already been evaluated have their
+previous fitness read directly from the cache, thus
+saving fitness evaluations. Fitness lookup can be
+de-activated with:
 
-    - Fitness Penalty
-        Individuals which have already been evaluated are given
-        a default bad fitness. Activate with:
+    --dont_lookup_fitness
 
-        "--lookup_bad_fitness"
+####Fitness Penalty
+Individuals which have already been evaluated are given
+a default bad fitness. Activate with:
 
-    - Mutate Duplicates
-        Individuals which have already been evaluated are
-        mutated to produce new unique individuals which have not
-        been encountered yet by the search process. Activate with:
+--lookup_bad_fitness
 
-        "--mutate_duplicates"
+####Mutate Duplicates
+Individuals which have already been evaluated are
+mutated to produce new unique individuals which have not
+been encountered yet by the search process. Activate with:
+
+    --mutate_duplicates
 
 Finally, it could be said that using a cache to lookup the
 fitness of duplicate individuals deprives the evolutionary
@@ -337,7 +338,7 @@ for a specified total number of fitness evaluations rather than
 for a specified number of total generations. This can be
 activated with the flag:
 
-"--complete_evals"
+    --complete_evals
 
 With this specified, PonyGE will run until the length of the
 cache reaches params['POPULATION_SIZE'] * params['GENERATIONS'].
@@ -346,13 +347,15 @@ cache reaches params['POPULATION_SIZE'] * params['GENERATIONS'].
 -----------
 ###Generational
 
-Activate with "--replacement generational"
+Activate with:
+
+    --replacement generational
 
 Elites can be saved between generations. The default number of
 elites is 1 percent of the population size. This value can be
 changed with the flag:
 
-"--elite_size [INT]"
+    --elite_size [INT]
 
 where [INT] is an integer which specifies the number of elites
 to be saved between generations. Elites are saved between
@@ -361,7 +364,9 @@ than the new population.
 
 ###Steady State
 
-Activate with "--replacement steady_state"
+Activate with:
+
+    --replacement steady_state
 
 
 ##Writing grammars
@@ -386,7 +391,7 @@ affected by the quality of the grammar used.
 All grammars are stored in the src/grammars folder. Grammars can be set with
 the flag:
 
-    "--bnf_grammar [FILE_NAME.bnf]"
+    --bnf_grammar [FILE_NAME.bnf]
 
 Note that the full file extension (e.g. ".bnf") must be specified.
 
@@ -440,8 +445,8 @@ is to match a target word.
 
 To use it, specify the following command-line arguments:
 
-    "--problem string_match"
-    "--target_string [TYPE_TARGET_STRING]"
+    --problem string_match
+    --target_string [TYPE_TARGET_STRING]
 
 e.g. --target_string golden, --target_string ponyge_rocks
 
@@ -458,16 +463,16 @@ This is the default problem for PonyGE.
 
 To use it, specify the following command-line arguments:
 
-    "--problem regression"
-    "--problem_suite [PROBLEM_SUITE]"
+    --problem regression
+    --problem_suite [PROBLEM_SUITE]
 
 e.g. --problem_suite Keijzer6, --problem_suite Vladislavleva4
 
 
-C##lassification
+##Classification
 --------------
 
-#TODO Explain classification problem here
+######TODO Explain classification problem here
 
 
 #Post-run Analysis
@@ -521,7 +526,7 @@ multiple runs, as given by:
 There are a number of flags that must be used for passing values via
 the command-line. To see a full list of these just run the following
 
-$ python stats/parse_stats.py --help
+    $ python stats/parse_stats.py --help
 
 
 #References
