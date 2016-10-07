@@ -266,8 +266,6 @@ params['MUTATION_EVENTS'] is specified as a higher number.
 ##Evaluation
 ----------
 
-######TODO: Talk about fitness functions here. The fitness function is set through --fitness_function. New problem = new fitness function.
-
 ###Multicore evaluation
 
 Evaluation of a population of individuals can be done in series (single core
@@ -427,6 +425,7 @@ useful information.
 ----------------
 
 ######FIXME Need to finalise a suite of problems for PonyGE2
+######TODO: Talk about fitness functions here. The fitness function is set through --fitness_function. New problem = new fitness function.
 
 Three example problems are currently provided:
 
@@ -499,6 +498,74 @@ e.g. --dataset Banknote
 Alternatively, you can specify a direct parameters file with:
 
     --parameters classification.txt
+
+
+#Adding New Problems
+--------------------
+
+It has been made as simple as possible to add problems to PonyGE. Everything
+is automated, and there are only two places where code may need to be edited in
+order to enable a new problem (apart from adding in the problem itself,
+obviously). The flipside of this is that it is possible to easily
+mis-configure PonyGE if you fail to specify everything correctly.
+_Note that this can be remedied somewhat with proper use of the new parameter_
+_config files._
+
+**To add in a new problem:**
+You simply need to write a **new fitness function** (if you don't want to use
+one already there) and add a **new grammar file**. You may also need to add a
+**new dataset** if you're using datasets.
+
+Fitness functions can be specified from the command line with the flag:
+
+    --fitness_function [FIT_FUNC_NAME]
+
+where [FIT_FUNC_NAME] is the name of the fitness function class.
+
+*__NOTE__ that fitness functions must be a class with the same name as the*
+*file containing the class, e.g. fitness.regression.regression.*
+
+*__NOTE__ that any regression-style problems that include training and test*
+*data will require a **self.training_test = True** attribute in the init*
+*function for your fitness function class in order for PonyGE to generate*
+*training and test fitnesses for your solutions.*
+
+Grammar files can be specified from the command line with the flag:
+
+    --bnf_grammar [GRAMMAR_FILE]
+
+where [GRAMMAR_FILE] is the name of the grammar file.
+
+*__NOTE__ that when specifying the grammar file you must specify the full*
+*file extension, e.g. "Keijzer6.bnf".*
+
+*__NOTE__ that you do not need to specify the file path, e.g.*
+*"grammars/Keijzer6.bnf."*
+
+Datasets can be specified from the command line with the flag:
+
+    --dataset [DATASET]
+
+where [DATASET] is the name of the dataset.
+
+*__NOTE__ that when specifying the dataset you _do not_ need to specify the*
+*file path or the file extension.*
+
+Finally, to add in the new problem you may need to edit one or two functions:
+
+1. fitness.fitness_wheel.set_fitness_params, and/or
+2. representation.individual.Individual.evaluate
+
+These functions are the only two remaining "if/else" catch functions in PonyGE.
+Essentially:
+
+1. set_fitness_params is where you specify the inputs needed for initialising
+your fitness function, and
+2. individual.evaluate is where you specify the inputs needed for evaluation.
+
+*__NOTE__ that it may not be necessary to edit individual.evaluate if you only*
+*pass in the phenotype to be evaluated.*
+
 
 #Post-run Analysis
 -----------------
