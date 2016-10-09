@@ -515,9 +515,9 @@ Alternatively, you can specify a direct parameters file with:
 --------------------
 
 It has been made as simple as possible to add problems to PonyGE. Everything
-is automated, and there are only two places where code may need to be edited in
-order to enable a new problem (apart from adding in the problem itself,
-obviously). The flipside of this is that it is possible to easily
+is automated, and there is only one place where code __may__ need to be
+edited in order to enable a new problem (apart from adding in the problem
+itself, obviously). The flipside of this is that it is possible to easily
 mis-configure PonyGE if you fail to specify everything correctly.
 _Note that this can be remedied somewhat with proper use of the new parameter_
 _config files._
@@ -586,17 +586,10 @@ where `[PARAMETERS_FILE]` is the name of the desired parameters file.
 
 ##Editing Code to enable new problems
 
-Finally, to add in the new problem you may need to edit one or two functions:
-
-1. `fitness.fitness_wheel.set_fitness_params`, and/or
-2. `representation.individual.Individual.evaluate`
-
-These functions are the only two remaining "if/else" catch functions in PonyGE.
-Essentially:
-
-1. `set_fitness_params` is where you specify the inputs needed for initialising
-your fitness function, and
-2. `individual.evaluate` is where you specify the inputs needed for evaluation.
+Finally, depending on the problem itself you may need to edit
+`representation.individual.Individual.evaluate` to fully integrate the new
+problem to PonyGE. `individual.evaluate` is where PonyGE specifies the inputs
+needed for fitness evaluation.
 
 *__NOTE__ that it may not be necessary to edit `individual.evaluate` if you*
 *only pass in the phenotype to be evaluated.*

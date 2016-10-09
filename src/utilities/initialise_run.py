@@ -136,7 +136,7 @@ def set_param_imports():
                 # initialisation of the fitness function.
                 params['FITNESS_FUNCTION'] = eval(
                     params[
-                        'FITNESS_FUNCTION'] + "(params['FITNESS_FUNC_INPUT'])")
+                        'FITNESS_FUNCTION'] + "()")
             else:
                 # We need to do an appropriate import...
                 import_str = make_import_str([[op, params[op]] for op in

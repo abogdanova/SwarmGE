@@ -231,8 +231,7 @@ def set_params(command_line_args):
     :param command_line_args: Command line arguments specified by the user.
     :return: Nothing.
     """
-    
-    from fitness.fitness_wheel import set_fitness_params
+
     from utilities.initialise_run import initialise_run_params
     from utilities.initialise_run import set_param_imports
     from utilities.helper_methods import return_percent
@@ -404,9 +403,6 @@ def set_params(command_line_args):
         params['GENOME_OPERATIONS'] = True
     else:
         params['GENOME_OPERATIONS'] = False
-
-    # Set grammar file and fitness parameters.
-    set_fitness_params()
 
     # Set correct param imports for specified function options, including
     # error metrics and fitness functions.

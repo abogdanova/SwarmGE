@@ -1,3 +1,4 @@
+from parameters.parameters import params
 
 class string_match:
     """Fitness function for matching a string. Takes a string and returns
@@ -7,8 +8,8 @@ class string_match:
 
     maximise = False
 
-    def __init__(self, target):
-        self.target = target
+    def __init__(self):
+        self.target = params['STRING_MATCH_TARGET']
 
     def __call__(self, guess):
         fitness = max(len(self.target), len(guess))
