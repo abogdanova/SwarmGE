@@ -2,9 +2,9 @@
 #Introduction
 ------------
 
-Grammatical evolution (GE) is a population-based evolutionary algorithm, where
-a formal BNF-style grammar is used in the genotype to phenotype mapping
-process.
+Grammatical evolution (GE) is a population-based evolutionary algorithm,
+where a formal BNF-style grammar is used in the genotype to phenotype 
+mapping process.
 
 PonyGE2 is an implementation of GE in Python. It's intended as an advertisement
 and a starting-point for those new to GE, a reference for students and
@@ -444,10 +444,12 @@ Three example problems are currently provided:
 2. Regression
 3. Classification
 
-A brief description is given below of each problem, along with the command-line
-arguments necessary to call each problem. *__NOTE__ that it is necessary to*
-*specify the desired grammar for each problem. This can either be done with*
-*a unique parameters config file or by passing the command-line argument in.*
+A brief description is given below of each problem, along with the 
+command-line arguments necessary to call each problem.
+
+*__NOTE__ that it is necessary to specify the desired grammar for each* 
+*problem. This can either be done with a unique parameters config file*
+*or by passing the command-line argument in.*
 
 
 ##String-match
@@ -519,7 +521,8 @@ is automated, and there is only one place where code __may__ need to be
 edited in order to enable a new problem (apart from adding in the problem
 itself, obviously). The flipside of this is that it is possible to easily
 mis-configure PonyGE if you fail to specify everything correctly.
-_Note that this can be remedied somewhat with proper use of the new parameter_
+
+_**NOTE** that this can be remedied somewhat with proper use of the new parameter_
 _config files._
 
 **To add in a new problem:**
@@ -536,10 +539,10 @@ Fitness functions can be specified from the command line with the flag:
 where `[FIT_FUNC_NAME]` is the name of the fitness function class.
 
 *__NOTE__ that fitness functions __must__ be a class with the same name as the*
-*file containing the class, e.g. `fitness.regression.regression`.*
+*file containing the class, e.g.* `fitness.regression.regression`.
 
 *__NOTE__ that any regression-style problems that include training and test*
-*data __require__ a `self.training_test = True` attribute in the init*
+*data __require__ a* `self.training_test = True` *attribute in the init*
 *function for your fitness function class in order for PonyGE to generate*
 *training and test fitnesses for your solutions.*
 
