@@ -10,7 +10,8 @@ plt.rc('font', family='Times New Roman')
 
 def save_best_fitness_plot():
     """
-    Saves a plot of the current fitness
+    Saves a plot of the current fitness.
+    
     :return: Nothing
     """
     from parameters.parameters import params
@@ -29,6 +30,7 @@ def save_best_fitness_plot():
 def save_plot_from_data(data, name):
     """
     Saves a plot of a given set of data.
+    
     :param data: the data to be plotted
     :param name: the name of the data to be plotted.
     :return: Nothing.
@@ -48,6 +50,7 @@ def save_plot_from_data(data, name):
 def save_plot_from_file(filename, stat_name):
     """
     Saves a plot of a given stat from the stats file.
+    
     :param filename: a full specified path to a .csv stats file.
     :param stat_name: the stat of interest for plotting.
     :return: Nothing.

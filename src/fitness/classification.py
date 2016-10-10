@@ -1,13 +1,12 @@
 from math import isnan
-from os import listdir, getcwd
 from sys import maxsize
 
 import numpy as np
-from numpy import log, sqrt, abs
 
 from parameters.parameters import params
 from utilities.error_metric import inverse_f1_score
-from utilities.helper_methods import get_Xy_train_test_separate
+from utilities.math_functions import pdiv, psqrt, plog
+from utilities.get_data import get_data
 
 
 class classification:
@@ -64,38 +63,3 @@ class classification:
             fitness = maxsize
 
         return fitness
-
-
-def pdiv(a, b):
-    """The analytic quotient, intended as a "better protected division",
-    from: Ji Ni and Russ H. Drieberg and Peter I. Rockett, "The Use of
-    an Analytic Quotient Operator in Genetic Programming", IEEE
-    Transactions on Evolutionary Computation."""
-    return a / sqrt(1.0 + b * b)
-
-
-def psqrt(x):
-    """ Protected square root operator"""
-    return sqrt(abs(x))
-
-
-def plog(x):
-    """ Protected log operator"""
-    return log(1.0 + abs(x))
-
-
-def get_data(experiment):
-    """ Return the training and test data for the current experiment.
-    """
-
-    file_type = "txt"
-    datasets = listdir(getcwd() + "/datasets/")
-    for dataset in datasets:
-        exp = dataset.split('.')[0].split('-')[0]
-        if exp == experiment:
-            file_type = dataset.split('.')[1]
-    train_set = "datasets/" + experiment + "-Train." + str(file_type)
-    test_set = "datasets/" + experiment + "-Test." + str(file_type)
-    training_in, training_out, test_in, \
-    test_out = get_Xy_train_test_separate(train_set, test_set, skip_header=1)
-    return training_in, training_out, test_in, test_out

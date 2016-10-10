@@ -234,7 +234,7 @@ def set_params(command_line_args):
 
     from utilities.initialise_run import initialise_run_params
     from utilities.initialise_run import set_param_imports
-    from utilities.helper_methods import return_percent
+    from utilities.math_functions import return_percent
     from utilities.help_message import help_message
     from representation import grammar
     import getopt
