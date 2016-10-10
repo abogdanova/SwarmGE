@@ -5,6 +5,8 @@ from parameters.parameters import params
 from representation import individual
 from representation.tree import Tree, generate_tree
 
+from utilities.check_methods import check_ind
+
 
 def random_init(size):
     """

@@ -55,6 +55,7 @@ class classification:
             # let's always call the error function with the true values first,
             # the estimate second
             fitness = self.error(y, yhat)
+        
         except:
             fitness = maxsize
 
