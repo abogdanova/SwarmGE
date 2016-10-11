@@ -392,7 +392,7 @@ def set_params(command_line_args):
 
     # Set random seed
     if params['RANDOM_SEED'] is None:
-        params['RANDOM_SEED'] = int(time.clock()*1000000)
+        params['RANDOM_SEED'] = int(time.clock() * 10000000000)
     seed(params['RANDOM_SEED'])
 
     # Set GENOME_OPERATIONS automatically for faster linear operations.
