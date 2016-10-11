@@ -1,7 +1,8 @@
 from multiprocessing import cpu_count
 from socket import gethostname
 from random import seed
-import time
+from datetime import datetime
+
 
 hostname = gethostname().split('.')
 machine_name = hostname[0]
@@ -392,7 +393,7 @@ def set_params(command_line_args):
 
     # Set random seed
     if params['RANDOM_SEED'] is None:
-        params['RANDOM_SEED'] = int(time.clock() * 10000000000)
+        params['RANDOM_SEED'] = int(datetime.now().microsecond)
     seed(params['RANDOM_SEED'])
 
     # Set GENOME_OPERATIONS automatically for faster linear operations.
