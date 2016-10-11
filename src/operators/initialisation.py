@@ -1,11 +1,10 @@
 from math import floor
 from random import shuffle, randint
 
-from parameters.parameters import params
+from algorithm.parameters import params
 from representation import individual
 from representation.tree import Tree, generate_tree
-
-from utilities.check_methods import check_ind
+from utilities.representation.python_filter import python_filter
 
 
 def random_init(size):
@@ -125,6 +124,11 @@ def generate_ind_tree(max_depth, method):
 
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
+
+    if params['BNF_GRAMMAR'].python_mode:
+        # Grammar contains python code
+
+        phenotype = python_filter(phenotype)
 
     # Initialise individual
     ind = individual.Individual(genome, ind_tree, map_ind=False)

@@ -6,13 +6,12 @@
 # Hereby licensed under the GNU GPL v3.
 """ Python GE implementation """
 
-from utilities.initialise_run import check_python_version
+from utilities.algorithm.initialise_run import check_python_version
 
 check_python_version()
 
-from parameters.parameters import params, set_params
+from algorithm.parameters import params, set_params
 from stats.stats import get_stats, stats
-from algorithm.search_loop import search_loop_wheel
 import sys
 
 
@@ -20,7 +19,7 @@ def mane():
     """ Run program """
     
     # Run evolution
-    individuals = search_loop_wheel()
+    individuals = params['SEARCH_LOOP']()
     
     # Print final review
     get_stats(individuals, end=True)

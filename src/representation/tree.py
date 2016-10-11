@@ -1,6 +1,6 @@
 from random import choice, randrange
 
-from parameters.parameters import params
+from algorithm.parameters import params
 
 
 class Tree:

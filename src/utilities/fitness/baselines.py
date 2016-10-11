@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-from utilities.error_metric import mae, rmse, mse
-from utilities.get_data import get_Xy_train_test, get_Xy_train_test_separate
 import sys
+
 import numpy as np
 from sklearn.linear_model import LinearRegression, ElasticNet
+
+from utilities.fitness.error_metric import rmse
+from utilities.fitness.get_data import get_Xy_train_test, get_Xy_train_test_separate
 
 
 def fit_const(train_X, train_y, test_X, test_y):

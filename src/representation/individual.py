@@ -1,6 +1,6 @@
 from algorithm.mapper import mapper
+from algorithm.parameters import params
 from fitness.default_fitness import default_fitness
-from parameters.parameters import params
 
 
 class Individual(object):
@@ -85,29 +85,19 @@ class Individual(object):
         
         return new_ind
 
-    def evaluate(self, dist="training"):
+    def evaluate(self):
         """
         Evaluates phenotype in using the fitness function set in the params
         dictionary. For regression/classification problems, allows for
         evaluation on either training or test distributions. Sets fitness
         value.
-        
-        :param dist: An optional parameter for problems with training/test
-        data. Specifies the distribution (i.e. training or test) upon which
-        evaluation is to be performed.
+
         :return: Nothing unless multicore evaluation is being used. In that
         case, returns self.
         """
 
-        if hasattr(params['FITNESS_FUNCTION'], "training_test"):
-            # The problem has training and test data. These fitness functions
-            # need an extra input parameter specifying the distribution upon
-            # which to be evaluated.
-            self.fitness = params['FITNESS_FUNCTION'](self.phenotype, dist)
-
-        else:
-            # Evaluate fitness using specified fitness function.
-            self.fitness = params['FITNESS_FUNCTION'](self.phenotype)
+        # Evaluate fitness using specified fitness function.
+        self.fitness = params['FITNESS_FUNCTION'](self.phenotype)
 
         if params['MULTICORE']:
             return self

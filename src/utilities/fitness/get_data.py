@@ -40,13 +40,13 @@ def get_data(experiment):
     """
 
     file_type = "txt"
-    datasets = listdir(getcwd() + "/datasets/")
+    datasets = listdir(getcwd() + "/../datasets/")
     for dataset in datasets:
         exp = dataset.split('.')[0].split('-')[0]
         if exp == experiment:
             file_type = dataset.split('.')[1]
-    train_set = "datasets/" + experiment + "-Train." + str(file_type)
-    test_set = "datasets/" + experiment + "-Test." + str(file_type)
+    train_set = "../datasets/" + experiment + "-Train." + str(file_type)
+    test_set = "../datasets/" + experiment + "-Test." + str(file_type)
     training_in, training_out, test_in, \
     test_out = get_Xy_train_test_separate(train_set, test_set, skip_header=1)
     return training_in, training_out, test_in, test_out

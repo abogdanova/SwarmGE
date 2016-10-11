@@ -3,10 +3,9 @@ from sys import maxsize
 
 import numpy as np
 
-from parameters.parameters import params
-from utilities.error_metric import inverse_f1_score
-from utilities.math_functions import pdiv, psqrt, plog
-from utilities.get_data import get_data
+from algorithm.parameters import params
+from utilities.fitness.error_metric import inverse_f1_score
+from utilities.fitness.get_data import get_data
 
 
 class classification:
@@ -32,9 +31,17 @@ class classification:
             self.error = params['ERROR_METRIC']
         self.training_test = True
 
-    def __call__(self, func, dist):
-        # We can call regression objects,
-        # ie r = regression(exp); r(f, "training").
+    def __call__(self, func, dist="training"):
+        """
+        We can call regression objects,
+        ie r = regression(exp); r(f, "training").
+
+        :param func:
+        :param dist: An optional parameter for problems with training/test
+        data. Specifies the distribution (i.e. training or test) upon which
+        evaluation is to be performed.
+        :return:
+        """
 
         if dist == "test":
             x = self.test_in
@@ -55,7 +62,7 @@ class classification:
             # let's always call the error function with the true values first,
             # the estimate second
             fitness = self.error(y, yhat)
-        
+
         except:
             fitness = maxsize
 

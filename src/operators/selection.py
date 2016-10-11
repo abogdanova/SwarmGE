@@ -1,6 +1,6 @@
 from random import sample
 
-from parameters.parameters import params
+from algorithm.parameters import params
 
 
 def selection(population):

@@ -1,7 +1,5 @@
 from multiprocessing import cpu_count
 from socket import gethostname
-from random import seed
-from datetime import datetime
 
 
 hostname = gethostname().split('.')
@@ -10,6 +8,10 @@ machine_name = hostname[0]
 
 """Algorithm parameters"""
 params = {
+        # Set default step and search loop functions
+        'SEARCH_LOOP': 'search_loop',
+        'STEP': 'step',
+
         # Evolutionary Parameters
         'POPULATION_SIZE': 500,
         'GENERATIONS': 50,
@@ -135,10 +137,6 @@ params = {
         # Removes duplicate individuals from the population by replacing them
         # with mutated versions of the original individual. Hopefully this will
         # encourage diversity in the population.
-        'COMPLETE_EVALS': False,
-        # Using the cache doesn't execute the full number of fitness
-        # evaluations. Use this to continue the run in order to execute the
-        # full number of fitness evaluations.
 
         # Set machine name (useful for doing multiple runs)
         'MACHINE': machine_name,
@@ -233,9 +231,9 @@ def set_params(command_line_args):
     :return: Nothing.
     """
 
-    from utilities.initialise_run import initialise_run_params
-    from utilities.initialise_run import set_param_imports
-    from utilities.math_functions import return_percent
+    from utilities.algorithm.initialise_run import initialise_run_params
+    from utilities.algorithm.initialise_run import set_param_imports
+    from utilities.fitness.math_functions import return_percent
     from utilities.help_message import help_message
     from representation import grammar
     import getopt
@@ -255,12 +253,12 @@ def set_params(command_line_args):
                                     "verbose", "elite_size=", "save_all",
                                     "save_plots", "cache", "lookup_fitness",
                                     "lookup_bad_fitness", "mutate_duplicates",
-                                    "complete_evals", "genome_length=",
+                                    "genome_length=",
                                     "invalid_selection", "silent",
                                     "dont_lookup_fitness", "experiment_name=",
                                     "multicore", "cores=", "max_wraps=",
                                     "error_metric=", "fitness_function=",
-                                    "parameters="])
+                                    "parameters=", "step=", "search_loop="])
     except getopt.GetoptError as err:
         print("Most parameters need a value associated with them \n",
               "Run python ponyge.py --help for more info")
@@ -274,7 +272,13 @@ def set_params(command_line_args):
 
         # LOAD PARAMETERS FILE
         elif opt == "--parameters":
-            load_params("parameters/" + arg)
+            load_params("../parameters/" + arg)
+
+        # LOAD STEP AND SEARCH LOOP FUNCTIONS
+        elif opt == "--search_loop":
+            params['SEARCH_LOOP'] = arg
+        elif opt == "--step":
+            params['STEP'] = arg
 
         # POPULATION OPTIONS
         elif opt == "--population":
@@ -377,8 +381,6 @@ def set_params(command_line_args):
         elif opt == "--mutate_duplicates":
             params['LOOKUP_FITNESS'] = False
             params['MUTATE_DUPLICATES'] = True
-        elif opt == "--complete_evals":
-            params['COMPLETE_EVALS'] = True
         else:
             assert False, "Unhandled Option, use --help for available params"
 
@@ -390,11 +392,6 @@ def set_params(command_line_args):
     # Set the size of a generation
     params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - params[
         'ELITE_SIZE']
-
-    # Set random seed
-    if params['RANDOM_SEED'] is None:
-        params['RANDOM_SEED'] = int(datetime.now().microsecond)
-    seed(params['RANDOM_SEED'])
 
     # Set GENOME_OPERATIONS automatically for faster linear operations.
     if (params['MUTATION'] == 'operators.mutation.int_flip' or
@@ -413,5 +410,5 @@ def set_params(command_line_args):
     initialise_run_params()
     
     # Parse grammar file and set grammar class.
-    params['BNF_GRAMMAR'] = grammar.Grammar("grammars/" +
+    params['BNF_GRAMMAR'] = grammar.Grammar("../grammars/" +
                                             params['GRAMMAR_FILE'])

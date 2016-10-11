@@ -16,6 +16,8 @@ def help_message():
 
     lines_2 = [["\t--help:", "Shows this help message."],
                ["\t--debug:", "Disables saving of all ancillary files."],
+               ["\t--search_loop:", "Sets the desired search loop function."],
+               ["\t--step:", "Sets the desired search step function."],
                ["\t--population:", "Sets the population size, requires int "
                                    "value"],
                ["\t--generations:", "Sets the number of generations, requires"
@@ -114,9 +116,7 @@ def help_message():
                                            " cache."],
                ["\t--mutate_duplicates:", "Replaces duplicate individuals with"
                                           " mutated versions. Requires "
-                                          "cache."],
-               ["\t--complete_evals:", "Advanced feature to reuse save "
-                                       "computation from use of cache."]]
+                                          "cache."]]
 
     lines_3 = [
              "----------------------------",

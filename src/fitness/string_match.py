@@ -1,4 +1,4 @@
-from parameters.parameters import params
+from algorithm.parameters import params
 
 class string_match:
     """Fitness function for matching a string. Takes a string and returns

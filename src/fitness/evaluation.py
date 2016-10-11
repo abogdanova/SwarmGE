@@ -1,9 +1,9 @@
 from multiprocessing import Pool
 
+from algorithm.parameters import params
 from fitness.default_fitness import default_fitness
-from parameters.parameters import params
 from stats.stats import stats
-from utilities.trackers import cache
+from utilities.stats.trackers import cache
 
 
 def evaluate_fitness(individuals):
@@ -42,6 +42,8 @@ def evaluate_fitness(individuals):
             stats['invalids'] += 1
         
         else:
+            eval_ind = True
+
             # Valid individuals can be evaluated.
             if params['CACHE'] and ind.phenotype in cache:
                 # The individual has been encountered before in
@@ -51,11 +53,13 @@ def evaluate_fitness(individuals):
                     # Set the fitness as the previous fitness from the
                     # cache.
                     ind.fitness = cache[ind.phenotype]
+                    eval_ind = False
 
                 elif params['LOOKUP_BAD_FITNESS']:
                     # Give the individual a bad default fitness.
                     ind.fitness = default_fitness(
                         params['FITNESS_FUNCTION'].maximise)
+                    eval_ind = False
 
                 elif params['MUTATE_DUPLICATES']:
                     # Mutate the individual to produce a new phenotype
@@ -64,7 +68,8 @@ def evaluate_fitness(individuals):
                         ind = params['MUTATION'](ind)
                         stats['regens'] += 1
 
-            results = eval_or_append(ind, results, pool)
+            if eval_ind:
+                results = eval_or_append(ind, results, pool)
 
     if params['MULTICORE']:
         for result in results:

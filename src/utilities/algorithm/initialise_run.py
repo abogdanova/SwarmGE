@@ -1,10 +1,11 @@
 import time
 from datetime import datetime
+from random import seed
 from sys import version_info
 
-from parameters.parameters import params
+from algorithm.parameters import params
 from stats.stats import generate_folders_and_files
-from utilities import trackers
+from utilities.stats import trackers
 
 
 def check_python_version():
@@ -29,6 +30,11 @@ def initialise_run_params():
 
     time1 = datetime.now()
     trackers.time_list.append(time.clock())
+
+    # Set random seed
+    if params['RANDOM_SEED'] is None:
+        params['RANDOM_SEED'] = int(time1.microsecond)
+    seed(params['RANDOM_SEED'])
     
     # Generate a time stamp for use with folder and file names.
     hms = "%02d%02d%02d" % (time1.hour, time1.minute, time1.second)
@@ -115,9 +121,14 @@ def set_param_imports():
     # For these ops we let the param equal the function itself.
     ops = {'operators': ['INITIALISATION', 'SELECTION', 'CROSSOVER',
                          'MUTATION', 'REPLACEMENT'],
-           'utilities': ['ERROR_METRIC'],
-           'fitness': ['FITNESS_FUNCTION']}
-    for special_ops in ops:
+           'utilities.fitness': ['ERROR_METRIC'],
+           'fitness': ['FITNESS_FUNCTION'],
+           'algorithm': ['SEARCH_LOOP', 'STEP']}
+
+    # The ops dictionary needs to be sorted as the functions from
+    # algorithm need to be imported before any others to prevent circular
+    # imports.
+    for special_ops in sorted(ops.keys()):
         if all([callable(params[op]) for op in ops[special_ops]]):
             # params are already functions
             pass

@@ -1,6 +1,6 @@
 from random import randint, choice, randrange
 
-from parameters.parameters import params
+from algorithm.parameters import params
 from representation.tree import Tree
 
 

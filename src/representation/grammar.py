@@ -2,7 +2,7 @@ from math import floor
 from re import finditer, DOTALL, MULTILINE
 from sys import maxsize
 
-from parameters.parameters import params
+from algorithm.parameters import params
 
 
 class Grammar(object):
@@ -347,6 +347,3 @@ class Grammar(object):
     def __str__(self):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,
                                 self.rules, self.start_rule)
-
-
-

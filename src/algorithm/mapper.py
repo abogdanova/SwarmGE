@@ -1,9 +1,10 @@
 from collections import deque
 from random import randint
 
+from algorithm.parameters import params
 from operators.initialisation import generate_ind_tree
-from parameters.parameters import params
 from representation.tree import Tree
+from utilities.representation.python_filter import python_filter
 
 
 def mapper(genome, tree):
@@ -217,8 +218,6 @@ def map_ind_from_genome(genome):
     if bnf_grammar.python_mode:
         # Grammar contains python code
 
-        from utilities.helper_methods import python_filter
-        
         output = python_filter(output)
 
     return output, genome, None, nodes, False, max_depth, used_input
@@ -242,6 +241,11 @@ def map_tree_from_genome(genome):
 
     # Build phenotype.
     phenotype = "".join(output)
+
+    if params['BNF_GRAMMAR'].python_mode:
+        # Grammar contains python code
+
+        phenotype = python_filter(phenotype)
     
     if invalid:
         # Return "None" phenotype if invalid

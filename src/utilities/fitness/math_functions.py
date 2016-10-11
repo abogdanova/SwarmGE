@@ -27,3 +27,12 @@ def psqrt(x):
 def plog(x):
     """ Protected log operator"""
     return np.log(1.0 + np.abs(x))
+
+
+def ave(x):
+    """
+    :param x: a given list
+    :return: the average of param x
+    """
+
+    return sum(x)/len(x)

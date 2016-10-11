@@ -1,13 +1,14 @@
 import time
+import types
 from copy import copy
 from datetime import timedelta
-from os import path, mkdir, getcwd
+from os import getcwd, path, mkdir
 from sys import stdout
-import types
 
-from parameters.parameters import params
-from utilities import trackers
-from utilities.save_plots import save_best_fitness_plot
+from algorithm.parameters import params
+from utilities.stats import trackers
+from utilities.fitness.math_functions import ave
+from utilities.stats.save_plots import save_best_fitness_plot
 
 """Algorithm statistics"""
 stats = {
@@ -49,7 +50,7 @@ def get_stats(individuals, end=False):
         stats['time_taken'] = \
             timedelta(seconds=trackers.time_list[-1] - trackers.time_list[-2])
         stats['total_time'] = timedelta(seconds=(trackers.time_list[-1] -
-                                        trackers.time_list[0]))
+                                                 trackers.time_list[0]))
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
         stats['unique_inds'] = len(trackers.cache)
@@ -97,7 +98,7 @@ def get_stats(individuals, end=False):
     # Print statistics
     if params['VERBOSE']:
         if not end:
-            print_stats()
+            print_generation_stats()
     
     elif not params['SILENT']:
         perc = stats['gen'] / (params['GENERATIONS']+1) * 100
@@ -105,40 +106,25 @@ def get_stats(individuals, end=False):
         stdout.flush()
 
     # Generate test fitness on regression problems
-    if hasattr(params['FITNESS_FUNCTION'], "training_test") and (end or (
-            params['COMPLETE_EVALS'] and stats['gen'] == params[
-            'GENERATIONS'])):
+    if hasattr(params['FITNESS_FUNCTION'], "training_test") and end:
         stats['best_ever'].training_fitness = copy(stats['best_ever'].fitness)
-        stats['best_ever'].evaluate(dist='test')
-        stats['best_ever'].test_fitness = copy(stats['best_ever'].fitness)
+        stats['best_ever'].test_fitness = params['FITNESS_FUNCTION'](
+            stats['best_ever'].phenotype, dist='test')
         stats['best_ever'].fitness = stats['best_ever'].training_fitness
-
-    if params['COMPLETE_EVALS'] and not params['DEBUG']:
-        if stats['gen'] == params['GENERATIONS']:
-            save_best_midway(stats['best_ever'])
 
     # Save statistics
     if not params['DEBUG']:
-        save_stats(end)
+        save_stats_to_file( end)
         if params['SAVE_ALL']:
-            save_best(end, stats['gen'])
+            save_best_ind_to_file(end, stats['gen'])
         elif params['VERBOSE'] or end:
-            save_best(end, "best")
+            save_best_ind_to_file(end, "best")
 
     if end and not params['SILENT']:
         print_final_stats()
 
 
-def ave(x):
-    """
-    :param x: a given list
-    :return: the average of param x
-    """
-
-    return sum(x)/len(x)
-
-
-def print_stats():
+def print_generation_stats():
     """Print the statistics for the generation and individuals"""
 
     print("______\n")
@@ -160,12 +146,11 @@ def print_final_stats():
         print("\n\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
     print("  Phenotype:", stats['best_ever'].phenotype)
     print("  Genome:", stats['best_ever'].genome)
-    for stat in sorted(stats.keys()):
-        print(" ", stat, ": \t", stats[stat])
+    print_generation_stats()
     print("\nTime taken:\t", stats['total_time'])
 
 
-def save_stats(end=False):
+def save_stats_to_file(end=False):
     """Write the results to a results file for later analysis"""
     if params['VERBOSE']:
         filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
@@ -204,7 +189,7 @@ def save_stats_headers():
     savefile.close()
 
 
-def save_final_stats():
+def save_final_time_stats():
     """
     Appends the total time taken for a run to the stats file.
     """
@@ -215,11 +200,11 @@ def save_final_stats():
     savefile.close()
 
 
-def save_params():
+def save_params_to_file():
     """
     Save evolutionary parameters in a parameters.txt file. Automatically
     parse function and class names.
-    
+
     :return: Nothing
     """
 
@@ -230,11 +215,11 @@ def save_params():
 
     # Justify whitespaces for pretty printing/saving.
     col_width = max(len(param) for param in params.keys())
-    
+
     for param in sorted(params.keys()):
         savefile.write(str(param) + ": ")
         spaces = [" " for _ in range(col_width - len(param))]
-        
+
         if isinstance(params[param], types.FunctionType):
             # Object is a function, save function name.
             savefile.write("".join(spaces) + str(params[
@@ -250,7 +235,7 @@ def save_params():
     savefile.close()
 
 
-def save_best(end=False, name="best"):
+def save_best_ind_to_file(end=False, name="best"):
 
     filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/" + \
                str(name) + ".txt"
@@ -272,39 +257,16 @@ def save_best(end=False, name="best"):
     savefile.close()
 
 
-def save_best_midway(best_ever):
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/best_" + \
-               str(stats['gen']) + ".txt"
-    savefile = open(filename, 'w')
-    t1 = time.clock()
-    trackers.time_list.append(t1)
-    time_taken = timedelta(seconds=trackers.time_list[-1] -
-                           trackers.time_list[0])
-    savefile.write("Generation:\n" + str(stats['gen']) + "\n\n")
-    savefile.write("Phenotype:\n" + str(best_ever.phenotype) + "\n\n")
-    savefile.write("Genotype:\n" + str(best_ever.genome) + "\n")
-    savefile.write("Tree:\n" + str(best_ever.tree) + "\n")
-    if hasattr(params['FITNESS_FUNCTION'], "training_test"):
-        savefile.write("\nTraining fitness:\t" +
-                       str(stats['best_ever'].training_fitness))
-        savefile.write("\nTest fitness:\t" +
-                       str(stats['best_ever'].test_fitness))
-    else:
-        savefile.write("\nFitness:\t" + str(stats['best_ever'].fitness))
-    savefile.write("\nTotal time:\t" + str(time_taken))
-    savefile.close()
-
-
 def generate_folders_and_files():
     """
     Generates necessary folders and files for saving statistics and parameters.
     """
 
     if params['EXPERIMENT_NAME']:
-        params['FILE_PATH'] = getcwd() + "/results/" + params[
+        params['FILE_PATH'] = getcwd() + "/../results/" + params[
             'EXPERIMENT_NAME'] + "/"
     else:
-        params['FILE_PATH'] = getcwd() + "/results/"
+        params['FILE_PATH'] = getcwd() + "/../results/"
 
     # Generate save folders
     if not path.isdir(params['FILE_PATH']):
@@ -312,5 +274,5 @@ def generate_folders_and_files():
     if not path.isdir(params['FILE_PATH'] + str(params['TIME_STAMP'])):
         mkdir(params['FILE_PATH'] + str(params['TIME_STAMP']))
 
-    save_params()
+    save_params_to_file()
     save_stats_headers()
