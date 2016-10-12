@@ -49,13 +49,19 @@ class Grammar(object):
         # non-terminals.
         self.read_bnf_file(file_name)
         
-        # Check
+        # Check the minimum depths of all non-terminals in the grammar.
         self.check_depths()
+        
+        # Check which non-terminals are recursive.
+        self.check_recursion(self.start_rule[0], [])
+        
+        # Set the minimum path and maximum arity of the grammar.
+        self.set_arity()
         
         # Calculate the total number of derivation tree permutations and
         # combinations that can be created by a grammar at a range of depths.
         self.check_permutations()
-        
+
         # Set the minimum depth at which ramping can start where we can have
         # unique solutions (no duplicates).
         self.get_min_ramp_depth()
@@ -86,7 +92,6 @@ class Grammar(object):
                     'min_steps': maxsize,
                     'expanded': False,
                     'recursive': True,
-                    'permutations': None,
                     'b_factor': 0}
                 
                 # Initialise empty list of all production choices for this
@@ -151,38 +156,49 @@ class Grammar(object):
                     raise ValueError("lhs should be unique", rule.group('rulename'))
 
     def check_depths(self):
-        """
-        Check the properties of all rules and set the properties accordingly.
-        
-        :return: Nothing.
-        """
+        """ Run through a grammar and find out the minimum distance from each
+            NT to the nearest T. Useful for initialisation methods where we
+            need to know how far away we are from fully expanding a tree
+            relative to where we are in the tree and what the depth limit is.
 
-        self.calc_nt_properties(self.start_rule[0], [])
+            For each NT in self.non_terminals we have:
+             - 'id':        the NT itself
+             - 'min_steps': its minimum distance to the nearest T (i.e. its
+                            minimum distance to full expansion
+             - 'expanded':  a boolean indicator for whether or not it is fully
+                            expanded
+             - 'b_factor':  the branching factor of the NT (now many choices
+                            does  the rule have)
+             - 'recursive': is the NT recursive
+         """
+        
+        # Initialise graph and counter for checking minimum steps to Ts for
+        # each NT.
+        counter, graph = 1, []
+        
+        for rule in sorted(self.rules.keys()):
+            # Iterate over all NTs.
+            choices = self.rules[rule]
+            
+            # Set branching factor for each NT.
+            self.non_terminals[rule]['b_factor'] = len(choices)
 
-        # Set the minimum path of the grammar as the minimum steps to a
-        # terminal from the start rule.
-        self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
+            for choice in choices:
+                # Add a new edge to our graph list.
+                graph.append([rule, choice])
         
-        # Initialise the maximum arity of the grammar to 0.
-        self.max_arity = 0
-        
-        for NT in self.non_terminals:
-            if self.non_terminals[NT]['min_steps'] > self.max_arity:
-                # Set the maximum arity of the grammar as the longest path
-                # to a T from any NT.
-                self.max_arity = self.non_terminals[NT]['min_steps']
-        
-        for rule in self.rules:
-            for prod in self.rules[rule]:
-                for sym in [i for i in prod if i[1] == self.NT]:
-                    sym.append(self.non_terminals[sym[0]]['min_steps'])
-        
-        for rule in self.rules:
-            for prod in self.rules[rule]:
-                for sym in [i for i in prod if i[1] == self.NT]:
-                    sym.append(self.non_terminals[sym[0]]['recursive'])
+        while graph:
+            removeset = set()
+            for edge in graph:
+                if all([sy[1] == self.T or self.non_terminals[sy[0]]['expanded'] for sy in edge[1]]):
+                    removeset.add(edge[0])
+            for s in removeset:
+                self.non_terminals[s]['expanded'] = True
+                self.non_terminals[s]['min_steps'] = counter
+            graph = [e for e in graph if e[0] not in removeset]
+            counter += 1
 
-    def calc_nt_properties(self, cur_symbol, seen):
+    def check_recursion(self, cur_symbol, seen):
         """
         Traverses the grammar recursively and sets the properties of each rule.
 
@@ -192,37 +208,58 @@ class Grammar(object):
         recursive
         """
         if cur_symbol not in self.non_terminals.keys():
-            return 0, False
+            return False
 
         if cur_symbol in seen:
-            return maxsize, True
+            return True
 
         nt = self.non_terminals[cur_symbol]
-        if nt['expanded']:
-            return nt['min_steps'], nt['recursive']
 
         seen.append(cur_symbol)
         choices = self.rules[cur_symbol]
         recursive = False
-        min_cur_symbol_depth = maxsize
         for choice in choices:
-            max_choice_depth = 0
             for symbol in choice:
-                symbol_depth, recursive_symbol = self.calc_nt_properties(symbol[0], seen)
-                max_choice_depth = symbol_depth if symbol_depth > max_choice_depth else max_choice_depth
+                recursive_symbol = self.check_recursion(symbol[0], seen)
                 recursive = recursive or recursive_symbol
-
-            min_cur_symbol_depth = max_choice_depth if max_choice_depth < min_cur_symbol_depth else min_cur_symbol_depth
-
-        if min_cur_symbol_depth >= maxsize:
-            raise Exception('No depth could be calculated for symbol', cur_symbol)
-
-        nt['b_factor'] = len(self.rules[cur_symbol])
-        nt['expanded'] = True
-        nt['min_steps'] = min_cur_symbol_depth + 1
+                
         nt['recursive'] = recursive
         seen.remove(cur_symbol)
-        return nt['min_steps'], nt['recursive']
+        return nt['recursive']
+
+    def set_arity(self):
+        """
+        Set the minimum path of the grammar, i.e. the smallest legal
+        solution that can be generated.
+        
+        Set the maximum arity of the grammar, i.e. the longest path to a
+        terminal from any non-terminal.
+        
+        :return: Nothing
+        """
+        
+        # Set the minimum path of the grammar as the minimum steps to a
+        # terminal from the start rule.
+        self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
+    
+        # Initialise the maximum arity of the grammar to 0.
+        self.max_arity = 0
+    
+        for NT in self.non_terminals:
+            if self.non_terminals[NT]['min_steps'] > self.max_arity:
+                # Set the maximum arity of the grammar as the longest path
+                # to a T from any NT.
+                self.max_arity = self.non_terminals[NT]['min_steps']
+    
+        for rule in self.rules:
+            for prod in self.rules[rule]:
+                for sym in [i for i in prod if i[1] == self.NT]:
+                    sym.append(self.non_terminals[sym[0]]['min_steps'])
+    
+        for rule in self.rules:
+            for prod in self.rules[rule]:
+                for sym in [i for i in prod if i[1] == self.NT]:
+                    sym.append(self.non_terminals[sym[0]]['recursive'])
 
     def check_permutations(self, ramps=5):
         """ Calculates how many possible derivation tree combinations can be

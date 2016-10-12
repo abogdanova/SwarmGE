@@ -1,0 +1,60 @@
+# A first stab at a grammar which will evolve an update algorithm for a
+# heterogenous cellular network.
+
+<start> ::= <schedule>BREAK<pbalgorithm>BREAK<ABSalgorithm>
+
+<schedule> ::= <expr1> <conds> <expr1>
+
+<pbalgorithm> ::= <expr2>
+
+<ABSalgorithm> ::= <expr3>
+
+<expr1> ::= <reg1> | <reg1> | <reg1> | <val1> <op> <val1> | <val1>
+
+<expr2> ::= <reg2> | <reg2> | <reg2> | <val2> <op> <val2> | <val2>
+
+<expr3> ::= <reg3> | <reg3> | <reg3> | <val3> <op> <val3> | <val3>
+
+<reg1> ::= (<expr1> <op> <expr1>) | (<expr1> <op> <expr1>) | (<expr1> <op> <expr1>) | <div>(<expr1>, <expr1>) | <fn>(<expr1>) | <fn>(<expr1>) | <fn>(<expr1>) | <spfn1> | <spfn1>
+
+<reg2> ::= (<expr2> <op> <expr2>) | (<expr2> <op> <expr2>) | (<expr2> <op> <expr2>) | <div>(<expr2>, <expr2>) | <fn>(<expr2>) | <fn>(<expr2>) | <fn>(<expr2>) | <spfn2> | <spfn2>
+
+<reg3> ::= (<expr3> <op> <expr3>) | (<expr3> <op> <expr3>) | (<expr3> <op> <expr3>) | <div>(<expr3>, <expr3>)
+#| <fn>(<expr3>) | <fn>(<expr3>) | <fn>(<expr3>) | <spfn3> | <spfn3>
+
+<val1> ::= min_SINR | max_SINR | <epsilon> | num_shared | good_slots | SINR | max_cell_SINR | min_cell_SINR
+# | congestion | previous | prev_cycles | CQI
+
+<val2> ::= N_m | N_s | N_ms | s_log_R | <epsilon> | m_log_R | R_s_avg | R_m_avg | R_ms_avg | ms_log_R
+
+<val3> ::= ABS_MSUEs | non_ABS_MUEs | ABS_MUEs | <epsilon>
+
+<epsilon> ::= float('<n><n><n>.<n><n><n>')
+
+<n> ::= 0|1|2|3|4|5|6|7|8|9
+
+<op> ::= + | - | *
+
+<div> ::= self.pdiv
+
+<plog1> ::= log(abs(<expr1>) + 1)
+
+<plog2> ::= log(abs(<expr2>) + 1)
+
+<plog3> ::= log(abs(<expr3>) + 1)
+
+<sqrt1> ::= sqrt(abs(<expr1>))
+
+<sqrt2> ::= sqrt(abs(<expr2>))
+
+<sqrt3> ::= sqrt(abs(<expr3>))
+
+<spfn1> ::= <plog1> | <sqrt1>
+
+<spfn2> ::= <plog2> | <sqrt2>
+
+<spfn3> ::= <plog3> | <sqrt3>
+
+<fn> ::= sin | cos | tan
+
+<conds> ::= < | > | ==
