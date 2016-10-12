@@ -379,9 +379,10 @@ Activate with:
 
     --replacement steady_state
 
+#Grammars
+---------
 
 ##Writing Grammars
-----------------
 
 Grammars are written in Backus-Naur form, aka BNF. See the examples in
 src/grammars. Each rule is composed of a left-hand side (a single
@@ -410,7 +411,6 @@ the flag:
 
 
 ##Parsing Grammars
-------------------
 
 Grammars are parsed using regular expressions.
 
@@ -429,8 +429,7 @@ Examples on parsing some of grammars can be found here:
 - [Production](https://regex101.com/r/sE7eM8/1)
 
 
-##A note on unit productions
-----------------------------
+##A note on unit productions.
 
 Traditionally GE would not consume a codon for unit productions. This was a
 design decision taken by O'Neill et al. In PonyGE2 unit productions consume
