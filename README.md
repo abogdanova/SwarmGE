@@ -380,7 +380,7 @@ Activate with:
     --replacement steady_state
 
 
-##Writing grammars
+##Writing Grammars
 ----------------
 
 Grammars are written in Backus-Naur form, aka BNF. See the examples in
@@ -407,6 +407,26 @@ the flag:
 *__NOTE__ that the full file extension (e.g. ".bnf") must be specified.*
 
 *__NOTE__ that the full file path __does not__ need to be specified.*
+
+
+##Parsing Grammars
+------------------
+
+Grammars are parsed using regular expressions.
+
+You can have:
+- production separators in multiple lines
+- comments at the end of any line
+- single quotation within double quotation and vice versa
+- any characters can be used in quotation, even separators '|'
+
+Additionally, the code becomes more readable as well as maintainable and 
+it is not as error prone.
+
+Examples on parsing some of grammars can be found here:
+- [Whole grammar](https://regex101.com/r/oY2dK0/3)
+- [Rule](https://regex101.com/r/rU9tA7/2)
+- [Production](https://regex101.com/r/sE7eM8/1)
 
 
 ##A note on unit productions
