@@ -1,15 +1,12 @@
 CACHE:                 True
 CODON_SIZE:            100000
-COMPLETE_EVALS:        False
 CROSSOVER:             onepoint
 CROSSOVER_PROBABILITY: 0.75
 DATASET:               Banknote
 DEBUG:                 False
-ELITE_SIZE:            5
 ERROR_METRIC:          inverse_f1_score
 EXPERIMENT_NAME:       None
 GENERATIONS:           50
-GENERATION_SIZE:       495
 GENOME_INIT:           False
 GENOME_LENGTH:         500
 GENOME_OPERATIONS:     False

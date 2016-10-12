@@ -75,6 +75,46 @@ class Tree:
 
         return tree_copy
 
+    def __eq__(self, other):
+        """
+        Set the definition for comparison of two instances of the tree
+        class by their attributes. Returns zero if self == other.
+
+        :param other: Another instance of the tree class with which to compare.
+        :return: Zero if self == other.
+        """
+
+        same = True
+        
+        # Get attributes of self and other.
+        attrs_self, attrs_other = vars(self), vars(other)
+        
+        # Remove "children" attribute as it is a list of class instances.
+        attrs_self.__delitem__("children")
+        attrs_other.__delitem__("children")
+        
+        # Compare attributes
+        if attrs_self != attrs_other:
+            same = False
+
+        else:
+            child_list = [self.children, other.children]
+            
+            if len(filter(lambda x: x is not None, child_list)) % 2 != 0:
+                # One contains children, other doesn't.
+                same = False
+            
+            elif self.children and len(self.children) != len(other.children):
+                # Number of children differs between self and other.
+                same = False
+            
+            else:
+                # Compare children recursively.
+                for i, child in enumerate(self.children):
+                    same = (child == other.children[i])
+
+        return same
+
     def get_target_nodes(self, array, target=None):
         """
         Returns the all NT nodes which match the target NT list in a

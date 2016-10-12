@@ -69,14 +69,26 @@ def rhh(size):
             # Iterate over number of required individuals per depth.
             for i in range(times):
 
+                depth = 10
+                from random import seed
+                seed(0)
                 # Generate individual using "Grow"
                 ind = generate_ind_tree(depth, "random")
-
+                
+                i1 = ind
+            
                 # Append individual to population
                 population.append(ind)
-
+                seed(0)
                 # Generate individual using "Full"
-                ind = generate_ind_tree(depth, "full")
+                ind = generate_ind_tree(depth, "random")
+                
+                i2 = ind
+                
+                print(i1.tree)
+                print(i2.tree)
+                print(i1.tree == i2.tree)
+                quit()
 
                 # Append individual to population
                 population.append(ind)
