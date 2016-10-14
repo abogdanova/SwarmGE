@@ -112,7 +112,10 @@ def parse_stat_from_runs(experiment_name, stats, graph):
     :return: Nothing.
     """
 
-    path = getcwd()
+    # Since results files are not kept in source directory, need to escape
+    # one folder.
+    path = getcwd() + "../"
+    
     if sys.platform == 'win32':
         slash = "\\"
     else:
