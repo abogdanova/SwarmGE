@@ -84,6 +84,9 @@ def evaluate_fitness(individuals):
         
             # Add the evaluated individual to the cache.
             cache[ind.phenotype] = ind.fitness
+        
+        # Close the workers pool (otherwise they'll live on forever).
+        pool.close()
 
     return individuals
 
