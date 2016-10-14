@@ -33,7 +33,9 @@ def evaluate_fitness(individuals):
         # Initialise a pool of jobs for multicore process workers.
         pool = Pool(processes=params['CORES'])  # , maxtasksperchild=1)
 
-    for ind in individuals:
+    for name, ind in enumerate(individuals):
+        ind.name = name
+        
         # Iterate over all individuals in the population.
         if ind.invalid:
             # Invalid individuals cannot be evaluated and are given a bad

@@ -263,8 +263,10 @@ def generate_folders_and_files():
     """
 
     if params['EXPERIMENT_NAME']:
-        params['FILE_PATH'] = getcwd() + "/../results/" + params[
-            'EXPERIMENT_NAME'] + "/"
+        path_1 = getcwd() + "/../results/"
+        if not path.isdir(path_1):
+            mkdir(path_1)
+        params['FILE_PATH'] = path_1 + params['EXPERIMENT_NAME'] + "/"
     else:
         params['FILE_PATH'] = getcwd() + "/../results/"
 
