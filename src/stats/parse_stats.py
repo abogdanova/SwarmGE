@@ -114,19 +114,10 @@ def parse_stat_from_runs(experiment_name, stats, graph):
 
     # Since results files are not kept in source directory, need to escape
     # one folder.
-    path = getcwd() + "../"
-    
-    if sys.platform == 'win32':
-        slash = "\\"
-    else:
-        slash = "/"
-    if path.split(slash)[-1] == "stats":
-        path = slash.join(path.split(slash)[:-1]) + slash + "results" + slash
-    else:
-        path = path + slash + "results" + slash
+    path = getcwd() + "/../results/"
 
     if experiment_name:
-        path += experiment_name + slash
+        path += experiment_name + "/"
     else:
         print("Error: experiment name not specified")
         quit()
@@ -208,8 +199,8 @@ def save_average_plot_across_runs(filename):
     plt.title("Average " + stat_name)
     plt.xlabel('Generation', fontsize=14)
     plt.ylabel('Average ' + stat_name, fontsize=14)
-    new_filename = filename.split(".")[0]
-    plt.savefig(str(new_filename) + ".pdf")
+    new_filename = filename[:-3] + "pdf"
+    plt.savefig(str(new_filename))
     plt.close()
 
 
