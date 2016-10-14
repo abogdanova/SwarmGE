@@ -112,18 +112,12 @@ def parse_stat_from_runs(experiment_name, stats, graph):
     :return: Nothing.
     """
 
-    path = getcwd()
-    if sys.platform == 'win32':
-        slash = "\\"
-    else:
-        slash = "/"
-    if path.split(slash)[-1] == "stats":
-        path = slash.join(path.split(slash)[:-1]) + slash + "results" + slash
-    else:
-        path = path + slash + "results" + slash
-
+    # Since results files are not kept in source directory, need to escape
+    # one folder.
+    path = getcwd() + "/../results/"
+    
     if experiment_name:
-        path += experiment_name + slash
+        path += experiment_name + "/"
     else:
         print("Error: experiment name not specified")
         quit()
@@ -155,6 +149,7 @@ def parse_stat_from_runs(experiment_name, stats, graph):
                 
         summary_stats = np.asarray(summary_stats)
         summary_stats = np.transpose(summary_stats)
+        
         np.savetxt(path + stat + ".csv", summary_stats, delimiter=",")
         if graph:
             save_average_plot_across_runs(path + stat + ".csv")
@@ -186,7 +181,8 @@ def save_average_plot_across_runs(filename):
     
     stat_name = filename.split("/")[-1].split(".")[0]
     
-    data = np.genfromtxt(filename, delimiter=',')[:, :-1]
+    data = np.genfromtxt(filename, delimiter=',')
+    
     ave = np.nanmean(data, axis=1)
     std = np.nanstd(data, axis=1)
     max_gens = len(ave)
@@ -205,8 +201,8 @@ def save_average_plot_across_runs(filename):
     plt.title("Average " + stat_name)
     plt.xlabel('Generation', fontsize=14)
     plt.ylabel('Average ' + stat_name, fontsize=14)
-    new_filename = filename.split(".")[0]
-    plt.savefig(str(new_filename) + ".pdf")
+    new_filename = filename[:-3] + "pdf"
+    plt.savefig(str(new_filename))
     plt.close()
 
 

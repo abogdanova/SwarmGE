@@ -2,17 +2,7 @@
 
 <expr> ::= <reg> | <reg> | <reg> | <T>
 
-<reg> ::= (<expr><op><expr>) | (<expr><op><expr>) | (<expr><op><expr>) | <pdiv>(<expr>, <expr>) | <sin>(<expr>) | <sqrt>(abs(<expr>)) | <copysign>(<expr>) | <log>(1+abs(<expr>))
-
-<pdiv> ::= pdiv
-
-<log> ::= np.log
-
-<sin> ::= np.sin
-
-<copysign> ::= np.sign
-
-<sqrt> ::= np.sqrt
+<reg> ::= (<expr><op><expr>) | (<expr><op><expr>) | (<expr><op><expr>) | pdiv(<expr>, <expr>) | np.sin(<expr>) | np.sqrt(abs(<expr>)) | np.sign(<expr>) | np.log(1+abs(<expr>))
 
 <op> ::= + | - | *
 
@@ -24,5 +14,3 @@
 <n> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
 <top_or_thresh> ::= evaluative_topology | evaluative_threshold
-
-<top> ::= np.round(<expr>)%8

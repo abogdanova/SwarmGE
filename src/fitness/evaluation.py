@@ -31,9 +31,11 @@ def evaluate_fitness(individuals):
     results, pool = [], None
     if params['MULTICORE']:
         # Initialise a pool of jobs for multicore process workers.
-        pool = Pool(processes=params['CORES'])  # , maxtasksperchild=1)
+        pool = Pool(processes=params['CORES'], maxtasksperchild=1)
 
-    for ind in individuals:
+    for name, ind in enumerate(individuals):
+        ind.name = name
+    
         # Iterate over all individuals in the population.
         if ind.invalid:
             # Invalid individuals cannot be evaluated and are given a bad
@@ -82,6 +84,7 @@ def evaluate_fitness(individuals):
         
             # Add the evaluated individual to the cache.
             cache[ind.phenotype] = ind.fitness
+        pool.close()
 
     return individuals
 

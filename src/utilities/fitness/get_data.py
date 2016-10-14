@@ -40,7 +40,7 @@ def get_data(experiment):
     """
 
     file_type = "txt"
-    datasets = listdir(getcwd() + "/../datasets/")
+    datasets = listdir("/../datasets/")
     for dataset in datasets:
         exp = dataset.split('.')[0].split('-')[0]
         if exp == experiment:
