@@ -76,7 +76,7 @@ def rhh(size):
                 population.append(ind)
 
                 # Generate individual using "Full"
-                ind = generate_ind_tree(depth, "random")
+                ind = generate_ind_tree(depth, "full")
                 
                 # Append individual to population
                 population.append(ind)
