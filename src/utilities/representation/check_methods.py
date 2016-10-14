@@ -23,11 +23,12 @@ def check_ind(ind):
         attributes_0['tree'] = None
     
     else:
-        compare_trees(attributes_0['tree'], attributes_1['tree'])
+        if attributes_0['tree'] != attributes_1['tree']:
+            print("Error: utilities.check_methods.check_ind."
+                  "Individual trees do not match.")
 
     # Must remove the tree variable as instances of classes cannot be
     # directly compared at the moment.
-    # TODO: Write comparison function for tree class.
     attributes_0['tree'], attributes_1['tree'] = None, None
     
     if attributes_0 != attributes_1:
@@ -35,52 +36,6 @@ def check_ind(ind):
               "Individual attributes do not match correct attributes.")
         print("Original attributes:\n", attributes_0)
         print("Correct attributes:\n", attributes_1)
-        quit()
-
-
-def compare_trees(tree0, tree1):
-    """
-    Compare two trees to ensure they contain identical contents.
-    
-    :param tree0: The first tree to be compared.
-    :param tree1: The second tree to be compared.
-    :return: Nothing.
-    """
-
-    g0, p0, i0, d0, n0 = tree0.get_tree_info(
-        params['BNF_GRAMMAR'].non_terminals.keys(), [], [])
-
-    g1, p1, i1, d1, n1 = tree1.get_tree_info(
-        params['BNF_GRAMMAR'].non_terminals.keys(), [], [])
-
-    if g1 != g0:
-        print("Error: utilities.check_methods.compare_trees."
-              "Genomes don't match")
-        print_dual_info(p0, g0, n0, i0, d0, None, p1, n1, i1, d1, None)
-        quit()
-
-    if p1 != p0:
-        print("Error: utilities.check_methods.compare_trees."
-              "Phenotypes don't match")
-        print_dual_info(p0, g0, n0, i0, d0, None, p1, n1, i1, d1, None)
-        quit()
-
-    elif n1 != n0:
-        print("Error: utilities.check_methods.compare_trees."
-              "Nodes don't match")
-        print_dual_info(p0, g0, n0, i0, d0, None, p1, n1, i1, d1, None)
-        quit()
-
-    elif d1 != d0:
-        print("Error: utilities.check_methods.compare_trees."
-              "Tree depth doesn't match")
-        print_dual_info(p0, g0, n0, i0, d0, None, p1, n1, i1, d1, None)
-        quit()
-
-    elif d1 > params['MAX_TREE_DEPTH']:
-        print("Error: utilities.check_methods.compare_trees."
-              "Max tree depth limit exceeded")
-        print_dual_info(p0, g0, n0, i0, d0, None, p1, n1, i1, d1, None)
         quit()
 
 

@@ -128,7 +128,9 @@ def set_param_imports():
     # The ops dictionary needs to be sorted as the functions from
     # algorithm need to be imported before any others to prevent circular
     # imports.
+
     for special_ops in sorted(ops.keys()):
+        
         if all([callable(params[op]) for op in ops[special_ops]]):
             # params are already functions
             pass
@@ -138,20 +140,20 @@ def set_param_imports():
                 import_func = "from fitness." + params[
                     'FITNESS_FUNCTION'] + " import " + params[
                                   'FITNESS_FUNCTION']
-    
+                
                 # Import the required fitness function.
                 exec(import_func)
     
                 # Set the fitness function in the params dictionary.
                 # params['FITNESS_FUNC_INPUT'] is the input required for
                 # initialisation of the fitness function.
-                params['FITNESS_FUNCTION'] = eval(
-                    params[
-                        'FITNESS_FUNCTION'] + "()")
+                params['FITNESS_FUNCTION'] = eval(params['FITNESS_FUNCTION'] +
+                                                  "()")
             else:
                 # We need to do an appropriate import...
                 import_str = make_import_str([[op, params[op]] for op in
                                               ops[special_ops]], special_ops)
+                
                 exec(import_str)
                 # ... and then eval the param.
                 for op in ops[special_ops]:

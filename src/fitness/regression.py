@@ -25,10 +25,7 @@ class regression:
             get_data(params['DATASET'])
         self.n_vars = np.shape(self.test_in)[1]
         if params['ERROR_METRIC'] == None:
-            self.error = mse
-            params['ERROR_METRIC'] = self.error
-        else:
-            self.error = params['ERROR_METRIC']
+            params['ERROR_METRIC'] = mse
         self.training_test = True
 
     def __call__(self, func, dist="training"):
@@ -61,7 +58,7 @@ class regression:
 
             # let's always call the error function with the true values first,
             # the estimate second
-            fitness = self.error(y, yhat)
+            fitness = params['ERROR_METRIC'](y, yhat)
         
         except:
             fitness = maxsize
