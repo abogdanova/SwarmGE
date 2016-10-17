@@ -24,7 +24,7 @@ class regression:
         self.training_in, self.training_exp, self.test_in, self.test_exp = \
             get_data(params['DATASET'])
         self.n_vars = np.shape(self.test_in)[1]
-        if params['ERROR_METRIC'] == None:
+        if params['ERROR_METRIC'] is None:
             params['ERROR_METRIC'] = mse
         self.training_test = True
 

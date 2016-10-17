@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from random import seed
 from sys import version_info
@@ -28,21 +27,21 @@ def initialise_run_params():
     :return: Nothing
     """
 
-    time1 = datetime.now()
-    trackers.time_list.append(time.clock())
+    start = datetime.now()
+    trackers.time_list.append(start)
 
     # Set random seed
     if params['RANDOM_SEED'] is None:
-        params['RANDOM_SEED'] = int(time1.microsecond)
+        params['RANDOM_SEED'] = int(start.microsecond)
     seed(params['RANDOM_SEED'])
     
     # Generate a time stamp for use with folder and file names.
-    hms = "%02d%02d%02d" % (time1.hour, time1.minute, time1.second)
-    params['TIME_STAMP'] = (str(time1.year)[2:] + "_" + str(time1.month) +
-                            "_" + str(time1.day) + "_" + hms +
-                            "_" + str(time1.microsecond))
+    hms = "%02d%02d%02d" % (start.hour, start.minute, start.second)
+    params['TIME_STAMP'] = (str(start.year)[2:] + "_" + str(start.month) +
+                            "_" + str(start.day) + "_" + hms +
+                            "_" + str(start.microsecond))
     if not params['SILENT']:
-        print("\nStart:\t", time1, "\n")
+        print("\nStart:\t", start, "\n")
 
     # Generate save folders and files
     if params['DEBUG']:

@@ -1,7 +1,6 @@
-import time
+from datetime import datetime
 import types
 from copy import copy
-from datetime import timedelta
 from os import getcwd, path, mkdir
 from sys import stdout
 
@@ -39,24 +38,32 @@ stats = {
 
 
 def get_stats(individuals, end=False):
-    """Generate the statistics for an evolutionary run"""
+    """
+    Generate the statistics for an evolutionary run. Save statistics to
+    utilities.trackers.stats_list. Print statistics. Save fitness plot
+    information.
+    
+    :param individuals: A population of individuals for which to generate
+    statistics.
+    :param end: Boolean flag for indicating the end of an evolutionary run.
+    :return: Nothing.
+    """
 
     if end or params['VERBOSE'] or not params['DEBUG']:
 
         # Time Stats
-        trackers.time_list.append(time.clock())
-        available = [i for i in individuals if not i.invalid]
-        # TODO: Should we save time stats as raw seconds? Easier for parsing.
-        stats['time_taken'] = \
-            timedelta(seconds=trackers.time_list[-1] - trackers.time_list[-2])
-        stats['total_time'] = timedelta(seconds=(trackers.time_list[-1] -
-                                                 trackers.time_list[0]))
+        trackers.time_list.append(datetime.now())
+        stats['time_taken'] = trackers.time_list[-1] - trackers.time_list[-2]
+        stats['total_time'] = trackers.time_list[-1] - trackers.time_list[0]
+        
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
         stats['unique_inds'] = len(trackers.cache)
         stats['unused_search'] = 100 - stats['unique_inds'] / \
                                        stats['total_inds']*100
         stats['best_ever'] = max(individuals)
+
+        available = [i for i in individuals if not i.invalid]
 
         # Genome Stats
         genome_lengths = [len(i.genome) for i in available]
@@ -114,7 +121,7 @@ def get_stats(individuals, end=False):
 
     # Save statistics
     if not params['DEBUG']:
-        save_stats_to_file( end)
+        save_stats_to_file(end)
         if params['SAVE_ALL']:
             save_best_ind_to_file(end, stats['gen'])
         elif params['VERBOSE'] or end:
