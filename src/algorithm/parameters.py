@@ -402,13 +402,13 @@ def set_params(command_line_args):
     else:
         params['GENOME_OPERATIONS'] = False
 
-    # Initialise run lists and folders
-    initialise_run_params()
-
     # Set correct param imports for specified function options, including
     # error metrics and fitness functions.
     set_param_imports()
     
+    # Initialise run lists and folders
+    initialise_run_params()
+
     # Parse grammar file and set grammar class.
     params['BNF_GRAMMAR'] = grammar.Grammar("../grammars/" +
                                             params['GRAMMAR_FILE'])

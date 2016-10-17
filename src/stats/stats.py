@@ -1,7 +1,6 @@
 from datetime import datetime
 import types
 from copy import copy
-from datetime import timedelta
 from os import getcwd, path, mkdir
 from sys import stdout
 
