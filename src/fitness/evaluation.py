@@ -23,7 +23,7 @@ def evaluate_fitness(individuals):
            have already been evaluated are mutated to produce new unique
            individuals which have not been encountered yet by the search
            process.
-    
+
     :param individuals: A population of individuals to be evaluated.
     :return: A population of fully evaluated individuals.
     """
@@ -31,18 +31,18 @@ def evaluate_fitness(individuals):
     results, pool = [], None
     if params['MULTICORE']:
         # Initialise a pool of jobs for multicore process workers.
-        pool = Pool(processes=params['CORES'])  # , maxtasksperchild=1)
+        pool = Pool(processes=params['CORES'], maxtasksperchild=1)
 
     for name, ind in enumerate(individuals):
         ind.name = name
-        
+
         # Iterate over all individuals in the population.
         if ind.invalid:
             # Invalid individuals cannot be evaluated and are given a bad
             # default fitness.
             ind.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
             stats['invalids'] += 1
-        
+
         else:
             eval_ind = True
 
@@ -77,14 +77,14 @@ def evaluate_fitness(individuals):
         for result in results:
             # Execute all jobs in the pool.
             ind = result.get()
-        
+
             # Set the fitness of the evaluated individual by placing the
             # evaluated individual back into the population.
             individuals[ind.name] = ind
-        
+
             # Add the evaluated individual to the cache.
             cache[ind.phenotype] = ind.fitness
-        
+
         # Close the workers pool (otherwise they'll live on forever).
         pool.close()
 
@@ -96,7 +96,7 @@ def eval_or_append(ind, results, pool):
     Evaluates an individual if sequential evaluation is being used. If
     multi-core parallel evaluation is being used, adds the individual to the
     pool to be evaluated.
-    
+
     :param ind: An individual to be evaluated.
     :param results: A list of individuals to be evaluated by the multicore
     pool of workers.
@@ -112,7 +112,7 @@ def eval_or_append(ind, results, pool):
     else:
         # Evaluate the individual.
         ind.evaluate()
-        
+
         if params['CACHE']:
             # The phenotype string of the individual does not appear
             # in the cache, it must be evaluated and added to the

@@ -30,7 +30,7 @@ params = {
         # "Dow"
         # "Keijzer6"
         # "Vladislavleva4"
-        
+
         # Set grammar file
         'GRAMMAR_FILE': "Vladislavleva4.bnf",
         # "Vladislavleva4.bnf"
@@ -38,7 +38,7 @@ params = {
         # "Dow.bnf"
         # "Banknote.bnf"
         # "letter.bnf"
-    
+
         # Select error metric
         'ERROR_METRIC': None,
         # "mse"
@@ -46,7 +46,7 @@ params = {
         # "rmse"
         # "hinge"
         # "inverse_f1_score"
-    
+
         # Specify String for StringMatch Problem
         'STRING_MATCH_TARGET': "ponyge_rocks",
 
@@ -149,7 +149,7 @@ params = {
 def load_params(file_name):
     """
     Load in a params text file and set the params dictionary directly.
-     
+
     :param file_name: The name/location of a parameters file.
     :return: Nothing.
     """
@@ -169,14 +169,14 @@ def load_params(file_name):
         for line in content:
             components = line.split(":")
             key, value = components[0], components[1].strip()
-           
+
             # Evaluate parameters.
             try:
                 value = eval(value)
             except:
                 # We can't evaluate, leave value as a string.
                 pass
-            
+
             # Set parameter
             params[key] = value
 
@@ -185,7 +185,7 @@ def check_int(param, arg):
     """
     Checks to ensure the given argument is indeed an int. If not, throws an
     error.
-    
+
     :param param: A parameter from the params dictionary.
     :param arg: A given input argument.
     :return: Error if an error occurs, nothing if no error.
@@ -202,7 +202,7 @@ def check_float(param, arg):
     """
     Checks to ensure the given argument is indeed a float. If not, throws an
     error. Also checks to ensure the given float is within the range [0:1].
-    
+
     :param param: A parameter from the params dictionary.
     :param arg: A given input argument.
     :return: Error if an error occurs, nothing if no error.
@@ -226,7 +226,7 @@ def set_params(command_line_args):
     seeds, elite size). Sets the correct imports given command line
     arguments. Sets correct grammar file and fitness function. Also
     initialises save folders and tracker lists in utilities.trackers.
-    
+
     :param command_line_args: Command line arguments specified by the user.
     :return: Nothing.
     """
@@ -405,7 +405,7 @@ def set_params(command_line_args):
     # Set correct param imports for specified function options, including
     # error metrics and fitness functions.
     set_param_imports()
-    
+
     # Initialise run lists and folders
     initialise_run_params()
 

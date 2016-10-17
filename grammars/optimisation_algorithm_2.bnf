@@ -1,0 +1,10 @@
+# A second stab at a grammar which will evolve an update algorithm for a
+# heterogenous cellular network.
+
+<expr> ::= <expr> + <expr> | <expr> - <expr> | <expr> * <expr> | self.pdiv(<expr>, <expr>) | sqrt(abs(<expr>)) | log(abs(<expr>) + 1) | sin(<expr>) | cos(<expr>) | tan(<expr>) | <val> | <val>
+
+<val> ::= N_m | N_s | N_ms | s_log_R | <epsilon> | m_log_R | R_s_avg | R_m_avg | R_ms_avg | ms_log_R
+
+<epsilon> ::= float('<n><n><n>.<n><n><n>')
+
+<n> ::= 0|1|2|3|4|5|6|7|8|9
