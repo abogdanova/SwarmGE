@@ -39,6 +39,7 @@ class Grammar(object):
         # Initialise dicts for terminals and non terminals, set params.
         self.non_terminals, self.terminals = {}, []
         self.start_rule, self.codon_size = None, params['CODON_SIZE']
+        self.min_path, self.max_arity = None, None
         
         # Set regular expressions for parsing BNF grammar.
         self.ruleregex = '(?P<rulename><\S+>)\s*::=\s*(?P<production>(?:(?=\#)\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)'
