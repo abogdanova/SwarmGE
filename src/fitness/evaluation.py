@@ -31,7 +31,7 @@ def evaluate_fitness(individuals):
     results, pool = [], None
     if params['MULTICORE']:
         # Initialise a pool of jobs for multicore process workers.
-        pool = Pool(processes=params['CORES'])  # , maxtasksperchild=1)
+        pool = Pool(processes=params['CORES'], maxtasksperchild=1)
 
     for name, ind in enumerate(individuals):
         ind.name = name

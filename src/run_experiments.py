@@ -49,7 +49,7 @@ def execute_multi_core():
         # Execute a single evolutionary run.
         run_results.append(ponyge.mane())
         
-        if run > 1:
+        if run > 0:
             # Save spreadsheet and average fitness plot for runs so far.
             parse_stat_from_runs(params['EXPERIMENT_NAME'],
                                  ["best_fitness"], True)

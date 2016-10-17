@@ -25,7 +25,7 @@ class scheduling_optimisation():
             scheduling_type = phenotype.split("break")[0]
             scheduling_algorithm = phenotype.split("break")[1]
 
-        if params['PRE_COMPUTE']:
+        if params['PRE_COMPUTE'] and dist=="training":
             fitness = PCN.standalone_scheduler.return_pre_compute_fitness(
                 scheduling_algorithm, scheduling_type,
                 PCN.pre_computed_network)

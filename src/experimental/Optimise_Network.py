@@ -352,15 +352,15 @@ class Optimise_Network():
                 if self.MAP:
                     self.save_heatmap("Optimised", SHOW=self.SHOW, SAVE=self.SAVE)
 
-                if answers['ave_improvement_R'] == 0:
+                if answers == 0:
                     # no point checking other scenarios this guy does nothing
                     break
 
-                if self.ALL_TOGETHER and answers['ave_improvement_R'] < 2:
+                if self.ALL_TOGETHER and answers < 2:
                     # no point checking other scenarios this guy sucks
                     break
 
-                elif answers['ave_improvement_R'] < -5:
+                elif answers < -5:
                     # no point checking other scenarios this guy sucks
                     break
 
@@ -372,7 +372,6 @@ class Optimise_Network():
                 process = psutil.Process(getpid())
                 print(self.NAME, "Mem:\t", process.memory_info().rss/1024/1024, "Mb\n")
             setstate(state)
-            answers = deepcopy(answers)
             # self.deep_cleanse()
             return answers
 
@@ -536,15 +535,15 @@ class Optimise_Network():
                 if self.MAP:
                     self.save_heatmap("Optimised", SHOW=self.SHOW, SAVE=self.SAVE)
 
-                if answers['ave_improvement_R'] == 0:
+                if answers == 0:
                     # no point checking other scenarios this guy does nothing
                     break
 
-                if self.ALL_TOGETHER and answers['ave_improvement_R'] < 2:
+                if self.ALL_TOGETHER and answers < 2:
                     # no point checking other scenarios this guy sucks
                     break
 
-                elif answers['ave_improvement_R'] < -5:
+                elif answers < -5:
                     # no point checking other scenarios this guy sucks
                     break
 
@@ -594,7 +593,6 @@ class Optimise_Network():
                 print((self.NAME, "Mem:\t", process.memory_info().rss/1024/1024,
                       "Mb\n"))
             setstate(state)
-            answers = deepcopy(answers)
             # self.deep_cleanse()
             return answers
 
