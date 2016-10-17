@@ -12,7 +12,7 @@ class regression:
     """Fitness function for supervised learning, ie regression and
     classification problems. Given a set of training or test data,
     returns the error between y (true labels) and yhat (estimated
-    labels). changing stuff. asdf
+    labels). changing stuff. asdf qwer
 
     We can pass in the error metric to be used. MSE is suitable for
     regression, while F1-score, hinge-loss and others are suitable for
