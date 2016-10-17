@@ -15,13 +15,13 @@ def help_message():
     Prints a help message to explain the usage of this file.
     :return: Nothing
     """
-
+    
     lines_1 = ["Welcome to PonyGE's post-run stats parser.",
                "-------------------",
                "The following are the available command line args. You must "
                "specify an experiment name and at least one stat to be parsed."
                ""]
-
+    
     lines_2 = [["\t--help:", "Shows this help message."],
                ["\t--experiment_name:", "The name of the containing folder in "
                                         "which target runs are saved, e.g. "
@@ -31,7 +31,7 @@ def help_message():
                               "stats.stats.stats dictionary. "
                               "IMPORTANT: MUST NOT CONTAIN ANY SPACES."],
                ["\t--graph:", "Saves a .pdf figure of each stat specified."]]
-
+    
     for line in lines_1:
         print(line)
     col_width = max(len(line[0]) for line in lines_2)
@@ -50,7 +50,7 @@ def parse_opts(command_line_args):
                     stats.stats.stats dictionary.
              graph: an optional boolean flag for graphing specified stats.
     """
-
+    
     try:
         opts, args = getopt.getopt(command_line_args[1:], "",
                                    ["help", "experiment_name=", "stats=",
@@ -69,7 +69,7 @@ def parse_opts(command_line_args):
         exit(2)
 
     experiment_name, stats, graph = None, None, False
-
+    
     for opt, arg in opts:
         if opt == "--help":
             help_message()
@@ -83,7 +83,7 @@ def parse_opts(command_line_args):
                 stats = arg.split(",")
         elif opt == "--graph":
             graph = True
-
+    
     return experiment_name, stats, graph
 
 
@@ -101,11 +101,11 @@ def parse_stat_from_runs(experiment_name, stats, graph):
         .               .               .   .   .   .
         run0_gen(n-1)   run1_gen(n-1)   .   .   .   run(n-1)_gen(n-1)
         run0_gen(n)     run1_gen(n)     .   .   .   run(n-1)_gen(n)
-
+        
     Generated file is compatible with
-
+        
         utilities.save_plot.save_average_plot_across_runs()
-
+    
     :param experiment_name: The name of a collecting folder within the
     ./results folder which holds multiple runs.
     :param stats: A list of the names of the stats to be parsed.
@@ -121,9 +121,9 @@ def parse_stat_from_runs(experiment_name, stats, graph):
     else:
         print("Error: experiment name not specified")
         quit()
-
+    
     runs = [run for run in listdir(path) if "." not in run]
-
+    
     for stat in stats:
         if stat == "best_ever":
             print("Error: Cannot graph instances of individual class. Do not"
@@ -146,10 +146,9 @@ def parse_stat_from_runs(experiment_name, stats, graph):
                 summary_stats[i] = [(datetime.strptime(time,
                                                        "%H:%M:%S.%f") - zero).total_seconds()
                                     for time in run]
-
+                
         summary_stats = np.asarray(summary_stats)
         summary_stats = np.transpose(summary_stats)
-
         np.savetxt(path + stat + ".csv", summary_stats, delimiter=",")
         if graph:
             save_average_plot_across_runs(path + stat + ".csv")
@@ -178,26 +177,25 @@ def save_average_plot_across_runs(filename):
     of each generation of multiple runs. Must be comma separated.
     :return: Nothing.
     """
-
+    
     stat_name = filename.split("/")[-1].split(".")[0]
-
-    data = np.genfromtxt(filename, delimiter=',')
-
+    
+    data = np.genfromtxt(filename, delimiter=',')[:, :-1]
     ave = np.nanmean(data, axis=1)
     std = np.nanstd(data, axis=1)
     max_gens = len(ave)
-
+    
     stdmax = ave + std
     stdmin = ave - std
     r = range(1, max_gens + 1)
-
+    
     fig = plt.figure()
     ax1 = fig.add_subplot(1, 1, 1)
-
+    
     ax1.plot(r, ave, color="blue")
     plt.xlim(0, max_gens + 1)
     ax1.fill_between(r, stdmin, stdmax, color="DodgerBlue", alpha=0.5)
-
+    
     plt.title("Average " + stat_name)
     plt.xlabel('Generation', fontsize=14)
     plt.ylabel('Average ' + stat_name, fontsize=14)

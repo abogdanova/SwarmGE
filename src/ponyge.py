@@ -29,9 +29,5 @@ def mane():
 
 
 if __name__ == "__main__":
-    
-    # Setup run parameters.
     set_params(sys.argv)
-    
-    # Execute run.
     mane()
