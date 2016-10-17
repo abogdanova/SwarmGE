@@ -372,6 +372,7 @@ class Optimise_Network():
                 process = psutil.Process(getpid())
                 print(self.NAME, "Mem:\t", process.memory_info().rss/1024/1024, "Mb\n")
             setstate(state)
+
             # self.deep_cleanse()
             return answers
 
@@ -593,6 +594,7 @@ class Optimise_Network():
                 print((self.NAME, "Mem:\t", process.memory_info().rss/1024/1024,
                       "Mb\n"))
             setstate(state)
+
             # self.deep_cleanse()
             return answers
 
@@ -969,7 +971,7 @@ class Optimise_Network():
                     print("   \tAve Impr:", round(self.ave_improvement_R, 4))
             print("\tHelpless:", answers['helpless_UEs'], end=' ')
             print("\tUnscheduled:", answers['unscheduled_UEs'])
-        
+
         if SAVE:
             filename = "./Network_Stats/" + str(self.TIME_STAMP) + "/Network_Stats.txt"
             savefile = open(filename, 'a')
@@ -987,7 +989,7 @@ class Optimise_Network():
             savefile.write("\tUnscheduled UEs: " + str(answers['unscheduled_UEs']))
             savefile.write("\n")
             savefile.close()
-        
+
         return answers["ave_improvement_R"]
 
     def clear_memory(self):

@@ -20,7 +20,7 @@ class scheduling_optimisation():
 
         scheduling_algorithm = phenotype
         scheduling_type = params['GRAMMAR_FILE'].split("/")[-1].split(".")[0]
-        
+
         if scheduling_type.split("_")[-1] == "complete":
             scheduling_type = phenotype.split("break")[0]
             scheduling_algorithm = phenotype.split("break")[1]
@@ -29,7 +29,7 @@ class scheduling_optimisation():
             fitness = PCN.standalone_scheduler.return_pre_compute_fitness(
                 scheduling_algorithm, scheduling_type,
                 PCN.pre_computed_network)
-        
+
         else:
             import experimental.Optimise_Network as OPT
             the_network = OPT.Optimise_Network(
