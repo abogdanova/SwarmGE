@@ -6,17 +6,20 @@ import numpy as np
 from algorithm.parameters import params
 from utilities.fitness.error_metric import mse
 from utilities.fitness.get_data import get_data
+from utilities.fitness.math_functions import plog, psqrt, pdiv
 
 
 class regression:
-    """Fitness function for supervised learning, ie regression and
+    """
+    Fitness function for supervised learning, ie regression and
     classification problems. Given a set of training or test data,
     returns the error between y (true labels) and yhat (estimated
     labels).
 
     We can pass in the error metric to be used. MSE is suitable for
     regression, while F1-score, hinge-loss and others are suitable for
-    classification."""
+    classification.
+    """
 
     maximise = False
 
@@ -32,6 +35,8 @@ class regression:
         """
         We can call regression objects,
         ie r = regression(exp); r(f, "training").
+        Note that math functions used in the solutions are imported from either
+        utilities.fitness.math_functions or called from numpy.
 
         :param func:
         :param dist: An optional parameter for problems with training/test

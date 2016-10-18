@@ -6,6 +6,7 @@ import numpy as np
 from algorithm.parameters import params
 from utilities.fitness.error_metric import inverse_f1_score
 from utilities.fitness.get_data import get_data
+from utilities.fitness.math_functions import plog, psqrt, pdiv
 
 
 class classification:
@@ -32,6 +33,8 @@ class classification:
         """
         We can call regression objects,
         ie r = regression(exp); r(f, "training").
+        Note that math functions used in the solutions are imported from either
+        utilities.fitness.math_functions or called from numpy.
 
         :param func:
         :param dist: An optional parameter for problems with training/test
