@@ -26,22 +26,28 @@ def help_message():
                                        "requires a string such as 'rhh' or a "
                                        "direct path string such as "
                                        "'operators.initialisation.rhh'"],
-               ["\t--max_init_depth:", "Sets the max tree depth for "
-                                       "initialisation"],
+               ["\t--max_init_tree_depth:", "Sets the max tree depth for "
+                                            "initialisation"],
                ["\t--genome_init:", "Will initialise individuals by "
                                     "generating a random genome for each "
                                     "individual"],
                ["\t--max_tree_depth:", "Sets the max derivation tree depth "
                                        "for the algorithm, requires int "
-                                       "value"],
+                                       "value."],
+               ["\t--max_tree_nodes:", "Sets the max derivation tree nodes "
+                                       "for the algorithm, requires int "
+                                       "value."],
                ["\t--codon_size:", "Sets the range from 0 to condon_size to "
                                    "be used in genome, requires int value"],
                ["\t--max_wraps:", "Sets the maximum number of times the "
                                   "genome mapping process can wrap over the "
                                   "length of the genome. Requires int value."],
-               ["\t--genome_length:", "Sets the maximum length for "
-                                      "chromosomes to be initialised to, "
-                                      "requires int value"],
+               ["\t--max_genome_length:", "Sets the maximum chromosome length "
+                                          "for the algorithm, requires int "
+                                          "value"],
+               ["\t--max_init_genome_length:", "Sets the maximum length for "
+                                                "chromosomes to be initialised"
+                                                " to, requires int value"],
                ["\t--selection:", "Sets the selection to be used, requires "
                                   "string such as 'tournament' or direct path "
                                   "string such as "

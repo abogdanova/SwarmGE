@@ -29,7 +29,7 @@ def rhh(size):
 
     # Calculate the range of depths to ramp individuals from.
     depths = range(params['BNF_GRAMMAR'].min_ramp + 1,
-                   params['MAX_INIT_DEPTH']+1)
+                   params['MAX_INIT_TREE_DEPTH']+1)
     population = []
 
     if size < 2:

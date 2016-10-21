@@ -41,8 +41,20 @@ def crossover(parents):
             # We have an invalid, need to do crossover again.
             pass
         
-        elif any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
-            # Tree is too big, need to do crossover again.
+        elif params['MAX_TREE_DEPTH'] and \
+                any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
+            # Tree is too deep, need to do crossover again.
+            pass
+        
+        elif params['MAX_TREE_NODES'] and \
+                any([ind.nodes > params['MAX_TREE_NODES'] for ind in inds]):
+            # Tree has too many nodes, need to do crossover again.
+            pass
+        
+        elif params['MAX_GENOME_LENGTH'] and \
+                any([len(ind.genome) > params['MAX_GENOME_LENGTH'] for ind in
+                     inds]):
+            # Genome is too long, need to do crossover again.
             pass
         
         else:
@@ -52,11 +64,12 @@ def crossover(parents):
     return cross_pop
 
 
-def onepoint(p_0, p_1, within_used=True):
+def variable_onepoint(p_0, p_1, within_used=True):
     """
     Given two individuals, create two children using one-point crossover and
     return them. A different point is selected on each genome for crossover
-    to occur. Crossover points are selected within the used portion of the
+    to occur. Note that this allows for genomes to grow or shrink in
+    size. Crossover points are selected within the used portion of the
     genome by default (i.e. crossover does not occur in the tail of the
     individual).
     
@@ -97,6 +110,54 @@ def onepoint(p_0, p_1, within_used=True):
     ind_0 = individual.Individual(c_0, None)
     ind_1 = individual.Individual(c_1, None)
 
+    return [ind_0, ind_1]
+
+
+def fixed_onepoint(p_0, p_1, within_used=True):
+    """
+    Given two individuals, create two children using one-point crossover and
+    return them. The same point is selected on both genomes for crossover
+    to occur. Crossover points are selected within the used portion of the
+    genome by default (i.e. crossover does not occur in the tail of the
+    individual).
+
+    Onepoint crossover in Grammatical Evolution is explained further in:
+        O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003.
+        Crossover in grammatical evolution.
+        Genetic programming and evolvable machines, 4(1), pp.67-93.
+        DOI: 10.1023/A:1021877127167
+
+    :param p_0: Parent 0
+    :param p_1: Parent 1
+    :param within_used: Boolean flag for selecting whether or not crossover
+    is performed within the used portion of the genome. Default set to True.
+    :return: A list of crossed-over individuals.
+    """
+    
+    # Get the chromosomes.
+    c_p_0, c_p_1 = p_0.genome, p_1.genome
+    
+    # Uniformly generate crossover points. If within_used==True,
+    # points will be within the used section.
+    if within_used:
+        max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
+    else:
+        max_p_0, max_p_1 = len(c_p_0), len(c_p_1)
+    
+    # Select the same point on both genomes for crossover to occur.
+    pt = randint(1, min(max_p_0, max_p_1))
+    
+    # Make new chromosomes by crossover: these slices perform copies.
+    if random() < params['CROSSOVER_PROBABILITY']:
+        c_0 = c_p_0[:pt] + c_p_1[pt:]
+        c_1 = c_p_1[:pt] + c_p_0[pt:]
+    else:
+        c_0, c_1 = c_p_0[:], c_p_1[:]
+    
+    # Put the new chromosomes into new individuals.
+    ind_0 = individual.Individual(c_0, None)
+    ind_1 = individual.Individual(c_1, None)
+    
     return [ind_0, ind_1]
 
 

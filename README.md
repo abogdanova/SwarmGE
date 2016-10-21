@@ -208,16 +208,36 @@ probability of crossover occurring is set with the flag:
 where `[NUM]` is a float between 0 and 1. The default value for crossover is
 0.75.
 
-####Onepoint
+####Variable Onepoint
 
 Activate with:
 
-    --crossover onepoint
+    --crossover variable_onepoint
 
-Given two individuals, create two children using one-point crossover and return
-them. A different point is selected on each genome for crossover to occur.
-Crossover points areselected within the used portion of the genome by default
-(i.e. crossover does not occur in the tail of the individual).
+Given two individuals, create two children using variable one-point 
+crossover and return them. A different point is selected on each genome 
+for crossover to occur. This allows genomes to grow or shrink in length.
+Crossover points areselected within the used portion of the genome by 
+default (i.e. crossover does not occur in the tail of the individual).
+
+*__NOTE__ that variable onepoint crossover can cause individuals to grow*
+*, leading to bloat.*
+
+For a more in-depth discussion on onepoint crossover in Grammatical Evolution,
+see the list of references at the end of this document.
+
+####Fixed Onepoint
+
+Activate with:
+
+    --crossover fixed_onepoint
+
+Given two individuals, create two children using fixed one-point crossover and return
+them. The same point is selected on both genomes for crossover to occur.
+This means that genomes will always remain the same length (as long as 
+int_flip mutation is used). Crossover points are selected within the 
+used portion of the genome by default (i.e. crossover does not occur in 
+the tail of the individual).
 
 For a more in-depth discussion on onepoint crossover in Grammatical Evolution,
 see the list of references at the end of this document.

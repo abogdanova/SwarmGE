@@ -52,15 +52,17 @@ params = {
 
         # Set max sizes of individuals
         'MAX_TREE_DEPTH': 17,
+        'MAX_TREE_NODES': None,
         'CODON_SIZE': 100000,
-        'GENOME_LENGTH': 500,
+        'MAX_INIT_GENOME_LENGTH': 200,
+        'MAX_GENOME_LENGTH': 500,
         'MAX_WRAPS': 0,
 
         # INITIALISATION
         'INITIALISATION': "operators.initialisation.rhh",
         # "operators.initialisation.random_init"
         # "operators.initialisation.rhh"
-        'MAX_INIT_DEPTH': 10,
+        'MAX_INIT_TREE_DEPTH': 10,
         # Set the maximum tree depth for initialisation.
         'GENOME_INIT': False,
         # If True, initialises individuals by generating random genomes (i.e.
@@ -78,8 +80,8 @@ params = {
         # Allow for selection of invalid individuals during selection process.
 
         # CROSSOVER
-        'CROSSOVER': "operators.crossover.onepoint",
-        # "operators.crossover.onepoint",
+        'CROSSOVER': "operators.crossover.variable_onepoint",
+        # "operators.crossover.fixed_onepoint",
         # "operators.crossover.subtree",
         'CROSSOVER_PROBABILITY': 0.75,
 
@@ -191,11 +193,15 @@ def check_int(param, arg):
     :return: Error if an error occurs, nothing if no error.
     """
 
-    try:
-        params[param] = int(arg)
-    except:
-        print("\nError: Please define", param, "as int. Value given:", arg)
-        quit()
+    if arg in ["None", "none"]:
+        params[param] = None
+    
+    else:
+        try:
+            params[param] = int(arg)
+        except:
+            print("\nError: Please define", param, "as int. Value given:", arg)
+            quit()
 
 
 def check_float(param, arg):
@@ -208,15 +214,19 @@ def check_float(param, arg):
     :return: Error if an error occurs, nothing if no error.
     """
 
-    try:
-        params[param] = float(arg)
-    except:
-        print("\nError: Please define", param, "as float. Value given:", arg)
-        quit()
-    if not 1 >= params[param] >= 0:
-        print("\nError:", param, "outside allowed range [0:1]. Value "
-                                 "given:", arg)
-        quit()
+    if arg in ["None", "none"]:
+        params[param] = None
+    
+    else:
+        try:
+            params[param] = float(arg)
+        except:
+            print("\nError: Please define", param, "as float. Value given:", arg)
+            quit()
+        if not 1 >= params[param] >= 0:
+            print("\nError:", param, "outside allowed range [0:1]. Value "
+                                     "given:", arg)
+            quit()
 
 
 def set_params(command_line_args):
@@ -242,8 +252,9 @@ def set_params(command_line_args):
         opts, args = getopt.getopt(command_line_args[1:], "",
                                    ["help", "debug", "population=",
                                     "generations=", "initialisation=",
-                                    "max_init_depth=", "genome_init",
-                                    "max_tree_depth=", "codon_size=",
+                                    "max_init_tree_depth=", "max_tree_depth=",
+                                    "max_genome_length=", "genome_init",
+                                    "max_init_genome_length=", "codon_size=",
                                     "selection=", "selection_proportion=",
                                     "tournament_size=", "crossover=",
                                     "crossover_probability=", "replacement=",
@@ -253,7 +264,7 @@ def set_params(command_line_args):
                                     "verbose", "elite_size=", "save_all",
                                     "save_plots", "cache", "lookup_fitness",
                                     "lookup_bad_fitness", "mutate_duplicates",
-                                    "genome_length=",
+                                    "max_tree_nodes=",
                                     "invalid_selection", "silent",
                                     "dont_lookup_fitness", "experiment_name=",
                                     "multicore", "cores=", "max_wraps=",
@@ -289,18 +300,22 @@ def set_params(command_line_args):
         # INDIVIDUAL SIZE
         elif opt == "--max_tree_depth":
             check_int('MAX_TREE_DEPTH', arg)
+        elif opt == "--max_tree_nodes":
+            check_int('MAX_TREE_NODES', arg)
         elif opt == "--codon_size":
             check_int('CODON_SIZE', arg)
-        elif opt == "--genome_length":
-            check_int('GENOME_LENGTH', arg)
+        elif opt == "--max_genome_length":
+            check_int('MAX_GENOME_LENGTH', arg)
         elif opt == "--max_wraps":
             check_int('MAX_WRAPS', arg)
 
         # INITIALISATION
         elif opt == "--initialisation":
             params['INITIALISATION'] = arg
-        elif opt == "--max_init_depth":
-            check_int('MAX_INIT_DEPTH', arg)
+        elif opt == "--max_init_tree_depth":
+            check_int('MAX_INIT_TREE_DEPTH', arg)
+        elif opt == "--max_init_genome_length":
+            check_int('MAX_INIT_GENOME_LENGTH', arg)
         elif opt == "--genome_init":
             params['GENOME_INIT'] = True
             params['INITIALISATION'] = "operators.initialisation.random_init"

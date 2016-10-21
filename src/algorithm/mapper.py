@@ -61,7 +61,7 @@ def mapper(genome, tree):
 
                 # Generate a random genome
                 genome = [randint(0, params['CODON_SIZE']) for _ in
-                          range(params['GENOME_LENGTH'])]
+                          range(params['MAX_INIT_GENOME_LENGTH'])]
 
                 if params['GENOME_OPERATIONS']:
                     # Initialise a new individual from a randomly generated
