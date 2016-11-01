@@ -35,14 +35,41 @@ class RegexEval:
         eval_results = test_regex(compiled_regex)
         return calculate_fitness(results)
 
+    def calculate_fitness(results):
+        """
+        We have a list of ( time, match object/null, iterations )
+        In order of most interesting first:
+        Match all
+        -Quicker than seed
+        -Slower than seed (doing same thing, but different)
+        Match some
+        -quicker, same, slower
+        Match all
+        -Same time as seed (meh, not interesting)
+        Match none
+        -same, slower, quicker (empty regex?)
+        Fitness = time + 100 * num_missed_matches (time will be in low seconds)
+        """
+        for a_result in results:
+            if a_result[1] == Null:
+                missed_match = 2
+            else: # see how close it got to desired match (as error ratio)
+                # if levenstein is 0 (the same), then error will be 0
+                # if levenstein is most it can be, then error will 1
+                missed_match = a_result[4].compare(a_result[1]) / len(a_result) 
+        fitness = a_result[0] + 100 * missed_match
+        if fitness == seed_fitness:
+            fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
+        return fitness
+    
     def test_regex(compiled_regex):
         results = list()
         # do a quick test to time the longest test case (which is also the last in the list)
-        quick_test = time_regex_test_case(compiled_regex, test_cases[len(test_cases)], 10)
-        # aim for a test to take a second
-        testing_iterations = 1 / (quick_test[0]/10) # time for one iteration
+        quick_test = time_regex_test_case(compiled_regex, test_cases[len(test_cases)-1], 10)
+        # aim for longest test to take a second
+        testing_iterations = 1 / (quick_test[0]/10) # change to half second?
         for test_case in test_cases:
-            results.add(time_regex_test_case(compiled_regex, test_cases[len(test_cases)], testing_iterations)
+            results.add(time_regex_test_case(compiled_regex, test_cases[len(test_cases)], testing_iterations))
         return results
 
     def time_regex_test_case(compiled_regex, test_case, iterations):
@@ -50,7 +77,7 @@ class RegexEval:
         def wrap():
             return compiled_reg.match(search_string)
         t = timeit.Timer(wrap) # does timeit do a number of iterations and pick the lowest? or does it do 100000 iterations and return time?
-        return t.timeit(number = iterations), iterations
+        return t.timeit(number = iterations), iterations, test_case
 
     """
     Given a test string and the desired match,
