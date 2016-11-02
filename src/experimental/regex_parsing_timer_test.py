@@ -6,6 +6,16 @@ import ast
 import re
 import timeit
 
+class timeitReturnTimer(timeit.Timer):
+    timeit.template = """
+def inner(_it, _timer{init}):
+    {setup}
+    _t0 = _timer()
+    for _i in _it:
+        retval = {stmt}
+    _t1 = _timer()
+    return _t1 - _t0, retval
+"""
 
 def _template_func(setup, func):
     """Create a timer function. Used if the "statement" is a callable.
@@ -20,7 +30,8 @@ def _template_func(setup, func):
         return _t1 - _t0, retval
     return inner
 
-template = """
+
+timeit.template = """
 def inner(_it, _timer{init}):
     {setup}
     _t0 = _timer()
@@ -31,9 +42,6 @@ def inner(_it, _timer{init}):
 """
 
 # timeit._template_func = _template_func
-timeit.template = template
-
-
 
 def mane():
     # this strings works in python as taken from RegexGenerator which marks them (JS)
@@ -63,7 +71,7 @@ def get_function(regex_str):
 def time_regex(regex_str):
     a_function = get_function(regex_str)
     print("Timing a function")
-    t = timeit.Timer(a_function)
+    t = timeitReturnTimer(a_function)
     eval_results = t.timeit(number=1000)
     print(eval_results)
     # print(min(t.repeat(repeat=3)))

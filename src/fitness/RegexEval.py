@@ -4,23 +4,16 @@ from Levenshtein import distance
 import re
 import time, timeit
 
-
-# class timeitReturn(timeit): # causes error: TypeError: function() argument 1 must be code, not str
-def _template_func(setup, func):
-    """Create a timer function. Used if the "statement" is a callable.
-    http://stackoverflow.com/questions/24812253/how-can-i-capture-return-value-with-python-timeit-module
-    """
-    def inner(_it, _timer, _func=func):
-        setup()
-        _t0 = _timer()
-        for _i in _it:
-            retval = _func()
-        _t1 = _timer()
-        return _t1 - _t0, retval
-    return inner
-
-# subclass instead of monkey-patching, but errors
-timeit._template_func = _template_func
+# http://stackoverflow.com/questions/24812253/how-can-i-capture-return-value-with-python-timeit-module/
+timeit.template = """
+def inner(_it, _timer{init}):
+    {setup}
+    _t0 = _timer()
+    for _i in _it:
+        retval = {stmt}
+    _t1 = _timer()
+    return _t1 - _t0, retval
+"""
     
 class RegexEval:
     """
@@ -63,8 +56,8 @@ class RegexEval:
                 # if levenstein is most it can be, then error will 1
                 missed_match = a_result[3].compare(a_result[1]) / len(a_result) 
         fitness = a_result[0] + 100 * missed_match
-        if fitness == seed_fitness:
-            fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
+#        if fitness == seed_fitness:
+ #           fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
         return fitness
     
     def test_regex(self,compiled_regex):
@@ -82,9 +75,12 @@ class RegexEval:
         def wrap():
             return compiled_regex.match(search_string)
         t = timeit.Timer(wrap) # does timeit do a number of iterations and pick the lowest? or does it do 100000 iterations and return time?
-        return_vals = t.timeit(number = iterations)
+        return_tuple = t.timeit(number = iterations)
         #return_vals = t.timeit()
-        return return_vals, iterations, test_case
+        return_vals = list(return_tuple)
+        return_vals.append(iterations)
+        return_vals.append(test_case)
+        return return_vals
 
     """
     Given a test string and the desired match,
@@ -108,7 +104,7 @@ class RegexTestString:
         self.matched_string = matched_string
         
     def compare(self,attempt_string):
-        return distance(self.matched_string, attempt_string)
+        return distance(self.matched_string, attempt_string.group(0))
 
     def get_search_string(self,):
         return self.search_string
