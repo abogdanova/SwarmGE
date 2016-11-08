@@ -48,26 +48,41 @@ class RegexEval:
         -same, slower, quicker (empty regex?)
         Fitness = time + 100 * num_missed_matches (time will be in low seconds)
         """
+        result_error=0
+        time_sum=0.0
         for a_result in eval_results:
+            time_sum += a_result[0] /  a_result[2]
             if a_result[1] == None:
-                missed_match = 2
+                result_error += 2 * (len(a_result[3].search_string) + len(a_result[3].matched_string))
+#                print("No Match")
             else: # see how close it got to desired match (as error ratio)
                 # if levenstein is 0 (the same), then error will be 0
-                # if levenstein is most it can be, then error will 1
-                missed_match = a_result[3].compare(a_result[1]) / len(a_result) 
-        fitness = a_result[0] + 100 * missed_match
-#        if fitness == seed_fitness:
- #           fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
+                # a match can be longer than desired, so no upper bound on levenshtein
+                # make max levenshtein error 1
+                # match_error = 1
+                # If a string is the same length as match but entirely different, levenstein will be the same as the empty string. We measure strings that are not the same length as error.
+                # Give some gradient towards a match even being the same length (but there is no gradient to the match being close)
+                match_lev = a_result[3].compare(a_result[1])
+                match_error = match_lev # / len(a_result[3].matched_string)
+                # if match_lev < len(a_result[3].matched_string):
+                # result_error += match_error #+ abs(len(a_result[3].matched_string) - len(a_result[1].group(0)))
+                result_error += abs(len(a_result[3].matched_string) - len(a_result[1].group(0)))
+#                if len(a_result[1].group(0)) > 1 and len(a_result[1].group(0)) < len(a_result[3].matched_string):
+#                    print(a_result[3].matched_string + " " + a_result[1].group(0) + " {}".format(result_error))
+        fitness = (100 * result_error)  + (time_sum)
+        # if fitness == seed_fitness:
+        # fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
         return fitness
     
     def test_regex(self,compiled_regex):
         results = list()
         # do a quick test to time the longest test case (which is also the last in the list)
         quick_test = self.time_regex_test_case(compiled_regex, self.test_cases[len(self.test_cases)-1], 10)
-        # aim for longest test to take a second
-        testing_iterations = int(1 / (quick_test[0]/10)) # change to half second?
+        # aim for entire test suite to take less than a second
+        eval_time = .01 # seconds
+        testing_iterations = int(( eval_time / (quick_test[0]/10))/len(self.test_cases)) # change to half second?
         for test_case in self.test_cases:
-            results.append(self.time_regex_test_case(compiled_regex, self.test_cases[len(self.test_cases)-1], testing_iterations))
+            results.append(self.time_regex_test_case(compiled_regex, test_case, testing_iterations))
         return results
 
     def time_regex_test_case(self, compiled_regex, test_case, iterations):
@@ -91,12 +106,18 @@ class RegexEval:
     def generate_tests(self):
         search_string = "Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)"
         match_string = "5c:0a:5b:63:4a:82"
-        for i in range(1, len(match_string)):
-            for j in range(len(match_string)-i):
-                self.test_cases.append(
-                    RegexTestString(search_string, # does this duplicate the search_string? (keep it simple hi)
-                                    match_string[j:j+i])
-                )
+        self.test_cases.append(
+            RegexTestString(search_string,
+                            match_string))
+        self.test_cases.append(
+            RegexTestString(match_string,
+            match_string))
+#        for i in range(1, len(match_string)):
+#            for j in range(len(match_string)-i):
+#                self.test_cases.append(
+#                    RegexTestString(search_string, # does this duplicate the search_string? (keep it simple hi)
+#                                    match_string[j:j+i])
+#                )
         
 class RegexTestString:
     def __init__(self,search_string,matched_string):

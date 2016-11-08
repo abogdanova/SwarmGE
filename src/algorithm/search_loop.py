@@ -4,7 +4,6 @@ from stats.stats import stats, get_stats
 from utilities.algorithm.state import create_state
 from utilities.stats import trackers
 
-
 def search_loop():
     """
     This is a standard search process for an evolutionary algorithm. Loop over
@@ -19,7 +18,7 @@ def search_loop():
 
     # Evaluate initial population
     individuals = evaluate_fitness(individuals)
-
+   
     # Generate statistics for run so far
     get_stats(individuals)
 
