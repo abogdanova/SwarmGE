@@ -29,9 +29,14 @@ class RegexEval:
         self.generate_tests()
 
     def __call__(self, regex_string):
-        compiled_regex = re.compile(regex_string)
-        eval_results = self.test_regex(compiled_regex)
-        return self.calculate_fitness(eval_results)
+        if ". ." in regex_string:
+            print("----- Interesting string: " + regex_string)
+        try:
+            compiled_regex = re.compile(regex_string)
+            eval_results = self.test_regex(compiled_regex)
+            return self.calculate_fitness(eval_results)
+        except:
+            return 100000
 
     def calculate_fitness(self,eval_results):
         """
@@ -64,12 +69,14 @@ class RegexEval:
                 # Give some gradient towards a match even being the same length (but there is no gradient to the match being close)
                 match_lev = a_result[3].compare(a_result[1])
                 match_error = match_lev # / len(a_result[3].matched_string)
+                if a_result[1].group(0) not in a_result[3].matched_string:
+                    match_error+=1
                 # if match_lev < len(a_result[3].matched_string):
                 # result_error += match_error #+ abs(len(a_result[3].matched_string) - len(a_result[1].group(0)))
-                result_error += abs(len(a_result[3].matched_string) - len(a_result[1].group(0)))
+                result_error += match_error + abs(len(a_result[3].matched_string) - len(a_result[1].group(0)))
 #                if len(a_result[1].group(0)) > 1 and len(a_result[1].group(0)) < len(a_result[3].matched_string):
 #                    print(a_result[3].matched_string + " " + a_result[1].group(0) + " {}".format(result_error))
-        fitness = (100 * result_error)  + (time_sum)
+        fitness = (100 * result_error) + (time_sum)
         # if fitness == seed_fitness:
         # fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
         return fitness
@@ -131,3 +138,5 @@ class RegexTestString:
         return self.search_string
 
     
+# <star>           ::=             <elementary-RE> "*"
+# <plus>           ::=             <elementary-RE> "+"
