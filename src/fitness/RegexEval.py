@@ -32,10 +32,17 @@ class RegexEval:
         if ". ." in regex_string:
             print("----- Interesting string: " + regex_string)
         try:
+            if "5c" == regex_string:
+                print("aha - " + regex_string)
+                print("aha - " + regex_string)
             compiled_regex = re.compile(regex_string)
             eval_results = self.test_regex(compiled_regex)
-            return self.calculate_fitness(eval_results)
+            fitness = self.calculate_fitness(eval_results)
+#            if "5c" in regex_string:
+#                print(regex_string + ": {}".format(fitness))
+            return fitness
         except:
+#            print(Exception)
             return 100000
 
     def calculate_fitness(self,eval_results):
@@ -58,7 +65,7 @@ class RegexEval:
         for a_result in eval_results:
             time_sum += a_result[0] /  a_result[2]
             if a_result[1] == None:
-                result_error += 2 * (len(a_result[3].search_string) + len(a_result[3].matched_string))
+                result_error += 100 * (len(a_result[3].search_string) + len(a_result[3].matched_string))
 #                print("No Match")
             else: # see how close it got to desired match (as error ratio)
                 # if levenstein is 0 (the same), then error will be 0
@@ -70,13 +77,20 @@ class RegexEval:
                 match_lev = a_result[3].compare(a_result[1])
                 match_error = match_lev # / len(a_result[3].matched_string)
                 if a_result[1].group(0) not in a_result[3].matched_string:
-                    match_error+=1
+                    match_error+=(len(a_result[3].search_string) + len(a_result[3].matched_string)) # encourage regex which match something
+                elif not a_result[1].group(0):
+                    match_error+=10*(len(a_result[3].search_string) + len(a_result[3].matched_string))
+                else:
+                    match_error+= 50*(abs(len(a_result[3].matched_string) - len(a_result[1].group(0))))
                 # if match_lev < len(a_result[3].matched_string):
                 # result_error += match_error #+ abs(len(a_result[3].matched_string) - len(a_result[1].group(0)))
-                result_error += match_error + abs(len(a_result[3].matched_string) - len(a_result[1].group(0)))
+                result_error += match_error 
 #                if len(a_result[1].group(0)) > 1 and len(a_result[1].group(0)) < len(a_result[3].matched_string):
 #                    print(a_result[3].matched_string + " " + a_result[1].group(0) + " {}".format(result_error))
-        fitness = (100 * result_error) + (time_sum)
+        if result_error:
+            fitness = result_error
+        else:
+            fitness = time_sum
         # if fitness == seed_fitness:
         # fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
         return fitness
@@ -95,7 +109,7 @@ class RegexEval:
     def time_regex_test_case(self, compiled_regex, test_case, iterations):
         search_string = test_case.get_search_string()
         def wrap():
-            return compiled_regex.match(search_string)
+            return compiled_regex.search(search_string)
         t = timeit.Timer(wrap) # does timeit do a number of iterations and pick the lowest? or does it do 100000 iterations and return time?
         return_tuple = t.timeit(number = iterations)
         #return_vals = t.timeit()
@@ -117,26 +131,36 @@ class RegexEval:
             RegexTestString(search_string,
                             match_string))
         self.test_cases.append(
-            RegexTestString(match_string,
-            match_string))
-#        for i in range(1, len(match_string)):
-#            for j in range(len(match_string)-i):
+            RegexTestString("196(5c:0a:5b:63:4a:82):43",
+                            "5c:0a:5b:63:4a:82"))
+#        self.test_cases.append(
+#            RegexTestString(match_string,
+#            match_string))
+#        for i in range(0, len(match_string)-1):
+#            for j in range(1,len(match_string)-i):
 #                self.test_cases.append(
 #                    RegexTestString(search_string, # does this duplicate the search_string? (keep it simple hi)
-#                                    match_string[j:j+i])
+#                                    match_string[i:j+i])
 #                )
         
 class RegexTestString:
     def __init__(self,search_string,matched_string):
         self.search_string = search_string
         self.matched_string = matched_string
+        self.starti = search_string.find(matched_string)
+        self.endi = self.starti + len(matched_string)
         
     def compare(self,attempt_string):
-        return distance(self.matched_string, attempt_string.group(0))
+        error = distance(self.matched_string, attempt_string.group(0))
+        attempti=0
+        attempti += self.search_string.find(attempt_string.group(0))
+        if attempti < self.starti:
+            error+= self.starti-attempti
+        elif attempti > self.endi:
+            error+= attempti-self.endi
+        return error
 
     def get_search_string(self,):
         return self.search_string
 
     
-# <star>           ::=             <elementary-RE> "*"
-# <plus>           ::=             <elementary-RE> "+"
