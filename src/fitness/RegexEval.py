@@ -64,18 +64,12 @@ class RegexEval:
         time_sum=0.0
         for a_result in eval_results:
             time_sum += a_result[0] /  a_result[2]
-            if a_result[1] == None:
+            if a_result[1] == None: # no match 
                 result_error += 100 * (len(a_result[3].search_string) + len(a_result[3].matched_string))
 #                print("No Match")
-            else: # see how close it got to desired match (as error ratio)
-                # if levenstein is 0 (the same), then error will be 0
-                # a match can be longer than desired, so no upper bound on levenshtein
-                # make max levenshtein error 1
-                # match_error = 1
-                # If a string is the same length as match but entirely different, levenstein will be the same as the empty string. We measure strings that are not the same length as error.
-                # Give some gradient towards a match even being the same length (but there is no gradient to the match being close)
-                match_lev = a_result[3].compare(a_result[1])
-                match_error = match_lev # / len(a_result[3].matched_string)
+            else: # a match which may be the empty string                
+                if a_result[1] in a_result[3].matched_string: # the found match is one of the desired extractions
+                    match_error += len(a_result[1]) - a_result[3].matched_string # but it may not be the correct match location
                 if a_result[1].group(0) not in a_result[3].matched_string:
                     match_error+=(len(a_result[3].search_string) + len(a_result[3].matched_string)) # encourage regex which match something
                 elif not a_result[1].group(0):
@@ -125,30 +119,50 @@ class RegexEval:
     Multiple search_strings should be used to guide toward generality. 
     """
     def generate_tests(self):
-        search_string = "Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)"
-        match_string = "5c:0a:5b:63:4a:82"
-        self.test_cases.append(
-            RegexTestString(search_string,
-                            match_string))
-        self.test_cases.append(
-            RegexTestString("196(5c:0a:5b:63:4a:82):43",
-                            "5c:0a:5b:63:4a:82"))
-#        self.test_cases.append(
-#            RegexTestString(match_string,
-#            match_string))
-#        for i in range(0, len(match_string)-1):
-#            for j in range(1,len(match_string)-i):
-#                self.test_cases.append(
-#                    RegexTestString(search_string, # does this duplicate the search_string? (keep it simple hi)
-#                                    match_string[i:j+i])
-#                )
+        a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 14")
+        a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
+
+        #a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)")
+        #a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
+        #a_test_string.add_match(161,178) # 50:06:04:92:53:44
+
+        self.test_cases.append(a_test_string)
         
 class RegexTestString:
-    def __init__(self,search_string,matched_string):
+    def __init__(self,search_string):
+        print("Added regex search string: "+search_string)
         self.search_string = search_string
-        self.matched_string = matched_string
-        self.starti = search_string.find(matched_string)
-        self.endi = self.starti + len(matched_string)
+        self.match = list()
+
+    def add_match(start, end):
+        self.match.append(start=start,end=end, matched_string=self.search_string[start:end])
+        print("Added the following match: "+self.match.matched_string)
+#         for i in range(start,end-1):
+#             for j in range(start+1,end):
+#                 self.match.append(start=i,end=j, matched_string=self.search_string[i:j])
+        
+    def calc_match_errors(match_candidates):
+        start_errors=list()
+        end_errors=list()
+        match_error = 0
+        # is it cheaper to make a copy and remove characters as they are matched, or create a set of all sub-snippets and what ones the candidate matches?
+        for a_known_match in self.match:
+            closest_start=list()
+            closest_end==list()
+            for a_match in match_candidates:
+                closest_start.append(a_known_match.start - a_match.start)
+                closest_end.append(a_known_match.end - a_match.end)
+            start_errors.append(min(closest_start))
+            end_errors.append(min(closest_end))
+        return sum(start_errors,end_errors)
+#             for a_match_candidate in match_candidates: # how much of our known match has gone unmatched?
+#                 temp_match=0
+#                 if a_matched_candidate.start < a_known_match.end or a_matched_candidate.end > a_known_match.start:
+#                     unmatched_start = a_matched_candidate.start - a_known_match.start # should be positive, if negative then there is none unmatched
+#                     unmatched_end = a_matched_candidate.end - a_known_match.start # should be positive
+#                     temp_match = max(unmatched_end,0) + max(unmatched_start,0)
+
+
         
     def compare(self,attempt_string):
         error = distance(self.matched_string, attempt_string.group(0))
