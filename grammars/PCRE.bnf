@@ -1,21 +1,37 @@
-<RE>             ::=            <simple-RE>|<char>|"8"
-<simple-RE>      ::=            <concatenation>|<basic-RE>|<greedy>
+<RE>             ::=            <simple-RE>|<char>
+<simple-RE>      ::=            <concatenation>|<basic-RE>|<possessive>
+
 <concatenation>  ::=            <simple-RE><basic-RE>
 <basic-RE>       ::=            <elementary-RE>|<char>
-<greedy>         ::=            <dot>|<starplus>|<star>|<plus>|<question>|<pplus>|<qplus>   
+
+<possessive>     ::=            <dot>|<starplus>|<pplus>|<qplus>|<brak>
 <dot>            ::=            <elementary-RE>"."
 <starplus>       ::=            <elementary-RE>"*+"
+<pplus>          ::=            <elementary-RE>"++"
+<qplus>          ::=            <elementary-RE>"?+"
+<brak>           ::=            <RE>"{"<RE>","<RE>"}+"
+
+<greedy>         ::=            <star>|<plus>|<question>
 <star>           ::=            <elementary-RE>"*"
 <plus>           ::=            <elementary-RE>"+"
 <question>       ::=            <elementary-RE>"?"
-<pplus>          ::=            <elementary-RE>"++"
-<qplus>          ::=            <elementary-RE>"?+"
-<elementary-RE>  ::=            <union>|<group>|<eos>|<char>|<set>
+
+<noncapgroup>    ::=            "(?:"<RE>")"
+<lookarounds>    ::=            "(?<="<RE>")"| "?<!"<RE>")"|"?="<RE>")"|"?!"<RE>")" 
+
+
+<elementary-RE>  ::=            <union>|<group>|<eos>|<char>|<set>|<charclass>|<rangeU>|<rangeL>|<noncapgroup>|<lookarounds>
+<union>          ::=            <RE>"|"<simple-RE>
 <group>          ::=            "("<RE>")"
+<eos>            ::=            "$"
+
+<charclass>      ::=            <word>|<digit>
 <word>           ::=            "\w"
 <digit>          ::=            "\d"
-<eos>            ::=            "$"
-<union>          ::=            <RE>"|"<simple-RE>
+
+<rangeU>         ::=            "A-Z"
+<rangeL>         ::=            "a-z"
+
 <char>           ::=            <character>|"\\"<metacharacter>|<metacharacter>
 <set>            ::=            <positive-set>|<negative-set>
 <positive-set>   ::=            "["<set-items>"]"

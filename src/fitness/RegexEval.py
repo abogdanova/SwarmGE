@@ -65,7 +65,7 @@ class RegexEval:
         quick_test = self.time_regex_test_case(compiled_regex, self.test_cases[len(self.test_cases)-1], 1)
         #        print("quick_test time: {}".format(quick_test[0]))
         # aim for entire test suite to take less than a second
-        eval_time = .01 # seconds
+        eval_time = .001 # seconds
         testing_iterations = int(( eval_time / (quick_test[0]/10))/len(self.test_cases)) # change to half second?
         # print("Iterations {}".format(testing_iterations))
         for test_case in self.test_cases:
