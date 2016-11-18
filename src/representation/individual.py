@@ -95,7 +95,7 @@ class Individual(object):
         :return: Nothing unless multicore evaluation is being used. In that
         case, returns self.
         """
-
+        print("Evaluating " + self.phenotype +"                  ", end='\r')
         # Evaluate fitness using specified fitness function.
         self.fitness = params['FITNESS_FUNCTION'](self)
 

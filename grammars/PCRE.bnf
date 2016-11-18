@@ -1,7 +1,6 @@
-<RE>             ::=            <union>|<simple-RE>|<char>
-<union>          ::=            <RE>"|"<simple-RE>
-<simple-RE>      ::=            <concatenation>|<basic-RE>
-<concatenation>  ::=            <simple-RE>|<basic-RE>|<greedy>
+<RE>             ::=            <simple-RE>|<char>|"8"
+<simple-RE>      ::=            <concatenation>|<basic-RE>|<greedy>
+<concatenation>  ::=            <simple-RE><basic-RE>
 <basic-RE>       ::=            <elementary-RE>|<char>
 <greedy>         ::=            <dot>|<starplus>|<star>|<plus>|<question>|<pplus>|<qplus>   
 <dot>            ::=            <elementary-RE>"."
@@ -11,11 +10,12 @@
 <question>       ::=            <elementary-RE>"?"
 <pplus>          ::=            <elementary-RE>"++"
 <qplus>          ::=            <elementary-RE>"?+"
-<elementary-RE>  ::=            <group>|<eos>|<char>|<set>
+<elementary-RE>  ::=            <union>|<group>|<eos>|<char>|<set>
 <group>          ::=            "("<RE>")"
 <word>           ::=            "\w"
 <digit>          ::=            "\d"
 <eos>            ::=            "$"
+<union>          ::=            <RE>"|"<simple-RE>
 <char>           ::=            <character>|"\\"<metacharacter>|<metacharacter>
 <set>            ::=            <positive-set>|<negative-set>
 <positive-set>   ::=            "["<set-items>"]"
