@@ -4,7 +4,7 @@ CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.99
 DEBUG:                  False
 EXPERIMENT_NAME:        None
-GENERATIONS:            1000
+GENERATIONS:            10000
 GENOME_INIT:            False
 MAX_GENOME_INIT_LENGTH: 1000
 MAX_GENOME_LENGTH:      1000
@@ -23,11 +23,11 @@ MUTATE_DUPLICATES:      True
 MUTATION:               subtree
 MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
-POPULATION_SIZE:        500
-ELITE_SIZE:  		50
+POPULATION_SIZE:        10000
+ELITE_SIZE:  		500
 FITNESS_FUNCTION:       RegexEval
 RANDOM_SEED:            None
-REPLACEMENT:            generational
+REPLACEMENT:            steady_state
 SAVE_ALL:               True
 SAVE_PLOTS:             True
 SELECTION:              tournament
