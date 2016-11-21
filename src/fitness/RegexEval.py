@@ -29,14 +29,15 @@ class RegexEval:
         self.generate_tests()
 
     def __call__(self, regex_string):
-#        regex_string="5"
+        regex_string="\d[^!].(\w[^d].(\w[^f].(\d\d.(\w[^U|].(\d\d)|\w.)|a)|$.)|(\|)\|)|(?<=G)"
         try:
             compiled_regex = re.compile(regex_string)
             eval_results = self.test_regex(compiled_regex)
             fitness = self.calculate_fitness(eval_results)
-#            if "5" in regex_string:
-#                print(regex_string + ": {}".format(fitness))
-            return fitness
+            if "\d[^!].(\w[^d].(\w[^f].(\d\d.(\w[^U|].(\d\d)|\w.)|a)|$.)|(\|)\|)|(?<=G)" in regex_string:
+                print(regex_string + ": {}".format(fitness))
+                sys.exit()
+            return fitness + (len(regex_string)/10000000000) # auto-tune this number so that error is first, performance second, length third (we should use multi-objective/pareto front)
         except:
 #            print(traceback.format_exc())
             return 100000
@@ -116,11 +117,10 @@ class RegexTestString:
     def calc_match_errors(self,match_candidates):
         start_errors=list()
         end_errors=list()
-
+        match_candidates_length=0
         # is it cheaper to make a copy and remove characters as they are matched, or create a set of all sub-snippets and what ones the candidate matches?
         for a_known_match in self.matches:
-            match_candidates_length=0
-            match_error = 0
+            match_error = -1
             match_ranges=list()
             for match in match_candidates:
                 match_candidates_length+=1
@@ -140,6 +140,7 @@ class RegexTestString:
                     #end_errors.append(abs(end_diff)) # add error if they're the same
                 else:
                     match_error +=1
+                
             # missing any of the desired extraction costs a lot
             match_error += self.find_missing_range(a_known_match.get("start"), a_known_match.get("end"), match_ranges)
             
@@ -147,9 +148,9 @@ class RegexTestString:
             #    start_errors.append(len(self.search_string))
             #if len(end_errors) == 0:
             #    end_errors.append(len(self.search_string))
-        if match_candidates_length == 0:
-            match_error = 5*len(self.search_string)
-            
+        if match_candidates_length < 0:
+            match_candidates_length = match_error = 5*len(self.search_string)
+        print("Matches: {}".format(match_candidates_length))
         #if (sum(start_errors+end_errors) + match_error) == 0:
         #    print("aagh")
         return match_error + match_candidates_length # sum(start_errors+end_errors) + 
@@ -159,7 +160,7 @@ class RegexTestString:
         for i in range(start,end):
             found = False
             for m_range in match_ranges:
-                if i > m_range.start() and i < m_range.end():
+                if i >= m_range.start() and i < m_range.end():
                     found = True
             if found:
                 missing -= 1

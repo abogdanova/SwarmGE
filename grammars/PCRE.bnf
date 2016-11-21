@@ -29,8 +29,8 @@
 <word>           ::=            "\w"
 <digit>          ::=            "\d"
 
-<rangeU>         ::=            "A-Z"
-<rangeL>         ::=            "a-z"
+<rangeU>         ::=            "[A-Z]"
+<rangeL>         ::=            "[a-z]"
 
 <char>           ::=            <character>|"\\"<metacharacter>|<metacharacter>
 <set>            ::=            <positive-set>|<negative-set>
