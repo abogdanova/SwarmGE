@@ -302,6 +302,7 @@ def generate_tree(tree, genome, output, method, nodes, depth, max_depth,
         nodes += 1
 
     if depth > max_depth:
+        # Set new maximum depth
         max_depth = depth
 
     return genome, output, nodes, depth, max_depth
@@ -318,6 +319,8 @@ def legal_productions(method, depth_limit, productions):
     :param productions:
     :return:
     """
+    
+    #TODO: Save a lot more grammar information in the grammar class to save time during mapping. There are a lot of calls that could be removed.
     
     # Initialise empty list of available production choices.
     available = []
@@ -345,12 +348,17 @@ def legal_productions(method, depth_limit, productions):
             # choices lest we generate a tree which violates the depth limit.
             for prod in productions:
                 prod_depth = max([item["min_steps"] for item in prod])
-                                
                 # The maximum arity of a choice is the maximum arity of any
                 # of its constituent components
+                
                 if prod_depth < depth_limit:
+                    # Allowable choices are those which do not violate the
+                    # depth limit.
                     available.append(prod)
+            
             if not available:
+                # There are no available choices which do not violate the depth
+                # limit. List the choices with the shortest terminating path.
                 min_path = min([max([item["min_steps"] for item in prod]) for
                                 prod in productions])
                 shortest = [prod for prod in productions if
@@ -361,26 +369,48 @@ def legal_productions(method, depth_limit, productions):
         # Build a "full" tree where every branch extends to the depth limit.
         
         if depth_limit > params['BNF_GRAMMAR'].max_arity:
+            # If the depth limit is greater than the maximum arity of the
+            # grammar, then only recursive production choices can be used.
             for production in productions:
                 if any(sym["recursive"] for sym in production):
                     available.append(production)
+            
             if not available:
-                for production in productions:
-                    if not all(sym["recursive"] for sym in production):
-                        available.append(production)
+                # There are no recursive production choices for the current
+                # rule. Pick any production choices.
+                available = productions
+
         else:
+            # The depth limit is less than the maximum arity of the grammar.
+            # We have to be careful in selecting available production
+            # choices lest we generate a tree which violates the depth limit.
             for prod in productions:
                 prod_depth = max([item["min_steps"] for item in prod])
+                # The maximum arity of a choice is the maximum arity of any
+                # of its constituent components
+                
                 if prod_depth == depth_limit - 1:
+                    # We only want choices which extend exactly to our depth
+                    # limit.
                     available.append(prod)
+            
             if not available:
-                # Then we don't have what we're looking for
+                # There are no available choices which extend exactly to the
+                # depth limit. List the choices with the longest terminating
+                # paths that don't violate the limit.
                 for prod in productions:
                     prod_depth = 0
                     for item in prod:
                         if (item["type"] == params['BNF_GRAMMAR'].NT) and \
                                 (item["min_steps"] > prod_depth):
+                            # Find the longest path to a terminal for this
+                            # choice. We only care about non-terminal choices
+                            # that don't violate the depth limit.
                             prod_depth = item["min_steps"]
+
                     if prod_depth < depth_limit:
+                        # If the maximum depth of the production choice is
+                        # below the limit, then add it to the list of
+                        # available choices.
                         available.append(prod)
     return available
