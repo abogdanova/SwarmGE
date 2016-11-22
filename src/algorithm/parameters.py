@@ -410,9 +410,15 @@ def set_params(command_line_args):
 
     # Set GENOME_OPERATIONS automatically for faster linear operations.
     if (params['MUTATION'] == 'operators.mutation.int_flip' or
-                params['MUTATION'] == 'int_flip') and \
-            (params['CROSSOVER'] == 'operators.crossover.onepoint' or
-                     params['CROSSOVER'] == 'onepoint'):
+        params['MUTATION'] == 'int_flip') and \
+        (params['CROSSOVER'] == 'operators.crossover.fixed_onepoint' or
+         params['CROSSOVER'] == 'operators.crossover.variable_onepoint' or
+         params['CROSSOVER'] == 'operators.crossover.fixed_twopoint' or
+         params['CROSSOVER'] == 'operators.crossover.variable_twopoint' or
+         params['CROSSOVER'] == 'fixed_onepoint' or
+         params['CROSSOVER'] == 'variable_onepoint' or
+         params['CROSSOVER'] == 'fixed_twopoint' or
+         params['CROSSOVER'] == 'variable_twopoint'):
         params['GENOME_OPERATIONS'] = True
     else:
         params['GENOME_OPERATIONS'] = False

@@ -569,6 +569,9 @@ You simply need to write a **new fitness function** (if you don't want to use
 one already there) and add a **new grammar file**. You may also need to add a
 **new dataset** if you're using datasets.
 
+_**NOTE** that it may be beneficial to create a **new paremeters file**_
+_for any new problem._
+
 ##Fitness Functions
 
 Fitness functions can be specified from the command line with the flag:

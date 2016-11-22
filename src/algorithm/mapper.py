@@ -150,7 +150,7 @@ def map_ind_from_genome(genome):
         
         if used_input % n_input == 0 and \
                         used_input > 0 and \
-                any([i[0][1] == nt_symbol for i in unexpanded_symbols]):
+                any([i[0]["type"] == nt_symbol for i in unexpanded_symbols]):
             # If we have reached the end of the genome and unexpanded
             # non-terminals remain, then we need to wrap back to the start
             # of the genome again. Can break the while loop.
@@ -165,13 +165,13 @@ def map_ind_from_genome(genome):
             max_depth = current_depth
 
         # Set output if it is a terminal.
-        if current_symbol[1] != nt_symbol:
-            output.append(current_symbol[0])
+        if current_symbol["type"] != nt_symbol:
+            output.append(current_symbol["symbol"])
         
         else:
             # Current item is a new non-terminal. Find associated production
             # choices.
-            production_choices = bnf_grammar.rules[current_symbol[0]]
+            production_choices = bnf_grammar.rules[current_symbol["symbol"]]
             
             # Select a production based on the next available codon in the
             # genome.
@@ -195,8 +195,7 @@ def map_ind_from_genome(genome):
                 
                 # Extendleft reverses the order, thus reverse adding.
                 children.appendleft(child)
-                # TODO store number of NT to avoid counting and simply do lookup instead?
-                if child[0][1] == nt_symbol:
+                if child[0]["type"] == nt_symbol:
                     nt_count += 1
             
             # Add the new children to the list of unexpanded symbols.
@@ -232,7 +231,7 @@ def map_tree_from_genome(genome):
     """
 
     # Initialise an instance of the tree class
-    tree = Tree(str(params['BNF_GRAMMAR'].start_rule[0]),
+    tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]),
                 None, depth_limit=params['MAX_TREE_DEPTH'])
     
     # Map tree from the given genome
@@ -316,15 +315,15 @@ def genome_tree_map(tree, genome, output, index, depth, max_depth, nodes,
             
             symbol = chosen_prod[i]
             
-            if symbol[1] == "T":
+            if symbol["type"] == "T":
                 # Append the child to the parent node. Child is a terminal, do
                 # not recurse.
-                tree.children.append(Tree(symbol[0], tree))
-                output.append(symbol[0])
+                tree.children.append(Tree(symbol["symbol"], tree))
+                output.append(symbol["symbol"])
 
-            elif symbol[1] == "NT":
+            elif symbol["type"] == "NT":
                 # Append the child to the parent node.
-                tree.children.append(Tree(symbol[0], tree))
+                tree.children.append(Tree(symbol["symbol"], tree))
                 
                 # Recurse by calling the function again to map the next
                 # non-terminal from the genome.

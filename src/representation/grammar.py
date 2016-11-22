@@ -54,7 +54,7 @@ class Grammar(object):
         self.check_depths()
         
         # Check which non-terminals are recursive.
-        self.check_recursion(self.start_rule[0], [])
+        self.check_recursion(self.start_rule["symbol"], [])
         
         # Set the minimum path and maximum arity of the grammar.
         self.set_arity()
@@ -85,7 +85,8 @@ class Grammar(object):
                 
                 if self.start_rule is None:
                     # Set the first rule found as the start rule.
-                    self.start_rule = (rule.group('rulename'), self.NT)
+                    self.start_rule = {"symbol": rule.group('rulename'),
+                                       "type": self.NT}
                 
                 # Create and add a new rule.
                 self.non_terminals[rule.group('rulename')] = {
@@ -120,13 +121,17 @@ class Grammar(object):
                             if terminalparts:
                                 # Terminal symbol is to be appended to the
                                 # terminals dictionary.
-                                symbol = [terminalparts, self.T, 0, False]
+                                symbol = {"symbol": terminalparts,
+                                          "type": self.T,
+                                          "min_steps": 0,
+                                          "recursive": False}
                                 tmp_production.append(symbol)
                                 self.terminals.append(terminalparts)
                                 terminalparts = ''
                             
                             tmp_production.append(
-                                [sub_p.group('subrule'), self.NT])
+                                {"symbol": sub_p.group('subrule'),
+                                 "type": self.NT})
                         
                         else:
                             # Unescape special characters (\n, \t etc.)
@@ -137,7 +142,10 @@ class Grammar(object):
                     if terminalparts:
                         # Terminal symbol is to be appended to the terminals
                         # dictionary.
-                        symbol = [terminalparts, self.T, 0, False]
+                        symbol = {"symbol": terminalparts,
+                                  "type": self.T,
+                                  "min_steps": 0,
+                                  "recursive": False}
                         tmp_production.append(symbol)
                         self.terminals.append(terminalparts)
                     tmp_productions.append(tmp_production)
@@ -174,21 +182,22 @@ class Grammar(object):
         for rule in sorted(self.rules.keys()):
             # Iterate over all NTs.
             choices = self.rules[rule]
-            
+                        
             # Set branching factor for each NT.
             self.non_terminals[rule]['b_factor'] = len(choices)
             
             for choice in choices:
                 # Add a new edge to our graph list.
                 graph.append([rule, choice])
-        
+
         while graph:
             removeset = set()
             for edge in graph:
                 # Find edges which either connect to terminals or nodes
                 # which are fully expanded.
-                if all([sy[1] == self.T or self.non_terminals[sy[0]][
-                    'expanded'] for sy in edge[1]]):
+                if all([sy["type"] == self.T or
+                        self.non_terminals[sy["symbol"]]['expanded']
+                        for sy in edge[1]]):
                     removeset.add(edge[0])
             
             for s in removeset:
@@ -226,9 +235,9 @@ class Grammar(object):
         
         recursive = False
         for choice in choices:
-            for symbol in choice:
+            for sym in choice:
                 # Recurse over choices.
-                recursive_symbol = self.check_recursion(symbol[0], seen)
+                recursive_symbol = self.check_recursion(sym["symbol"], seen)
                 recursive = recursive or recursive_symbol
         
         # Set recursive properties.
@@ -250,32 +259,43 @@ class Grammar(object):
         
         # Set the minimum path of the grammar as the minimum steps to a
         # terminal from the start rule.
-        self.min_path = self.non_terminals[self.start_rule[0]]['min_steps']
+        self.min_path = self.non_terminals[self.start_rule["symbol"]][
+            'min_steps']
         
         # Initialise the maximum arity of the grammar to 0.
         self.max_arity = 0
         
+        # Find the maximum arity of the grammar.
         for NT in self.non_terminals:
             if self.non_terminals[NT]['min_steps'] > self.max_arity:
                 # Set the maximum arity of the grammar as the longest path
                 # to a T from any NT.
                 self.max_arity = self.non_terminals[NT]['min_steps']
         
+        # Add the minimum terminal path to each production rule.
         for rule in self.rules:
             for prod in self.rules[rule]:
-                for sym in [i for i in prod if i[1] == self.NT]:
-                    sym.append(self.non_terminals[sym[0]]['min_steps'])
+                for sym in [i for i in prod if i["type"] == self.NT]:
+                    sym['min_steps'] = self.non_terminals[sym["symbol"]][
+                        'min_steps']
         
+        # Add boolean flag indicating recursion to each production rule.
         for rule in self.rules:
             for prod in self.rules[rule]:
-                for sym in [i for i in prod if i[1] == self.NT]:
-                    sym.append(self.non_terminals[sym[0]]['recursive'])
+                for sym in [i for i in prod if i["type"] == self.NT]:
+                    sym['recursive'] = self.non_terminals[sym["symbol"]][
+                        'recursive']
     
     def check_permutations(self, ramps=5):
-        """ Calculates how many possible derivation tree combinations can be
-            created from the given grammar at a specified depth. Only returns
-            possible combinations at the specific given depth (if there are no
-            possible permutations for a given depth, will return 0).
+        """
+        Calculates how many possible derivation tree combinations can be
+        created from the given grammar at a specified depth. Only returns
+        possible combinations at the specific given depth (if there are no
+        possible permutations for a given depth, will return 0).
+        
+        :param ramps: The number of depths permutations are calculated for
+        (starting from the minimum path of the grammar)
+        :return: Nothing.
         """
         
         perms_list = []
@@ -295,10 +315,15 @@ class Grammar(object):
                     self.permutations[i + self.min_path] -= sum(perms_list[:i])
     
     def check_all_permutations(self, depth):
-        """ Calculates how many possible derivation tree combinations can be
-            created from the given grammar at a specified depth. Returns all
-            possible combinations at the specific given depth including those
-            depths below the given depth.
+        """
+        Calculates how many possible derivation tree combinations can be
+        created from the given grammar at a specified depth. Returns all
+        possible combinations at the specific given depth including those
+        depths below the given depth.
+        
+        :param depth: A depth for which to calculate the number of
+        permutations of solution that can be generated by the grammar.
+        :return: The permutations possible at the given depth.
         """
         
         if depth < self.min_path:
@@ -316,10 +341,10 @@ class Grammar(object):
             for NT in self.non_terminals:
                 a = self.non_terminals[NT]
                 for rule in self.rules[a['id']]:
-                    if any([prod[1] is self.NT for prod in rule]):
+                    if any([prod["type"] is self.NT for prod in rule]):
                         productions.append(rule)
             
-            start_symbols = self.rules[self.start_rule[0]]
+            start_symbols = self.rules[self.start_rule["symbol"]]
             
             for prod in productions:
                 depth_per_symbol_trees[str(prod)] = {}
@@ -331,9 +356,9 @@ class Grammar(object):
                     sym_pos = 1
                     for j in ntSymbol:
                         symbol_arity_pos = 0
-                        if j[1] is self.NT:
-                            for child in self.rules[j[0]]:
-                                if len(child) == 1 and child[0][0] in \
+                        if j["type"] is self.NT:
+                            for child in self.rules[j["symbol"]]:
+                                if len(child) == 1 and child[0]["symbol"] in \
                                         self.terminals:
                                     symbol_arity_pos += 1
                                 else:
