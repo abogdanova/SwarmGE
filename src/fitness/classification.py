@@ -22,11 +22,18 @@ class classification:
     maximise = False
 
     def __init__(self):
+        # Get training and test data
         self.training_in, self.training_exp, self.test_in, self.test_exp = \
             get_data(params['DATASET'])
+
+        # Find number of variables.
         self.n_vars = np.shape(self.test_in)[1]
+
+        # Set error metric if it's not set already.
         if params['ERROR_METRIC'] is None:
             params['ERROR_METRIC'] = inverse_f1_score
+
+        # Regression-style problems use training and test data.
         self.training_test = True
 
     def __call__(self, func, dist="training"):
@@ -36,11 +43,11 @@ class classification:
         Note that math functions used in the solutions are imported from either
         utilities.fitness.math_functions or called from numpy.
 
-        :param func:
+        :param func: A function to be evaluated.
         :param dist: An optional parameter for problems with training/test
         data. Specifies the distribution (i.e. training or test) upon which
         evaluation is to be performed.
-        :return:
+        :return: The fitness of teh evaluated function.
         """
 
         if dist == "test":

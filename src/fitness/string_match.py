@@ -1,5 +1,6 @@
 from algorithm.parameters import params
 
+
 class string_match:
     """Fitness function for matching a string. Takes a string and returns
     fitness. Penalises output that is not the same length as the target.
@@ -9,6 +10,7 @@ class string_match:
     maximise = False
 
     def __init__(self):
+        # Set target string.
         self.target = params['STRING_MATCH_TARGET']
 
     def __call__(self, guess):
