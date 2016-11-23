@@ -14,8 +14,9 @@ def check_python_version():
     :return: Nothing
     """
 
-    if version_info.major < 3:
-        print("\nError: Python version not supported. Must use Python 3.x")
+    if version_info.major < 3 or version_info.minor < 5:
+        print("\nError: Python version not supported. Must use at least "
+              "Python 3.5")
         quit()
 
 
