@@ -126,7 +126,7 @@ def map_ind_from_genome(genome):
    
     # Create local variables to avoide multiple dictionary lookups
     max_tree_depth, max_wraps = params['MAX_TREE_DEPTH'], params['MAX_WRAPS']
-    nt_symbol, bnf_grammar = params['BNF_GRAMMAR'].NT, params['BNF_GRAMMAR']
+    bnf_grammar = params['BNF_GRAMMAR']
 
     n_input = len(genome)
 
@@ -147,10 +147,10 @@ def map_ind_from_genome(genome):
         # While there are unexpanded non-terminals, and we are below our
         # wrapping limit, and we haven't breached our maximum tree depth, we
         # can continue to map the genome.
-        
+                
         if used_input % n_input == 0 and \
                         used_input > 0 and \
-                any([i[0]["type"] == nt_symbol for i in unexpanded_symbols]):
+                any([i[0]["type"] == "NT" for i in unexpanded_symbols]):
             # If we have reached the end of the genome and unexpanded
             # non-terminals remain, then we need to wrap back to the start
             # of the genome again. Can break the while loop.
@@ -165,37 +165,36 @@ def map_ind_from_genome(genome):
             max_depth = current_depth
 
         # Set output if it is a terminal.
-        if current_symbol["type"] != nt_symbol:
+        if current_symbol["type"] != "NT":
             output.append(current_symbol["symbol"])
         
         else:
             # Current item is a new non-terminal. Find associated production
             # choices.
-            production_choices = bnf_grammar.rules[current_symbol["symbol"]]
+            production_choices = bnf_grammar.rules[current_symbol[
+                "symbol"]]["choices"]
+            no_choices = bnf_grammar.rules[current_symbol["symbol"]][
+                "no_choices"]
             
             # Select a production based on the next available codon in the
             # genome.
-            # TODO store the length of production choices to avoid len call?
-            current_production = genome[used_input % n_input] % \
-                len(production_choices)
+            current_production = genome[used_input % n_input] % no_choices
             
             # Use an input
             used_input += 1
-            
-            # TODO: Derviation order is left to right(depth-first). Is a list comprehension faster? (Only if the loop for counting NT for each production can be avoided, by using a lookup instead.
-            
+                        
             # Initialise children as empty deque list.
             children = deque()
             nt_count = 0
-            
-            for prod in production_choices[current_production]:
+                        
+            for prod in production_choices[current_production]['choice']:
                 # iterate over all elements of chosen production rule.
                 
                 child = [prod, current_depth + 1]
                 
                 # Extendleft reverses the order, thus reverse adding.
                 children.appendleft(child)
-                if child[0]["type"] == nt_symbol:
+                if child[0]["type"] == "NT":
                     nt_count += 1
             
             # Add the new children to the list of unexpanded symbols.
@@ -205,7 +204,7 @@ def map_ind_from_genome(genome):
                 nodes += nt_count
             else:
                 nodes += 1
-
+                
     # Generate phenotype string.
     output = "".join(output)
 
@@ -250,6 +249,7 @@ def map_tree_from_genome(genome):
         # Return "None" phenotype if invalid
         return None, genome, tree, nodes, invalid, max_depth, \
            used_codons
+    
     else:
         return phenotype, genome, tree, nodes, invalid, max_depth, \
            used_codons
@@ -290,15 +290,16 @@ def genome_tree_map(tree, genome, output, index, depth, max_depth, nodes,
         depth += 1
         tree.id, tree.depth = nodes, depth
 
-        # Find all production choices that can be made by the current root
-        # non-terminal.
-        productions = params['BNF_GRAMMAR'].rules[tree.root]
+        # Find all production choices and the number of those production
+        # choices that can be made by the current root non-terminal.
+        productions = params['BNF_GRAMMAR'].rules[tree.root]['choices']
+        no_choices = params['BNF_GRAMMAR'].rules[tree.root]['no_choices']
         
         # Set the current codon value from the genome.
         tree.codon = genome[index % len(genome)]
         
         # Select the index of the correct production from the list.
-        selection = tree.codon % len(productions)
+        selection = tree.codon % no_choices
         
         # Set the chosen production
         chosen_prod = productions[selection]
@@ -309,11 +310,9 @@ def genome_tree_map(tree, genome, output, index, depth, max_depth, nodes,
         # Initialise an empty list of children.
         tree.children = []
 
-        for i in range(len(chosen_prod)):
+        for symbol in chosen_prod['choice']:
             # Add children to the derivation tree by creating a new instance
             # of the representation.tree.Tree class for each child.
-            
-            symbol = chosen_prod[i]
             
             if symbol["type"] == "T":
                 # Append the child to the parent node. Child is a terminal, do
