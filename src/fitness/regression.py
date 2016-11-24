@@ -15,8 +15,9 @@ class regression:
     returns the error between y (true labels) and yhat (estimated
     labels).
 
-    We can pass in the error metric to be used. MSE is suitable for
-    regression, while F1-score, hinge-loss and others are suitable for
+    We can pass in the error metric and the dataset via the params
+    dictionary. Of error metrics, MSE is suitable for regression,
+    while F1-score, hinge-loss and others are suitable for
     classification.
     """
 
@@ -26,21 +27,19 @@ class regression:
         # Get training and test data
         self.training_in, self.training_exp, self.test_in, self.test_exp = \
             get_data(params['DATASET'])
-        
+
         # Find number of variables.
         self.n_vars = np.shape(self.test_in)[1]
-        
+
         # Set error metric if it's not set already.
         if params['ERROR_METRIC'] is None:
             params['ERROR_METRIC'] = mse
-        
+
         # Regression-style problems use training and test data.
         self.training_test = True
 
     def __call__(self, func, dist="training"):
         """
-        We can call regression objects,
-        ie r = regression(exp); r(f, "training").
         Note that math functions used in the solutions are imported from either
         utilities.fitness.math_functions or called from numpy.
 
@@ -70,7 +69,7 @@ class regression:
             # let's always call the error function with the true values first,
             # the estimate second
             fitness = params['ERROR_METRIC'](y, yhat)
-        
+
         except:
             fitness = maxsize
 

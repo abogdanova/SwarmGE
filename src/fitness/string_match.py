@@ -3,9 +3,7 @@ from algorithm.parameters import params
 
 class string_match:
     """Fitness function for matching a string. Takes a string and returns
-    fitness. Penalises output that is not the same length as the target.
-    Usage: StringMatch("golden") returns a *callable object*, ie the fitness
-    function."""
+    fitness. Penalises output that is not the same length as the target."""
 
     maximise = False
 

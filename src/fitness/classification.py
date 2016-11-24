@@ -14,9 +14,11 @@ class classification:
     returns the error between y (true labels) and yhat (estimated
     labels).
 
-    We can pass in the error metric to be used. MSE is suitable for
-    regression, while F1-score, hinge-loss and others are suitable for
-    classification."""
+    We can pass in the error metric and the dataset via the params
+    dictionary. Of error metrics, MSE is suitable for regression,
+    while F1-score, hinge-loss and others are suitable for
+    classification.
+    """
 
     maximise = False
 
@@ -37,8 +39,6 @@ class classification:
 
     def __call__(self, func, dist="training"):
         """
-        We can call regression objects,
-        ie r = regression(exp); r(f, "training").
         Note that math functions used in the solutions are imported from either
         utilities.fitness.math_functions or called from numpy.
 
