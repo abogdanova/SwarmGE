@@ -71,9 +71,13 @@ class sequence_match:
     def __init__(self):
         # --target will be a sequence such as (0, 5, 0, 5)
         self.target = eval(params['TARGET'])
-        # we assume --extra_fitness_parameters gives a tuple eg (0.5, 0.5, 0.5)
-        extra_fit_params = eval(params['EXTRA_FITNESS_PARAMETERS'])
-        self.alpha, self.beta, self.gamma = extra_fit_params
+        # we assume --extra_fitness_parameters is a comma-separated kv sequence, eg:
+        # "alpha=0.5, beta=0.5, gamma=0.5"
+        # which we can pass to the dict() constructor
+        extra_fit_params = eval("dict("+params['EXTRA_FITNESS_PARAMETERS']+")")
+        self.alpha = extra_fit_params['alpha']
+        self.beta = extra_fit_params['beta']
+        self.gamma = extra_fit_params['gamma']
         self.maximise = False
 
     def __call__(self, p):
