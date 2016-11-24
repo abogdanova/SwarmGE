@@ -47,8 +47,8 @@ params = {
         # "hinge"
         # "inverse_f1_score"
     
-        # Specify String for StringMatch Problem
-        'STRING_MATCH_TARGET': "ponyge_rocks",
+        # Specify target for target problems
+        'TARGET': "ponyge_rocks",
 
         # Set max sizes of individuals
         'MAX_TREE_DEPTH': 17,
@@ -260,7 +260,7 @@ def set_params(command_line_args):
                                     "crossover_probability=", "replacement=",
                                     "mutation=", "mutation_events=",
                                     "random_seed=", "bnf_grammar=",
-                                    "dataset=", "target_string=",
+                                    "dataset=", "target=",
                                     "verbose", "elite_size=", "save_all",
                                     "save_plots", "cache", "lookup_fitness",
                                     "lookup_bad_fitness", "mutate_duplicates",
@@ -363,8 +363,8 @@ def set_params(command_line_args):
             params['FITNESS_FUNCTION'] = arg
         elif opt == "--dataset":
             params['DATASET'] = arg
-        elif opt == "--target_string":
-            params['STRING_MATCH_TARGET'] = arg
+        elif opt == "--target":
+            params['TARGET'] = arg
         elif opt == "--experiment_name":
             params['EXPERIMENT_NAME'] = arg
         elif opt == "--error_metric":
@@ -396,6 +396,8 @@ def set_params(command_line_args):
         elif opt == "--mutate_duplicates":
             params['LOOKUP_FITNESS'] = False
             params['MUTATE_DUPLICATES'] = True
+        elif opt == "--fitness_parameters":
+            params['FITNESS_PARAMETERS'] = arg
         else:
             assert False, "Unhandled Option, use --help for available params"
 

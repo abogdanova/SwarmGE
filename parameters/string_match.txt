@@ -31,6 +31,6 @@ SAVE_ALL:               False
 SAVE_PLOTS:             True
 SELECTION:              tournament
 SILENT:                 False
-STRING_MATCH_TARGET:    ponyge_rocks
+TARGET:                 ponyge_rocks
 TOURNAMENT_SIZE:        2
 VERBOSE:                False

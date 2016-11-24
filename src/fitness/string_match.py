@@ -11,7 +11,7 @@ class string_match:
 
     def __init__(self):
         # Set target string.
-        self.target = params['STRING_MATCH_TARGET']
+        self.target = params['TARGET']
 
     def __call__(self, guess):
         fitness = max(len(self.target), len(guess))
