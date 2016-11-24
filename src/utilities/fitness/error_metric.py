@@ -1,5 +1,5 @@
-from sklearn.metrics.classification import f1_score
 import numpy as np
+from sklearn.metrics.classification import f1_score
 
 
 def mae(y, yhat):

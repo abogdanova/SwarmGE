@@ -396,8 +396,8 @@ def set_params(command_line_args):
         elif opt == "--mutate_duplicates":
             params['LOOKUP_FITNESS'] = False
             params['MUTATE_DUPLICATES'] = True
-        elif opt == "--fitness_parameters":
-            params['FITNESS_PARAMETERS'] = arg
+        elif opt == "--extra_fitness_parameters":
+            params['EXTRA_FITNESS_PARAMETERS'] = arg
         else:
             assert False, "Unhandled Option, use --help for available params"
 

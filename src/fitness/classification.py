@@ -6,7 +6,6 @@ import numpy as np
 from algorithm.parameters import params
 from utilities.fitness.error_metric import inverse_f1_score
 from utilities.fitness.get_data import get_data
-from utilities.fitness.math_functions import plog, psqrt, pdiv
 
 
 class classification:

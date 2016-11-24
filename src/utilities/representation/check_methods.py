@@ -64,7 +64,7 @@ def check_mapping(genome):
     p1, g1, t1, n1, i1, d1, c1 = mapper.map_ind_from_genome(genome)
 
     if not i0:
-        if (i0 == i1):
+        if i0 == i1:
             # Both individuals are valid.
             
             if p1 != p0:

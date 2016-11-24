@@ -1,12 +1,12 @@
-from datetime import datetime
 import types
 from copy import copy
+from datetime import datetime
 from os import getcwd, path, mkdir
 from sys import stdout
 
 from algorithm.parameters import params
-from utilities.stats import trackers
 from utilities.fitness.math_functions import ave
+from utilities.stats import trackers
 from utilities.stats.save_plots import save_best_fitness_plot
 
 """Algorithm statistics"""

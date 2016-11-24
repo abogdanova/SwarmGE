@@ -1,10 +1,12 @@
-from os import getcwd, listdir
-from datetime import datetime
-import pandas as pd
-import numpy as np
-import matplotlib
 import getopt
 import sys
+from datetime import datetime
+from os import getcwd, listdir
+
+import matplotlib
+import numpy as np
+import pandas as pd
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.rc('font', family='Times New Roman')
@@ -109,6 +111,7 @@ def parse_stat_from_runs(experiment_name, stats, graph):
     :param experiment_name: The name of a collecting folder within the
     ./results folder which holds multiple runs.
     :param stats: A list of the names of the stats to be parsed.
+    :param graph: A boolean flag for whether or not to save figure.
     :return: Nothing.
     """
 
