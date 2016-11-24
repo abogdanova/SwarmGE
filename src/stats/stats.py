@@ -132,7 +132,11 @@ def get_stats(individuals, end=False):
 
 
 def print_generation_stats():
-    """Print the statistics for the generation and individuals"""
+    """
+    Print the statistics for the generation and individuals
+    
+    :return: Nothing.
+    """
 
     print("______\n")
     for stat in sorted(stats.keys()):
@@ -142,7 +146,9 @@ def print_generation_stats():
 
 def print_final_stats():
     """
-    Prints a final review of the overall evolutionary process
+    Prints a final review of the overall evolutionary process.
+    
+    :return: Nothing.
     """
 
     if hasattr(params['FITNESS_FUNCTION'], "training_test"):
@@ -158,7 +164,14 @@ def print_final_stats():
 
 
 def save_stats_to_file(end=False):
-    """Write the results to a results file for later analysis"""
+    """
+    Write the results to a results file for later analysis
+    
+    :param end: A boolean flag indicating whether or not the evolutionary
+    process has finished.
+    :return: Nothing.
+    """
+    
     if params['VERBOSE']:
         filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
                    "/stats.tsv"
@@ -185,6 +198,7 @@ def save_stats_to_file(end=False):
 def save_stats_headers():
     """
     Saves the headers for all stats in the stats dictionary.
+    
     :return: Nothing.
     """
 
@@ -199,6 +213,8 @@ def save_stats_headers():
 def save_final_time_stats():
     """
     Appends the total time taken for a run to the stats file.
+    
+    :return: Nothing.
     """
 
     filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
@@ -212,7 +228,7 @@ def save_params_to_file():
     Save evolutionary parameters in a parameters.txt file. Automatically
     parse function and class names.
 
-    :return: Nothing
+    :return: Nothing.
     """
 
     # Generate file path and name.
@@ -243,6 +259,14 @@ def save_params_to_file():
 
 
 def save_best_ind_to_file(end=False, name="best"):
+    """
+    Saves the best individual to a file.
+    
+    :param end: A boolean flag indicating whether or not the evolutionary
+    process has finished.
+    :param name: The name of the individual. Default set to "best".
+    :return: Nothing.
+    """
 
     filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/" + \
                str(name) + ".txt"
@@ -267,6 +291,8 @@ def save_best_ind_to_file(end=False, name="best"):
 def generate_folders_and_files():
     """
     Generates necessary folders and files for saving statistics and parameters.
+    
+    :return: Nothing.
     """
 
     if params['EXPERIMENT_NAME']:
