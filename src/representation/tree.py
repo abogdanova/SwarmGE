@@ -370,17 +370,17 @@ def legal_productions(method, depth_limit, root, productions):
                 available = productions
 
         else:
-            # The depth limit is less than the maximum arity of the grammar.
-            # We have to be careful in selecting available production
+            # The depth limit is at or less than the maximum arity of the
+            # grammar. We have to be careful in selecting available production
             # choices lest we generate a tree which violates the depth limit.
             available = [prod for prod in productions if prod['max_path'] ==
-                         depth_limit - 1]
+                         depth_limit]
             
             if not available:
                 # There are no available choices which extend exactly to the
                 # depth limit. List the NT choices with the longest terminating
                 # paths that don't violate the limit.
                 available = [prod for prod in productions if prod['max_path']
-                             < depth_limit and prod['NT_kids']]
+                             < depth_limit]
 
     return available

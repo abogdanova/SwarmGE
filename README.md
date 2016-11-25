@@ -572,7 +572,6 @@ To try this problem, use command-line arguments similar to the following:
 	--extra_fitness_parameters "alpha=0.5, beta=0.5, gamma=0.5"
 	
 
-
 #Adding New Problems
 --------------------
 
