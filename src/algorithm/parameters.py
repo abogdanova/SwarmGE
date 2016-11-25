@@ -1,6 +1,6 @@
 from multiprocessing import cpu_count
-from socket import gethostname
 from os import path
+from socket import gethostname
 
 hostname = gethostname().split('.')
 machine_name = hostname[0]
@@ -240,23 +240,22 @@ def set_params(command_line_args):
     :param command_line_args: Command line arguments specified by the user.
     :return: Nothing.
     """
-    global params
 
     from utilities.algorithm.initialise_run import initialise_run_params
     from utilities.algorithm.initialise_run import set_param_imports
     from utilities.fitness.math_functions import return_percent
     from representation import grammar
-    import algorithm.command_line_parser as parser
+    import utilities.algorithm.command_line_parser as parser
 
-    cmd_args, unkown = parser.parse_cmd_args(command_line_args)
-    # ToDo: how do we handle unkown parameters?
+    cmd_args, unknown = parser.parse_cmd_args(command_line_args)
+    # TODO: how should we handle unknown parameters? Should we just add them indiscriminately to the params dictionary?
 
     # LOAD PARAMETERS FILE
     if 'PARAMETERS' in cmd_args:
         load_params(path.join("..", "parameters", cmd_args['PARAMETERS']))
 
-    params = {**params, **cmd_args}
-
+    params.update(cmd_args)
+            
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger if no elite size is previously set.
     if params['ELITE_SIZE'] is None:
@@ -267,6 +266,7 @@ def set_params(command_line_args):
         'ELITE_SIZE']
 
     # Set GENOME_OPERATIONS automatically for faster linear operations.
+    # TODO: there must be a cleaner way of doing this.
     if (params['MUTATION'] == 'operators.mutation.int_flip' or
         params['MUTATION'] == 'int_flip') and \
         (params['CROSSOVER'] == 'operators.crossover.fixed_onepoint' or
