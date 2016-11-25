@@ -370,6 +370,8 @@ def set_params(command_line_args):
             params['EXPERIMENT_NAME'] = arg
         elif opt == "--error_metric":
             params['ERROR_METRIC'] = arg
+        elif opt == "--extra_fitness_parameters":
+            params['EXTRA_FITNESS_PARAMETERS'] = arg
 
         # OPTIONS
         elif opt == "--random_seed":
@@ -397,8 +399,6 @@ def set_params(command_line_args):
         elif opt == "--mutate_duplicates":
             params['LOOKUP_FITNESS'] = False
             params['MUTATE_DUPLICATES'] = True
-        elif opt == "--extra_fitness_parameters":
-            params['EXTRA_FITNESS_PARAMETERS'] = arg
         else:
             assert False, "Unhandled Option, use --help for available params"
 
