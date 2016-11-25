@@ -259,7 +259,7 @@ def set_params(command_line_args):
                                     "tournament_size=", "crossover=",
                                     "crossover_probability=", "replacement=",
                                     "mutation=", "mutation_events=",
-                                    "random_seed=", "bnf_grammar=",
+                                    "random_seed=", "grammar_file=",
                                     "dataset=", "target=",
                                     "verbose", "elite_size=", "save_all",
                                     "save_plots", "cache", "lookup_fitness",
@@ -358,7 +358,7 @@ def set_params(command_line_args):
             check_int('ELITE_SIZE', arg)
 
         # PROBLEM SPECIFICS
-        elif opt == "--bnf_grammar":
+        elif opt == "--grammar_file":
             params['GRAMMAR_FILE'] = arg
         elif opt == "--fitness_function":
             params['FITNESS_FUNCTION'] = arg
