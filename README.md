@@ -405,10 +405,10 @@ Activate with:
 ##Writing Grammars
 
 Grammars are written in Backus-Naur form, aka BNF. See the examples in
-src/grammars. Each rule is composed of a left-hand side (a single
-non-terminal), followed by the "goes-to" symbol `::=`, followed by a list of
-productions separated by the "or" symbol `|`. Non-terminals are enclosed by
-angle brackets `<>`. For example:
+grammars. Each rule is composed of a left-hand side (a single
+non-terminal), followed by the "goes-to" symbol `::=`, followed by a
+list of productions separated by the "or" symbol `|`. Non-terminals
+are enclosed by angle brackets `<>`. For example:
 
     <a> ::= <b>c | d
 
@@ -420,8 +420,8 @@ Along with the fitness function, grammars are one of the most problem-specific
 components of the PonyGE2 algorithm. The performance of PonyGE2 can be vastly
 affected by the quality of the grammar used.
 
-All grammars are stored in the src/grammars folder. Grammars can be set with
-the flag:
+All grammars are stored in the grammars folder. Grammars can be set
+with the flag:
 
     --bnf_grammar [FILE_NAME.bnf]
 
@@ -477,11 +477,12 @@ useful information.
 
 ######FIXME Need to finalise a suite of problems for PonyGE2
 
-Three example problems are currently provided:
+Four example problems are currently provided:
 
 1. String-match
 2. Regression
 3. Classification
+4. Integer sequence match
 
 A brief description is given below of each problem, along with the 
 command-line arguments necessary to call each problem.
@@ -550,6 +551,26 @@ e.g. `--dataset Banknote`
 Alternatively, you can specify a direct parameters file with:
 
     --parameters classification.txt
+
+
+##Integer sequence match
+------------------------
+
+In the sequence-match problem, we're given an integer sequence target,
+say [0, 5, 0, 5, 0, 5], and we try to synthesize a program (loops,
+if-statements, etc) which will *yield* that sequence, one item at a
+time. There are several components to the provided fitness function,
+which are weighted by numerical parameters. We can specify the target
+sequence and weights using parameters on the command line or in a
+parameters file.
+
+To try this problem, use command-line arguments similar to the following:
+
+    --fitness_function sequence_match
+	--bnf_grammar sequence_match.pybnf
+	--target "[0, 5, 0, 5, 0, 5]"
+	--extra_fitness_parameters "alpha=0.5, beta=0.5, gamma=0.5"
+	
 
 
 #Adding New Problems
