@@ -92,11 +92,11 @@ There are three different ways to specify operational parameters with PonyGE.
 1. The first and most basic method is to modify the algorithm.parameters.params dictionary directly in the code.
 2. The second method is to list your desired parameters in a specialised parameters text file. Example parameters files are located in the parameters folder. When using parameters files, it is necessary to specify the desired parameter file from the command line. This is done by calling
 
-    --parameters [FULL FILE NAME INCLUDING EXTENSION]
+        --parameters [FULL FILE NAME INCLUDING EXTENSION]
     
 3. The third and final method is to list all desired parameters from the command line. To see a list of all currently available command-line arguments implemented in the parser, type
 
-    $ python ponyge.py --help
+        $ python ponyge.py --help
     
 PonyGE2 automatically parses the correct path for all operators, meaning you
 don't have to specify the full direct path but only the name of the desired
