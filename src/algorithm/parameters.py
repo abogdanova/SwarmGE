@@ -2,7 +2,6 @@ from multiprocessing import cpu_count
 from socket import gethostname
 from os import path
 
-
 hostname = gethostname().split('.')
 machine_name = hostname[0]
 
@@ -241,167 +240,22 @@ def set_params(command_line_args):
     :param command_line_args: Command line arguments specified by the user.
     :return: Nothing.
     """
+    global params
 
     from utilities.algorithm.initialise_run import initialise_run_params
     from utilities.algorithm.initialise_run import set_param_imports
     from utilities.fitness.math_functions import return_percent
-    from utilities.help_message import help_message
     from representation import grammar
-    import getopt
+    import algorithm.command_line_parser as parser
 
-    try:
-        opts, args = getopt.getopt(command_line_args[1:], "",
-                                   ["help", "debug", "population=",
-                                    "generations=", "initialisation=",
-                                    "max_init_tree_depth=", "max_tree_depth=",
-                                    "max_genome_length=", "genome_init",
-                                    "max_init_genome_length=", "codon_size=",
-                                    "selection=", "selection_proportion=",
-                                    "tournament_size=", "crossover=",
-                                    "crossover_probability=", "replacement=",
-                                    "mutation=", "mutation_events=",
-                                    "random_seed=", "grammar_file=",
-                                    "dataset=", "target=",
-                                    "verbose", "elite_size=", "save_all",
-                                    "save_plots", "cache", "lookup_fitness",
-                                    "lookup_bad_fitness", "mutate_duplicates",
-                                    "max_tree_nodes=",
-                                    "extra_fitness_parameters=",
-                                    "invalid_selection", "silent",
-                                    "dont_lookup_fitness", "experiment_name=",
-                                    "multicore", "cores=", "max_wraps=",
-                                    "error_metric=", "fitness_function=",
-                                    "parameters=", "step=", "search_loop="])
-    except getopt.GetoptError as err:
-        print("Most parameters need a value associated with them \n",
-              "Run python ponyge.py --help for more info")
-        print(str(err))
-        exit(2)
+    cmd_args, unkown = parser.parse_cmd_args(command_line_args)
+    # ToDo: how do we handle unkown parameters?
 
-    for opt, arg in opts:
-        if opt == "--help":
-            help_message()
-            exit()
+    # LOAD PARAMETERS FILE
+    if 'PARAMETERS' in cmd_args:
+        load_params(path.join("..", "parameters", cmd_args['PARAMETERS']))
 
-        # LOAD PARAMETERS FILE
-        elif opt == "--parameters":
-            load_params(path.join("..", "parameters", arg))
-
-        # LOAD STEP AND SEARCH LOOP FUNCTIONS
-        elif opt == "--search_loop":
-            params['SEARCH_LOOP'] = arg
-        elif opt == "--step":
-            params['STEP'] = arg
-
-        # POPULATION OPTIONS
-        elif opt == "--population":
-            check_int('POPULATION_SIZE', arg)
-        elif opt == "--generations":
-            check_int('GENERATIONS', arg)
-
-        # INDIVIDUAL SIZE
-        elif opt == "--max_tree_depth":
-            check_int('MAX_TREE_DEPTH', arg)
-        elif opt == "--max_tree_nodes":
-            check_int('MAX_TREE_NODES', arg)
-        elif opt == "--codon_size":
-            check_int('CODON_SIZE', arg)
-        elif opt == "--max_genome_length":
-            check_int('MAX_GENOME_LENGTH', arg)
-        elif opt == "--max_wraps":
-            check_int('MAX_WRAPS', arg)
-
-        # INITIALISATION
-        elif opt == "--initialisation":
-            params['INITIALISATION'] = arg
-        elif opt == "--max_init_tree_depth":
-            check_int('MAX_INIT_TREE_DEPTH', arg)
-        elif opt == "--max_init_genome_length":
-            check_int('MAX_INIT_GENOME_LENGTH', arg)
-        elif opt == "--genome_init":
-            params['GENOME_INIT'] = True
-            params['INITIALISATION'] = "operators.initialisation.random_init"
-
-        # SELECTION
-        elif opt == "--selection":
-            params['SELECTION'] = arg
-        elif opt == "--invalid_selection":
-            params['INVALID_SELECTION'] = arg
-        elif opt == "--tournament_size":
-            check_int('TOURNAMENT_SIZE', arg)
-        elif opt == "--selection_proportion":
-            check_float('SELECTION_PROPORTION', arg)
-
-        # EVALUATION
-        elif opt == "--multicore":
-            params['MULTICORE'] = True
-        elif opt == "--cores":
-            check_int('CORES', arg)
-
-        # CROSSOVER
-        elif opt == "--crossover":
-            params['CROSSOVER'] = arg
-        elif opt == "--crossover_probability":
-            check_float('CROSSOVER_PROBABILITY', arg)
-
-        # MUTATION
-        elif opt == "--mutation":
-            params['MUTATION'] = arg
-        elif opt == "--mutation_events":
-            check_int('MUTATION_EVENTS', arg)
-        elif opt == "--mutation_probability":
-            check_float('MUTATION_PROBABILITY', arg)
-
-        # REPLACEMENT
-        elif opt == "--replacement":
-            params['REPLACEMENT'] = arg
-        elif opt == "--elite_size":
-            check_int('ELITE_SIZE', arg)
-
-        # PROBLEM SPECIFICS
-        elif opt == "--grammar_file":
-            params['GRAMMAR_FILE'] = arg
-        elif opt == "--fitness_function":
-            params['FITNESS_FUNCTION'] = arg
-        elif opt == "--dataset":
-            params['DATASET'] = arg
-        elif opt == "--target":
-            params['TARGET'] = arg
-        elif opt == "--experiment_name":
-            params['EXPERIMENT_NAME'] = arg
-        elif opt == "--error_metric":
-            params['ERROR_METRIC'] = arg
-        elif opt == "--extra_fitness_parameters":
-            params['EXTRA_FITNESS_PARAMETERS'] = arg
-
-        # OPTIONS
-        elif opt == "--random_seed":
-            check_int('RANDOM_SEED', arg)
-        elif opt == "--debug":
-            params['DEBUG'] = True
-        elif opt == "--verbose":
-            params['VERBOSE'] = True
-        elif opt == "--silent":
-            params['SILENT'] = True
-        elif opt == "--save_all":
-            params['SAVE_ALL'] = True
-        elif opt == "--save_plots":
-            params['SAVE_PLOTS'] = True
-
-        # CACHING
-        elif opt == "--cache":
-            params['CACHE'] = True
-            params['LOOKUP_FITNESS'] = True
-        elif opt == "--dont_lookup_fitness":
-            params['LOOKUP_FITNESS'] = False
-        elif opt == "--lookup_bad_fitness":
-            params['LOOKUP_FITNESS'] = False
-            params['LOOKUP_BAD_FITNESS'] = True
-        elif opt == "--mutate_duplicates":
-            params['LOOKUP_FITNESS'] = False
-            params['MUTATE_DUPLICATES'] = True
-        else:
-            assert False, "Unhandled Option, use --help for available params"
+    params = {**params, **cmd_args}
 
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger if no elite size is previously set.
@@ -436,4 +290,4 @@ def set_params(command_line_args):
 
     # Parse grammar file and set grammar class.
     params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
-                                                      params['GRAMMAR_FILE']))
+                                            params['GRAMMAR_FILE']))
