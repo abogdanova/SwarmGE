@@ -334,7 +334,7 @@ def set_params(command_line_args):
 
         # EVALUATION
         elif opt == "--multicore":
-            params['MULTIPCORE'] = True
+            params['MULTICORE'] = True
         elif opt == "--cores":
             check_int('CORES', arg)
 

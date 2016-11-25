@@ -156,7 +156,7 @@ need to specify any `--initialisation` argument directly.
 *__NOTE__ that random genome initialisation in Grammatical Evolution should*
 *be used with caution as poor grammar design can have a negative impact on*
 *the quality of randomly initialised solutions due to the inherent bias*
-*capabilities of GE [Fagan *et al.*, 2016; Nicolau & Fenton, 2016].*
+*capabilities of GE [Fagan et al., 2016; Nicolau & Fenton, 2016].*
 
 ###Subtree
 
@@ -180,10 +180,10 @@ Activate with:
 
 *__NOTE__ that there is no obligation that randomly generated derivation*
 *trees will extend to the depth limit; they will be of random size*
-*[Fagan *et al.*, 2016].*
+*[Fagan et al., 2016].*
 
 *__NOTE__ that randomly generated derivation trees will have a tendency*
-*towards smaller tree sizes [Fagan *et al.*, 2016].*
+*towards smaller tree sizes [Fagan et al., 2016].*
 
 ####Ramped Half-Half
 
@@ -273,7 +273,7 @@ default (i.e. crossover does not occur in the tail of the individual).
 *, leading to bloat.*
 
 For a more in-depth discussion on onepoint crossover in Grammatical Evolution,
-see the list of references at the end of this document.
+see [O'Neill *et al.*, 2003].
 
 ####Fixed Onepoint
 
