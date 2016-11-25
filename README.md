@@ -32,8 +32,8 @@ PonyGE2 is copyright (C) 2009-2016
 #Requirements
 ------------
 
-PonyGE runs under Python 3.x.
-Using matplotlib, numpy, scipy, scikit-learn (sklearn), pandas
+PonyGE requires Python 3.5 or higher.
+Using matplotlib, numpy, scipy, scikit-learn (sklearn), pandas.
 
 All requirements can be satisfied with Anaconda.
 
