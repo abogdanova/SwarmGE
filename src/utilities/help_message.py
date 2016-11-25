@@ -80,7 +80,7 @@ def help_message():
                                         "based on probability"],
                ["\t--random_seed:", "Sets the seed to be used, requires int "
                                     "value"],
-               ["\t--bnf_grammar:", "Sets the grammar to be used, requires "
+               ["\t--grammar_file:", "Sets the grammar to be used, requires "
                                     "string"],
                ["\t--fitness_function:", "Sets the fitness function to be "
                                          "used. Requires string such as "
@@ -95,8 +95,12 @@ def help_message():
                                         "folder. If not specified then "
                                         "results are saved in default "
                                         "/results folder."],
-               ["\t--target_string:", "For string match problem. Requires "
-                                      "target string."],
+               ["\t--target:", "For string match and similar problems. "
+                                       "Requires target as a string."],
+               ["\t--extra_fitness_parameters:", "For custom parameterised "
+                                      "fitness functions. Requires a string, "
+                                      "to be interpreted by the fitness "
+                                      "function."],
                ["\t--verbose:", "Turns on the verbose output of the program in"
                                 " terms of command line and extra files"],
                ["\t--silent:", "Prevents any output from being printed to "

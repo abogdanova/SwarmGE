@@ -2,9 +2,9 @@
 #Introduction
 ------------
 
-Grammatical evolution (GE) is a population-based evolutionary algorithm,
-where a formal BNF-style grammar is used in the genotype to phenotype 
-mapping process.
+Grammatical evolution (GE) is a population-based evolutionary
+algorithm, where a BNF-style grammar is used in the genotype to
+phenotype mapping process.
 
 PonyGE2 is an implementation of GE in Python. It's intended as an advertisement
 and a starting-point for those new to GE, a reference for students and
@@ -423,7 +423,7 @@ affected by the quality of the grammar used.
 All grammars are stored in the grammars folder. Grammars can be set
 with the flag:
 
-    --bnf_grammar [FILE_NAME.bnf]
+    --grammar_file [FILE_NAME.bnf]
 
 *__NOTE__ that the full file extension (e.g. ".bnf") must be specified.*
 
@@ -567,7 +567,7 @@ parameters file.
 To try this problem, use command-line arguments similar to the following:
 
     --fitness_function sequence_match
-	--bnf_grammar sequence_match.pybnf
+	--grammar_file sequence_match.pybnf
 	--target "[0, 5, 0, 5, 0, 5]"
 	--extra_fitness_parameters "alpha=0.5, beta=0.5, gamma=0.5"
 	
@@ -612,7 +612,7 @@ where `[FIT_FUNC_NAME]` is the name of the fitness function class.
 
 Grammar files can be specified from the command line with the flag:
 
-    --bnf_grammar [GRAMMAR_FILE]
+    --grammar_file [GRAMMAR_FILE]
 
 where `[GRAMMAR_FILE]` is the name of the grammar file.
 
