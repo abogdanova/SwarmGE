@@ -431,18 +431,8 @@ Activate with:
 
     --mutate_duplicates
 
-Finally, it could be said that using a cache to lookup the fitness of duplicate
-individuals deprives the evolutionary algorithm of potential fitness
-evaluations, thus leading to a reduced overall number of fitness evaluations
-over the course of an evolutionary run. If desired, it is possible to run
-PonyGE for a specified total number of fitness evaluations rather than
-for a specified number of total generations. This can be activated with the
-flag:
-
-    --complete_evals
-
-With this specified, PonyGE will run until the length of the cache reaches
-`params['POPULATION_SIZE']` * `params['GENERATIONS']`.
+*__NOTE__ that the various caching options are __mutually exclusive__.*
+*For example, you cannot specify* `--mutate_duplicates` *with* `--lookup_bad_fitness`.
 
 ##Replacement
 -----------
@@ -570,9 +560,9 @@ is to match a target word.
 To use it, specify the following command-line arguments:
 
     --fitness_function string_match
-    --target_string [TYPE_TARGET_STRING]
+    --target [TYPE_TARGET_STRING]
 
-e.g. `--target_string golden, --target_string ponyge_rocks`
+e.g. `--target golden, --target ponyge_rocks`
 
 Alternatively, you can specify a direct parameters file with:
 
