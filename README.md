@@ -98,6 +98,12 @@ There are three different ways to specify operational parameters with PonyGE.
 
         $ python ponyge.py --help
     
+*__NOTE__ that each of the above three options successively supersedes the*
+*previous ones, i.e. parameters specified in a paremeters file will over-write*
+*those set in the original* `algorithm.parameters.params` *dictionary, and*
+*parameters set from the command line will over-write those set in the*
+*parameters file.*
+
 PonyGE2 automatically parses the correct path for all operators, meaning you
 don't have to specify the full direct path but only the name of the desired
 operator, e.g.
