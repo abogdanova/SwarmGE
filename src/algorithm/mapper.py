@@ -84,7 +84,7 @@ def mapper(genome, tree):
             else:
                 # We need to initialise a new individual from a randomly
                 # generated tree.
-                ind = generate_ind_tree(params['MAX_TREE_DEPTH'], "random")
+                ind = generate_ind_tree(params['MAX_INIT_TREE_DEPTH'], "random")
 
                 # Extract all parameters needed for an individual.
                 phenotype, genome, tree, nodes, invalid, depth, \

@@ -1,7 +1,7 @@
 import getopt
 import sys
 from datetime import datetime
-from os import getcwd, listdir
+from os import getcwd, listdir, path, pathsep
 
 import matplotlib
 import numpy as np
@@ -131,18 +131,18 @@ def parse_stat_from_runs(experiment_name, stats, graph):
 
     # Since results files are not kept in source directory, need to escape
     # one folder.
-    path = getcwd() + "/../results/"
+    file_path = path.join(getcwd(), "..", "results")
 
     # Check for use of experiment manager.
     if experiment_name:
-        path += experiment_name + "/"
+        file_path = path.join(file_path, experiment_name)
     
     else:
         print("Error: experiment name not specified")
         quit()
     
     # Find list of all runs contained in the specified folder.
-    runs = [run for run in listdir(path) if "." not in run]
+    runs = [run for run in listdir(file_path) if "." not in run]
     
     for stat in stats:
         # Iterate over all specified stats.
@@ -156,8 +156,11 @@ def parse_stat_from_runs(experiment_name, stats, graph):
 
         # Iterate over all runs
         for run in runs:
+            # Get file name
+            file_name = path.join(file_path, str(run), "stats.tsv")
+            
             # Load in data
-            data = pd.read_csv(path + str(run) + "/stats.tsv", sep="\t")
+            data = pd.read_csv(file_name, sep="\t")
             
             try:
                 # Try to extract specific stat from the data.
@@ -174,7 +177,8 @@ def parse_stat_from_runs(experiment_name, stats, graph):
                                      "%Y-%m-%d %H:%M:%S.%f")
             for i, run in enumerate(summary_stats):
                 summary_stats[i] = [(datetime.strptime(time,
-                                                       "%H:%M:%S.%f") - zero).total_seconds()
+                                                       "%H:%M:%S.%f") -
+                                     zero).total_seconds()
                                     for time in run]
         
         # Generate numpy array of all stats
@@ -182,11 +186,13 @@ def parse_stat_from_runs(experiment_name, stats, graph):
         summary_stats = np.transpose(summary_stats)
         
         # Save stats as a .csv file.
-        np.savetxt(path + stat + ".csv", summary_stats, delimiter=",")
+        np.savetxt(path.join(file_path, (stat + ".csv")), summary_stats,
+                   delimiter=",")
         
         if graph:
             # Graph stat by calling graphing function.
-            save_average_plot_across_runs(path + stat + ".csv")
+            save_average_plot_across_runs(path.join(file_path, (stat +
+                                                                ".csv")))
 
 
 def save_average_plot_across_runs(filename):
@@ -214,7 +220,7 @@ def save_average_plot_across_runs(filename):
     """
     
     # Get stat name from the filename. Used later for saving graph.
-    stat_name = filename.split("/")[-1].split(".")[0]
+    stat_name = filename.split(pathsep)[-1].split(".")[0]
     
     # Load in data.
     data = np.genfromtxt(filename, delimiter=',')[:, :-1]

@@ -173,8 +173,7 @@ def save_stats_to_file(end=False):
     """
     
     if params['VERBOSE']:
-        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
-                   "/stats.tsv"
+        filename = path.join(params['FILE_PATH'], "stats.tsv")
         savefile = open(filename, 'a')
         for stat in sorted(stats.keys()):
             savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
@@ -182,8 +181,7 @@ def save_stats_to_file(end=False):
         savefile.close()
 
     elif end:
-        filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
-                   "/stats.tsv"
+        filename = path.join(params['FILE_PATH'], "stats.tsv")
         savefile = open(filename, 'a')
         for item in trackers.stats_list:
             for stat in sorted(item.keys()):
@@ -202,24 +200,11 @@ def save_stats_headers():
     :return: Nothing.
     """
 
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
+    filename = path.join(params['FILE_PATH'], "stats.tsv")
     savefile = open(filename, 'w')
     for stat in sorted(stats.keys()):
         savefile.write(str(stat) + "\t")
     savefile.write("\n")
-    savefile.close()
-
-
-def save_final_time_stats():
-    """
-    Appends the total time taken for a run to the stats file.
-    
-    :return: Nothing.
-    """
-
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/stats.tsv"
-    savefile = open(filename, 'a')
-    savefile.write("Total time taken: \t" + str(stats['total_time']))
     savefile.close()
 
 
@@ -232,8 +217,7 @@ def save_params_to_file():
     """
 
     # Generate file path and name.
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + \
-               "/parameters.txt"
+    filename = path.join(params['FILE_PATH'], "parameters.txt")
     savefile = open(filename, 'w')
 
     # Justify whitespaces for pretty printing/saving.
@@ -268,8 +252,7 @@ def save_best_ind_to_file(end=False, name="best"):
     :return: Nothing.
     """
 
-    filename = params['FILE_PATH'] + str(params['TIME_STAMP']) + "/" + \
-               str(name) + ".txt"
+    filename = path.join(params['FILE_PATH'], (str(name) + ".txt"))
     savefile = open(filename, 'w')
     savefile.write("Generation:\n" + str(stats['gen']) + "\n\n")
     savefile.write("Phenotype:\n" + str(stats['best_ever'].phenotype) + "\n\n")
@@ -296,18 +279,31 @@ def generate_folders_and_files():
     """
 
     if params['EXPERIMENT_NAME']:
-        path_1 = getcwd() + "/../results/"
+        # Experiment manager is being used.
+        path_1 = path.join(getcwd(), "..", "results")
+        
         if not path.isdir(path_1):
+            # Create results folder.
             mkdir(path_1)
-        params['FILE_PATH'] = path_1 + params['EXPERIMENT_NAME'] + "/"
+        
+        # Set file path to include experiment name.
+        params['FILE_PATH'] = path.join(path_1, params['EXPERIMENT_NAME'])
+    
     else:
-        params['FILE_PATH'] = getcwd() + "/../results/"
+        # Set file path to results folder.
+        params['FILE_PATH'] = path.join(getcwd(), "..", "results")
 
     # Generate save folders
     if not path.isdir(params['FILE_PATH']):
         mkdir(params['FILE_PATH'])
-    if not path.isdir(params['FILE_PATH'] + str(params['TIME_STAMP'])):
-        mkdir(params['FILE_PATH'] + str(params['TIME_STAMP']))
+    
+    if not path.isdir(path.join(params['FILE_PATH'],
+                                str(params['TIME_STAMP']))):
+        mkdir(path.join(params['FILE_PATH'],
+                        str(params['TIME_STAMP'])))
+        
+    params['FILE_PATH'] = path.join(params['FILE_PATH'],
+                                    str(params['TIME_STAMP']))
 
     save_params_to_file()
     save_stats_headers()

@@ -1,4 +1,4 @@
-from os import listdir, getcwd
+from os import listdir, getcwd, path
 
 import numpy as np
 
@@ -9,6 +9,7 @@ def get_Xy_train_test(filename, randomise=True, test_proportion=0.5,
     to last) and y (last column), then split it into training and
     testing subsets according to test_proportion. Shuffle if
     required."""
+    
     Xy = np.genfromtxt(filename, skip_header=skip_header)
     if randomise:
         np.random.shuffle(Xy)
@@ -19,12 +20,14 @@ def get_Xy_train_test(filename, randomise=True, test_proportion=0.5,
     train_y = y[:idx]
     test_X = X[idx:]
     test_y = y[idx:]
+    
     return train_X, train_y, test_X, test_y
 
 
 def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     """Read in training and testing data files, and split each into X
     (all columns up to last) and y (last column)."""
+    
     train_Xy = np.genfromtxt(train_filename, skip_header=skip_header)
     test_Xy = np.genfromtxt(test_filename, skip_header=skip_header)
     train_X = train_Xy[:, :-1].transpose()  # all columns but last
@@ -45,8 +48,11 @@ def get_data(experiment):
         exp = dataset.split('.')[0].split('-')[0]
         if exp == experiment:
             file_type = dataset.split('.')[1]
-    train_set = "../datasets/" + experiment + "-Train." + str(file_type)
-    test_set = "../datasets/" + experiment + "-Test." + str(file_type)
+    train_set = path.join("..", "datasets",
+                          (experiment + "-Train." + str(file_type)))
+    test_set = path.join("..", "datasets",
+                         (experiment + "-Test." + str(file_type)))
     training_in, training_out, test_in, \
     test_out = get_Xy_train_test_separate(train_set, test_set, skip_header=1)
+    
     return training_in, training_out, test_in, test_out

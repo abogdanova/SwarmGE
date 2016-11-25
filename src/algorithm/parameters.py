@@ -1,5 +1,6 @@
 from multiprocessing import cpu_count
 from socket import gethostname
+from os import path
 
 
 hostname = gethostname().split('.')
@@ -284,7 +285,7 @@ def set_params(command_line_args):
 
         # LOAD PARAMETERS FILE
         elif opt == "--parameters":
-            load_params("../parameters/" + arg)
+            load_params(path.join("..", "parameters", arg))
 
         # LOAD STEP AND SEARCH LOOP FUNCTIONS
         elif opt == "--search_loop":
@@ -434,5 +435,5 @@ def set_params(command_line_args):
     initialise_run_params()
 
     # Parse grammar file and set grammar class.
-    params['BNF_GRAMMAR'] = grammar.Grammar("../grammars/" +
-                                            params['GRAMMAR_FILE'])
+    params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
+                                                      params['GRAMMAR_FILE']))
