@@ -5,16 +5,18 @@ from sklearn.metrics.classification import f1_score
 def mae(y, yhat):
     """Calculate mean absolute error between inputs."""
     return np.mean(np.abs(y - yhat))
-
+mae.maximise = False
 
 def rmse(y, yhat):
     """Calculate root mean square error between inputs."""
     return np.sqrt(np.mean(np.square(y - yhat)))
+rmse.maximise = False
 
 
 def mse(y, yhat):
     """Calculate mean square error between inputs."""
     return np.mean(np.square(y - yhat))
+mse.maximise = False
 
 
 def hinge(y, yhat):
@@ -22,6 +24,7 @@ def hinge(y, yhat):
     the true values (-1 and 1) and yhat is the "raw" output of the individual,
     ie a real value. The classifier will use sign(yhat) as its prediction."""
     return np.max(0, 1 - y * yhat)
+hinge.maximise = False
 
 
 # TODO should we depend on scikit-learn? it's an extra dependency, but anyone doing anything like this in Python should have it. We would use its utils, error metrics, etc
@@ -42,3 +45,4 @@ def inverse_f1_score(y, yhat):
             return 1.0 / f
         except:
             return 10000.0
+inverse_f1_score.maximise = False

@@ -125,12 +125,14 @@ def set_param_imports():
            'fitness': ['FITNESS_FUNCTION'],
            'algorithm': ['SEARCH_LOOP', 'STEP']}
 
-    # The ops dictionary needs to be sorted as the functions from
-    # algorithm need to be imported before any others to prevent circular
-    # imports.
+    # We have to take 'algorithm' first as the functions from
+    # algorithm need to be imported before any others to prevent
+    # circular imports. We have to take 'utilities.fitness' before
+    # 'fitness' because ERROR_METRIC has to be set in order to call
+    # the fitness function constructor.
 
-    for special_ops in sorted(ops.keys()):
-        
+    for special_ops in ['algorithm', 'utilities.fitness', 'operators', 'fitness']:
+
         if all([callable(params[op]) for op in ops[special_ops]]):
             # params are already functions
             pass
