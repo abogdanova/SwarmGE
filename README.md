@@ -32,8 +32,8 @@ PonyGE2 is copyright (C) 2009-2016
 #Requirements
 ------------
 
-PonyGE runs under Python 3.x.
-Using matplotlib, numpy, scipy, scikit-learn (sklearn), pandas
+PonyGE requires Python 3.5 or higher.
+Using matplotlib, numpy, scipy, scikit-learn (sklearn), pandas.
 
 All requirements can be satisfied with Anaconda.
 
@@ -92,12 +92,18 @@ There are three different ways to specify operational parameters with PonyGE.
 1. The first and most basic method is to modify the algorithm.parameters.params dictionary directly in the code.
 2. The second method is to list your desired parameters in a specialised parameters text file. Example parameters files are located in the parameters folder. When using parameters files, it is necessary to specify the desired parameter file from the command line. This is done by calling
 
-    --parameters [FULL FILE NAME INCLUDING EXTENSION]
+        --parameters [FULL FILE NAME INCLUDING EXTENSION]
     
 3. The third and final method is to list all desired parameters from the command line. To see a list of all currently available command-line arguments implemented in the parser, type
 
-    $ python ponyge.py --help
+        $ python ponyge.py --help
     
+*__NOTE__ that each of the above three options successively supersedes the*
+*previous ones, i.e. parameters specified in a paremeters file will over-write*
+*those set in the original* `algorithm.parameters.params` *dictionary, and*
+*parameters set from the command line will over-write those set in the*
+*parameters file.*
+
 PonyGE2 automatically parses the correct path for all operators, meaning you
 don't have to specify the full direct path but only the name of the desired
 operator, e.g.
@@ -431,18 +437,8 @@ Activate with:
 
     --mutate_duplicates
 
-Finally, it could be said that using a cache to lookup the fitness of duplicate
-individuals deprives the evolutionary algorithm of potential fitness
-evaluations, thus leading to a reduced overall number of fitness evaluations
-over the course of an evolutionary run. If desired, it is possible to run
-PonyGE for a specified total number of fitness evaluations rather than
-for a specified number of total generations. This can be activated with the
-flag:
-
-    --complete_evals
-
-With this specified, PonyGE will run until the length of the cache reaches
-`params['POPULATION_SIZE']` * `params['GENERATIONS']`.
+*__NOTE__ that the various caching options are __mutually exclusive__.*
+*For example, you cannot specify* `--mutate_duplicates` *with* `--lookup_bad_fitness`.
 
 ##Replacement
 -----------
@@ -570,9 +566,9 @@ is to match a target word.
 To use it, specify the following command-line arguments:
 
     --fitness_function string_match
-    --target_string [TYPE_TARGET_STRING]
+    --target [TYPE_TARGET_STRING]
 
-e.g. `--target_string golden, --target_string ponyge_rocks`
+e.g. `--target golden, --target ponyge_rocks`
 
 Alternatively, you can specify a direct parameters file with:
 
