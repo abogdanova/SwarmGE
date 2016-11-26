@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics.classification import f1_score
+from sklearn.metrics.classification import f1_score as sklearn_f1_score
 
 
 def mae(y, yhat):
@@ -27,22 +27,16 @@ def hinge(y, yhat):
 hinge.maximise = False
 
 
-# TODO should we depend on scikit-learn? it's an extra dependency, but anyone doing anything like this in Python should have it. We would use its utils, error metrics, etc
-def inverse_f1_score(y, yhat):
+def f1_score(y, yhat):
     """The F_1 score is a metric for classification which tries to balance
     precision and recall, ie both true positives and true negatives.
-    For F_1 score higher is better, so we take inverse."""
+    For F_1 score higher is better."""
 
     # convert real values to boolean with a zero threshold
     yhat = (yhat > 0)
-    f = f1_score(y, yhat)
-    # this can give a runtime warning of zero division because if we
-    # predict the same value for all samples (trivial individuals will
-    # do so), f-score is undefined (see sklearn implementation) but
-    # it's a warning, we can ignore.
-    with np.errstate(divide='raise'):
-        try:
-            return 1.0 / f
-        except:
-            return 10000.0
-inverse_f1_score.maximise = False
+    # this can give a runtime warning because if we predict the same
+    # value for all samples (trivial individuals will do so), f-score
+    # is undefined (see sklearn implementation). However it's a
+    # warning, we can ignore.
+    return sklearn_f1_score(y, yhat)
+f1_score.maximise = True

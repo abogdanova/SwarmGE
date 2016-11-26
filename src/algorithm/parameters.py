@@ -45,7 +45,7 @@ params = {
         # "mae"
         # "rmse"
         # "hinge"
-        # "inverse_f1_score"
+        # "f1_score"
 
         # Specify target for target problems
         'TARGET': "ponyge_rocks",
