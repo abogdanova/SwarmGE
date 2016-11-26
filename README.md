@@ -481,6 +481,13 @@ You can use an "or" symbol or angle bracket in a production. Escape it
 using a backslash: `\|, \<, \>`. You can use the "goes-to" symbol in a
 production without escaping it.
 
+A useful special case is available when writing grammars: a production
+can be given as `GE_RANGE:4`, for example, and this will be replaced
+by a set of productions: `0 | 1 | 2 | 3`. With
+`GE_RANGE:dataset_n_vars`, the number of productions will be set by
+the number in the file given by the `--dataset` argument, if any. See
+`grammars/supervised_learning.bnf` for an example.
+
 Along with the fitness function, grammars are one of the most problem-specific
 components of the PonyGE2 algorithm. The performance of PonyGE2 can be vastly
 affected by the quality of the grammar used.

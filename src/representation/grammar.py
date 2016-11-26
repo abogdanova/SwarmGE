@@ -1,5 +1,5 @@
 from math import floor
-from re import finditer, DOTALL, MULTILINE
+from re import match, finditer, DOTALL, MULTILINE
 from sys import maxsize
 
 from algorithm.parameters import params
@@ -106,15 +106,48 @@ class Grammar(object):
                                   rule.group('production'), MULTILINE):
                     # Iterate over all production choices for this rule.
                     # Split production choices of a rule.
-                    
+
                     if p.group('production') is None or p.group(
                             'production').isspace():
                         # Skip to the next iteration of the loop if the
                         # current "p" production is None or blank space.
                         continue
-                    
+
                     # Initialise empty data structures for production choice
                     tmp_production, terminalparts = [], ''
+
+                    # special case: GERANGE:dataset_n_vars will be transformed
+                    # to productions 0 | 1 | ... | n_vars-1
+                    GE_RANGE_regex = r'GE_RANGE:(?P<range>\w*)'
+                    m = match(GE_RANGE_regex, p.group('production'))
+                    if m:
+                        try:
+                            if m.group('range') == "dataset_n_vars":
+                                # set n = number of columns from dataset
+                                n = params['FITNESS_FUNCTION'].n_vars
+                            else:
+                                # assume it's just an int
+                                n = int(m.group('range'))
+                        except (ValueError, AttributeError):
+                            raise ValueError("Bad use of GE_RANGE: "
+                                             + m.group())
+
+                        for i in range(n):
+                            # add a terminal symbol
+                            tmp_production, terminalparts = [], ''
+                            symbol = {
+                                "symbol": str(i),
+                                "type": "T",
+                                "min_steps": 0,
+                                "recursive": False}
+                            tmp_production.append(symbol)
+                            self.terminals.append(str(i))
+                            tmp_productions.append({"choice": tmp_production,
+                                                    "recursive": False,
+                                                    "NT_kids": False})
+                        # don't try to process this production further
+                        # (but later productions in same rule will work)
+                        continue
                     
                     for sub_p in finditer(self.productionpartsregex,
                                           p.group('production').strip()):

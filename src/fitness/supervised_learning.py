@@ -28,7 +28,7 @@ class supervised_learning:
             get_data(params['DATASET'])
 
         # Find number of variables.
-        self.n_vars = np.shape(self.test_in)[1]
+        self.n_vars = np.shape(self.test_in)[0]
 
         # Regression/classification-style problems use training and test data.
         self.training_test = True
