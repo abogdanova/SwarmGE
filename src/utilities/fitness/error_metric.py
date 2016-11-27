@@ -24,7 +24,7 @@ def hinge(y, yhat):
     the true values (-1 and 1) and yhat is the "raw" output of the individual,
     ie a real value. The classifier will use sign(yhat) as its prediction."""
     # NB not np.max. maximum does element-wise max
-    return np.maximum(0, 1 - y * yhat) 
+    return np.sum(np.maximum(0, 1 - y * yhat))
 hinge.maximise = False
 
 
