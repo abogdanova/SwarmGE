@@ -10,7 +10,7 @@ from utilities.stats import trackers
 def check_python_version():
     """
     Check the python version to ensure it is correct. PonyGE uses Python 3.
-    
+
     :return: Nothing
     """
 
@@ -24,7 +24,7 @@ def initialise_run_params():
     """
     Initialises all lists and trackers. Generates save folders and initial
     parameter files if debugging is not active.
-    
+
     :return: Nothing
     """
 
@@ -35,7 +35,7 @@ def initialise_run_params():
     if params['RANDOM_SEED'] is None:
         params['RANDOM_SEED'] = int(start.microsecond)
     seed(params['RANDOM_SEED'])
-    
+
     # Generate a time stamp for use with folder and file names.
     hms = "%02d%02d%02d" % (start.hour, start.minute, start.second)
     params['TIME_STAMP'] = (str(start.year)[2:] + "_" + str(start.month) +
@@ -58,7 +58,7 @@ def make_import_str(fns, location):
     function which we wish to access, eg operators.selection.tournament, or
     just the function name directly (in which case we default to the specified
     functions in the default location for each operators).
-    
+
     :param fns: a paired list of operators and the specified function from the
     option parser. Strings either represent the full dotted path to the
     function which we wish to access, eg operators.selection.tournament, or
@@ -78,17 +78,17 @@ def make_import_str(fns, location):
         operator, function = fn[0], fn[1]
         parts = function.split(".")
         # Split the function into its component parts
-        
+
         if len(parts) == 1:
             # If the specified location is a single name, default to
             # operators.operator location
             imports.append("import " + location + "." + operator.lower())
             params[operator] = ".".join([location, operator.lower(), parts[0]])
-        
+
         else:
             # "operators.selection.tournament" -> "import operators.selection"
             imports.append("import " + ".".join(parts[:-1]))
-    
+
     return "\n".join(imports)
 
 
@@ -98,26 +98,26 @@ def set_param_imports():
     specifying operators listed in the lists below, users do not need to
     specify the full file path to the functions themselves. Users can simply
     specify a single word, e.g.
-        
+
         "--mutation subtree"
-    
+
     Using the special_ops dictionary for example, this will default to
     "operators.mutation.subtree. Executes the correct imports for specified
     modules and then saves the correct parameters in the params dictionary.
     Users can still specify the full direct path to the operators if they so
     desire, allowing them to create new operators and save them wherever
     they like.
-    
+
     Sets the fitness function for a problem automatically. Fitness functions
     are stored in fitness. Fitness functions must be classes, where the
     class name matches the file name.
-    
+
     Function is set up to automatically set imports for operators and error
     metrics.
-    
+
     :return: Nothing.
     """
-    
+
     # For these ops we let the param equal the function itself.
     ops = {'operators': ['INITIALISATION', 'SELECTION', 'CROSSOVER',
                          'MUTATION', 'REPLACEMENT'],
@@ -136,26 +136,24 @@ def set_param_imports():
         if all([callable(params[op]) for op in ops[special_ops]]):
             # params are already functions
             pass
-        
+
         else:
             if special_ops == "fitness":
                 import_func = "from fitness." + params[
                     'FITNESS_FUNCTION'] + " import " + params[
                                   'FITNESS_FUNCTION']
-                
+
                 # Import the required fitness function.
                 exec(import_func)
-    
+
                 # Set the fitness function in the params dictionary.
-                # params['FITNESS_FUNC_INPUT'] is the input required for
-                # initialisation of the fitness function.
                 params['FITNESS_FUNCTION'] = eval(params['FITNESS_FUNCTION'] +
                                                   "()")
             else:
                 # We need to do an appropriate import...
                 import_str = make_import_str([[op, params[op]] for op in
                                               ops[special_ops]], special_ops)
-                
+
                 exec(import_str)
                 # ... and then eval the param.
                 for op in ops[special_ops]:
