@@ -1,4 +1,5 @@
 from random import randint, random, sample, choice
+import numpy as np
 
 from algorithm.parameters import params
 from representation import individual
@@ -73,12 +74,6 @@ def variable_onepoint(p_0, p_1, within_used=True):
     genome by default (i.e. crossover does not occur in the tail of the
     individual).
     
-    Onepoint crossover in Grammatical Evolution is explained further in:
-        O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003.
-        Crossover in grammatical evolution.
-        Genetic programming and evolvable machines, 4(1), pp.67-93.
-        DOI: 10.1023/A:1021877127167
-    
     :param p_0: Parent 0
     :param p_1: Parent 1
     :param within_used: Boolean flag for selecting whether or not crossover
@@ -87,24 +82,24 @@ def variable_onepoint(p_0, p_1, within_used=True):
     """
 
     # Get the chromosomes.
-    c_p_0, c_p_1 = p_0.genome, p_1.genome
+    genome_0, genome_1 = p_0.genome, p_1.genome
 
     # Uniformly generate crossover points. If within_used==True,
     # points will be within the used section.
     if within_used:
         max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
     else:
-        max_p_0, max_p_1 = len(c_p_0), len(c_p_1)
+        max_p_0, max_p_1 = len(genome_0), len(genome_1)
         
     # Select unique points on each genome for crossover to occur.
-    pt_p_0, pt_p_1 = randint(1, max_p_0), randint(1, max_p_1)
+    pt_0, pt_1 = randint(1, max_p_0), randint(1, max_p_1)
 
     # Make new chromosomes by crossover: these slices perform copies.
     if random() < params['CROSSOVER_PROBABILITY']:
-        c_0 = c_p_0[:pt_p_0] + c_p_1[pt_p_1:]
-        c_1 = c_p_1[:pt_p_1] + c_p_0[pt_p_0:]
+        c_0 = genome_0[:pt_0] + genome_1[pt_1:]
+        c_1 = genome_1[:pt_1] + genome_0[pt_0:]
     else:
-        c_0, c_1 = c_p_0[:], c_p_1[:]
+        c_0, c_1 = genome_0[:], genome_1[:]
 
     # Put the new chromosomes into new individuals.
     ind_0 = individual.Individual(c_0, None)
@@ -121,12 +116,6 @@ def fixed_onepoint(p_0, p_1, within_used=True):
     genome by default (i.e. crossover does not occur in the tail of the
     individual).
 
-    Onepoint crossover in Grammatical Evolution is explained further in:
-        O'Neill, M., Ryan, C., Keijzer, M. and Cattolico, M., 2003.
-        Crossover in grammatical evolution.
-        Genetic programming and evolvable machines, 4(1), pp.67-93.
-        DOI: 10.1023/A:1021877127167
-
     :param p_0: Parent 0
     :param p_1: Parent 1
     :param within_used: Boolean flag for selecting whether or not crossover
@@ -135,24 +124,110 @@ def fixed_onepoint(p_0, p_1, within_used=True):
     """
     
     # Get the chromosomes.
-    c_p_0, c_p_1 = p_0.genome, p_1.genome
+    genome_0, genome_1 = p_0.genome, p_1.genome
     
     # Uniformly generate crossover points. If within_used==True,
     # points will be within the used section.
     if within_used:
         max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
     else:
-        max_p_0, max_p_1 = len(c_p_0), len(c_p_1)
+        max_p_0, max_p_1 = len(genome_0), len(genome_1)
     
     # Select the same point on both genomes for crossover to occur.
     pt = randint(1, min(max_p_0, max_p_1))
     
     # Make new chromosomes by crossover: these slices perform copies.
     if random() < params['CROSSOVER_PROBABILITY']:
-        c_0 = c_p_0[:pt] + c_p_1[pt:]
-        c_1 = c_p_1[:pt] + c_p_0[pt:]
+        c_0 = genome_0[:pt] + genome_1[pt:]
+        c_1 = genome_1[:pt] + genome_0[pt:]
     else:
-        c_0, c_1 = c_p_0[:], c_p_1[:]
+        c_0, c_1 = genome_0[:], genome_1[:]
+    
+    # Put the new chromosomes into new individuals.
+    ind_0 = individual.Individual(c_0, None)
+    ind_1 = individual.Individual(c_1, None)
+    
+    return [ind_0, ind_1]
+
+
+def fixed_twopoint(p_0, p_1, within_used=True):
+    """
+    Given two individuals, create two children using two-point crossover and
+    return them. The same points are selected on both genomes for crossover
+    to occur. Crossover points are selected within the used portion of the
+    genome by default (i.e. crossover does not occur in the tail of the
+    individual).
+
+    :param p_0: Parent 0
+    :param p_1: Parent 1
+    :param within_used: Boolean flag for selecting whether or not crossover
+    is performed within the used portion of the genome. Default set to True.
+    :return: A list of crossed-over individuals.
+    """
+    
+    genome_0, genome_1 = p_0.genome, p_1.genome
+
+    # Uniformly generate crossover points. If within_used==True, points will
+    # be within the used section.
+    if within_used:
+        max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
+    else:
+        max_p_0, max_p_1 = len(genome_0), len(genome_1)
+
+    # Select the same points on both genomes for crossover to occur.
+    a, b = randint(1, max_p_0), randint(1, max_p_1)
+    pt_0, pt_1 = min([a, b]), max([a, b])
+    
+    # Make new chromosomes by crossover: these slices perform copies.
+    if random() < params['CROSSOVER_PROBABILITY']:
+        c_0 = genome_0[:pt_0] + genome_1[pt_0:pt_1] + genome_0[pt_1:]
+        c_1 = genome_1[:pt_0] + genome_0[pt_0:pt_1] + genome_1[pt_1:]
+    else:
+        c_0, c_1 = genome_0[:], genome_1[:]
+
+    # Put the new chromosomes into new individuals.
+    ind_0 = individual.Individual(c_0, None)
+    ind_1 = individual.Individual(c_1, None)
+    
+    return [ind_0, ind_1]
+
+
+def variable_twopoint(p_0, p_1, within_used=True):
+    """
+    Given two individuals, create two children using two-point crossover and
+    return them. Different points are selected on both genomes for crossover
+    to occur. Note that this allows for genomes to grow or shrink in size.
+    Crossover points are selected within the used portion of the genome by
+    default (i.e. crossover does not occur in the tail of the individual).
+
+    :param p_0: Parent 0
+    :param p_1: Parent 1
+    :param within_used: Boolean flag for selecting whether or not crossover
+    is performed within the used portion of the genome. Default set to True.
+    :return: A list of crossed-over individuals.
+    """
+    
+    genome_0, genome_1 = p_0.genome, p_1.genome
+    
+    # Uniformly generate crossover points. If within_used==True, points will
+    # be within the used section.
+    if within_used:
+        max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
+    else:
+        max_p_0, max_p_1 = len(genome_0), len(genome_1)
+    
+    # Select the same points on both genomes for crossover to occur.
+    a_0, b_0 = randint(1, max_p_0), randint(1, max_p_1)
+    a_1, b_1 = randint(1, max_p_0), randint(1, max_p_1)
+    pt_0, pt_1 = min([a_0, b_0]), max([a_0, b_0])
+    pt_2, pt_3 = min([a_1, b_1]), max([a_1, b_1])
+    
+    # Make new chromosomes by crossover: these slices perform copies.
+    if random() < params['CROSSOVER_PROBABILITY']:
+        c_0 = genome_0[:pt_0] + genome_1[pt_2:pt_3] + genome_0[pt_1:]
+        c_1 = genome_1[:pt_2] + genome_0[pt_0:pt_1] + genome_1[pt_3:]
+    else:
+        c_0, c_1 = genome_0[:], genome_1[:]
     
     # Put the new chromosomes into new individuals.
     ind_0 = individual.Individual(c_0, None)

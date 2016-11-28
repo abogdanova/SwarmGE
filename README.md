@@ -240,6 +240,9 @@ Activate with:
 ##Selection
 ---------
 
+The selection process is a key step in Evolutionary Algorithms.
+
+The mapping process in Grammatical Evolution can generate "invalid" individuals.
 Only valid individuals are selected by default. However, this can be changed
 with the flag:
 
