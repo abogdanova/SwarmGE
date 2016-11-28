@@ -23,7 +23,7 @@ MUTATE_DUPLICATES:      True
 MUTATION:               subtree
 MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
-POPULATION_SIZE:        10000
+POPULATION_SIZE:        2000
 ELITE_SIZE:  		500
 FITNESS_FUNCTION:       RegexEval
 RANDOM_SEED:            None
@@ -32,5 +32,5 @@ SAVE_ALL:               True
 SAVE_PLOTS:             True
 SELECTION:              tournament
 SILENT:                 False
-TOURNAMENT_SIZE:        2
+TOURNAMENT_SIZE:        10
 VERBOSE:                True
