@@ -92,35 +92,12 @@ def parse_cmd_args(arguments):
                         dest='MAX_INIT_GENOME_LENGTH', type=int,
                         help='Sets the maximum length for chromosomes to be '
                              'initialised to, requires int value')
-
-    class GenomeInitAction(argparse.Action):
-        """
-        Class for defining the special case for genome initialisation.
-        """
-
-        def __init__(self, option_strings, **kwargs):
-            super(GenomeInitAction, self).__init__(option_strings,
-                                                   nargs=0, **kwargs)
-
-        def __call__(self, parser, namespace, values, option_string=None):
-            setattr(namespace, 'GENOME_INIT', True)
-            setattr(namespace, 'INITIALISATION',
-                    "operators.initialisation.uniform_genome")
-
-    # Generate a mutually exclusive group for initialisation arguments. This
-    # means you cannot specify GENOME_INIT with RHH initialisation.
-    initialisation_group = parser.add_mutually_exclusive_group()
-    initialisation_group.add_argument('--initialisation',
-                                      dest='INITIALISATION', type=str,
-                                      help='Sets the initialisation strategy, '
-                                           'requires a string such as "rhh" or'
-                                           ' a direct path string such as '
-                                           '|operators.initialisation.rhh"')
-    initialisation_group.add_argument('--genome_init', dest='GENOME_INIT',
-                                      action=GenomeInitAction,
-                                      help='Will initialise individuals by '
-                                           'generating a random genome for '
-                                           'each individual')
+    parser.add_argument('--initialisation',
+                        dest='INITIALISATION', type=str,
+                        help='Sets the initialisation strategy, '
+                        'requires a string such as "rhh" or'
+                        ' a direct path string such as '
+                        '|operators.initialisation.rhh"')
 
     # SELECTION
     parser.add_argument('--selection', dest='SELECTION', type=str,

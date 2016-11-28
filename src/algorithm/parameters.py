@@ -64,9 +64,6 @@ params = {
         # "operators.initialisation.rhh"
         'MAX_INIT_TREE_DEPTH': 10,
         # Set the maximum tree depth for initialisation.
-        'GENOME_INIT': False,
-        # If True, initialises individuals by generating random genomes (i.e.
-        # doesn't use trees to initialise individuals).
 
         # SELECTION
         'SELECTION': "operators.selection.tournament",

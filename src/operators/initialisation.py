@@ -7,6 +7,13 @@ from representation.tree import Tree, generate_tree
 from utilities.representation.python_filter import python_filter
 
 
+def sample_genome():
+    # Generate a random genome, uniformly
+    genome = [randint(0, params['CODON_SIZE']) for _ in
+              range(params['MAX_INIT_GENOME_LENGTH'])]
+    return genome
+
+
 def uniform_genome(size):
     """
     Create a population of individuals by sampling genomes uniformly.
@@ -15,7 +22,7 @@ def uniform_genome(size):
     :return: A full population composed of randomly generated individuals.
     """
 
-    return [individual.Individual(None, None) for _ in range(size)]
+    return [individual.Individual(sample_genome(), None) for _ in range(size)]
 
 
 def rhh(size):
@@ -36,7 +43,8 @@ def rhh(size):
         # If the population size is too small, can't use RHH initialisation.
         print("Error: population size too small for RHH initialisation.")
         print("Returning randomly built trees.")
-        return [individual.Individual(None, None) for _ in range(size)]
+        return [individual.Individual(sample_genome(), None)
+                for _ in range(size)]
 
     elif not depths:
         # If we have no depths to ramp from, then params['MAX_INIT_DEPTH'] is
