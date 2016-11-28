@@ -123,10 +123,16 @@ class RegexEval:
         self.test_cases.append(a_test_string)
 
         a_test_string = RegexTestString("Jan 12 06:26:20: ACCEPT service dns from 140.105.48.16 to firewall(pub-nic-dns), prefix: \"none\" (in: eth0 140.105.48.16(00:21:dd:bc:95:44):4263 -> 140.105.63.158(00:14:31:83:c6:8d):53 UDP len:76 ttl:62)")
-        a_test_string.add_match(120,137) # 5c:0a:5b:63:4a:82
-        a_test_string.add_match(162,179) # 50:06:04:92:53:44
+        a_test_string.add_match(120,137) 
+        a_test_string.add_match(162,179) 
         self.test_cases.append(a_test_string)
 
+        a_test_string = RegexTestString("Jan 12 06:27:09: DROP service 68->67(udp) from 216.34.211.83 to 216.34.253.94, prefix: \"spoof iana-0/8\" (in: eth0 213.92.153.78(00:1f:d6:19:0a:80):68 -> 69.43.177.110(00:30:fe:fd:d6:51):67 UDP len:576 ttl:64)")
+        a_test_string.add_match(128,145)
+        a_test_string.add_match(167,184) 
+        self.test_cases.append(a_test_string)
+
+        
         
 class RegexTestString:
     def __init__(self,search_string):
