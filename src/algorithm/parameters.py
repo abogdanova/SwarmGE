@@ -180,52 +180,6 @@ def load_params(file_name):
             params[key] = value
 
 
-def check_int(param, arg):
-    """
-    Checks to ensure the given argument is indeed an int. If not, throws an
-    error.
-
-    :param param: A parameter from the params dictionary.
-    :param arg: A given input argument.
-    :return: Error if an error occurs, nothing if no error.
-    """
-
-    if arg in ["None", "none"]:
-        params[param] = None
-
-    else:
-        try:
-            params[param] = int(arg)
-        except:
-            print("\nError: Please define", param, "as int. Value given:", arg)
-            quit()
-
-
-def check_float(param, arg):
-    """
-    Checks to ensure the given argument is indeed a float. If not, throws an
-    error. Also checks to ensure the given float is within the range [0:1].
-
-    :param param: A parameter from the params dictionary.
-    :param arg: A given input argument.
-    :return: Error if an error occurs, nothing if no error.
-    """
-
-    if arg in ["None", "none"]:
-        params[param] = None
-
-    else:
-        try:
-            params[param] = float(arg)
-        except:
-            print("\nError: Please define", param, "as float. Value given:", arg)
-            quit()
-        if not 1 >= params[param] >= 0:
-            print("\nError:", param, "outside allowed range [0:1]. Value "
-                                     "given:", arg)
-            quit()
-
-
 def set_params(command_line_args):
     """
     This function parses all command line arguments specified by the user.
@@ -248,9 +202,12 @@ def set_params(command_line_args):
     # TODO: how should we handle unknown parameters? Should we just add them indiscriminately to the params dictionary?
 
     # LOAD PARAMETERS FILE
+    # NOTE that the parameters file overwrites all previously set parameters.
     if 'PARAMETERS' in cmd_args:
         load_params(path.join("..", "parameters", cmd_args['PARAMETERS']))
 
+    # Join original params dictionary with command line specified arguments.
+    # NOTE that command line arguments overwrite all previously set parameters.
     params.update(cmd_args)
 
     # Elite size is set to either 1 or 1% of the population size, whichever is
@@ -264,16 +221,13 @@ def set_params(command_line_args):
 
     # Set GENOME_OPERATIONS automatically for faster linear operations.
     # TODO: there must be a cleaner way of doing this.
-    if (params['MUTATION'] == 'operators.mutation.int_flip' or
-        params['MUTATION'] == 'int_flip') and \
-        (params['CROSSOVER'] == 'operators.crossover.fixed_onepoint' or
-         params['CROSSOVER'] == 'operators.crossover.variable_onepoint' or
-         params['CROSSOVER'] == 'operators.crossover.fixed_twopoint' or
-         params['CROSSOVER'] == 'operators.crossover.variable_twopoint' or
-         params['CROSSOVER'] == 'fixed_onepoint' or
-         params['CROSSOVER'] == 'variable_onepoint' or
-         params['CROSSOVER'] == 'fixed_twopoint' or
-         params['CROSSOVER'] == 'variable_twopoint'):
+    if params['MUTATION'] in ['operators.mutation.int_flip', 'int_flip'] \
+        and params['CROSSOVER'] in ['operators.crossover.fixed_onepoint',
+                                    'operators.crossover.variable_onepoint',
+                                    'operators.crossover.fixed_twopoint',
+                                    'operators.crossover.variable_twopoint',
+                                    'fixed_onepoint', 'variable_onepoint',
+                                    'fixed_twopoint', 'variable_twopoint']:
         params['GENOME_OPERATIONS'] = True
     else:
         params['GENOME_OPERATIONS'] = False

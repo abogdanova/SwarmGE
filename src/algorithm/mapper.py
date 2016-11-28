@@ -1,8 +1,6 @@
 from collections import deque
-from random import randint
 
 from algorithm.parameters import params
-from operators.initialisation import generate_ind_tree
 from representation.tree import Tree
 from utilities.representation.python_filter import python_filter
 
@@ -35,21 +33,17 @@ def mapper(genome, tree):
         # This is a fast way of creating a new unique copy of the genome
         # (prevents cross-contamination of information between individuals).
 
-        if not tree:
-            # We have a genome but no tree. We need to map an individual
-            # from the genome and generate all tree-related info.
+        if params['GENOME_OPERATIONS']:
+            # Can generate tree information faster using
+            # algorithm.mapper.map_ind_from_genome() if we don't need to
+            # store the whole tree.
+            phenotype, genome, tree, nodes, invalid, depth, \
+                used_codons = map_ind_from_genome(genome)
 
-            if params['GENOME_OPERATIONS']:
-                # Can generate tree information faster using
-                # algorithm.mapper.map_ind_from_genome() if we don't need to
-                # store the whole tree.
-                phenotype, genome, tree, nodes, invalid, depth, \
-                    used_codons = map_ind_from_genome(genome)
-
-            else:
-                # Build the tree using algorithm.mapper.map_tree_from_genome().
-                phenotype, genome, tree, nodes, invalid, depth, \
-                    used_codons = map_tree_from_genome(genome)
+        else:
+            # Build the tree using algorithm.mapper.map_tree_from_genome().
+            phenotype, genome, tree, nodes, invalid, depth, \
+                used_codons = map_tree_from_genome(genome)
 
     else:
 
@@ -65,7 +59,7 @@ def mapper(genome, tree):
                                        .non_terminals.keys(),
                                        [], [])
             used_codons, phenotype = len(_input), "".join(output)
-            depth += 1 # because get_tree_info under-counts by 1.
+            depth += 1  # because get_tree_info under-counts by 1.
 
         genome = _input
 

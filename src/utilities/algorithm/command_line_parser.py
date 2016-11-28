@@ -49,6 +49,24 @@ def parse_cmd_args(arguments):
 
         PonyGE Team""")
 
+    # Set up class for checking float arguments
+    class FloatAction(argparse.Action):
+        """
+        Class for checking a given float is within the range [0:1].
+        """
+
+        def __init__(self, option_strings, **kwargs):
+            super(FloatAction, self).__init__(option_strings, **kwargs)
+
+        def __call__(self, parser, namespace, value, option_string=None):
+            if not 0 <= float(value) <= 1:
+                print("\nError: parameter '", option_string,
+                      "' outside allowed range [0:1]. "
+                      "Value given:", value)
+                quit()
+            else:
+                setattr(namespace, self.dest, float(value))
+
     # LOAD PARAMETERS FILE
     parser.add_argument('--parameters', dest='PARAMETERS', type=str,
                         help='ToDo')
@@ -97,7 +115,7 @@ def parse_cmd_args(arguments):
                         help='Sets the initialisation strategy, '
                         'requires a string such as "rhh" or'
                         ' a direct path string such as '
-                        '|operators.initialisation.rhh"')
+                        '"operators.initialisation.rhh"')
 
     # SELECTION
     parser.add_argument('--selection', dest='SELECTION', type=str,
@@ -105,14 +123,16 @@ def parse_cmd_args(arguments):
                              'such as "tournament" or direct path string such '
                              'as "operators.selection.tournament"')
     parser.add_argument('--invalid_selection', dest='INVALID_SELECTION',
-                        type=str, help='Allow for the selection of invalid '
-                                       'individuals during selection')
+                        action='store_true', help='Allow for the selection of '
+                                                  'invalid individuals during '
+                                                  'selection')
     parser.add_argument('--tournament_size', dest='TOURNAMENT_SIZE', type=int,
                         help='Sets the number of indivs to contest tournament,'
                              ' requires int')
     parser.add_argument('--selection_proportion', dest='SELECTION_PROPORTION',
-                        type=float, help='Sets the proportion for truncation '
-                                         'selection, requires float, e.g. 0.5')
+                        action=FloatAction, help='Sets the proportion for '
+                                                 'truncation selection, '
+                                                 'requires float, e.g. 0.5')
 
     # EVALUATION
     parser.add_argument('--multicore', dest='MULTICORE', default=None,
@@ -128,7 +148,7 @@ def parse_cmd_args(arguments):
                              'string such as "subtree" or direct path string '
                              'such as "operators.crossover.subtree"')
     parser.add_argument('--crossover_probability',
-                        dest='CROSSOVER_PROBABILITY', type=float,
+                        dest='CROSSOVER_PROBABILITY', action=FloatAction,
                         help='Sets the crossover probability, requires float, '
                              'e.g. 0.9')
 
@@ -141,7 +161,7 @@ def parse_cmd_args(arguments):
                         help='Sets the number of mutation events based on '
                              'probability')
     parser.add_argument('--mutation_probability', dest='MUTATION_PROBABILITY',
-                        type=float, help='Sets the rate of mutation '
+                        action=FloatAction, help='Sets the rate of mutation '
                                          'probability for linear genomes')
 
     # REPLACEMENT
@@ -253,5 +273,10 @@ def parse_cmd_args(arguments):
     # the command line.
     cmd_args = {key: value for key, value in vars(args).items() if value is
                 not None}
+
+    for arg in cmd_args:
+        print(arg, "\t", cmd_args[arg])
+        
+    quit()
 
     return cmd_args, unknown

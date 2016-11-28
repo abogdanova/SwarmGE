@@ -286,6 +286,32 @@ probability of crossover occurring is set with the flag:
 where `[NUM]` is a float between 0 and 1. The default value for crossover is
 0.75.
 
+####Fixed Onepoint
+
+Activate with:
+
+    --crossover fixed_onepoint
+
+Given two individuals, create two children using fixed one-point crossover and return
+them. The same point is selected on both genomes for crossover to occur.
+This means that genomes will always remain the same length (as long as 
+int_flip mutation is used). Crossover points are selected within the 
+used portion of the genome by default (i.e. crossover does not occur in 
+the tail of the individual).
+
+####Fixed Twopoint
+
+Activate with:
+
+    --crossover fixed_twopoint
+
+Given two individuals, create two children using fixed two-point crossover and return
+them. The same points are selected on both genomes for crossover to occur.
+This means that genomes will always remain the same length (as long as 
+int_flip mutation is used). Crossover points are selected within the 
+used portion of the genome by default (i.e. crossover does not occur in 
+the tail of the individual).
+
 ####Variable Onepoint
 
 Activate with:
@@ -301,24 +327,23 @@ default (i.e. crossover does not occur in the tail of the individual).
 *__NOTE__ that variable onepoint crossover can cause individuals to grow*
 *, leading to bloat.*
 
-For a more in-depth discussion on onepoint crossover in Grammatical Evolution,
-see [O'Neill *et al.*, 2003].
-
-####Fixed Onepoint
+####Variable Twopoint
 
 Activate with:
 
-    --crossover fixed_onepoint
+    --crossover variable_twopoint
 
-Given two individuals, create two children using fixed one-point crossover and return
-them. The same point is selected on both genomes for crossover to occur.
-This means that genomes will always remain the same length (as long as 
-int_flip mutation is used). Crossover points are selected within the 
-used portion of the genome by default (i.e. crossover does not occur in 
-the tail of the individual).
+Given two individuals, create two children using variable two-point 
+crossover and return them. Two different points are selected on each genome 
+for crossover to occur. This allows genomes to grow or shrink in length.
+Crossover points are selected within the used portion of the genome by 
+default (i.e. crossover does not occur in the tail of the individual).
 
-For a more in-depth discussion on onepoint crossover in Grammatical Evolution,
-see the list of references at the end of this document.
+*__NOTE__ that variable onepoint crossover can cause individuals to grow*
+*, leading to bloat.*
+
+For a more in-depth discussion on crossover in Grammatical Evolution,
+see [O'Neill *et al.*, 2003].
 
 ####Subtree
 
