@@ -104,15 +104,24 @@ class RegexEval:
     def generate_tests(self):
         #a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 14")
         #a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
-
+        
         a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)")
         a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
         a_test_string.add_match(161,178) # 50:06:04:92:53:44
         self.test_cases.append(a_test_string)
 
+        a_test_string = RegexTestString("26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.1")
+        a_test_string.add_match(109,126) # 5c:0a:5b:63:4a:82
+        self.test_cases.append(a_test_string)
+
         a_test_string = RegexTestString(" -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)")
         a_test_string.add_match(19,36) # 50:06:04:92:53:44
         self.test_cases.append(a_test_string)
+
+        a_test_string = RegexTestString(" -> 140.105.63.16450:06:04:92:53:44:80 TCP flags: ****S* len:60 ttl:32)")
+        a_test_string.add_match(18,35) # 50:06:04:92:53:44
+        self.test_cases.append(a_test_string)
+
 
         
 class RegexTestString:
