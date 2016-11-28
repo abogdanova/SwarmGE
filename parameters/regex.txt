@@ -2,7 +2,7 @@ CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.99
-DEBUG:                  False
+DEBUG:                  True
 EXPERIMENT_NAME:        None
 GENERATIONS:            10000
 GENOME_INIT:            False

@@ -17,7 +17,7 @@
 <question>       ::=            <elementary-RE>"?"
 
 <noncapgroup>    ::=            "(?:"<RE>")"
-<lookarounds>    ::=            "(?<="<RE>")"| "?<!"<RE>")"|"?="<RE>")"|"?!"<RE>")" 
+<lookarounds>    ::=            "(?<="<RE>")"|"(?<!"<RE>")"|"(?="<RE>")"|"(?!"<RE>")" 
 
 
 <elementary-RE>  ::=            <union>|<group>|<eos>|<char>|<set>|<charclass>|<rangeU>|<rangeL>|<noncapgroup>|<lookarounds>
