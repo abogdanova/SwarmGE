@@ -42,7 +42,7 @@ def get_stats(individuals, end=False):
     Generate the statistics for an evolutionary run. Save statistics to
     utilities.trackers.stats_list. Print statistics. Save fitness plot
     information.
-    
+
     :param individuals: A population of individuals for which to generate
     statistics.
     :param end: Boolean flag for indicating the end of an evolutionary run.
@@ -55,7 +55,7 @@ def get_stats(individuals, end=False):
         trackers.time_list.append(datetime.now())
         stats['time_taken'] = trackers.time_list[-1] - trackers.time_list[-2]
         stats['total_time'] = trackers.time_list[-1] - trackers.time_list[0]
-        
+
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
         stats['unique_inds'] = len(trackers.cache)
@@ -98,7 +98,7 @@ def get_stats(individuals, end=False):
     if params['SAVE_PLOTS'] and not params['DEBUG']:
         if not end:
             trackers.best_fitness_list.append(stats['best_ever'].fitness)
-       
+
         if params['VERBOSE'] or end:
             save_best_fitness_plot()
 
@@ -106,7 +106,7 @@ def get_stats(individuals, end=False):
     if params['VERBOSE']:
         if not end:
             print_generation_stats()
-    
+
     elif not params['SILENT']:
         perc = stats['gen'] / (params['GENERATIONS']+1) * 100
         stdout.write("Evolution: %d%% complete\r" % perc)
@@ -116,7 +116,7 @@ def get_stats(individuals, end=False):
     if hasattr(params['FITNESS_FUNCTION'], "training_test") and end:
         stats['best_ever'].training_fitness = copy(stats['best_ever'].fitness)
         stats['best_ever'].test_fitness = params['FITNESS_FUNCTION'](
-            stats['best_ever'].phenotype, dist='test')
+            stats['best_ever'], dist='test')
         stats['best_ever'].fitness = stats['best_ever'].training_fitness
 
     # Save statistics
@@ -134,7 +134,7 @@ def get_stats(individuals, end=False):
 def print_generation_stats():
     """
     Print the statistics for the generation and individuals
-    
+
     :return: Nothing.
     """
 
@@ -147,7 +147,7 @@ def print_generation_stats():
 def print_final_stats():
     """
     Prints a final review of the overall evolutionary process.
-    
+
     :return: Nothing.
     """
 
@@ -166,12 +166,12 @@ def print_final_stats():
 def save_stats_to_file(end=False):
     """
     Write the results to a results file for later analysis
-    
+
     :param end: A boolean flag indicating whether or not the evolutionary
     process has finished.
     :return: Nothing.
     """
-    
+
     if params['VERBOSE']:
         filename = path.join(params['FILE_PATH'], "stats.tsv")
         savefile = open(filename, 'a')
@@ -196,7 +196,7 @@ def save_stats_to_file(end=False):
 def save_stats_headers():
     """
     Saves the headers for all stats in the stats dictionary.
-    
+
     :return: Nothing.
     """
 
@@ -245,7 +245,7 @@ def save_params_to_file():
 def save_best_ind_to_file(end=False, name="best"):
     """
     Saves the best individual to a file.
-    
+
     :param end: A boolean flag indicating whether or not the evolutionary
     process has finished.
     :param name: The name of the individual. Default set to "best".
@@ -274,21 +274,21 @@ def save_best_ind_to_file(end=False, name="best"):
 def generate_folders_and_files():
     """
     Generates necessary folders and files for saving statistics and parameters.
-    
+
     :return: Nothing.
     """
 
     if params['EXPERIMENT_NAME']:
         # Experiment manager is being used.
         path_1 = path.join(getcwd(), "..", "results")
-        
+
         if not path.isdir(path_1):
             # Create results folder.
             mkdir(path_1)
-        
+
         # Set file path to include experiment name.
         params['FILE_PATH'] = path.join(path_1, params['EXPERIMENT_NAME'])
-    
+
     else:
         # Set file path to results folder.
         params['FILE_PATH'] = path.join(getcwd(), "..", "results")
@@ -296,12 +296,12 @@ def generate_folders_and_files():
     # Generate save folders
     if not path.isdir(params['FILE_PATH']):
         mkdir(params['FILE_PATH'])
-    
+
     if not path.isdir(path.join(params['FILE_PATH'],
                                 str(params['TIME_STAMP']))):
         mkdir(path.join(params['FILE_PATH'],
                         str(params['TIME_STAMP'])))
-        
+
     params['FILE_PATH'] = path.join(params['FILE_PATH'],
                                     str(params['TIME_STAMP']))
 

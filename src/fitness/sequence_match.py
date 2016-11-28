@@ -80,10 +80,12 @@ class sequence_match:
         self.gamma = extra_fit_params['gamma']
         self.maximise = False
 
-    def __call__(self, p):
-        # p will be a string incl fn defns etc. when we exec it will create
-        # a value XXX_output_XXX, but we exec inside an empty dict for safety.
-        # but we put a couple of useful primitives in the dict too.
+    def __call__(self, ind):
+        # ind.phenotype will be a string incl fn defns etc. when we
+        # exec it will create a value XXX_output_XXX, but we exec
+        # inside an empty dict for safety.  but we put a couple of
+        # useful primitives in the dict too.
+        p = ind.phenotype
         d = {'pred': pred, 'succ': succ}
         exec(p, d)
         s = d['XXX_output_XXX'] # this is the program's output: a generator

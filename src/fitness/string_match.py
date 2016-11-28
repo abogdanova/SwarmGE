@@ -11,7 +11,8 @@ class string_match:
         # Set target string.
         self.target = params['TARGET']
 
-    def __call__(self, guess):
+    def __call__(self, ind):
+        guess = ind.phenotype
         fitness = max(len(self.target), len(guess))
         # Loops as long as the shorter of two strings
         for (t_p, g_p) in zip(self.target, guess):

@@ -33,17 +33,19 @@ class supervised_learning:
         # Regression/classification-style problems use training and test data.
         self.training_test = True
 
-    def __call__(self, func, dist="training"):
+    def __call__(self, ind, dist="training"):
         """
         Note that math functions used in the solutions are imported from either
         utilities.fitness.math_functions or called from numpy.
 
-        :param func: A function to be evaluated.
+        :param ind: An individual to be evaluated.
         :param dist: An optional parameter for problems with training/test
         data. Specifies the distribution (i.e. training or test) upon which
         evaluation is to be performed.
-        :return: The fitness of teh evaluated function.
+        :return: The fitness of the evaluated individual.
         """
+
+        phen = ind.phenotype
 
         if dist == "test":
             x = self.test_in
@@ -53,9 +55,9 @@ class supervised_learning:
             y = self.training_exp
 
         try:
-            yhat = eval(func)  # func will refer to "x", created above
+            yhat = eval(phen)  # phen will refer to "x", created above
 
-            # if func is a constant, eg 0.001 (doesn't refer to x),
+            # if phen is a constant, eg 0.001 (doesn't refer to x),
             # then yhat will be a constant. that can confuse the error
             # metric.  so convert to a constant array.
             if not isinstance(yhat, np.ndarray):
