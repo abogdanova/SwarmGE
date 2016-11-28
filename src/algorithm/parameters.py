@@ -60,7 +60,7 @@ params = {
 
         # INITIALISATION
         'INITIALISATION': "operators.initialisation.rhh",
-        # "operators.initialisation.random_init"
+        # "operators.initialisation.uniform_genome"
         # "operators.initialisation.rhh"
         'MAX_INIT_TREE_DEPTH': 10,
         # Set the maximum tree depth for initialisation.
@@ -255,7 +255,7 @@ def set_params(command_line_args):
         load_params(path.join("..", "parameters", cmd_args['PARAMETERS']))
 
     params.update(cmd_args)
-            
+
     # Elite size is set to either 1 or 1% of the population size, whichever is
     # bigger if no elite size is previously set.
     if params['ELITE_SIZE'] is None:

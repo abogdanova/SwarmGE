@@ -7,9 +7,9 @@ from representation.tree import Tree, generate_tree
 from utilities.representation.python_filter import python_filter
 
 
-def random_init(size):
+def uniform_genome(size):
     """
-    Randomly create a population of size and return.
+    Create a population of individuals by sampling genomes uniformly.
 
     :param size: The size of the required population.
     :return: A full population composed of randomly generated individuals.
@@ -71,13 +71,13 @@ def rhh(size):
 
                 # Generate individual using "Grow"
                 ind = generate_ind_tree(depth, "random")
-            
+
                 # Append individual to population
                 population.append(ind)
 
                 # Generate individual using "Full"
                 ind = generate_ind_tree(depth, "full")
-                
+
                 # Append individual to population
                 population.append(ind)
 
@@ -103,7 +103,7 @@ def rhh(size):
             population.append(ind)
 
         return population
-    
+
 
 def generate_ind_tree(max_depth, method):
     """

@@ -6,19 +6,19 @@ def parse_cmd_args(arguments):
     Parser for command line arguments specified by the user. Specified command
     line arguments over-write parameter file arguments, which themselves
     over-write original values in the algorithm.parameters.params dictionary.
-    
+
     The argument parser structure is set up such that each argument has the
     following information:
-        
+
         dest: a valid key from the algorithm.parameters.params dictionary
         type: an expected type for the specified option (i.e. str, int, float)
         help: a string detailing correct usage of the parameter in question.
-        
+
     Optional info:
-    
+
         default: The default setting for this parameter.
         action : The action to be undertaken when this argument is called.
-    
+
     NOTE: You cannot add a new parser argument and have it evaluate "None" for
     its value. All parser arguments are set to "None" by default. We filter
     out arguments specified at the command line by removing any "None"
@@ -27,13 +27,13 @@ def parse_cmd_args(arguments):
     will not be included in the eventual parameters.params dictionary. A
     workaround for this would be to leave "None" command line arguments as
     strings and to eval them at a later stage.
-    
+
     :param arguments: Command line arguments specified by the user.
     :return: A dictionary of parsed command line arguments, along with a
     dictionary of newly specified command line arguments which do not exist
     in the params dictionary.
     """
-    
+
     # Initialise parser
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
         description="""Welcome to PonyGE - Help
@@ -44,28 +44,28 @@ def parse_cmd_args(arguments):
         values:""",
         epilog="""----------------------------
         To try out ponyge simply run: python ponyge.py
-    
+
         Thanks for trying our product
-    
+
         PonyGE Team""")
-    
+
     # LOAD PARAMETERS FILE
     parser.add_argument('--parameters', dest='PARAMETERS', type=str,
                         help='ToDo')
-    
+
     # LOAD STEP AND SEARCH LOOP FUNCTIONS
     parser.add_argument('--search_loop', dest='SEARCH_LOOP', type=str,
                         help='Sets the desired search loop function.')
     parser.add_argument('--step', dest='STEP', type=str,
                         help='Sets the desired search step function.')
-    
+
     # POPULATION OPTIONS
     parser.add_argument('--population', dest='POPULATION_SIZE', type=int,
                         help='Sets the population size, requires int value')
     parser.add_argument('--generations', dest='GENERATIONS', type=int,
                         help='Sets the number of generations, requires int '
                              'value')
-    
+
     # INDIVIDUAL SIZE
     parser.add_argument('--max_tree_depth', dest='MAX_TREE_DEPTH', type=int,
                         help='Sets the max derivation tree depth for the '
@@ -83,7 +83,7 @@ def parse_cmd_args(arguments):
                         help='Sets the maximum number of times the genome '
                              'mapping process can wrap over the length of the '
                              'genome. Requires int value.')
-    
+
     # INITIALISATION
     parser.add_argument('--max_init_tree_depth', dest='MAX_INIT_TREE_DEPTH',
                         type=int, help='Sets the max tree depth for '
@@ -92,21 +92,21 @@ def parse_cmd_args(arguments):
                         dest='MAX_INIT_GENOME_LENGTH', type=int,
                         help='Sets the maximum length for chromosomes to be '
                              'initialised to, requires int value')
-    
+
     class GenomeInitAction(argparse.Action):
         """
         Class for defining the special case for genome initialisation.
         """
-        
+
         def __init__(self, option_strings, **kwargs):
             super(GenomeInitAction, self).__init__(option_strings,
                                                    nargs=0, **kwargs)
-        
+
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, 'GENOME_INIT', True)
             setattr(namespace, 'INITIALISATION',
-                    "operators.initialisation.random_init")
-    
+                    "operators.initialisation.uniform_genome")
+
     # Generate a mutually exclusive group for initialisation arguments. This
     # means you cannot specify GENOME_INIT with RHH initialisation.
     initialisation_group = parser.add_mutually_exclusive_group()
@@ -121,7 +121,7 @@ def parse_cmd_args(arguments):
                                       help='Will initialise individuals by '
                                            'generating a random genome for '
                                            'each individual')
-    
+
     # SELECTION
     parser.add_argument('--selection', dest='SELECTION', type=str,
                         help='Sets the selection to be used, requires string '
@@ -136,7 +136,7 @@ def parse_cmd_args(arguments):
     parser.add_argument('--selection_proportion', dest='SELECTION_PROPORTION',
                         type=float, help='Sets the proportion for truncation '
                                          'selection, requires float, e.g. 0.5')
-    
+
     # EVALUATION
     parser.add_argument('--multicore', dest='MULTICORE', default=None,
                         action='store_true', help='Turns on multicore '
@@ -144,7 +144,7 @@ def parse_cmd_args(arguments):
     parser.add_argument('--cores', dest='CORES', type=int,
                         help='Specify the number of cores to be used for '
                              'multicore evaluation. Requires int.')
-    
+
     # CROSSOVER
     parser.add_argument('--crossover', dest='CROSSOVER', type=str,
                         help='Sets the type of crossover to be used, requires '
@@ -154,7 +154,7 @@ def parse_cmd_args(arguments):
                         dest='CROSSOVER_PROBABILITY', type=float,
                         help='Sets the crossover probability, requires float, '
                              'e.g. 0.9')
-    
+
     # MUTATION
     parser.add_argument('--mutation', dest='MUTATION', type=str,
                         help='Sets the type of mutation to be used, requires '
@@ -166,7 +166,7 @@ def parse_cmd_args(arguments):
     parser.add_argument('--mutation_probability', dest='MUTATION_PROBABILITY',
                         type=float, help='Sets the rate of mutation '
                                          'probability for linear genomes')
-    
+
     # REPLACEMENT
     parser.add_argument('--replacement', dest='REPLACEMENT', type=str,
                         help='Sets the replacement strategy, requires string '
@@ -175,7 +175,7 @@ def parse_cmd_args(arguments):
     parser.add_argument('--elite_size', dest='ELITE_SIZE', type=int,
                         help='Sets the number of elites to be used, requires '
                              'int')
-    
+
     # PROBLEM SPECIFICS
     parser.add_argument('--grammar_file', dest='GRAMMAR_FILE', type=str,
                         help='Sets the grammar to be used, requires string')
@@ -199,7 +199,7 @@ def parse_cmd_args(arguments):
                              'or "rmse".')
     parser.add_argument('--extra_fitness_parameters',
                         dest='EXTRA_FITNESS_PARAMETERS', type=str, help='ToDo')
-    
+
     # OPTIONS
     parser.add_argument('--random_seed', dest='RANDOM_SEED', type=int,
                         help='Sets the seed to be used, requires int value')
@@ -221,13 +221,13 @@ def parse_cmd_args(arguments):
     parser.add_argument('--save_plots', dest='SAVE_PLOTS', default=None,
                         action='store_true', help='Saves plots for best '
                                                   'fitness')
-    
+
     # CACHING
     class CachingAction(argparse.Action):
         """
         Class for defining special mutually exclusive options for caching.
         """
-        
+
         def __init__(self, option_strings, CACHE=None, LOOKUP_FITNESS=None,
                      LOOKUP_BAD_FITNESS=None, MUTATE_DUPLICATES=None,
                      **kwargs):
@@ -237,7 +237,7 @@ def parse_cmd_args(arguments):
             self.MUTATE_DUPLICATES = MUTATE_DUPLICATES
             super(CachingAction, self).__init__(option_strings, nargs=0,
                                                 **kwargs)
-         
+
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, 'CACHE', self.CACHE)
             setattr(namespace, 'LOOKUP_FITNESS', self.LOOKUP_FITNESS)
@@ -270,11 +270,11 @@ def parse_cmd_args(arguments):
 
     # Parse command line arguments using all above information.
     args, unknown = parser.parse_known_args(arguments)
-    
+
     # All default args in the parser are set to "None". Only take arguments
     # which are not "None", i.e. arguments which have been passed in from
     # the command line.
     cmd_args = {key: value for key, value in vars(args).items() if value is
                 not None}
-    
+
     return cmd_args, unknown
