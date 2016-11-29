@@ -274,9 +274,4 @@ def parse_cmd_args(arguments):
     cmd_args = {key: value for key, value in vars(args).items() if value is
                 not None}
 
-    for arg in cmd_args:
-        print(arg, "\t", cmd_args[arg])
-        
-    quit()
-
     return cmd_args, unknown
