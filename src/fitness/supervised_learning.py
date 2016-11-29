@@ -1,11 +1,11 @@
 from math import isnan
-from sys import maxsize
 
 import numpy as np
 
 from algorithm.parameters import params
 from utilities.fitness.get_data import get_data
 from fitness.default_fitness import default_fitness
+
 
 class supervised_learning:
     """

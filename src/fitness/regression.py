@@ -3,6 +3,7 @@ from . import supervised_learning
 from algorithm.parameters import params
 from utilities.fitness.error_metric import mse
 
+
 class regression(supervised_learning.supervised_learning):
     """Fitness function for regression. We just slightly specialise the
     function for supervised_learning."""
