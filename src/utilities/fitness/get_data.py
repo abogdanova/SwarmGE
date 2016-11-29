@@ -27,9 +27,30 @@ def get_Xy_train_test(filename, randomise=True, test_proportion=0.5,
 def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     """Read in training and testing data files, and split each into X
     (all columns up to last) and y (last column)."""
+
+    # first try to auto-detect the field separator ie delimiter
+    f = open(train_filename)
+    for line in f:
+        if line.startswith("#") or len(line) < 2:
+            continue
+        else:
+            if "," in line:
+                delimiter = ","; break
+            elif "\t" in line:
+                delimiter = "\t"; break
+            elif ";" in line:
+                delimiter = ";"; break
+            elif ":" in line:
+                delimiter = ":"; break
+            else:
+                delimiter = " "; break
+    f.close()
     
-    train_Xy = np.genfromtxt(train_filename, skip_header=skip_header)
-    test_Xy = np.genfromtxt(test_filename, skip_header=skip_header)
+    train_Xy = np.genfromtxt(train_filename, skip_header=skip_header,
+                             delimiter=delimiter)
+    test_Xy = np.genfromtxt(test_filename, skip_header=skip_header,
+                            delimiter=delimiter)
+    
     train_X = train_Xy[:, :-1].transpose()  # all columns but last
     train_y = train_Xy[:, -1].transpose()  # last column
     test_X = test_Xy[:, :-1].transpose()  # all columns but last
@@ -38,11 +59,10 @@ def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     return train_X, train_y, test_X, test_y
 
 
-def get_data(experiment):
+def get_data(experiment, file_type="txt"):
     """ Return the training and test data for the current experiment.
     """
 
-    file_type = "txt"
     datasets = listdir(getcwd() + "/../datasets/")
     for dataset in datasets:
         exp = dataset.split('.')[0].split('-')[0]
