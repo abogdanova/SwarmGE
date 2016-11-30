@@ -210,7 +210,7 @@ def set_params(command_line_args):
     from utilities.fitness.math_functions import return_percent
     from representation import grammar
     import utilities.algorithm.command_line_parser as parser
-    from utilities.stats import trackers
+    from utilities.stats import trackers, clean_stats
 
     cmd_args, unknown = parser.parse_cmd_args(command_line_args)
     # TODO: how should we handle unknown parameters? Should we just add them indiscriminately to the params dictionary?
@@ -265,6 +265,9 @@ def set_params(command_line_args):
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
         set_param_imports()
+    
+        # Clean the stats dict to remove unused stats.
+        clean_stats.clean_stats()
     
         # Initialise run lists and folders
         initialise_run_params()

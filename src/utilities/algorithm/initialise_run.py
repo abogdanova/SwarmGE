@@ -1,4 +1,5 @@
 from datetime import datetime
+from time import time
 from random import seed
 from sys import version_info
 
@@ -29,7 +30,7 @@ def initialise_run_params():
     """
 
     start = datetime.now()
-    trackers.time_list.append(start)
+    trackers.time_list.append(time())
 
     # Set random seed
     if params['RANDOM_SEED'] is None:

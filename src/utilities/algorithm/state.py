@@ -17,6 +17,10 @@ def create_state(individuals):
     from algorithm.parameters import params
     from stats.stats import stats
     from utilities.stats import trackers
+    from time import time
+
+    # Get time.
+    state_time = time()
 
     # Get random state.
     random_state = random.getstate()
@@ -35,7 +39,7 @@ def create_state(individuals):
     # Create state dictionary
     state = {"trackers": pickle_trackers, "params": pickle_params,
              "stats": stats, "individuals": individuals,
-             "random_state": random_state}
+             "random_state": random_state, "time": state_time}
     
     save_state(state)
     
@@ -102,6 +106,7 @@ def set_state(state):
     from utilities.algorithm.initialise_run import set_param_imports
     from stats.stats import stats
     from utilities.stats import trackers
+    from time import time
 
     # Set random state.
     random.setstate(state['random_state'])
@@ -121,6 +126,9 @@ def set_state(state):
     # Set correct param imports for specified function options, including
     # error metrics and fitness functions.
     set_param_imports()
+    
+    # Set time adjustment to account for old time.
+    stats['time_adjust'] = time() - state['time']
 
     return state['individuals']
 

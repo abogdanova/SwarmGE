@@ -1,6 +1,6 @@
 import types
 from copy import copy
-from datetime import datetime
+from time import time
 from os import getcwd, path, mkdir
 from sys import stdout
 
@@ -33,7 +33,8 @@ stats = {
         "ave_fitness": 0,
         "best_fitness": 0,
         "time_taken": 0,
-        "total_time": 0
+        "total_time": 0,
+        "time_adjust": 0
 }
 
 
@@ -56,15 +57,16 @@ def get_stats(individuals, end=False):
     if end or params['VERBOSE'] or not params['DEBUG']:
 
         # Time Stats
-        trackers.time_list.append(datetime.now())
+        trackers.time_list.append(time() - stats['time_adjust'])
         stats['time_taken'] = trackers.time_list[-1] - trackers.time_list[-2]
         stats['total_time'] = trackers.time_list[-1] - trackers.time_list[0]
 
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
-        stats['unique_inds'] = len(trackers.cache)
-        stats['unused_search'] = 100 - stats['unique_inds'] / \
-                                       stats['total_inds']*100
+        if params['CACHE']:
+            stats['unique_inds'] = len(trackers.cache)
+            stats['unused_search'] = 100 - stats['unique_inds'] / \
+                                           stats['total_inds']*100
 
         available = [i for i in individuals if not i.invalid]
 
@@ -163,7 +165,6 @@ def print_final_stats():
     print("  Phenotype:", stats['best_ever'].phenotype)
     print("  Genome:", stats['best_ever'].genome)
     print_generation_stats()
-    print("\nTime taken:\t", stats['total_time'])
 
 
 def save_stats_to_file(end=False):
