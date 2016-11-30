@@ -6,6 +6,8 @@ from algorithm.parameters import params
 from utilities.fitness.get_data import get_data
 from fitness.default_fitness import default_fitness
 
+def AQ(x, y):
+    return x / np.sqrt(1.0 + y**2)
 
 class supervised_learning:
     """
@@ -67,7 +69,7 @@ class supervised_learning:
             # the estimate second
             fitness = params['ERROR_METRIC'](y, yhat)
 
-        except:
+        except Error as err:
             fitness = default_fitness(self.maximise)
 
         # don't use "not fitness" here, because what if fitness = 0.0?!
