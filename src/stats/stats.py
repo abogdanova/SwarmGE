@@ -49,6 +49,10 @@ def get_stats(individuals, end=False):
     :return: Nothing.
     """
 
+    best = max(individuals)
+    if stats['best_ever'] is None or best > stats['best_ever']:
+        stats['best_ever'] = best
+
     if end or params['VERBOSE'] or not params['DEBUG']:
 
         # Time Stats
@@ -61,7 +65,6 @@ def get_stats(individuals, end=False):
         stats['unique_inds'] = len(trackers.cache)
         stats['unused_search'] = 100 - stats['unique_inds'] / \
                                        stats['total_inds']*100
-        stats['best_ever'] = max(individuals)
 
         available = [i for i in individuals if not i.invalid]
 
