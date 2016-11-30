@@ -121,6 +121,18 @@ params = {
         # Multiprocessing of phenotype evaluations.
         'CORES': cpu_count(),
 
+        # STATE SAVING/LOADING
+        'SAVE_STATE': False,
+        # Saves the state of the evolutionary run every generation. You can
+        # specify how often you want to save the state with SAVE_STATE_STEP.
+        'SAVE_STATE_STEP': 1,
+        # Specifies how often the state of the current evolutionary run is
+        # saved (i.e. every n-th generation). Requires int value.
+        'LOAD_STATE': None,
+        # Loads an evolutionary run from a saved state. You must specify the
+        # full file path to the desired state file. Note that state files have
+        # no file type.
+
         # CACHING
         'CACHE': False,
         # The cache tracks unique individuals across evolution by saving a
@@ -198,6 +210,7 @@ def set_params(command_line_args):
     from utilities.fitness.math_functions import return_percent
     from representation import grammar
     import utilities.algorithm.command_line_parser as parser
+    from utilities.stats import trackers
 
     cmd_args, unknown = parser.parse_cmd_args(command_line_args)
     # TODO: how should we handle unknown parameters? Should we just add them indiscriminately to the params dictionary?
@@ -211,35 +224,51 @@ def set_params(command_line_args):
     # NOTE that command line arguments overwrite all previously set parameters.
     params.update(cmd_args)
 
-    # Elite size is set to either 1 or 1% of the population size, whichever is
-    # bigger if no elite size is previously set.
-    if params['ELITE_SIZE'] is None:
-        params['ELITE_SIZE'] = return_percent(1, params['POPULATION_SIZE'])
+    if params['LOAD_STATE']:
+        # Load run from state.
+        from utilities.algorithm.state import load_state
+        
+        # Load in state information.
+        individuals = load_state(params['LOAD_STATE'])
 
-    # Set the size of a generation
-    params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - params[
-        'ELITE_SIZE']
-
-    # Set GENOME_OPERATIONS automatically for faster linear operations.
-    # TODO: there must be a cleaner way of doing this.
-    if params['MUTATION'] in ['operators.mutation.int_flip', 'int_flip'] \
-        and params['CROSSOVER'] in ['operators.crossover.fixed_onepoint',
-                                    'operators.crossover.variable_onepoint',
-                                    'operators.crossover.fixed_twopoint',
-                                    'operators.crossover.variable_twopoint',
-                                    'fixed_onepoint', 'variable_onepoint',
-                                    'fixed_twopoint', 'variable_twopoint']:
-        params['GENOME_OPERATIONS'] = True
+        # Set correct search loop.
+        from algorithm.search_loop import search_loop_from_state
+        params['SEARCH_LOOP'] = search_loop_from_state
+        
+        # Set population.
+        setattr(trackers, "state_individuals", individuals)
+        
     else:
-        params['GENOME_OPERATIONS'] = False
-
-    # Set correct param imports for specified function options, including
-    # error metrics and fitness functions.
-    set_param_imports()
-
-    # Initialise run lists and folders
-    initialise_run_params()
-
-    # Parse grammar file and set grammar class.
-    params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
-                                            params['GRAMMAR_FILE']))
+        # Elite size is set to either 1 or 1% of the population size, whichever is
+        # bigger if no elite size is previously set.
+        if params['ELITE_SIZE'] is None:
+            params['ELITE_SIZE'] = return_percent(1, params['POPULATION_SIZE'])
+    
+        # Set the size of a generation
+        params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - params[
+            'ELITE_SIZE']
+    
+        # Set GENOME_OPERATIONS automatically for faster linear operations.
+        # TODO: there must be a cleaner way of doing this.
+        if params['MUTATION'] in ['operators.mutation.int_flip', 'int_flip'] \
+                and params['CROSSOVER'] in [
+                    'operators.crossover.fixed_onepoint',
+                    'operators.crossover.variable_onepoint',
+                    'operators.crossover.fixed_twopoint',
+                    'operators.crossover.variable_twopoint',
+                    'fixed_onepoint', 'variable_onepoint',
+                    'fixed_twopoint', 'variable_twopoint']:
+            params['GENOME_OPERATIONS'] = True
+        else:
+            params['GENOME_OPERATIONS'] = False
+            
+        # Set correct param imports for specified function options, including
+        # error metrics and fitness functions.
+        set_param_imports()
+    
+        # Initialise run lists and folders
+        initialise_run_params()
+    
+        # Parse grammar file and set grammar class.
+        params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
+                                                params['GRAMMAR_FILE']))

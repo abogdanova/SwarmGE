@@ -37,7 +37,7 @@ def create_state(individuals):
              "stats": stats, "individuals": individuals,
              "random_state": random_state}
     
-    return state
+    save_state(state)
     
 
 def save_state(state):
@@ -55,6 +55,9 @@ def save_state(state):
     # Save state information
     pickle.dump(state, state_file)
 
+    # Close file.
+    state_file.close()
+
 
 def load_state(state):
     """
@@ -68,8 +71,17 @@ def load_state(state):
     # Open pickle file
     state_file = open(state, "rb")
     
-    # Return state information
-    return pickle.load(state_file)
+    # Get state information
+    loaded_state = pickle.load(state_file)
+
+    # Close file.
+    state_file.close()
+    
+    # Set state.
+    individuals = set_state(loaded_state)
+    
+    # Return individuals.
+    return individuals
 
 
 def set_state(state):

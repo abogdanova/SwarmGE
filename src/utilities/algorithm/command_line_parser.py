@@ -219,10 +219,28 @@ def parse_cmd_args(arguments):
                                                   'command line.')
     parser.add_argument('--save_all', dest='SAVE_ALL', default=None,
                         action='store_true', help='Saves the best phenotypes '
-                                                  'at each generation')
+                                                  'at each generation.')
     parser.add_argument('--save_plots', dest='SAVE_PLOTS', default=None,
                         action='store_true', help='Saves plots for best '
-                                                  'fitness')
+                                                  'fitness.')
+    
+    # STATE SAVING/LOADING
+    parser.add_argument('--save_state', dest='SAVE_STATE', default=None,
+                        action='store_true',
+                        help='Saves the state of the evolutionary run every '
+                             'generation. You can specify how often you want '
+                             'to save the state with the command '
+                             '"--save_state_step".')
+    parser.add_argument('--save_state_step', dest='SAVE_STATE_STEP',
+                        default=None, type=int,
+                        help='Specifies how often the state of the current '
+                             'evolutionary run is saved (i.e. every n-th '
+                             'generation). Requires int value.')
+    parser.add_argument('--load_state', dest='LOAD_STATE', type=str,
+                        help='Load an evolutionary run from a saved state. '
+                             'You must specify the full file path to the '
+                             'desired state file. Note that state files have '
+                             'no file type.')
 
     # CACHING
     class CachingAction(argparse.Action):

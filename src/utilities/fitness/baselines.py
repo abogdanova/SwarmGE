@@ -5,8 +5,8 @@ from collections import Counter
 import numpy as np
 from sklearn.linear_model import LinearRegression, ElasticNet
 
-import get_data
-from get_data import get_data
+from utilities.fitness.get_data import get_data
+
 
 def pprint(a, format_string ='{0:.2f}'):
     # adapted from http://stackoverflow.com/a/18287838
