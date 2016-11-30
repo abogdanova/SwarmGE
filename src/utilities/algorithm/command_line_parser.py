@@ -83,6 +83,11 @@ def parse_cmd_args(arguments):
     parser.add_argument('--generations', dest='GENERATIONS', type=int,
                         help='Sets the number of generations, requires int '
                              'value')
+    parser.add_argument('--hill_climbing_history',
+                        dest='HILL_CLIMBING_HISTORY',
+                        type=int,
+                        help='Sets the history-length for late-acceptance'
+                        'and step-counting hill-climbing.')
 
     # INDIVIDUAL SIZE
     parser.add_argument('--max_tree_depth', dest='MAX_TREE_DEPTH', type=int,

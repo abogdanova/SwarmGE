@@ -15,6 +15,7 @@ params = {
         # Evolutionary Parameters
         'POPULATION_SIZE': 500,
         'GENERATIONS': 50,
+        'HILL_CLIMBING_HISTORY': 1000,
 
         # Set optional experiment name
         'EXPERIMENT_NAME': None,
