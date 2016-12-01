@@ -23,8 +23,8 @@ MUTATE_DUPLICATES:      True
 MUTATION:               subtree
 MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
-POPULATION_SIZE:        1000
-ELITE_SIZE:  		250
+POPULATION_SIZE:        2000
+ELITE_SIZE:  		500
 FITNESS_FUNCTION:       RegexEval
 RANDOM_SEED:            None
 REPLACEMENT:            generational
