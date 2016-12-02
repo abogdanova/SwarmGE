@@ -30,7 +30,9 @@ class RegexEval:
         self.generate_tests()
         self.time=False
 
-    def __call__(self, regex_string):
+    def __call__(self, individual):
+
+        regex_string = individual.phenotype
 #        regex_string="5"
         try:
             compiled_regex = re.compile(regex_string)
@@ -67,7 +69,7 @@ class RegexEval:
         # if fitness == seed_fitness:
         # fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
         return fitness
-    
+
     def test_regex(self,compiled_regex):
         results = list()
         testing_iterations=1
@@ -131,8 +133,6 @@ class RegexEval:
         a_test_string.add_match(128,145)
         a_test_string.add_match(167,184) 
         self.test_cases.append(a_test_string)
-
-        
         
 class RegexTestString:
     def __init__(self,search_string):

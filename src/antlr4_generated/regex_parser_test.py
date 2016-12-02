@@ -5,11 +5,17 @@ from antlr4 import *
 from PCRELexer import PCRELexer
 from PCREParser import PCREParser
 from PCREListener import PCREListener
+from pprint import pprint
 
 class PCREPrinter(PCREListener):
-
+    generated_grammar="<toprule>  ::=  <element>|<recurserule>\n<recurserule>  ::=  <toprule><element>\n<element>  ::=  "
+    
     def enterEveryRule(self,ctx):
-        print( "Entering: " + ctx.getText() )
+#        pp=pprint.PrettyPrinter(indent=4)
+        if len(ctx.children) == 1 and type(ctx.children[0]) is tree.Tree.TerminalNodeImpl :
+            self.generated_grammar += "\"" + ctx.getText() +"\"|"
+        print( "Entering: " + ctx.getText() + " : ")
+        pprint(ctx.children)
             
     def enterParse(self,ctx):
         print( "Entering: " + ctx.getText() )
@@ -36,6 +42,7 @@ def get_ponyGE2Tree_from_antlrTree(antlr_tree):
     walker = ParseTreeWalker()
     walker.walk( printer, antlr_tree )
     print("Done!")
+    print(printer.generated_grammar[:-1])
     return "yea"
     
 if __name__ == '__main__':
