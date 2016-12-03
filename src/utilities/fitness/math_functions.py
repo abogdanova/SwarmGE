@@ -1,4 +1,6 @@
 import numpy as np
+np.seterr(all="raise")
+
 
 
 def return_percent(num, pop_size):
