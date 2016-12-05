@@ -1,9 +1,8 @@
 <e>  ::=  (<e>+<e>) |
 	 	  (<e>-<e>) |
 		  (<e>*<e>) |
-          plog(<e>) |
-		  x[<varidx>] |
-		  x[<varidx>] | 
+		  AQ(<e>) |
+		  X[<varidx>] |
 		  <c>
 <varidx> ::= GE_RANGE:dataset_n_vars
 <c> ::= <d>.<d> | -<d>.<d>
