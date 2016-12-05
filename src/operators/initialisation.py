@@ -146,7 +146,10 @@ def generate_ind_tree(max_depth, method):
     ind.depth, ind.used_codons, ind.invalid = depth, used_cod, invalid
 
     # Generate random tail for genome.
-    ind.genome = genome + [randint(0, params['CODON_SIZE']) for
-                           _ in range(int(ind.used_codons / 2))]
+    if params['TAILS']:
+        ind.genome = genome + [randint(0, params['CODON_SIZE']) for _ in
+                               range(int(ind.used_codons / 2))]
+    else:
+        ind.genome = genome
 
     return ind

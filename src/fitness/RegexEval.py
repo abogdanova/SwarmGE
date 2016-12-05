@@ -1,5 +1,3 @@
-
-from Levenshtein import distance 
 import re
 import time, timeit
 import traceback
@@ -20,7 +18,7 @@ def inner(_it, _timer{init}):
 class RegexEval:
     """
     Fitness function for checking regex matching which sums functionality and time.
-    The regex is presented with a number of strings. 
+    The regex is presented with a number of strings.
     The resulting matched values are checked against known correct answers
     """
 
@@ -46,7 +44,7 @@ class RegexEval:
                 return fitness + (len(regex_string)/10000000000) #fitness # error is first, length second
             else:
                 self.time=True
-                return fitness # + (len(regex_string)/10000000000)  # performance only 
+                return fitness # + (len(regex_string)/10000000000)  # performance only
 
         except:
 #            print(traceback.format_exc())
@@ -58,7 +56,7 @@ class RegexEval:
         time_sum=0.0
         for a_result in eval_results:
             time_sum += a_result[0] /  a_result[2]
-            if a_result[1] == None: # no match 
+            if a_result[1] == None: # no match
                 result_error += 100 * (len(a_result[3].search_string)) #+ len(a_result[3].matched_string))
             else: # a match which may be the empty string
                 result_error += a_result[3].calc_match_errors(a_result[1])
@@ -102,7 +100,7 @@ class RegexEval:
     Given a test string and the desired match,
     Break the desired match into substrings,
     these substrings give us a gradient.
-    Multiple search_strings should be used to guide toward generality. 
+    Multiple search_strings should be used to guide toward generality.
     """
     def generate_tests(self):
         #a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 14")
@@ -126,13 +124,13 @@ class RegexEval:
         self.test_cases.append(a_test_string)
 
         a_test_string = RegexTestString("Jan 12 06:26:20: ACCEPT service dns from 140.105.48.16 to firewall(pub-nic-dns), prefix: \"none\" (in: eth0 140.105.48.16(00:21:dd:bc:95:44):4263 -> 140.105.63.158(00:14:31:83:c6:8d):53 UDP len:76 ttl:62)")
-        a_test_string.add_match(120,137) 
-        a_test_string.add_match(162,179) 
+        a_test_string.add_match(120,137)
+        a_test_string.add_match(162,179)
         self.test_cases.append(a_test_string)
 
         a_test_string = RegexTestString("Jan 12 06:27:09: DROP service 68->67(udp) from 216.34.211.83 to 216.34.253.94, prefix: \"spoof iana-0/8\" (in: eth0 213.92.153.78(00:1f:d6:19:0a:80):68 -> 69.43.177.110(00:30:fe:fd:d6:51):67 UDP len:576 ttl:64)")
         a_test_string.add_match(128,145)
-        a_test_string.add_match(167,184) 
+        a_test_string.add_match(167,184)
         self.test_cases.append(a_test_string)
         
 class RegexTestString:
@@ -160,7 +158,7 @@ class RegexTestString:
                 match_candidates_length+=1
                 if match.end() != match.start():
                     # how mutch of the match we're looking for are we missing?
-                    start_diff = match.start() - a_known_match.get("start") 
+                    start_diff = match.start() - a_known_match.get("start")
                     end_diff = (a_known_match.get("end")) - match.end()
                     if start_diff < 0: # missing the start or end costs a bit
                         match_error+= abs(start_diff)
@@ -192,7 +190,7 @@ class RegexTestString:
         #print("Matches: {}".format(match_candidates_length))
         #if (sum(start_errors+end_errors) + match_error) == 0:
         #    print("aagh")
-        return (match_error) + (match_candidates_length * 5) # sum(start_errors+end_errors) + 
+        return (match_error) + (match_candidates_length * 5) # sum(start_errors+end_errors) +
 
     def find_missing_range(self,start, end, match_ranges):
         missing = end - start

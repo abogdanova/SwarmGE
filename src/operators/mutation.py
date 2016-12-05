@@ -3,7 +3,7 @@ from random import randint, random, choice
 from algorithm.parameters import params
 from representation import individual
 from representation.tree import generate_tree
-
+from stats.stats import stats
 
 def mutation(pop):
     """
@@ -96,6 +96,9 @@ def subtree(ind):
     
     # Allows for multiple mutation events should that be desired.
     for i in range(params['MUTATION_EVENTS']):
+        # if stats['gen'] > 0 and stats['best_ever'].fitness < 1.8:
+        #     ind.tree = leaf_mutate(ind.tree)
+        # else:
         ind.tree = subtree_mutate(ind.tree)
     
     # Re-build a new individual with the newly mutated genetic information.
@@ -105,3 +108,31 @@ def subtree(ind):
     ind.genome = ind.genome + tail
 
     return ind
+
+
+def leaf_mutate(ind_tree):
+    """
+    Creates a list of all nodes and picks one node at random to mutate.
+    Because we have a list of all nodes, we can (but currently don't)
+    choose what kind of nodes to mutate on. Handy.
+
+    :param ind_tree: The full tree of an individual.
+    :return: The full mutated tree and the associated genome.
+    """
+    
+    target = params['BNF_GRAMMAR'].non_terminals
+    l_target = [i for i in target if target[i]['min_steps'] == 1]
+    
+    # Find the list of nodes we can mutate from.
+    targets = ind_tree.get_target_nodes([], target=l_target)
+    
+    # Pick a node.
+    new_tree = choice(targets)
+    
+    # Set the depth limits for the new subtree.
+    new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
+    
+    # Mutate a new subtree.
+    generate_tree(new_tree, [], [], "random", 0, 0, 0, new_tree.max_depth)
+    
+    return ind_tree
