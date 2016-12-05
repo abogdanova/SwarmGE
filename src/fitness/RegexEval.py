@@ -5,6 +5,7 @@ import time, timeit
 import traceback
 import sys
 
+
 # http://stackoverflow.com/questions/24812253/how-can-i-capture-return-value-with-python-timeit-module/
 timeit.template = """
 def inner(_it, _timer{init}):
