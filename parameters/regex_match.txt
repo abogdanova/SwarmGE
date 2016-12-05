@@ -1,7 +1,7 @@
-CACHE:                  True
+CACHE:                  False
 CODON_SIZE:             100000
 CROSSOVER:              subtree
-CROSSOVER_PROBABILITY:  0.99
+CROSSOVER_PROBABILITY:  0
 DEBUG:                  True
 EXPERIMENT_NAME:        None
 GENERATIONS:            10000
@@ -29,7 +29,7 @@ RANDOM_SEED:            None
 REPLACEMENT:            generational
 SAVE_ALL:               True
 SAVE_PLOTS:             True
-SEARCHL_LOOP:           search_loop_break
+SEARCH_LOOP:            search_loop_break
 SELECTION:              tournament
 SILENT:                 False
 TOURNAMENT_SIZE:        2
