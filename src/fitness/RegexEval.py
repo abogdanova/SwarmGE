@@ -17,7 +17,7 @@ def inner(_it, _timer{init}):
     
 class RegexEval:
     """
-    Fitness function for checking regex matching which sums functionality and time.
+    Fitness function for checking regex matching which sums functionality error.
     The regex is presented with a number of strings.
     The resulting matched values are checked against known correct answers
     """
@@ -30,18 +30,20 @@ class RegexEval:
         self.time=False
 
     def __call__(self, individual):
-
         regex_string = individual.phenotype
-#        regex_string="5"
+#        regex_string="!|\w.[6-l]\w\w[^!]\w\w[^!]\w\w[^!]\d\w[^P]\w\w"
         try:
             compiled_regex = re.compile(regex_string)
             eval_results = self.test_regex(compiled_regex)
             fitness = self.calculate_fitness(eval_results)
-#            if "5" in regex_string:
-#                print(regex_string + ": {}".format(fitness))
-#                sys.exit()
-            if fitness >= 0: # (we should use multi-objective/pareto front)
-                return fitness + (len(regex_string)/10000000000) #fitness # error is first, length second
+            #            if "5" in regex_string:
+            # (we should use multi-objective/pareto front)
+            #print(regex_string + ": {}".format(fitness))
+            #sys.exit()
+        
+            if fitness >= 1: # If there is a functionality error, we don't really care about time 
+                #return fitness + (len(individual.genome)/10000) #fitness # error is first, length second
+                return fitness + (len(regex_string)/10000) #fitness # error is first, length second
             else:
                 self.time=True
                 return fitness # + (len(regex_string)/10000000000)  # performance only
@@ -50,6 +52,7 @@ class RegexEval:
 #            print(traceback.format_exc())
 #            sys.exit()
             return 100000
+            
 
     def calculate_fitness(self,eval_results):
         result_error=0
@@ -59,12 +62,12 @@ class RegexEval:
             if a_result[1] == None: # no match
                 result_error += 100 * (len(a_result[3].search_string)) #+ len(a_result[3].matched_string))
             else: # a match which may be the empty string
-                result_error += a_result[3].calc_match_errors(a_result[1])
-        if result_error >1:
-            fitness = result_error
-        else:
-            fitness = time_sum
-        #fitness = time_sum + result_error
+                result_error += a_result[3].calc_match_errors(list(a_result[1]))
+        #if result_error >1:
+        #    fitness = result_error
+        # else:
+        #     fitness = time_sum
+        fitness = time_sum + result_error
         # if fitness == seed_fitness:
         # fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
         return fitness
@@ -147,52 +150,25 @@ class RegexTestString:
 #                 self.match.append(start=i,end=j, matched_string=self.search_string[i:j])
         
     def calc_match_errors(self,match_candidates):
-        start_errors=list()
-        end_errors=list()
-        match_candidates_length=-1
-        # is it cheaper to make a copy and remove characters as they are matched, or create a set of all sub-snippets and what ones the candidate matches?
-        match_error = 0
-        for a_known_match in self.matches:
-            match_ranges=list()
-            for match in match_candidates:
-                match_candidates_length+=1
-                if match.end() != match.start():
-                    # how mutch of the match we're looking for are we missing?
-                    start_diff = match.start() - a_known_match.get("start")
-                    end_diff = (a_known_match.get("end")) - match.end()
-                    if start_diff < 0: # missing the start or end costs a bit
-                        match_error+= abs(start_diff)
-                    if end_diff < 0:
-                        match_error+= abs(end_diff)-1
-                    if match.start() > a_known_match.get("end") or match.end() < a_known_match.get("start"): # we totally missed
-                        match_error+= a_known_match.get("end")  - a_known_match.get("start")
-                    else: # how much of this known match did we get?
-                        match_ranges.append(match)
-                    #start_errors.append(abs(start_diff))
-                    #end_errors.append(abs(end_diff)) # add error if they're the same
-                else:
-                    match_error +=1
-                
-            # missing any of the desired extraction costs a lot
-            missing_range = self.find_missing_range(a_known_match.get("start"), a_known_match.get("end"), match_ranges)
-            range_length = (a_known_match.get("end") - a_known_match.get("start"))
-            if missing_range == range_length: # we've missed the whole thing
-                match_error += missing_range * (range_length * 10)
-            else:
-                match_error += missing_range * range_length
-            
-            #if len(start_errors) == 0:
-            #    start_errors.append(len(self.search_string))
-            #if len(end_errors) == 0:
-            #    end_errors.append(len(self.search_string))
-        if match_candidates_length < 0:
-            match_candidates_length = match_error = 50*len(self.search_string)
-        #print("Matches: {}".format(match_candidates_length))
-        #if (sum(start_errors+end_errors) + match_error) == 0:
-        #    print("aagh")
-        return (match_error) + (match_candidates_length * 5) # sum(start_errors+end_errors) +
+        match_ranges=list()
+        undesired_range = missing_range = 0
+#        for match in match_candidates:
+ #           match_ranges.append(match)
 
-    def find_missing_range(self,start, end, match_ranges):
+        for a_known_match in self.matches:
+            # missing any of the desired extraction costs a lot
+            missing_range += self.find_missing_range(a_known_match, match_candidates)
+        for match_candidate in  match_candidates:
+            undesired_range += self.find_undesired_range(match_candidate, self.matches)
+
+        match_error = missing_range + undesired_range
+        match_error += abs(len(match_candidates) - len(self.matches))
+
+        return (match_error) 
+
+    def find_missing_range(self, a_known_match, match_ranges):
+        start = a_known_match.get("start")
+        end = a_known_match.get("end")
         missing = end - start
         for i in range(start,end):
             found = False
@@ -202,7 +178,20 @@ class RegexTestString:
             if found:
                 missing -= 1
         return missing
-                
+
+    def find_undesired_range(self,match_candidate, known_matches):
+        undesired_matched = 0
+        for i in range(match_candidate.start(), match_candidate.end()):
+            in_range=False
+            for a_known_match in known_matches:
+                start = a_known_match.get("start")
+                end = a_known_match.get("end")
+                if i >= start and i <= end:
+                    in_range = True
+            if not in_range:
+                undesired_matched += 1
+        return undesired_matched
+
 
     #             for a_match_candidate in match_candidates: # how much of our known match has gone unmatched?
 #                 temp_match=0
