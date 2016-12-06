@@ -40,13 +40,14 @@ class RegexEval:
             # (we should use multi-objective/pareto front)
             #print(regex_string + ": {}".format(fitness))
             #sys.exit()
-        
-            if fitness >= 1: # If there is a functionality error, we don't really care about time 
-                #return fitness + (len(individual.genome)/10000) #fitness # error is first, length second
-                return fitness + (len(regex_string)/10000) #fitness # error is first, length second
-            else:
-                self.time=True
-                return fitness # + (len(regex_string)/10000000000)  # performance only
+
+            return fitness + (len(individual.genome)/10000) #fitness # error is first, length second
+            #if fitness >= 1: # If there is a functionality error, we don't really care about time 
+            #    return fitness + (len(individual.genome)/10000) #fitness # error is first, length second
+                #return fitness + (len(regex_string)/10000) #fitness # error is first, length second
+            #else:
+            #    self.time=True
+            #    return fitness 
 
         except:
 #            print(traceback.format_exc())
