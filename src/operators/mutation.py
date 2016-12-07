@@ -2,7 +2,7 @@ from random import randint, random, choice
 
 from algorithm.parameters import params
 from representation import individual
-from representation.tree import generate_tree
+from representation.derivation import generate_tree
 
 
 def mutation(pop):

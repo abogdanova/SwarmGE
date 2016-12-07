@@ -358,8 +358,8 @@ class Grammar(object):
             min_path = min([choice['max_path'] for choice in choices])
             
             # Set the minimum path in the self.non_terminals dict.
-            self.non_terminals[nt]['min_path'] = [choice['choice'] for choice
-                                                  in choices if choice[
+            self.non_terminals[nt]['min_path'] = [choice for choice in
+                                                  choices if choice[
                                                       'max_path'] == min_path]
 
             # Find recursive production choices for current NT. If any
