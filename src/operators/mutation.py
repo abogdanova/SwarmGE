@@ -16,6 +16,7 @@ def mutation(pop):
 
     return list(map(params['MUTATION'], pop))
 
+
 def int_flip(ind, within_used=True):
     """
     Mutate the genome of an individual by randomly choosing a new int with
@@ -73,8 +74,9 @@ def int_flip_per_ind(ind, within_used=True):
         eff_length = min(len(ind.genome), ind.used_codons)
     else:
         eff_length = len(ind.genome)
-    idx = randint(0, eff_length-1)
-    ind.genome[idx] = randint(0, params['CODON_SIZE'])
+    for _ in params['MUTATION_EVENTS']:
+        idx = randint(0, eff_length-1)
+        ind.genome[idx] = randint(0, params['CODON_SIZE'])
     
     # Re-build a new individual with the newly mutated genetic information.
     new_ind = individual.Individual(ind.genome, None)

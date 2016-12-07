@@ -51,7 +51,7 @@ def get_stats(individuals, end=False):
     """
 
     best = max(individuals)
-    if stats['best_ever'] is None or best > stats['best_ever']:
+    if not stats['best_ever'] or best > stats['best_ever']:
         stats['best_ever'] = best
 
     if end or params['VERBOSE'] or not params['DEBUG']:

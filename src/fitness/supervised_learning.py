@@ -6,11 +6,9 @@ np.seterr(all="raise")
 from algorithm.parameters import params
 from utilities.fitness.get_data import get_data
 from fitness.default_fitness import default_fitness
-from utilities.fitness.math_functions import plog, pdiv, psqrt
+from utilities.fitness.math_functions import plog, pdiv, psqrt, aq
 
 
-def AQ(x, y):
-    return x / np.sqrt(1.0 + y**2)
 pow = lambda x, y: abs(x)**y
 
 
@@ -83,7 +81,6 @@ class supervised_learning:
             # an unprotected operator) so user would prefer to see them
             print(err)
             raise
-
 
         # don't use "not fitness" here, because what if fitness = 0.0?!
         if isnan(fitness):
