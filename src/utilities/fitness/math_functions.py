@@ -40,13 +40,13 @@ def rlog(x):
 
 def ppow(x, y):
     # for the case where x negative and y non-integer
-    return abs(x)**y
+    return np.abs(x)**y
 
 
 def ppow2(x, y):
     # for the case where x negative and y non-integer
     # preserve sign
-    return sign(x) * (np.abs(x) ** y)
+    return np.sign(x) * (np.abs(x) ** y)
 
 
 def psqrt(x):
@@ -70,5 +70,4 @@ def ave(x):
     :param x: a given list
     :return: the average of param x
     """
-
     return np.mean(x)
