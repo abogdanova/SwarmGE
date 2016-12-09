@@ -13,7 +13,7 @@ INITIALISATION:         rhh
 INVALID_SELECTION:      False
 LOOKUP_BAD_FITNESS:     False
 LOOKUP_FITNESS:         False
-MAX_INIT_TREE_DEPTH:    50
+MAX_INIT_TREE_DEPTH:    10
 MAX_TREE_DEPTH:         1000
 MAX_TREE_NODES:         None
 MAX_WRAPS:              0
@@ -22,8 +22,8 @@ MUTATE_DUPLICATES:      True
 MUTATION:               subtree
 MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
-POPULATION_SIZE:        500
-ELITE_SIZE:  		    10
+POPULATION_SIZE:        2000
+ELITE_SIZE:  		500
 FITNESS_FUNCTION:       RegexEval
 RANDOM_SEED:            None
 REPLACEMENT:            generational

@@ -22,8 +22,8 @@ MUTATE_DUPLICATES:      False
 MUTATION:               subtree
 MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
-POPULATION_SIZE:        500
-ELITE_SIZE:  		    10
+POPULATION_SIZE:        1000
+ELITE_SIZE:  		1
 FITNESS_FUNCTION:       regex_string_match
 RANDOM_SEED:            None
 REPLACEMENT:            generational
