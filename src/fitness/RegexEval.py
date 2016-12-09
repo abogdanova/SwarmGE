@@ -31,7 +31,8 @@ class RegexEval:
 
     def __call__(self, individual):
         regex_string = individual.phenotype
-#        regex_string="!|\w.[6-l]\w\w[^!]\w\w[^!]\w\w[^!]\d\w[^P]\w\w"
+        #regex_string = "\d.*\w.$|e"
+        #        regex_string="!|\w.[6-l]\w\w[^!]\w\w[^!]\w\w[^!]\d\w[^P]\w\w"
         try:
             compiled_regex = re.compile(regex_string)
             eval_results = self.test_regex(compiled_regex)
@@ -60,10 +61,10 @@ class RegexEval:
         time_sum=0.0
         for a_result in eval_results:
             time_sum += a_result[0] /  a_result[2]
-            if a_result[1] == None: # no match
-                result_error += 100 * (len(a_result[3].search_string)) #+ len(a_result[3].matched_string))
-            else: # a match which may be the empty string
-                result_error += a_result[3].calc_match_errors(list(a_result[1]))
+            # if a_result[1] == None: # no match
+            # result_error += 100 * (len(a_result[3].search_string)) #+ len(a_result[3].matched_string))
+            # else: # a match which may be the empty string
+            result_error += a_result[3].calc_match_errors(list(a_result[1]))
         #if result_error >1:
         #    fitness = result_error
         # else:
@@ -100,16 +101,55 @@ class RegexEval:
         return_vals.append(test_case)
         return return_vals
 
+    """ 
+    This is a 'booster' for test suite generation. We know a single good match, 
+    and we can use that to find search strings which do not contain a match.
+    Given a regex, generate/discoverB a test suite of examples which match, and those that don't.
+    The test suite is used to define (or outline) the functionality boundaries of the regex.
+    When we go to evolve new regexs, we can use the test suite to measure functionality equivalence 
+    with the original test regex.
     """
-    Given a test string and the desired match,
-    Break the desired match into substrings,
-    these substrings give us a gradient.
+    def generate_equivalence_test_suite(self, a_match, a_regex):
+        # go through the whole known search string, changing letters until you find one which does not match.
+        compiled_regex = re.compile(a_regex)
+        if len(a_match.matches) > 0 :
+            for i in range(0, len(a_match.search_string)):
+                for char in [ a for a in range(ord('0'), ord('9'))] + [ord('a'), ord('Z') ]:
+                    new_search_string = a_match.search_string[:i] + chr(char) + a_match.search_string[i+1:]
+                    a_test_case_string = RegexTestString(new_search_string)
+                    vals = self.time_regex_test_case(compiled_regex, a_test_case_string, 1)
+                    if len(list(vals[1])) == 0:
+                        self.test_cases.append(a_test_case_string)
+
+    
+    """
     Multiple search_strings should be used to guide toward generality.
     """
-    def generate_tests(self):
+    def generate_iso8601_datetime_tests(self):
+        # target: ^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$
+        a_test_string = RegexTestString("2016-12-09T08:21:15.9+00:00")
+        a_test_string.add_match(0,27)
+        self.test_cases.append(a_test_string)
+        
+        self.generate_equivalence_test_suite(a_test_string,"^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$")
+
+        a_test_string = RegexTestString("2016-12-09T08:21:15.9+00:0") # this does not match at all! (what will our fitness function throw?)
+        self.test_cases.append(a_test_string) 
+
+        a_test_string = RegexTestString("2016-22-09T08:21:15.9+00:0") # 
+        self.test_cases.append(a_test_string)
+
+        a_test_string = RegexTestString("2016-22-09T08:21:15.9+00:00") # no match, as 22 is not a valid month
+        self.test_cases.append(a_test_string) 
+
+        a_test_string = RegexTestString("1911-02-19T22:35:42.3+08:43")
+        a_test_string.add_match(0,27)
+        self.test_cases.append(a_test_string) 
+        
+    def generate_string_tests(self):
         #a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 14")
         #a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
-        
+
         a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)")
         a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
         a_test_string.add_match(161,178) # 50:06:04:92:53:44
@@ -136,6 +176,11 @@ class RegexEval:
         a_test_string.add_match(128,145)
         a_test_string.add_match(167,184)
         self.test_cases.append(a_test_string)
+        
+    def generate_tests(self):
+        #generate_string_tests()
+        self.generate_iso8601_datetime_tests()
+        #
         
 class RegexTestString:
     def __init__(self,search_string):
