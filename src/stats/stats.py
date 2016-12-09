@@ -51,7 +51,7 @@ def get_stats(individuals, end=False):
     """
 
     best = max(individuals)
-    if stats['best_ever'] is None or best > stats['best_ever']:
+    if not stats['best_ever'] or best > stats['best_ever']:
         stats['best_ever'] = best
 
     if end or params['VERBOSE'] or not params['DEBUG']:
@@ -124,7 +124,11 @@ def get_stats(individuals, end=False):
             stats['best_ever'], dist='test')
         stats['best_ever'].fitness = stats['best_ever'].training_fitness
 
-    # Save statistics
+    # Save stats to list.
+    if params['VERBOSE'] or not params['DEBUG']:
+        trackers.stats_list.append(copy(stats))
+    
+    # Save stats to file.
     if not params['DEBUG']:
         save_stats_to_file(end)
         if params['SAVE_ALL']:
@@ -192,9 +196,6 @@ def save_stats_to_file(end=False):
                 savefile.write(str(item[stat]) + "\t")
             savefile.write("\n")
         savefile.close()
-
-    else:
-        trackers.stats_list.append(copy(stats))
 
 
 def save_stats_headers():

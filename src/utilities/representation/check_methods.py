@@ -326,3 +326,18 @@ def get_output(ind_tree):
         return output
     
     return "".join(build_output(ind_tree))
+
+
+def ret_true(obj):
+    """
+    Returns "True" if an object is there. E.g. if given a list, will return
+    True if the list contains some data, but False if the list is empty.
+    
+    :param obj: Some object (e.g. list)
+    :return: True if something is there, else False.
+    """
+
+    if obj:
+        return True
+    else:
+        return False

@@ -5,6 +5,7 @@ from os import getcwd, listdir, path, pathsep
 
 import matplotlib
 import numpy as np
+np.seterr(all="raise")
 import pandas as pd
 
 matplotlib.use('Agg')

@@ -63,7 +63,7 @@ if __name__ == "__main__":
     else:
         metric = "rmse"
 
-    s = "from error_metric import " + metric + " as metric"
+    s = "from .error_metric import " + metric + " as metric"
     exec(s)
 
     train_X, train_y, test_X, test_y = get_data(dataset_name)
