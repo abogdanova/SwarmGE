@@ -1,7 +1,7 @@
 from algorithm.mapper import mapper
 from algorithm.parameters import params
 from fitness.default_fitness import default_fitness
-import os
+
 
 class Individual(object):
     """
@@ -95,11 +95,9 @@ class Individual(object):
         :return: Nothing unless multicore evaluation is being used. In that
         case, returns self.
         """
-#        rows,columns = os.popen('stty size', 'r').read().split()
-        #print("Length: {}".format(len(columns)-1))
-#        text= self.phenotype + (" " * ((len(columns)-1) - len(self.phenotype) -11))
-        print("Evaluating " + self.phenotype + "                " , end='\r')
-#        print("Evaluating " + self.phenotype + "                ")
+
+        print("Evaluating " + self.phenotype, end='\r')
+
         # Evaluate fitness using specified fitness function.
         self.fitness = params['FITNESS_FUNCTION'](self)
 

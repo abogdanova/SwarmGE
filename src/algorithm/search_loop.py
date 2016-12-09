@@ -3,6 +3,8 @@ from fitness.evaluation import evaluate_fitness
 from stats.stats import stats, get_stats
 from utilities.algorithm.state import create_state
 from utilities.stats import trackers
+from utilities.fitness.math_functions import ave
+
 
 def search_loop():
     """
@@ -49,6 +51,8 @@ def search_loop_break():
     the specified number of generations.
     """
     
+    RESTART = False
+    
     # Initialise population
     individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
     
@@ -75,7 +79,31 @@ def search_loop_break():
     
         if stats['best_ever'].fitness == 0:
             break
-    
+
+        if params['RESTARTS']:
+            if generation > 100:
+                prev = round(ave([stat['ave_fitness'] for stat in
+                               trackers.stats_list[-100:]]), 5)
+                curr = round(trackers.stats_list[-1]['ave_fitness'], 5)
+                
+                if prev == curr:
+                    # No variation in average population fitness for past 100
+                    # generations. Restart evolutionary process
+                    
+                    RESTART = True
+                    break
+
+    if RESTART:
+        # Reset trackers
+        trackers.stats_list = []
+        trackers.cache = {}
+        trackers.best_fitness_list = []
+        
+        stats['restarts'] += 1
+        
+        # Restart search loop
+        individuals = params['SEARCH_LOOP']()
+
     return individuals
 
 

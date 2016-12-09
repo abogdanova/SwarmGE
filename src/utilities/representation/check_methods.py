@@ -51,6 +51,20 @@ def print_dual_info(p1, g1, n1, i1, d1, c1,
     print("Genome\n  ", g1)
 
 
+def check_output(ind):
+    """
+    Check the phenotype of an individual to ensure it matches the output of
+    all individaul nodes.
+    
+    :param ind: An individaul to be checked.
+    :return: Nothing.
+    """
+    
+    if ind.phenotype != get_output(ind.tree):
+        print("Error: Phenotype doesn't match tree output")
+        print("Phenotype:\n\t", ind.phenotype, "\nTree output:\n\t", get_output(ind.tree))
+
+
 def check_mapping(genome):
     """
     Checks both mapping methods to ensure a single genome gives the same
@@ -302,27 +316,124 @@ def get_output(ind_tree):
     :param ind_tree: a full tree for which the phenotype string is to be built.
     :return: The complete built phenotype string of an individual.
     """
-    
-    def build_output(tree):
-        """
-        Recursively adds all node roots to a list which can be joined to
-        create the phenotype.
-
-        :return: The list of all node roots.
-        """
-        
-        output = []
-        for child in tree.children:
-            if not child.children:
-                # If the current child has no children it is a terminal.
-                # Append it to the output.
-                output.append(child.root)
-            
-            else:
-                # Otherwise it is a non-terminal. Recurse on all
-                # non-terminals.
-                output += build_output(child)
-        
-        return output
-    
+       
     return "".join(build_output(ind_tree))
+
+
+def build_output(tree):
+    """
+    Recursively adds all node roots to a list which can be joined to
+    create the phenotype.
+
+    :return: The list of all node roots.
+    """
+    
+    output = []
+    for child in tree.children:
+        if not child.children:
+            # If the current child has no children it is a terminal.
+            # Append it to the output.
+            output.append(child.root)
+        
+        else:
+            # Otherwise it is a non-terminal. Recurse on all
+            # non-terminals.
+            output += build_output(child)
+    
+    return output
+
+
+def output_with_nodes(tree, lock=True):
+    """
+    Recursively adds all node roots and the actual node to a list.
+
+    :return: The list of all node roots and overall nodes.
+    """
+    
+    if lock:
+        tree.semantic_lock = False
+    output = []
+    for child in tree.children:
+        if not child.children:
+            # If the current child has no children it is a terminal.
+            # Append it to the output.
+            output.append([child.root, child.parent])
+        
+        else:
+            # Otherwise it is a non-terminal. Recurse on all
+            # non-terminals.
+            output += output_with_nodes(child, lock)
+    
+    return output
+
+
+def set_phenotypic_output_lr(tree, phenotype, index):
+    """
+    Set the phenotypic output and the indexes of the output from the overall
+    phenotype for each node in the entire derivation tree. Indexes read from
+    right to left.
+
+    :return: Nothing.
+    """
+
+    tree.output = get_output(tree)
+    tree.pheno_index_lr = [index, index + len(tree.output)]
+    
+    for child in tree.children:
+        if not child.children:
+            # If the current child has no children it is a terminal.
+            # Append it to the output.
+            index += len(child.root)
+            child.output = child.root
+        else:
+            # Otherwise it is a non-terminal. Recurse on all
+            # non-terminals.
+            index = set_phenotypic_output_lr(child, phenotype, index)
+    
+    return index
+
+
+def set_phenotypic_output_rl(tree, phenotype, index):
+    """
+    Set the phenotypic output and the indexes of the output from the overall
+    phenotype for each node in the entire derivation tree. Indexes read from
+    left to right.
+
+    :return: Nothing.
+    """
+    
+    if not index:
+        tree.pheno_index_rl = [- len(tree.output), None]
+    else:
+        tree.pheno_index_rl = [index - len(tree.output), index]
+
+    for child in reversed(tree.children):
+        if not child.children:
+            # If the current child has no children it is a terminal.
+            # Append it to the output.
+            index -= len(child.root)
+        else:
+            # Otherwise it is a non-terminal. Recurse on all
+            # non-terminals.
+            index = set_phenotypic_output_rl(child, phenotype, index)
+    
+    return index
+
+
+def print_semantic_lock(tree, indent=""):
+    """
+    Recursively prints out a whole derivation tree. Indents children for
+    easy visualisation. Prints out current root along with whether or not
+    that node is semantically locked.
+    
+    :param tree: A derivation tree.
+    :param indent: A string indicating the current indentation.
+    :return: Nothing.
+    """
+    
+    print(indent, tree.root, " ", tree.semantic_lock, " ", tree.output)#,
+          # "\t", tree.pheno_index_rl, "\t", tree.pheno_index_lr)
+
+    indent = indent + " "
+    for child in tree.children:
+        print_semantic_lock(child, indent)
