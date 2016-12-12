@@ -1,13 +1,12 @@
 from math import isnan
 
 import numpy as np
+np.seterr(all="raise")
 
 from algorithm.parameters import params
 from utilities.fitness.get_data import get_data
 from fitness.default_fitness import default_fitness
-
-def AQ(x, y):
-    return x / np.sqrt(1.0 + y**2)
+from utilities.fitness.math_functions import plog, rlog, pdiv, psqrt, aq, ppow, psqrt2, ppow2
 
 class supervised_learning:
     """
@@ -69,8 +68,15 @@ class supervised_learning:
             # the estimate second
             fitness = params['ERROR_METRIC'](y, yhat)
 
-        except Error as err:
+        except (FloatingPointError, ZeroDivisionError):
+            # FP err can happen through eg overflow (lots of pow/exp calls)
+            # ZeroDiv can happen when using unprotected operators
             fitness = default_fitness(self.maximise)
+        except Exception as err:
+            # other errors should not usually happen (unless we have
+            # an unprotected operator) so user would prefer to see them
+            print(err)
+            raise
 
         # don't use "not fitness" here, because what if fitness = 0.0?!
         if isnan(fitness):

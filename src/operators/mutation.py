@@ -2,7 +2,7 @@ from random import randint, random, choice
 
 from algorithm.parameters import params
 from representation import individual
-from representation.tree import generate_tree, Tree
+from representation.derivation import generate_tree
 
 
 def mutation(pop):
@@ -21,18 +21,18 @@ def int_flip(ind, within_used=True):
     """
     Mutate the genome of an individual by randomly choosing a new int with
     probability p_mut. Works per-codon. Mutation is performed over the
-    entire length of the genome by default, but the flag within_used is
-    provided to limit mutation to only the effective length of the genome.
+    effective length (i.e. within used codons, not tails) by default;
+    within_used=False switches this off.
     
     :param ind: An individual to be mutated.
     :param within_used: Boolean flag for selecting whether or not mutation
-    is performed within the used portion of the genome. Default set to True.
+    is confined to within the used portion of the genome. Default set to True.
     :return: A mutated individual.
     """
 
     # Set effective genome length over which mutation will be performed.
     if within_used:
-        eff_length = len(ind.genome[:ind.used_codons])
+        eff_length = min(len(ind.genome), ind.used_codons)
     else:
         eff_length = len(ind.genome)
 
@@ -55,6 +55,34 @@ def int_flip(ind, within_used=True):
 
     return new_ind
 
+
+def int_flip_per_ind(ind, within_used=True):
+    """
+    Mutate the genome of an individual by randomly choosing a new int with
+    probability p_mut. Works per-individual. Mutation is performed over the
+    entire length of the genome by default, but the flag within_used is
+    provided to limit mutation to only the effective length of the genome.
+    
+    :param ind: An individual to be mutated.
+    :param within_used: Boolean flag for selecting whether or not mutation
+    is confined to within the used portion of the genome. Default set to True.
+    :return: A mutated individual.
+    """
+    
+    # Set effective genome length over which mutation will be performed.
+    if within_used:
+        eff_length = min(len(ind.genome), ind.used_codons)
+    else:
+        eff_length = len(ind.genome)
+    for _ in params['MUTATION_EVENTS']:
+        idx = randint(0, eff_length-1)
+        ind.genome[idx] = randint(0, params['CODON_SIZE'])
+    
+    # Re-build a new individual with the newly mutated genetic information.
+    new_ind = individual.Individual(ind.genome, None)
+
+    return new_ind
+    
 
 def subtree(ind):
     """

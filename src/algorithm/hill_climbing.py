@@ -110,6 +110,8 @@ def LAHC_search_loop():
             this_gen.append(s) # collect this "generation"
 
             s_ = params['MUTATION'](s) # mutate s to get candidate s*
+            if not s_.invalid:
+                s_.evaluate()
             Cs_ = s.fitness
 
             v = I % Lfa
@@ -214,6 +216,8 @@ def SCHC_search_loop():
             this_gen.append(s) # collect this "generation"
 
             s_ = params['MUTATION'](s) # mutate s to get candidate s*
+            if not s_.invalid:
+                s_.evaluate()
             Cs_ = s.fitness
 
             # count
@@ -221,11 +225,11 @@ def SCHC_search_loop():
                 nc += 1 # increment the counter
             elif count_method == "acp": # we count accepted moves only
                 if ((maximise and (Cs_ > Bc or Cs_ >= Cs)) or
-                    (not maximise and (Cs_ < Bc or Cs_ <= Cs))):
+                    ((not maximise) and (Cs_ < Bc or Cs_ <= Cs))):
                     nc += 1 # increment the counter
             elif count_method == "imp": # we count improving moves only
                 if ((maximise and Cs_ > Cs) or
-                    (not maximise and Cs_ < Cs)):
+                    ((not maximise) and Cs_ < Cs)):
                     nc += 1 # increment the counter
             else:
                 raise ValueError("Unknown count method " + count_method)
@@ -234,14 +238,16 @@ def SCHC_search_loop():
             if accept_method == "bykov":
                 # standard accept method
                 if ((maximise and (Cs_ > Bc or Cs_ >= Cs)) or
-                    (not maximise and (Cs_ < Bc or Cs_ <= Cs))):
+                    ((not maximise) and (Cs_ < Bc or Cs_ <= Cs))):
                     s = s_ # accept the candidate
                     Cs = Cs_
                 else:
                     pass # reject the candidate
 
             elif accept_method == "nicolau":
-                if maximise and Cs_ >= Bc:
+                # simpler alternative suggested by Nicolau, unpublished
+                if ((maximise and Cs_ >= Bc) or
+                    ((not maximise) and (Cs_ <= Bc))):
                     s = s_ # accept the candidate
                     Cs = Cs_
                 else:
