@@ -34,7 +34,8 @@ stats = {
         "best_fitness": 0,
         "time_taken": 0,
         "total_time": 0,
-        "time_adjust": 0
+        "time_adjust": 0,
+        "restarts": 0
 }
 
 
@@ -53,6 +54,7 @@ def get_stats(individuals, end=False):
     best = max(individuals)
     if not stats['best_ever'] or best > stats['best_ever']:
         stats['best_ever'] = best
+        stats['best_genome'] = best.genome
 
     if end or params['VERBOSE'] or not params['DEBUG']:
 
@@ -99,6 +101,10 @@ def get_stats(individuals, end=False):
         stats['ave_fitness'] = ave(fitnesses)
         stats['best_fitness'] = stats['best_ever'].fitness
 
+        # Trackers Stats
+        if params['SEMANTIC_LOCK']:
+            stats['snippets'] = len(trackers.snippets)
+
     # Save fitness plot information
     if params['SAVE_PLOTS'] and not params['DEBUG']:
         if not end:
@@ -127,7 +133,7 @@ def get_stats(individuals, end=False):
     # Save stats to list.
     if params['VERBOSE'] or not params['DEBUG']:
         trackers.stats_list.append(copy(stats))
-    
+
     # Save stats to file.
     if not params['DEBUG']:
         save_stats_to_file(end)

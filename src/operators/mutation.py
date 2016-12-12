@@ -93,40 +93,15 @@ def subtree(ind):
     :return: A mutated individual.
     """
 
-    def subtree_mutate(ind_tree):
-        """
-        Creates a list of all nodes and picks one node at random to mutate.
-        Because we have a list of all nodes, we can (but currently don't)
-        choose what kind of nodes to mutate on. Handy.
-
-        :param ind_tree: The full tree of an individual.
-        :return: The full mutated tree and the associated genome.
-        """
-    
-        # Find the list of nodes we can mutate from.
-        targets = ind_tree.get_target_nodes([], target=params[
-                                          'BNF_GRAMMAR'].non_terminals)
-        
-        # Pick a node.
-        new_tree = choice(targets)
-
-        # Set the depth limits for the new subtree.
-        new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
-    
-        # Mutate a new subtree.
-        generate_tree(new_tree, [], [], "random", 0, 0, 0, new_tree.max_depth)
-    
-        return ind_tree
-
     # Save the tail of the genome.
     tail = ind.genome[ind.used_codons:]
     
     # Allows for multiple mutation events should that be desired.
     for i in range(params['MUTATION_EVENTS']):
-        # if stats['gen'] > 0 and stats['best_ever'].fitness < 1.8:
-        #     ind.tree = leaf_mutate(ind.tree)
-        # else:
-        ind.tree = subtree_mutate(ind.tree)
+        if params['SEMANTIC_LOCK']:
+            ind.tree = semantic_mutate(ind.tree)
+        else:
+            ind.tree = subtree_mutate(ind.tree)
     
     # Re-build a new individual with the newly mutated genetic information.
     ind = individual.Individual(None, ind.tree)
@@ -135,6 +110,186 @@ def subtree(ind):
     ind.genome = ind.genome + tail
 
     return ind
+
+
+def subtree_mutate(ind_tree):
+    """
+    Creates a list of all nodes and picks one node at random to mutate.
+    Because we have a list of all nodes, we can (but currently don't)
+    choose what kind of nodes to mutate on. Handy.
+
+    :param ind_tree: The full tree of an individual.
+    :return: The full mutated tree and the associated genome.
+    """
+    
+    # Find the list of nodes we can mutate from.
+    targets = ind_tree.get_target_nodes([], target=params[
+        'BNF_GRAMMAR'].non_terminals)
+
+    # Pick a node.
+    new_tree = choice(targets)
+    
+    # Set the depth limits for the new subtree.
+    new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
+    
+    # Mutate a new subtree.
+    generate_tree(new_tree, [], [], "random", 0, 0, 0,
+                  new_tree.max_depth)
+    
+    return ind_tree
+
+
+def semantic_mutate(ind_tree):
+    """
+    Creates a list of all nodes and picks one node at random to mutate.
+    Because we have a list of all nodes, we can (but currently don't)
+    choose what kind of nodes to mutate on. Handy.
+
+    :param ind_tree: The full tree of an individual.
+    :return: The full mutated tree and the associated genome.
+    """
+    
+    # Find the list of nodes we can mutate from.
+    targets = ind_tree.get_target_nodes([], target=params[
+        'BNF_GRAMMAR'].non_terminals)
+    
+    available = [node for node in targets if not node.semantic_lock]
+    
+    if not available:
+        available = targets
+    
+    if available:
+        # Pick a node.
+        new_tree = choice(available)
+        
+        # Set the depth limits for the new subtree.
+        new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
+        
+        # Mutate a new subtree.
+        generate_tree(new_tree, [], [], "random", 0, 0, 0,
+                      new_tree.max_depth)
+    
+    return ind_tree
+
+
+def hillclimb_mutate(ind_tree):
+    """
+    Creates a list of all nodes and picks one node at random to mutate.
+    Because we have a list of all nodes, we can (but currently don't)
+    choose what kind of nodes to mutate on. Handy.
+
+    :param ind_tree: The full tree of an individual.
+    :return: The full mutated tree and the associated genome.
+    """
+    
+    # Find the list of nodes we can mutate from.
+    targets = ind_tree.get_target_nodes([], target=params[
+        'BNF_GRAMMAR'].non_terminals)
+    
+    # Pick a node.
+    chosen_tree = choice(targets)
+    
+    # Find number of production choices for root node.
+    var = params['BNF_GRAMMAR'].non_terminals[chosen_tree.root]['b_factor']
+    
+    # Find how big of a change can be made to the genome.
+    step = max(1, int(var * params['HILLCLIMB_SLOPE']))
+    
+    # Set the depth limits for the new subtree.
+    chosen_tree.max_depth = params['MAX_TREE_DEPTH'] - chosen_tree.depth
+    
+    # Generate new codon
+    new_codon = chosen_tree.codon + choice(range(-step, step))
+    
+    # Set the new codon
+    chosen_tree.codon = new_codon
+    
+    # Select the index of the correct production from the list.
+    selection = new_codon % \
+                params['BNF_GRAMMAR'].rules[chosen_tree.root]['no_choices']
+    
+    # Set the chosen production
+    new_choice = params['BNF_GRAMMAR'].rules[chosen_tree.root][
+        'choices'][selection]
+    
+    # Remove old children
+    chosen_tree.children = []
+    
+    for symbol in new_choice['choice']:
+        # Add children to the derivation tree by creating a new instance
+        # of the representation.tree.Tree class for each child.
+        
+        chosen_tree.children.append(Tree(symbol["symbol"], chosen_tree))
+    
+    for child in [kid for kid in chosen_tree.children if kid.root in
+            params['BNF_GRAMMAR'].non_terminals]:
+        # Mutate a new subtree.
+        generate_tree(child, [], [], "random", 0, 0, 0,
+                      chosen_tree.max_depth - 1)
+    
+    return ind_tree
+
+
+def semantic_hillclimb_mutate(ind_tree):
+    """
+    Creates a list of all nodes and picks one node at random to mutate.
+    Because we have a list of all nodes, we can (but currently don't)
+    choose what kind of nodes to mutate on. Handy.
+
+    :param ind_tree: The full tree of an individual.
+    :return: The full mutated tree and the associated genome.
+    """
+    
+    # Find the list of nodes we can mutate from.
+    targets = ind_tree.get_target_nodes([], target=params[
+        'BNF_GRAMMAR'].non_terminals)
+    
+    available = [node for node in targets if not node.semantic_lock]
+    
+    if available:
+        # Pick a node.
+        chosen_tree = choice(available)
+        
+        # Find number of production choices for root node.
+        var = params['BNF_GRAMMAR'].non_terminals[chosen_tree.root]['b_factor']
+        
+        # Find how big of a change can be made to the genome.
+        step = max(1, int(var*params['HILLCLIMB_SLOPE']))
+        
+        # Set the depth limits for the new subtree.
+        chosen_tree.max_depth = params['MAX_TREE_DEPTH'] - chosen_tree.depth
+                
+        # Generate new codon
+        new_codon = chosen_tree.codon + choice(range(-step, step))
+        
+        # Set the new codon
+        chosen_tree.codon = new_codon
+
+        # Select the index of the correct production from the list.
+        selection = new_codon % \
+                    params['BNF_GRAMMAR'].rules[chosen_tree.root]['no_choices']
+
+        # Set the chosen production
+        new_choice = params['BNF_GRAMMAR'].rules[chosen_tree.root][
+            'choices'][selection]
+        
+        # Remove old children
+        chosen_tree.children = []
+   
+        for symbol in new_choice['choice']:
+            # Add children to the derivation tree by creating a new instance
+            # of the representation.tree.Tree class for each child.
+
+            chosen_tree.children.append(Tree(symbol["symbol"], chosen_tree))
+        
+        for child in [kid for kid in chosen_tree.children if kid.root in
+                params['BNF_GRAMMAR'].non_terminals]:
+                    
+            # Mutate a new subtree.
+            generate_tree(child, [], [], "random", 0, 0, 0,
+                          chosen_tree.max_depth - 1)
+    
+    return ind_tree
 
 
 def leaf_mutate(ind_tree):
@@ -163,3 +318,33 @@ def leaf_mutate(ind_tree):
     generate_tree(new_tree, [], [], "random", 0, 0, 0, new_tree.max_depth)
     
     return ind_tree
+
+
+def hillclimb(ind):
+    """
+    Mutate the individual by selecting a random subtree to mutate, then by
+    mutating the CODON of that subtree up or down a number of steps (based
+    on a probability distribution), and then mapping a new subtree from that
+    new codon. Allows for hillclimbing local mutations
+    
+    :param ind: An individual to be mutated.
+    :return: A mutated individual.
+    """
+
+    # Save the tail of the genome.
+    tail = ind.genome[ind.used_codons:]
+
+    # Allows for multiple mutation events should that be desired.
+    for i in range(params['MUTATION_EVENTS']):
+        if params['SEMANTIC_LOCK']:
+            ind.tree = semantic_hillclimb_mutate(ind.tree)
+        else:
+            ind.tree = hillclimb_mutate(ind.tree)
+
+    # Re-build a new individual with the newly mutated genetic information.
+    ind = individual.Individual(None, ind.tree)
+
+    # Add in the previous tail.
+    ind.genome = ind.genome + tail
+
+    return ind

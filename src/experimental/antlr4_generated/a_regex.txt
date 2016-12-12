@@ -1,1 +1,22 @@
-\d.[9-n](\d.).(\w.).(\w.).(\d.).\w\d|y|!|!|Q
+\d.[9-n](\d.).(\w.).(\w.).(\d.).\w\d
+
+([0-9a-fA-F]:?){12}
+
+
+#<RE>             ::=            <simple-RE>|<char>
+#<simple-RE>      ::=            <simple-RE><basic-RE>|<basic-RE>|<possessive>
+
+#<basic-RE>       ::=            <elementary-RE>|<char>
+
+#<possessive>     ::=            <elementary-RE>.|<elementary-RE>*+|<elementary-RE>++|<elementary-RE>?+|<RE>{<RE>,<RE>}+
+
+#<elementary-RE>  ::=            <char>|<set>|\w|\d|\w|\d|<range>|<lookarounds>
+
+#<range>          ::=            <char>-<char>|<char>-<char>|A-Z|a-z|0-9
+#<lookarounds>    ::=            (?"<"=<RE>)|(?"<"!<RE>)|(?=<RE>)|(?!<RE>)|(?:<RE>)|<RE>"|"<simple-RE>
+#<set>            ::=            [<set-items>]|[^<set-items>]|(<RE>)|[<RE>]|[<range>]
+
+#<set-items>      ::=            <char>|<char><set-items>
+
+
+<simple-RE> (<simple-RE> (<simple-RE> (<basic-RE> (<elementary-RE> \d))) (<basic-RE> (<char> _))) (<basic-RE> (<elementary-RE> (<range> [ (<char> }) - (<char> e) ])))

@@ -1,4 +1,5 @@
 from algorithm.parameters import params
+from utilities.representation.check_methods import get_output
 
 
 class Tree:
@@ -19,33 +20,36 @@ class Tree:
         self.depth = 1
         self.root = expr
         self.children = []
+        self.semantic_lock = False
+        self.pheno_index_rl = None
+        self.pheno_index_lr = None
 
     def __str__(self):
         """
         Builds a string of the current tree.
-        
+
         :return: A string of the current tree.
         """
-        
+
         # Initialise the output string.
         result = "("
-        
+
         # Append the root of the current node to the output string.
         result += str(self.root)
-        
+
         for child in self.children:
             # Iterate across all children.
-            
+
             if len(child.children) > 0:
                 # Recurse through all children.
                 result += " " + str(child)
-            
+
             else:
                 # Child is a terminal, append root to string.
                 result += " " + str(child.root)
-        
+
         result += ")"
-        
+
         return result
 
     def __copy__(self):
@@ -60,6 +64,9 @@ class Tree:
         
         # Set node parameters.
         tree_copy.codon, tree_copy.depth = self.codon, self.depth
+        tree_copy.semantic_lock = self.semantic_lock
+        tree_copy.pheno_index_rl = self.pheno_index_rl
+        tree_copy.pheno_index_lr = self.pheno_index_lr
 
         for child in self.children:
             # Recurse through all children.
@@ -160,6 +167,25 @@ class Tree:
             labels = child.get_node_labels(labels)
         
         return labels
+
+    def get_node_labels_with_output(self, info):
+        """
+        Recurses through a tree and appends all node roots, their phenotypic
+        output, and the node itself to a list.
+
+        :param labels: The set of roots of all nodes in the tree.
+        :return: The set of roots of all nodes in the tree.
+        """
+    
+        if self.children:
+            # Add the current root to the set of all labels.
+            info.append([self.root, get_output(self), self])
+    
+        for child in self.children:
+            # Recurse on all children.
+            info = child.get_node_labels_with_output(info)
+    
+        return info
 
     def get_tree_info(self, nt_keys, genome, output, invalid=False,
                       max_depth=0, nodes=0):
