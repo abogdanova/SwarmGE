@@ -111,6 +111,12 @@ def rhh(size):
             # Append individual to population
             population.append(ind)
 
+        # Include seed genome if defined
+        if 'SEED_GENOME' in params and params['SEED_GENOME']:
+            seed_ind = individual.Individual(params['SEED_GENOME'], None)
+            print("Seed Individual: " + seed_ind.phenotype)
+            population[0] = seed_ind
+            
         return population
 
 

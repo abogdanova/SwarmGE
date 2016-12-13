@@ -129,12 +129,16 @@ def subtree(ind):
         ind.tree = subtree_mutate(ind.tree)
     
     # Re-build a new individual with the newly mutated genetic information.
-    ind = individual.Individual(None, ind.tree)
+    try:
+        ind = individual.Individual(None, ind.tree)
+    except RuntimeError as re:
+        print("Tree generate error on recursion")
     
     # Add in the previous tail.
     ind.genome = ind.genome + tail
 
     return ind
+
 
 
 def leaf_mutate(ind_tree):

@@ -43,12 +43,12 @@ class RegexEval:
             #sys.exit()
 
             return fitness + (len(individual.genome)/10000) #fitness # error is first, length second
-            #if fitness >= 1: # If there is a functionality error, we don't really care about time 
-            #    return fitness + (len(individual.genome)/10000) #fitness # error is first, length second
-                #return fitness + (len(regex_string)/10000) #fitness # error is first, length second
-            #else:
-            #    self.time=True
-            #    return fitness 
+            # if fitness >= 1: # If there is a functionality error, we don't really care about time 
+            #     return fitness + (len(individual.genome)/10000) #fitness # error is first, length second
+            #     #return fitness + (len(regex_string)/10000) #fitness # error is first, length second
+            # else:
+            #     self.time=True
+            #     return fitness 
 
         except:
 #            print(traceback.format_exc())
@@ -81,8 +81,9 @@ class RegexEval:
         quick_test = self.time_regex_test_case(compiled_regex, self.test_cases[len(self.test_cases)-1], testing_iterations)
         #        print("quick_test time: {}".format(quick_test[0]))
         # aim for entire test suite to take less than a second
-        eval_time = .001 # seconds
-        if self.time:
+
+        if self.time and quick_test[3].calc_match_errors(list(quick_test[1])) < 0 : # Ideally we only time a program if it is funtionally correct
+            eval_time = .1 # seconds
             testing_iterations = int(( eval_time / (quick_test[0]/10))/len(self.test_cases)) # change to half second?
         # print("Iterations {}".format(testing_iterations))
         for test_case in self.test_cases:
@@ -109,7 +110,7 @@ class RegexEval:
     When we go to evolve new regexs, we can use the test suite to measure functionality equivalence 
     with the original test regex.
     """
-    def generate_equivalence_test_suite(self, a_match, a_regex):
+    def generate_equivalence_test_suite_replacement(self, a_match, a_regex):
         # go through the whole known search string, changing letters until you find one which does not match.
         compiled_regex = re.compile(a_regex)
         if len(a_match.matches) > 0 :
@@ -121,6 +122,23 @@ class RegexEval:
                     if len(list(vals[1])) == 0:
                         self.test_cases.append(a_test_case_string)
 
+# TODO https://www.loggly.com/blog/regexes-the-bad-better-best/
+                        
+    def generate_equivalence_test_suite_length(self, a_match, a_regex):
+        # add and remove characters from the string until we find a regex which fails
+        compiled_regex = re.compile(a_regex)
+        if len(a_match.matches) > 0 :
+            new_search_string = 'a'+ a_match.search_string
+            a_test_case_string = RegexTestString(new_search_string)
+            vals = self.time_regex_test_case(compiled_regex, a_test_case_string, 1)
+            if len(list(vals[1])) == 0:
+                self.test_cases.append(a_test_case_string)
+            new_search_string = a_match.search_string[1:] # TODO: refactor this
+            a_test_case_string = RegexTestString(new_search_string)
+            vals = self.time_regex_test_case(compiled_regex, a_test_case_string, 1)
+            if len(list(vals[1])) == 0:
+                self.test_cases.append(a_test_case_string)
+
     
     """
     Multiple search_strings should be used to guide toward generality.
@@ -131,7 +149,7 @@ class RegexEval:
         a_test_string.add_match(0,27)
         self.test_cases.append(a_test_string)
         
-        self.generate_equivalence_test_suite(a_test_string,"^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$")
+        self.generate_equivalence_test_suite_replacement(a_test_string,"^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$")
 
         a_test_string = RegexTestString("2016-12-09T08:21:15.9+00:0") # this does not match at all! (what will our fitness function throw?)
         self.test_cases.append(a_test_string) 
@@ -144,9 +162,22 @@ class RegexEval:
 
         a_test_string = RegexTestString("1911-02-19T22:35:42.3+08:43")
         a_test_string.add_match(0,27)
-        self.test_cases.append(a_test_string) 
+        self.test_cases.append(a_test_string)
+
+
+    """
+    From https://github.com/ghiscoding/angular-validation/wiki/Regular-Expression-Pattern
+    """        
+    def generate_macaddress_validation_tests(self):
+        a_test_string = RegexTestString("5C0A5B634A82")
+        a_test_string.add_match(0,12)
+        self.test_cases.append(a_test_string)
+
+        self.generate_equivalence_test_suite_length(a_test_string, "^[0-9A-F]{12}$")
+        self.generate_equivalence_test_suite_replacement(a_test_string, "^[0-9A-F]{12}$")
+
         
-    def generate_string_tests(self):
+    def generate_regex_mac_search_string_tests(self):
         #a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 14")
         #a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
 
@@ -178,9 +209,9 @@ class RegexEval:
         self.test_cases.append(a_test_string)
         
     def generate_tests(self):
-        #generate_string_tests()
-        self.generate_iso8601_datetime_tests()
-        #
+        self.generate_regex_mac_search_string_tests()
+        # self.generate_iso8601_datetime_tests()
+        # self.generate_macaddress_validation_tests()
         
 class RegexTestString:
     def __init__(self,search_string):
@@ -204,7 +235,7 @@ class RegexTestString:
         for a_known_match in self.matches:
             # missing any of the desired extraction costs a lot
             missing_range += self.find_missing_range(a_known_match, match_candidates)
-        for match_candidate in  match_candidates:
+        for match_candidate in match_candidates:
             undesired_range += self.find_undesired_range(match_candidate, self.matches)
 
         match_error = missing_range + undesired_range
@@ -232,7 +263,7 @@ class RegexTestString:
             for a_known_match in known_matches:
                 start = a_known_match.get("start")
                 end = a_known_match.get("end")
-                if i >= start and i <= end:
+                if i >= start and i < end:
                     in_range = True
             if not in_range:
                 undesired_matched += 1

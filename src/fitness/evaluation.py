@@ -72,6 +72,7 @@ def evaluate_fitness(individuals):
 
             if eval_ind:
                 results = eval_or_append(ind, results, pool)
+        # print("Individual: " + ind.phenotype + " fitness: {}".format(ind.fitness))
 
     if params['MULTICORE']:
         for result in results:
