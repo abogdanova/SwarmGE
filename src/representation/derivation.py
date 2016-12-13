@@ -1,5 +1,4 @@
 from random import choice, randrange, randint
-
 from algorithm.parameters import params
 from utilities.representation.check_methods import ret_true
 from representation.tree import Tree
@@ -67,8 +66,11 @@ def generate_tree(tree, genome, output, method, nodes, depth, max_depth,
             
             # Recurse on the new node.
             genome, output, nodes, d, max_depth = \
-                generate_tree(tree.children[-1], genome, output, method,
-                              nodes, depth, max_depth, depth_limit - 1)
+                                                generate_tree(tree.children[-1], genome, output, method,
+                                                nodes, depth, max_depth, depth_limit - 1)
+
+    
+
 
     NT_kids = [kid for kid in tree.children if kid.root in
                params['BNF_GRAMMAR'].non_terminals]
