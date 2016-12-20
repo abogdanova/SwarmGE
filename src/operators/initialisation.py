@@ -26,6 +26,19 @@ def uniform_genome(size):
     return [individual.Individual(sample_genome(), None) for _ in range(size)]
 
 
+def seed_only(size):
+    population = []
+    # Include seed genome if defined
+    if 'SEED_GENOME' in params and params['SEED_GENOME']:
+        seed_ind = individual.Individual(params['SEED_GENOME'], None)
+        print("Seed Individual: " + seed_ind.phenotype)
+        while len(population)<size:
+            population.append(seed_ind)
+    else:
+        print("Using seed_only initialisation without SEED_GENOME")
+        exit()
+    return population
+
 def rhh(size):
     """
     Create a population of size using ramped half and half (or sensible
@@ -118,7 +131,6 @@ def rhh(size):
             population[0] = seed_ind
             
         return population
-
 
 def PI_grow(size):
     """
