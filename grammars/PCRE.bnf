@@ -8,7 +8,7 @@
 
 <range>         ::= <an_char>-<an_char>|<an_char>-<an_char>|A-Z|a-z|0-9
 
-<char>          ::= <s_char>|<an_char>
+<char>          ::= <s_char>|<an_char>|<an_char>|<an_char>
 <an_char>       ::= <0_9>|<A_Z>|<a_z>
 
 <match_times>   ::= <recur_digit>|<recur_digit>,|<recur_digit>,<recur_digit>

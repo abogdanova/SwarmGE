@@ -34,6 +34,10 @@ def seed_only(size):
         print("Seed Individual: " + seed_ind.phenotype)
         while len(population)<size:
             population.append(seed_ind)
+        params['MAX_TREE_DEPTH'] = len(seed_ind.genome) * 3
+        print("Setting MAX_TREE_DEPTH to {}".format(params['MAX_TREE_DEPTH']))
+        print("S")
+
     else:
         print("Using seed_only initialisation without SEED_GENOME")
         exit()
@@ -129,6 +133,9 @@ def rhh(size):
             seed_ind = individual.Individual(params['SEED_GENOME'], None)
             print("Seed Individual: " + seed_ind.phenotype)
             population[0] = seed_ind
+            params['MAX_TREE_DEPTH'] = len(seed_ind.genome) * 3
+            print("Setting MAX_TREE_DEPTH to {}".format(params['MAX_TREE_DEPTH']))
+            print("S")
             
         return population
 

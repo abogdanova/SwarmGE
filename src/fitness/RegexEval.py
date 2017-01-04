@@ -38,15 +38,18 @@ class RegexEval:
         try:
             compiled_regex = re.compile(regex_string)
             eval_results = self.test_regex(compiled_regex)
-            fitness = self.calculate_fitness(eval_results)
+            result_error,time_sum = self.calculate_fitness(eval_results)
             #            if "5" in regex_string:
             # (we should use multi-objective/pareto front)
             #print(regex_string + ": {}".format(fitness))
             #sys.exit()
-
+            fitness = result_error
             if 'SEED_GENOME' in params and params['SEED_GENOME']:
                 similarity_score = self.calculate_similarity_score(regex_string)
-                fitness += similarity_score
+                if(similarity_score > 1):
+                    fitness += (similarity_score)
+                else:
+                    fitness += time_sum
 
 
             # phenotype or genome length?
@@ -76,27 +79,30 @@ class RegexEval:
                     if regex_string[i] == (seed_string)[j]:
                         char_same_count += 1
                         break
-        char_same_count += (abs(len(seed_string) - len(regex_string))/100)
-        return char_same_count / len(seed_string)
+        #char_same_count += (abs(len(seed_string) - len(regex_string))/100)
+        return char_same_count # / len(seed_string)
          
 
     def calculate_fitness(self,eval_results):
         result_error=0
         time_sum=0.0
+        print(" ")
+        print("Calculate_fitness ")
         for a_result in eval_results:
             time_sum += a_result[0] # /  a_result[2]
+            print("time_val : {} ".format(a_result[0]))
             # if a_result[1] == None: # no match
             # result_error += 100 * (len(a_result[3].search_string)) #+ len(a_result[3].matched_string))
             # else: # a match which may be the empty string
             result_error += a_result[3].calc_match_errors(list(a_result[1]))
         #if result_error >1:
         #    fitness = result_error
-        # else:
-        #     fitness = time_sum
-        fitness = result_error
+        #else:
+        #    fitness = time_sum
+        # fitness = result_error + time_sum
         # if fitness == seed_fitness:
         # fitness = 100 * len(a_result) # identical result to seed penalised (plucking the centre from spiderweb)
-        return fitness
+        return result_error,time_sum
 
     def test_regex(self,compiled_regex):
         results = list()
@@ -114,7 +120,7 @@ class RegexEval:
         return results
 
     def time_regex_test_case(self, compiled_regex, test_case, iterations):
-        repeats = 10
+        repeats = 3
         iterations_per_repeat = iterations
         search_string = test_case.get_search_string()
         def wrap():
@@ -260,8 +266,8 @@ class RegexEval:
         self.test_cases.append(a_test_string)
 
         a_test_string = RegexTestString("Jan 12 06:27:09: DROP service 68->67(udp) from 216.34.211.83 to 216.34.253.94, prefix: \"spoof iana-0/8\" (in: eth0 213.92.153.78(00:1f:d6:19:0a:80):68 -> 69.43.177.110(00:30:fe:fd:d6:51):67 UDP len:576 ttl:64)sdkfjhakljweheiniwerishdkljghsdlkjfhglksjdhfglksjhdfgkjhsdkfjhakljweheiniwerishdkljghsdlkjfhglksjdhfglksjhdfgkjhsdkfjhakljweheiniwerishdkljghsdlkjfhglksjdhfglksjhdfgkjhsdkfjhakljweheiniwerishdkljghsdlkjfhglksjdhfglksjhdfgkjhsdkfjhakljweheiniwerishdkljghsdlkjfhglksjdhfglksjhdfgkjhsdkfjhakljweheiniwerishdkljghsdlkjfhglksjdhfglksjhdfgkjhsdkfjhakljweheiniwerishdkljghsdlkjfhglksjdhffgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53fgkjh 50:06:04:92:53")
-        a_test_string.add_match(128,145)
-        a_test_string.add_match(167,184)
+        a_test_string.add_match(128,144)
+        a_test_string.add_match(167,183)
         self.test_cases.append(a_test_string)
 
         # a_test_string = RegexTestString("105.63.1650:06:04:92:53:44:80")
@@ -276,16 +282,12 @@ class RegexEval:
 
 
     def generate_catastrophic_csv(self):
+        
         # http://www.regular-expressions.info/catastrophic.html
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,24,5P")
         self.test_cases.append(a_test_string)
 
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,243,3P")
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,24,P")
-        a_test_string.add_match(0,36)
-#        a_test_string.add_match(22,35)
+        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,243,3P") # catastrophic
         self.test_cases.append(a_test_string)
 
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,P")
@@ -300,15 +302,21 @@ class RegexEval:
         a_test_string.add_match(0,24)
         self.test_cases.append(a_test_string)
 
-        
-        self.generate_equivalence_test_suite_replacement(a_test_string,"^(.*?,){,11}P")
-        self.generate_equivalence_test_suite_length(a_test_string,"^(.*?,){,11}P")
+#        self.generate_equivalence_test_suite_replacement(a_test_string,"^(.*?,){11}P")
+#        self.generate_equivalence_test_suite_length(a_test_string,"^(.*?,){11}P")
+
+        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,P")
+        self.test_cases.append(a_test_string)
+
+        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,5P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P")
+        self.test_cases.append(a_test_string)
+
 
         print("Number of test cases: {}".format(len(self.test_cases)))
         
     def generate_tests(self):
-        self.generate_regex_mac_search_string_tests()
-        # self.generate_catastrophic_csv()
+        # self.generate_regex_mac_search_string_tests()
+        self.generate_catastrophic_csv()
         # self.generate_iso8601_datetime_tests()
         # self.generate_macaddress_validation_tests()
         

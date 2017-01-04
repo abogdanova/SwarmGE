@@ -1,18 +1,18 @@
-CACHE:                  False
+CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              subtree
-CROSSOVER_PROBABILITY:  0.99
+CROSSOVER_PROBABILITY:  0.0099
 DEBUG:                  True
-EXPERIMENT_NAME:        None
+EXPERIMENT_NAME:        Regex_Time_Improvement
 GENERATIONS:            1000
 GENOME_INIT:            False
 MAX_GENOME_LENGTH:      1000
 GENOME_OPERATIONS:      False
 GRAMMAR_FILE:           PCRE.bnf
-INITIALISATION:         rhh
+INITIALISATION:         seed_only
 INVALID_SELECTION:      False
 LOOKUP_BAD_FITNESS:     False
-LOOKUP_FITNESS:         False
+LOOKUP_FITNESS:         True
 MAX_INIT_TREE_DEPTH:    10
 MAX_TREE_DEPTH:         1000
 MAX_TREE_NODES:         None
@@ -26,7 +26,7 @@ POPULATION_SIZE:        1000
 ELITE_SIZE:  		500
 FITNESS_FUNCTION:       RegexEval
 RANDOM_SEED:            None
-REPLACEMENT:            generational
+REPLACEMENT:            steady_state
 SAVE_ALL:               True
 SAVE_PLOTS:             True
 SELECTION:              tournament
@@ -35,3 +35,4 @@ TOURNAMENT_SIZE:        2
 VERBOSE:                True
 TAILS:                  False
 SEMANTIC_LOCK:          False
+SEED_GENOME:            [96364, 64507, 23856, 15803, 78697, 37001, 72920, 24343, 96488, 2552, 33043, 27992, 76402, 74835, 94072, 84927, 56678, 53684, 10899, 38124, 48296, 32145, 80324, 61208, 14325, 32525, 13209, 61251, 64404, 37461, 61194, 66551, 27807, 31142, 1859, 46200, 70977, 2888, 18089, 90202, 5085]
