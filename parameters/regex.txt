@@ -23,10 +23,10 @@ MUTATION:               subtree
 MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
 POPULATION_SIZE:        1000
-ELITE_SIZE:  		500
+ELITE_SIZE:  		5
 FITNESS_FUNCTION:       RegexEval
 RANDOM_SEED:            None
-REPLACEMENT:            steady_state
+REPLACEMENT:            generational
 SAVE_ALL:               True
 SAVE_PLOTS:             True
 SELECTION:              tournament

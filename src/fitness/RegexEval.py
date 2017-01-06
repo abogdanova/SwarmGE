@@ -43,13 +43,13 @@ class RegexEval:
             # (we should use multi-objective/pareto front)
             #print(regex_string + ": {}".format(fitness))
             #sys.exit()
-            fitness = result_error
+            fitness = result_error + time_sum
             if 'SEED_GENOME' in params and params['SEED_GENOME']:
                 similarity_score = self.calculate_similarity_score(regex_string)
-                if(similarity_score > 1):
-                    fitness += (similarity_score)
-                else:
-                    fitness += time_sum
+                #if(similarity_score > 1):
+                #    fitness += (similarity_score)
+                #else:
+                #    fitness += time_sum
 
 
             # phenotype or genome length?
@@ -86,11 +86,11 @@ class RegexEval:
     def calculate_fitness(self,eval_results):
         result_error=0
         time_sum=0.0
-        print(" ")
-        print("Calculate_fitness ")
+        # print(" ")
+        # print("Calculate_fitness ")
         for a_result in eval_results:
             time_sum += a_result[0] # /  a_result[2]
-            print("time_val : {} ".format(a_result[0]))
+            # print("time_val : {} ".format(a_result[0]))
             # if a_result[1] == None: # no match
             # result_error += 100 * (len(a_result[3].search_string)) #+ len(a_result[3].matched_string))
             # else: # a match which may be the empty string
@@ -124,8 +124,11 @@ class RegexEval:
         iterations_per_repeat = iterations
         search_string = test_case.get_search_string()
         def wrap():
-            return compiled_regex.finditer(search_string)
-        t = timeit.Timer(wrap) # does timeit do a number of iterations and pick the lowest? or does it do 100000 iterations and return time?
+            # Timing bug, lazy eval defers computation if we don't convert to list here
+            # https://swizec.com/blog/python-and-lazy-evaluation/swizec/5148
+            return list(compiled_regex.finditer(search_string)) 
+        
+        t = timeit.Timer(wrap)
         repeat_iterations = t.repeat(repeat=repeats, number = iterations)
         best_run = list(repeat_iterations[0])
         for repeated_timeit in repeat_iterations:
@@ -282,7 +285,9 @@ class RegexEval:
 
 
     def generate_catastrophic_csv(self):
-        
+        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,5P,5,5,6,5P") 
+        self.test_cases.append(a_test_string)
+
         # http://www.regular-expressions.info/catastrophic.html
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,24,5P")
         self.test_cases.append(a_test_string)
@@ -307,10 +312,6 @@ class RegexEval:
 
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,P")
         self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,5P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P,23,3,3,2,3,6,6,4P")
-        self.test_cases.append(a_test_string)
-
 
         print("Number of test cases: {}".format(len(self.test_cases)))
         
