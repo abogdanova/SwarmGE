@@ -184,7 +184,7 @@ def save_stats_to_file(end=False):
         filename = path.join(params['FILE_PATH'], "stats.tsv")
         savefile = open(filename, 'a')
         for stat in sorted(stats.keys()):
-            savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
+            savefile.write(str(stats[stat]) + "\t")
         savefile.write("\n")
         savefile.close()
 
