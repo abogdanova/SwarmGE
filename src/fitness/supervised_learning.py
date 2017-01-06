@@ -6,11 +6,7 @@ np.seterr(all="raise")
 from algorithm.parameters import params
 from utilities.fitness.get_data import get_data
 from fitness.default_fitness import default_fitness
-from utilities.fitness.math_functions import plog, pdiv, psqrt, aq
-
-
-pow = lambda x, y: abs(x)**y
-
+from utilities.fitness.math_functions import plog, rlog, pdiv, psqrt, aq, ppow, psqrt2, ppow2
 
 class supervised_learning:
     """
