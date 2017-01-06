@@ -183,21 +183,23 @@ class RegexEval:
         # seed genome to go in regex.txt parameters file
         # [10082, 41053, 89472, 13943, 83234, 23739, 51472, 59723, 52910, 4880, 72071, 68514, 53866, 25754, 39758, 51472, 59723, 29655, 22034, 52910, 4880, 72071, 5630, 83669, 54528, 45876, 76718, 53866, 25754, 39758, 51472, 59723, 29655, 22034, 52910, 4880, 72071, 56000, 67442, 49372, 13302, 70567, 37415, 81973, 40820, 18637, 88657, 51472, 59723, 52910, 4880, 72071]
         
-        
-    def generate_equivalence_test_suite_length(self, a_match, a_regex):
         # add and remove characters from the string until we find a regex which fails
         compiled_regex = re.compile(a_regex)
         if len(a_match.matches) > 0 :
-            new_search_string = 'a'+ a_match.search_string
-            a_test_case_string = RegexTestString(new_search_string)
-            vals = self.time_regex_test_case(compiled_regex, a_test_case_string, 1)
-            if len(list(vals[1])) == 0:
-                self.test_cases.append(a_test_case_string)
-            new_search_string = a_match.search_string[1:] # TODO: refactor this
-            a_test_case_string = RegexTestString(new_search_string)
-            vals = self.time_regex_test_case(compiled_regex, a_test_case_string, 1)
-            if len(list(vals[1])) == 0:
-                self.test_cases.append(a_test_case_string)
+            new_search_string = 'a'+ a_match.search_string # check string with one character added at the front
+            add_test_case_if_fails(new_search_string, compiled_regex)
+            new_search_string = a_match.search_string+'a' # check string with one character added at the end
+            add_test_case_if_fails(new_search_string, compiled_regex)
+
+            for i in len(a_match.search_string)-1:
+                new_search_string = a_match.search_string[i:] # TODO: refactor this
+                add_test_case_if_fails(new_search_string, compiled_regex)                
+
+    def add_test_case_if_fails(self,new_search_string, compiled_regex):
+        a_test_case_string = RegexTestString(new_search_string)
+        vals = self.time_regex_test_case(compiled_regex, a_test_case_string, 1)
+        if len(list(vals[1])) == 0:
+            self.test_cases.append(a_test_case_string)
 
     
     """
@@ -308,7 +310,7 @@ class RegexEval:
         self.test_cases.append(a_test_string)
 
 #        self.generate_equivalence_test_suite_replacement(a_test_string,"^(.*?,){11}P")
-#        self.generate_equivalence_test_suite_length(a_test_string,"^(.*?,){11}P")
+        self.generate_equivalence_test_suite_length(a_test_string,"^(.*?,){11}P")
 
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,P")
         self.test_cases.append(a_test_string)
