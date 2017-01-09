@@ -56,10 +56,13 @@ def get_stats(individuals, end=False):
 
     if end or params['VERBOSE'] or not params['DEBUG']:
 
-        # Time Stats
-        trackers.time_list.append(time() - stats['time_adjust'])
-        stats['time_taken'] = trackers.time_list[-1] - trackers.time_list[-2]
-        stats['total_time'] = trackers.time_list[-1] - trackers.time_list[0]
+        if not end:
+            # Time Stats
+            trackers.time_list.append(time() - stats['time_adjust'])
+            stats['time_taken'] = trackers.time_list[-1] - \
+                                  trackers.time_list[-2]
+            stats['total_time'] = trackers.time_list[-1] - \
+                                  trackers.time_list[0]
 
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
@@ -125,7 +128,7 @@ def get_stats(individuals, end=False):
         stats['best_ever'].fitness = stats['best_ever'].training_fitness
 
     # Save stats to list.
-    if params['VERBOSE'] or not params['DEBUG']:
+    if params['VERBOSE'] or not params['DEBUG'] and not end:
         trackers.stats_list.append(copy(stats))
     
     # Save stats to file.
