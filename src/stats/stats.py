@@ -130,6 +130,8 @@ def get_stats(individuals, end=False):
     
     # Save stats to file.
     if not params['DEBUG']:
+        if stats['gen'] == 0:
+            save_stats_headers()
         save_stats_to_file(end)
         if params['SAVE_ALL']:
             save_best_ind_to_file(end, stats['gen'])
@@ -311,4 +313,3 @@ def generate_folders_and_files():
                                     str(params['TIME_STAMP']))
 
     save_params_to_file()
-    save_stats_headers()
