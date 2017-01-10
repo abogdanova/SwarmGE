@@ -195,7 +195,11 @@ class RegexEval:
 
             for i in range(len(a_match.search_string)-1):
                 new_search_string = a_match.search_string[i:] # TODO: refactor this
-                self.add_test_case_if_fails(new_search_string, compiled_regex)                
+                self.add_test_case_if_fails(new_search_string, compiled_regex)
+            for i in range(len(a_match.search_string)-1):
+                new_search_string = a_match.search_string[:i] # TODO: refactor this
+                self.add_test_case_if_fails(new_search_string, compiled_regex)
+
 
     def add_test_case_if_fails(self,new_search_string, compiled_regex):
         a_test_case_string = RegexTestString(new_search_string)
@@ -203,35 +207,45 @@ class RegexEval:
         if len(list(vals[1])) == 0:
             self.test_cases.append(a_test_case_string)
 
-    
+
+    def add_test(self,regex_string, match):
+        a_test_string = RegexTestString(regex_string)
+        if match and len(match) == 2: # should be e.g. [0,27]
+            a_test_string.add_match(match[0],match[1])
+        self.test_cases.append(a_test_string)
+        return a_test_string
+            
     """
     Multiple search_strings should be used to guide toward generality.
     """
     def generate_iso8601_datetime_tests(self):
         # target: ^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$
-        a_test_string = RegexTestString("2016-12-09T08:21:15.9+00:00")
-        a_test_string.add_match(0,27)
-        self.test_cases.append(a_test_string)
-        
+        a_test_string = self.add_test("2016-12-09T08:21:15.9+00:00",[0,27])
         self.generate_equivalence_test_suite_replacement(a_test_string,"^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$")
 
-        a_test_string = RegexTestString("2016-12-09T08:21:15.9+00:0") # this does not match at all! (what will our fitness function throw?)
-        self.test_cases.append(a_test_string) 
+        # this does not match at all! (what will our fitness function throw?)
+        self.add_test("2016-12-09T08:21:15.9+00:0", None)
+        self.add_test("2016-22-09T08:21:15.9+00:00000000000",None) # 
+        self.add_test("2016-22-09T08:21:15.9+00:00",None) # no match, as 22 is not a valid month
+        self.add_test("1911-02-19T22:35:42.3+08:43",[0,27])
+        self.add_test("2016-09-05T15:22:26.286Z",[0,24])
 
-        a_test_string = RegexTestString("2016-22-09T08:21:15.9+00:00000000000") # 
-        self.test_cases.append(a_test_string)
+    """
+    From: https://github.com/angular/angular.js/blob/a24777a2c4ad2ac087d9e3aa278fa2e61e8cc740/src/ng/directive/input.js
+    """
+    def generate_scientific_number_tests(self):
+        self.add_test("230.234E-10", [0,10])
+        self.add_test("3566", [0,3])
+        self.add_test("4", [0,0])
+        self.add_test("87465.345345", [0,11])
+        self.add_test("2346.533", [0,7])
+        a_test_string = self.add_test("0.045e-10", [0,8])
+        known_regex = "^\s*(-|\+)?(\d+|(\d*(\.\d*)))([eE][+-]?\d+)?\s*$"
+        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
+        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
+        self.add_test("3566.", None)
+        self.add_test(".3456", None)
 
-        a_test_string = RegexTestString("2016-22-09T08:21:15.9+00:00") # no match, as 22 is not a valid month
-        self.test_cases.append(a_test_string) 
-
-        a_test_string = RegexTestString("1911-02-19T22:35:42.3+08:43")
-        a_test_string.add_match(0,27)
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("2016-09-05T15:22:26.286Z")
-        a_test_string.add_match(0,24)
-        self.test_cases.append(a_test_string)
-        
 
     """
     From https://github.com/ghiscoding/angular-validation/wiki/Regular-Expression-Pattern
@@ -320,8 +334,6 @@ class RegexEval:
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,P")
         self.test_cases.append(a_test_string)
 
-        print("Number of test cases: {}".format(len(self.test_cases)))
-
     def generate_email_validation_tests(self):
         a_test_string = RegexTestString("codykenny@gmail.com")
         a_test_string.add_match(0,18)
@@ -329,7 +341,6 @@ class RegexEval:
 
         self.generate_equivalence_test_suite_replacement(a_test_string,"^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$")
         self.generate_equivalence_test_suite_length(a_test_string,"^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$")
-        print("Number of test cases: {}".format(len(self.test_cases)))
 
         a_test_string = RegexTestString("codykennygmail.com")
         self.test_cases.append(a_test_string)
@@ -340,10 +351,12 @@ class RegexEval:
         
     def generate_tests(self):
         # self.generate_regex_mac_search_string_tests()
-        self.generate_catastrophic_csv()
+        # self.generate_catastrophic_csv()
         # self.generate_iso8601_datetime_tests()
         # self.generate_macaddress_validation_tests()
         # self.generate_email_validation_tests()
+        self.generate_scientific_number_tests()
+        print("Number of test cases: {}".format(len(self.test_cases)))
         
 class RegexTestString:
     def __init__(self,search_string):
