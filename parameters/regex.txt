@@ -3,7 +3,7 @@ CODON_SIZE:             100000
 CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.0099
 DEBUG:                  True
-EXPERIMENT_NAME:        Regex_Time_Improvement
+EXPERIMENT_NAME:        Regex_Time_Improvement_iso
 GENERATIONS:            1000
 GENOME_INIT:            False
 MAX_GENOME_LENGTH:      1000

@@ -44,6 +44,8 @@ class RegexEval:
             #print(regex_string + ": {}".format(fitness))
             #sys.exit()
             fitness = result_error + time_sum
+#            if fitness == 0 : # no error
+#                fitness += time_sum
             if 'SEED_GENOME' in params and params['SEED_GENOME']:
                 similarity_score = self.calculate_similarity_score(regex_string)
                 #if(similarity_score > 1):
@@ -187,13 +189,13 @@ class RegexEval:
         compiled_regex = re.compile(a_regex)
         if len(a_match.matches) > 0 :
             new_search_string = 'a'+ a_match.search_string # check string with one character added at the front
-            add_test_case_if_fails(new_search_string, compiled_regex)
+            self.add_test_case_if_fails(new_search_string, compiled_regex)
             new_search_string = a_match.search_string+'a' # check string with one character added at the end
-            add_test_case_if_fails(new_search_string, compiled_regex)
+            self.add_test_case_if_fails(new_search_string, compiled_regex)
 
-            for i in len(a_match.search_string)-1:
+            for i in range(len(a_match.search_string)-1):
                 new_search_string = a_match.search_string[i:] # TODO: refactor this
-                add_test_case_if_fails(new_search_string, compiled_regex)                
+                self.add_test_case_if_fails(new_search_string, compiled_regex)                
 
     def add_test_case_if_fails(self,new_search_string, compiled_regex):
         a_test_case_string = RegexTestString(new_search_string)
@@ -304,24 +306,44 @@ class RegexEval:
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,P")
         a_test_string.add_match(0,27)
         self.test_cases.append(a_test_string)
-
+        
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,P")
         a_test_string.add_match(0,24)
         self.test_cases.append(a_test_string)
 
-#        self.generate_equivalence_test_suite_replacement(a_test_string,"^(.*?,){11}P")
+        #        self.generate_equivalence_test_suite_replacement(a_test_string,"^(.*?,){11}P")
         self.generate_equivalence_test_suite_length(a_test_string,"^(.*?,){11}P")
+
+        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,3P")
+        self.test_cases.append(a_test_string)
 
         a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,P")
         self.test_cases.append(a_test_string)
 
         print("Number of test cases: {}".format(len(self.test_cases)))
+
+    def generate_email_validation_tests(self):
+        a_test_string = RegexTestString("codykenny@gmail.com")
+        a_test_string.add_match(0,18)
+        self.test_cases.append(a_test_string)
+
+        self.generate_equivalence_test_suite_replacement(a_test_string,"^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$")
+        self.generate_equivalence_test_suite_length(a_test_string,"^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$")
+        print("Number of test cases: {}".format(len(self.test_cases)))
+
+        a_test_string = RegexTestString("codykennygmail.com")
+        self.test_cases.append(a_test_string)
+
+        a_test_string = RegexTestString("codykenny@gmailcom")
+        self.test_cases.append(a_test_string)
+
         
     def generate_tests(self):
         # self.generate_regex_mac_search_string_tests()
-        self.generate_catastrophic_csv()
+        # self.generate_catastrophic_csv()
         # self.generate_iso8601_datetime_tests()
         # self.generate_macaddress_validation_tests()
+        self.generate_email_validation_tests()
         
 class RegexTestString:
     def __init__(self,search_string):
@@ -339,8 +361,8 @@ class RegexTestString:
     def calc_match_errors(self,match_candidates):
         match_ranges=list()
         undesired_range = missing_range = 0
-#        for match in match_candidates:
- #           match_ranges.append(match)
+        #        for match in match_candidates:
+        #           match_ranges.append(match)
 
         for a_known_match in self.matches:
             # missing any of the desired extraction costs a lot
@@ -349,7 +371,7 @@ class RegexTestString:
             undesired_range += self.find_undesired_range(match_candidate, self.matches)
 
         match_error = missing_range + undesired_range
-        match_error += abs(len(match_candidates) - len(self.matches))
+        match_error += (abs(len(match_candidates) - len(self.matches)))
 
         return (match_error) 
 
