@@ -340,10 +340,10 @@ class RegexEval:
         
     def generate_tests(self):
         # self.generate_regex_mac_search_string_tests()
-        # self.generate_catastrophic_csv()
+        self.generate_catastrophic_csv()
         # self.generate_iso8601_datetime_tests()
         # self.generate_macaddress_validation_tests()
-        self.generate_email_validation_tests()
+        # self.generate_email_validation_tests()
         
 class RegexTestString:
     def __init__(self,search_string):
