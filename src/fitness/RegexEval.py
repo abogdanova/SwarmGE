@@ -236,6 +236,7 @@ class RegexEval:
     """
     def generate_scientific_number_tests(self):
         self.add_test("230.234E-10", [0,10])
+        self.add_test("971.829E+26", [0,10])
         self.add_test("3566", [0,3])
         self.add_test("4", [0,0])
         self.add_test("-7", [0,1])
