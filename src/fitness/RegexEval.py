@@ -240,6 +240,8 @@ class RegexEval:
         self.add_test("4", [0,0])
         self.add_test("-7", [0,1])
         self.add_test("+94", [0,2])
+        self.add_test("            36", [0,13])
+        self.add_test("78      ", [0,8])
         self.add_test("87465.345345", [0,11])
         self.add_test("2346.533", [0,7])
         a_test_string = self.add_test("0.045e-10", [0,8])
