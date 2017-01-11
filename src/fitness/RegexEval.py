@@ -252,6 +252,16 @@ class RegexEval:
         # self.add_test("3566.", None) # this is allowed per the original regex 
         # self.add_test(".3456", None) # this is allowed per the original regex 
 
+    """
+    From: https://github.com/jmmcd/PonyGE2/blob/c256f9a36331078b9ca298af4d73034b623dd8a0/src/representation/grammar.py
+    """
+    def generate_PonyGE2_Grammar_File_Rule_tests(self):
+        known_regex = "(?P<rulename><\S+>)\s*::=\s*(?P<production>(?:(?=\#)\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)"
+        a_test_string = self.add_test("<string> ::= <letter>|<letter><string>", [0,37])
+        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
+        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
+        
+        
 
     """
     From https://github.com/ghiscoding/angular-validation/wiki/Regular-Expression-Pattern
@@ -361,7 +371,8 @@ class RegexEval:
         # self.generate_iso8601_datetime_tests()
         # self.generate_macaddress_validation_tests()
         # self.generate_email_validation_tests()
-        self.generate_scientific_number_tests()
+        # self.generate_scientific_number_tests()
+        self.generate_PonyGE2_Grammar_File_Rule_tests()
         print("Number of test cases: {}".format(len(self.test_cases)))
         
 class RegexTestString:
