@@ -117,6 +117,27 @@ def subtree(ind):
 
         return ind_tree
 
+    def subtree_mutate_delete(ind_tree):
+        """
+        Picks a node at random to delete from the tree
+
+        :param ind_tree: The full tree of an individual.
+        :return: The full mutated tree and the associated genome.
+        """
+        # Find the list of nodes we can mutate from.
+        targets = ind_tree.get_target_nodes([], target=params[
+                                          'BNF_GRAMMAR'].non_terminals)
+
+        # Pick a node.
+        tree_for_deletion = choice(targets)
+
+        if tree_for_deletion.parent:
+            # do we need to rebuild the tree/genome?
+            tree_for_deletion.parent.children.remove(tree_for_deletion)
+            return ind_tree
+        else:
+            return subtree_mutate(ind_tree)
+
     # Save the tail of the genome.
     tail = ind.genome[ind.used_codons:]
     
@@ -124,9 +145,13 @@ def subtree(ind):
     for i in range(params['MUTATION_EVENTS']):
         if params['SEMANTIC_LOCK']:
             ind.tree = semantic_mutate(ind.tree)
-        else:
+        # else:
+        #     ind.tree = subtree_mutate(ind.tree)
+        elif choice([True, False]): # too much?
             ind.tree = subtree_mutate(ind.tree)
-    
+        else:
+            ind.tree = subtree_mutate_delete(ind.tree)
+            
     # Re-build a new individual with the newly mutated genetic information.
     try:
         ind = individual.Individual(None, ind.tree)

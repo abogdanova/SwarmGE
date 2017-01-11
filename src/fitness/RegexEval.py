@@ -33,6 +33,7 @@ class RegexEval:
     def __call__(self, individual):
         regex_string = individual.phenotype
         # regex_string = "^(.*?,){11}P"
+#        regex_string = "^\s*(-|\+)?(\d+|(\d*(\.\d*)))([eE][+-]?\d+)?\s*$"
         #regex_string = "\d.*\w.$|e"
         #        regex_string="!|\w.[6-l]\w\w[^!]\w\w[^!]\w\w[^!]\d\w[^P]\w\w"
         try:
@@ -237,14 +238,16 @@ class RegexEval:
         self.add_test("230.234E-10", [0,10])
         self.add_test("3566", [0,3])
         self.add_test("4", [0,0])
+        self.add_test("-7", [0,1])
+        self.add_test("+94", [0,2])
         self.add_test("87465.345345", [0,11])
         self.add_test("2346.533", [0,7])
         a_test_string = self.add_test("0.045e-10", [0,8])
         known_regex = "^\s*(-|\+)?(\d+|(\d*(\.\d*)))([eE][+-]?\d+)?\s*$"
         self.generate_equivalence_test_suite_length(a_test_string, known_regex)
         self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
-        self.add_test("3566.", None)
-        self.add_test(".3456", None)
+        # self.add_test("3566.", None) # this is allowed per the original regex 
+        # self.add_test(".3456", None) # this is allowed per the original regex 
 
 
     """
