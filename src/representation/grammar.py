@@ -34,7 +34,7 @@ class Grammar(object):
         self.rules, self.permutations = {}, {}
         
         # Initialise dicts for terminals and non terminals, set params.
-        self.non_terminals, self.terminals = {}, []
+        self.non_terminals, self.terminals = {}, {}
         self.start_rule, self.codon_size = None, params['CODON_SIZE']
         self.min_path, self.max_arity, self.min_ramp = None, None, None
         
@@ -141,7 +141,7 @@ class Grammar(object):
                                 "min_steps": 0,
                                 "recursive": False}
                             tmp_production.append(symbol)
-                            self.terminals.append(str(i))
+                            self.terminals[str(i)] = rule.group('rulename')
                             tmp_productions.append({"choice": tmp_production,
                                                     "recursive": False,
                                                     "NT_kids": False})
@@ -163,7 +163,8 @@ class Grammar(object):
                                           "min_steps": 0,
                                           "recursive": False}
                                 tmp_production.append(symbol)
-                                self.terminals.append(terminalparts)
+                                self.terminals[terminalparts] = rule.group(
+                                    'rulename')
                                 terminalparts = ''
                             
                             tmp_production.append(
@@ -184,7 +185,7 @@ class Grammar(object):
                                   "min_steps": 0,
                                   "recursive": False}
                         tmp_production.append(symbol)
-                        self.terminals.append(terminalparts)
+                        self.terminals[terminalparts] = rule.group('rulename')
                     tmp_productions.append({"choice": tmp_production,
                                             "recursive": False,
                                             "NT_kids": False})
