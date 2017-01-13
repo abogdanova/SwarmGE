@@ -141,7 +141,12 @@ class Grammar(object):
                                 "min_steps": 0,
                                 "recursive": False}
                             tmp_production.append(symbol)
-                            self.terminals[str(i)] = rule.group('rulename')
+                            if str(i) not in self.terminals:
+                                self.terminals[str(i)] = \
+                                    [rule.group('rulename')]
+                            else:
+                                self.terminals[str(i)].append(
+                                    rule.group('rulename'))
                             tmp_productions.append({"choice": tmp_production,
                                                     "recursive": False,
                                                     "NT_kids": False})
@@ -163,8 +168,12 @@ class Grammar(object):
                                           "min_steps": 0,
                                           "recursive": False}
                                 tmp_production.append(symbol)
-                                self.terminals[terminalparts] = rule.group(
-                                    'rulename')
+                                if terminalparts not in self.terminals:
+                                    self.terminals[terminalparts] = \
+                                        [rule.group('rulename')]
+                                else:
+                                    self.terminals[terminalparts].append(
+                                        rule.group('rulename'))
                                 terminalparts = ''
                             
                             tmp_production.append(
@@ -185,7 +194,12 @@ class Grammar(object):
                                   "min_steps": 0,
                                   "recursive": False}
                         tmp_production.append(symbol)
-                        self.terminals[terminalparts] = rule.group('rulename')
+                        if terminalparts not in self.terminals:
+                            self.terminals[terminalparts] = \
+                                [rule.group('rulename')]
+                        else:
+                            self.terminals[terminalparts].append(
+                                rule.group('rulename'))
                     tmp_productions.append({"choice": tmp_production,
                                             "recursive": False,
                                             "NT_kids": False})
