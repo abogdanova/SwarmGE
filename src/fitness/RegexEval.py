@@ -260,7 +260,17 @@ class RegexEval:
         a_test_string = self.add_test("<string> ::= <letter>|<letter><string>", [0,37])
         self.generate_equivalence_test_suite_length(a_test_string, known_regex)
         self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
-        
+
+    """
+    From: https://github.com/jmmcd/PonyGE2/blob/c256f9a36331078b9ca298af4d73034b623dd8a0/src/representation/grammar.py
+    """
+    def generate_catastrophic_QT3TS_tests(self):
+        known_regex = ".X(.+)+XX"
+        self.add_test("hryxioXcXXdornct", [5,9])
+        a_test_string = self.add_test("bbbbXcyXXaaa", [3,8])
+        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
+        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
+
         
 
     """
@@ -372,7 +382,8 @@ class RegexEval:
         # self.generate_macaddress_validation_tests()
         # self.generate_email_validation_tests()
         # self.generate_scientific_number_tests()
-        self.generate_PonyGE2_Grammar_File_Rule_tests()
+        # self.generate_PonyGE2_Grammar_File_Rule_tests()
+        self.generate_catastrophic_QT3TS_tests()
         print("Number of test cases: {}".format(len(self.test_cases)))
         
 class RegexTestString:
