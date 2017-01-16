@@ -4,7 +4,8 @@ import traceback
 import sys
 from algorithm.parameters import params
 from representation import individual
-#import multiprocessing
+from multiprocessing import Process, Queue
+#from multiprocessing.pool import ThreadPool # could be better performance to keep the thread around (is overhead cost of recreating a thread, less than the cost of exponential regex? no)
 
 # http://stackoverflow.com/questions/24812253/how-can-i-capture-return-value-with-python-timeit-module/
 timeit.template = """
@@ -16,7 +17,16 @@ def inner(_it, _timer{init}):
     _t1 = _timer()
     return _t1 - _t0, retval
 """
-    
+
+"""
+TODO
+Apache log file
+([0-9a-f.:]+)\s+(-|.+?)\s+(-|.+?)\s+\[([0-9]{2}\/[a-z]{3}\/[0-9]{4}\:[0-9]{2}:[0-9]{2}:[0-9]{2}[^\]]*)\] \"(\S+?)\s(\S*?)\s{0,1}(\S+?)\" ([0-9|\-]+) ([0-9|\-]+)
+
+"""
+
+# pool = ThreadPool(processes=1)
+
 class RegexEval:
     """
     Fitness function for checking regex matching which sums functionality error.
@@ -31,7 +41,8 @@ class RegexEval:
         self.generate_tests()
         self.time=True
 
-    def __call__(self, individual):
+
+    def call_fitness(self, individual, q):
         regex_string = individual.phenotype
 #        regex_string = "^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$"
 #        regex_string = "^\s*(-|\+)?(\d+|(\d*(\.\d*)))([eE][+-]?\d+)?\s*$"
@@ -64,12 +75,14 @@ class RegexEval:
             # else:
             #     self.time=True
             #     return fitness
-            return fitness
+            q.put(fitness)
+#            print("\n {}".format(fitness))
 
         except:
+            #print(" ------------ exception")
 #            print(traceback.format_exc())
 #            sys.exit()
-            return 100000
+            q.put(100000)
 
     def calculate_similarity_score(self, regex_string):
         char_same_count = 0
@@ -415,7 +428,28 @@ class RegexEval:
         # self.generate_d3_interpolate_number()
 
         print("Number of test cases: {}".format(len(self.test_cases)))
+
+    def __call__(self, individual):
+        q = Queue()
+        p = Process(target=self.call_fitness, name="self.call_fitness", args=(individual,q))
+        p.start()
+
+        p.join(5)
         
+        # If thread is active
+        if p.is_alive():
+            print("      ------------      ------------      ------------    timeout reached, killing process")
+            # Terminate foo
+            p.terminate()
+            p.join()
+            return 100000
+        else:
+            fitness = q.get()
+#            print("\n again: {}".format(fitness))            
+            return fitness
+
+            
+
 class RegexTestString:
     def __init__(self,search_string):
         # print("Added regex search string: "+search_string)
