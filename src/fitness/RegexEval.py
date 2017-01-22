@@ -5,6 +5,7 @@ import sys
 from algorithm.parameters import params
 from representation import individual
 from multiprocessing import Process, Queue
+# from multiprocessing.pool import ThreadPool
 
 # http://stackoverflow.com/questions/24812253/how-can-i-capture-return-value-with-python-timeit-module/
 timeit.template = """
@@ -23,10 +24,10 @@ Apache log file
 ([0-9a-f.:]+)\s+(-|.+?)\s+(-|.+?)\s+\[([0-9]{2}\/[a-z]{3}\/[0-9]{4}\:[0-9]{2}:[0-9]{2}:[0-9]{2}[^\]]*)\] \"(\S+?)\s(\S*?)\s{0,1}(\S+?)\" ([0-9|\-]+) ([0-9|\-]+)
 """
 
-# from multiprocessing.pool import ThreadPool
 # could be better performance to keep the thread around (is overhead cost of recreating a thread, less than the cost of exponential regex? no)
 # pool = ThreadPool(processes=1)
-
+q = Queue()
+p = None 
 
 """
 Fitness function for regex (lower fitness value is better)
@@ -404,17 +405,21 @@ class RegexEval:
     Generating new processes is expensive, rework the code to reuse a process.
     """
     def __call__(self, individual):
-        q = Queue()
-        p = Process(target=self.call_fitness, name="self.call_fitness", args=(individual,q))
+        global p # gulp
+        #if(p==None):
+        p=Process(target=self.call_fitness, name="self.call_fitness", args=(individual,q))
         p.start()
+        #else:
+        #    p._args=(individual,q)
+        #    p.run()
         p.join(5)
         
         # If thread is active
         if p.is_alive():
-            print("      ------------      ------------      ------------    timeout reached, killing process")
-            # Terminate foo
+            print("      ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------    timeout reached, killing process")
             p.terminate()
             p.join()
+            p=None
             return 100000
         else:
             fitness = q.get()
