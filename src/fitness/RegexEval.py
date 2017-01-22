@@ -27,7 +27,8 @@ Apache log file
 # could be better performance to keep the thread around (is overhead cost of recreating a thread, less than the cost of exponential regex? no)
 # pool = ThreadPool(processes=1)
 q = Queue()
-p = None 
+pstartup = None
+prunner = None 
 
 """
 Fitness function for regex (lower fitness value is better)
@@ -405,21 +406,25 @@ class RegexEval:
     Generating new processes is expensive, rework the code to reuse a process.
     """
     def __call__(self, individual):
-        global p # gulp
-        #if(p==None):
-        p=Process(target=self.call_fitness, name="self.call_fitness", args=(individual,q))
-        p.start()
+        global pstartup # gulp
+        global prunner
+        if(pstartup==None):
+            pstartup=Process(target=self.call_fitness, name="self.call_fitness")
+        pstartup._args=(individual,q)
+        pstartup.start()
+        prunner=pstartup
+        pstartup=Process(target=self.call_fitness, name="self.call_fitness")
+        #args=(individual,q)
         #else:
-        #    p._args=(individual,q)
-        #    p.run()
-        p.join(5)
+        #p.run()
+        prunner.join(5)
         
         # If thread is active
-        if p.is_alive():
+        if prunner.is_alive():
             print("      ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------    timeout reached, killing process")
-            p.terminate()
-            p.join()
-            p=None
+            prunner.terminate()
+            prunner.join()
+            #p=None
             return 100000
         else:
             fitness = q.get()

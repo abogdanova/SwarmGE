@@ -1,7 +1,7 @@
 CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              subtree
-CROSSOVER_PROBABILITY:  0.500
+CROSSOVER_PROBABILITY:  0.01
 DEBUG:                  True
 EXPERIMENT_NAME:        Regex_Time_Improvement_mac_catastrophic_csv
 GENERATIONS:            1000
@@ -9,7 +9,7 @@ GENOME_INIT:            False
 MAX_GENOME_LENGTH:      1000
 GENOME_OPERATIONS:      False
 GRAMMAR_FILE:           PCRE.bnf
-INITIALISATION:         rhh
+INITIALISATION:         seed_only
 INVALID_SELECTION:      False
 LOOKUP_BAD_FITNESS:     False
 LOOKUP_FITNESS:         True
