@@ -417,7 +417,7 @@ class RegexEval:
         #args=(individual,q)
         #else:
         #p.run()
-        prunner.join(5)
+        prunner.join(1)
         
         # If thread is active
         if prunner.is_alive():
