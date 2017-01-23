@@ -57,12 +57,12 @@ class RegexEval:
             fitness = result_error + time_sum
 
             # check how similar the mutated regex is to the seed regex, character by character. Use Levenshtein distance either?
-            # if 'SEED_GENOME' in params and params['SEED_GENOME']:
-            #    similarity_score = self.calculate_similarity_score(regex_string)
-            #    if(similarity_score > 1):
+            #if 'SEED_GENOME' in params and params['SEED_GENOME']:
+            #   similarity_score = self.calculate_similarity_score(regex_string)
+            #   if(similarity_score > 1):
             #        fitness += (similarity_score)
-            #    else:
-            #        fitness += time_sum
+               #else:
+               #     fitness += time_sum
 
 
             # phenotype or genome length?
