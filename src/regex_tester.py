@@ -159,25 +159,37 @@ def test():
 Want to validate that these are in fact different runtimes
 """
 def time_tester():
+    for i in range(1000000):
 
-    for i in range(1000):
+        # .X(.+)+XX;  & 0.0003474690020084381 \\
+        genomes = list()
+     
+         # .X(.+)XX;  & 0.00010399427264928818 \\
+        a_genome_2=[2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 11, 3, 15, 4, 44, 3, 12, 3, 5, 4, 49, 2, 5, 4, 49]
+        genomes.append( Individual(a_genome_2, None) )
+
+        # .X([0-c{76,}]?)\wXX;  & 0.00009754206985235214 \\
+        a_genome_3 = [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 13, 3, 10, 2, 13, 5, 3, 10, 5, 28, 3, 18, 4, 3, 17, 2, 16, 3, 12, 3, 4, 54, 3, 5, 5, 48, 3, 5, 4, 49, 2, 5, 4, 49]
+        genomes.append(  Individual(a_genome_3, None) )
+        
         # .X([3-c{26,}]?)\wXX; 9.634345769882202e-05
-        a_genome = [2, 11, 3, 4, 44, 2, 99349, 295, 36917, 2, 10, 2, 3, 48325, 53645, 5491, 90387, 72464, 99534, 39990, 94950, 77883, 67940, 53250, 30577, 62567, 54154, 58109, 36092, 87960, 59386, 2, 44295, 2, 14, 5, 4, 49, 3, 14, 5, 4, 49]
-        orig_ind = Individual(a_genome, None)
+        a_genome_4 = [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 13, 3, 10, 2, 13, 5, 3, 13, 5, 28, 3, 18, 4, 3, 12, 2, 16, 3, 12, 3, 4, 54, 3, 5, 5, 48, 3, 5, 4, 49, 2, 5, 4, 49]
+        genomes.append(  Individual(a_genome_4, None) )
 
         # .X([9-c{70,}]?)\wXX; 9.745266288518906e-05
-        another_regex = [2, 11, 3, 4, 44, 2, 5, 4, 94585, 2, 10, 2, 3, 48325, 53645, 5491, 90387, 72464, 99534, 39990, 24483, 20879, 67940, 53250, 30577, 62567, 54154, 58109, 33331, 58109, 66537, 87960, 48280, 2, 40461, 2, 14, 31297, 71332, 74669, 3, 14, 5, 82828, 79973]
-        evo_ind = Individual(another_regex, None)
+        a_genome_5 = [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 13, 3, 10, 2, 13, 5, 3, 19, 5, 28, 3, 18, 4, 3, 17, 2, 10, 3, 12, 3, 4, 54, 3, 5, 5, 48, 3, 5, 4, 49, 2, 5, 4, 49]
+        genomes.append( Individual(a_genome_5, None) )
 
-    
-        if bool(random.getrandbits(1)):
-            evo_ind.evaluate()
-            orig_ind.evaluate()
-        else:
-            evo_ind.evaluate()
-            orig_ind.evaluate()
-#        print("{0:.10f} {0:.10f}".format(orig_ind.fitness, evo_ind.fitness))
-        print("{0:.10f}".format(orig_ind.fitness - evo_ind.fitness))
+        order = list(range(0,len(genomes))) # can we get rid of lazy eval already? :/
+
+        random.shuffle(order)
+        for i in order:
+            genomes[i].evaluate()
+
+        for ind in genomes:
+            print("{0:.20f} ".format(ind.fitness), flush=True, end="") # print all so we can bootstrap them in R
+        print("")
+        # print("{0:.10f}".format(orig_ind.fitness - evo_ind.fitness))
             
             
 if __name__ == '__main__':

@@ -118,8 +118,8 @@ class RegexEval:
         testing_iterations=1
         # do a quick test to time the longest test case (which is also the last in the list)
         quick_test = self.time_regex_test_case(compiled_regex, self.test_cases[len(self.test_cases)-1], testing_iterations)
-        if quick_test[3].calc_match_errors(list(quick_test[1])) < 0 : # Ideally we only time a program if it is funtionally correct
-            testing_iterations = 10000000 
+        #if quick_test[3].calc_match_errors(list(quick_test[1])) < 0 : # Ideally we only time a program if it is funtionally correct
+        #    testing_iterations = 10000000 
         for test_case in self.test_cases:
             results.append(self.time_regex_test_case(compiled_regex, test_case, testing_iterations))
         return results
@@ -406,6 +406,9 @@ class RegexEval:
     Generating new processes is expensive, rework the code to reuse a process.
     """
     def __call__(self, individual):
+        self.call_fitness(individual,q) # do it without using separate process
+        return q.get()
+    
         global pstartup # gulp
         global prunner
         if(pstartup==None):
