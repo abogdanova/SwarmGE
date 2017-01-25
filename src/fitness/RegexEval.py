@@ -406,8 +406,8 @@ class RegexEval:
     Generating new processes is expensive, rework the code to reuse a process.
     """
     def __call__(self, individual):
-        self.call_fitness(individual,q) # do it without using separate process
-        return q.get()
+        # self.call_fitness(individual,q) # do it without using separate process
+        # return q.get()
     
         global pstartup # gulp
         global prunner

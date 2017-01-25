@@ -4,7 +4,7 @@ CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.500
 DEBUG:                  True
 EXPERIMENT_NAME:        Regex_Time_Improvement_mac_address_validation
-GENERATIONS:            1000
+GENERATIONS:            100
 GENOME_INIT:            False
 MAX_GENOME_LENGTH:      1000
 GENOME_OPERATIONS:      False

@@ -4,7 +4,7 @@ CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.75
 DEBUG:                  True
 EXPERIMENT_NAME:        None
-GENERATIONS:            100000
+GENERATIONS:            10000
 GENOME_INIT:            False
 MAX_GENOME_LENGTH:      None
 GENOME_OPERATIONS:      False
