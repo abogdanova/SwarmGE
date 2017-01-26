@@ -127,7 +127,7 @@ def rhh(size):
 
             # Append individual to population
             population.append(ind)
-
+            
         # Include seed genome if defined
         if 'SEED_GENOME' in params and params['SEED_GENOME']:
             seed_ind = individual.Individual(params['SEED_GENOME'], None)
@@ -202,6 +202,15 @@ def PI_grow(size):
 
             # Append individual to population
             population.append(ind)
+
+        # Include seed genome if defined # TODO refactor this duplicate code!
+        if 'SEED_GENOME' in params and params['SEED_GENOME']:
+            seed_ind = individual.Individual(params['SEED_GENOME'], None)
+            print("Seed Individual: " + seed_ind.phenotype)
+            population[0] = seed_ind
+            params['MAX_TREE_DEPTH'] = len(seed_ind.genome) * 3
+            print("Setting MAX_TREE_DEPTH to {}".format(params['MAX_TREE_DEPTH']))
+            print("S")
 
         return population
 
