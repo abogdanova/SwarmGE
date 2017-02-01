@@ -1,7 +1,7 @@
 CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              subtree
-CROSSOVER_PROBABILITY:  0.1
+CROSSOVER_PROBABILITY:  0.500
 DEBUG:                  True
 EXPERIMENT_NAME:        Regex_Time_Improvement_mac_catastrophic_csv
 GENERATIONS:            100
