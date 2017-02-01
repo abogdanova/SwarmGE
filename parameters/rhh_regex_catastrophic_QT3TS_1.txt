@@ -3,13 +3,13 @@ CODON_SIZE:             100000
 CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.500
 DEBUG:                  True
-EXPERIMENT_NAME:        Regex_Time_Improvement_mac_address_search
+EXPERIMENT_NAME:        Regex_Time_Improvement_catastrophic_QT3TS
 GENERATIONS:            100
 GENOME_INIT:            False
 MAX_GENOME_LENGTH:      1000
 GENOME_OPERATIONS:      False
 GRAMMAR_FILE:           PCRE.bnf
-INITIALISATION:         PI_grow
+INITIALISATION:         rhh
 INVALID_SELECTION:      False
 LOOKUP_BAD_FITNESS:     False
 LOOKUP_FITNESS:         True
@@ -25,7 +25,7 @@ MUTATION_PROBABILITY:   None
 POPULATION_SIZE:        1000
 ELITE_SIZE:  		100
 FITNESS_FUNCTION:       RegexEval
-FITNESS_TEST_SUITE:     generate_regex_mac_search_string_tests
+FITNESS_TEST_SUITE:     generate_catastrophic_QT3TS_tests
 RANDOM_SEED:            None
 REPLACEMENT:            generational
 SAVE_ALL:               True
@@ -36,4 +36,4 @@ TOURNAMENT_SIZE:        2
 VERBOSE:                True
 TAILS:                  False
 SEMANTIC_LOCK:          False
-SEED_GENOME:            [2, 11, 2, 10, 2, 13, 9, 2, 13, 5, 4, 26, 4, 31, 3, 13, 5, 5, 26, 5, 31, 2, 18, 3, 2, 12, 3, 10, 3, 12, 3, 4, 46, 2, 4, 43, 2, 18, 3, 2, 15, 3, 11, 2, 10, 2, 13, 9, 2, 13, 5, 4, 26, 4, 31, 3, 13, 5, 5, 26, 5, 31, 3, 18, 3, 2, 12]
+SEED_GENOME:            [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 11, 3, 15, 4, 44, 3, 12, 3, 4, 41, 3, 5, 4, 49, 2, 5, 4, 49]

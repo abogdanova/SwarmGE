@@ -20,7 +20,7 @@ MAX_WRAPS:              0
 MULTICORE:              False
 MUTATE_DUPLICATES:      False
 MUTATION:               subtree
-MUTATION_EVENTS:        2
+MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
 POPULATION_SIZE:        1000
 ELITE_SIZE:  		100

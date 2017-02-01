@@ -9,7 +9,7 @@ GENOME_INIT:            False
 MAX_GENOME_LENGTH:      1000
 GENOME_OPERATIONS:      False
 GRAMMAR_FILE:           PCRE.bnf
-INITIALISATION:         PI_grow
+INITIALISATION:         rhh
 INVALID_SELECTION:      False
 LOOKUP_BAD_FITNESS:     False
 LOOKUP_FITNESS:         True
