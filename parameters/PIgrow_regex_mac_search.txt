@@ -2,7 +2,6 @@ CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.500
-DEBUG:                  True
 EXPERIMENT_NAME:        Regex_Time_Improvement_mac_address_search
 GENERATIONS:            100
 GENOME_INIT:            False
@@ -37,3 +36,4 @@ VERBOSE:                True
 TAILS:                  False
 SEMANTIC_LOCK:          False
 SEED_GENOME:            [2, 11, 2, 10, 2, 13, 9, 2, 13, 5, 4, 26, 4, 31, 3, 13, 5, 5, 26, 5, 31, 2, 18, 3, 2, 12, 3, 10, 3, 12, 3, 4, 46, 2, 4, 43, 2, 18, 3, 2, 15, 3, 11, 2, 10, 2, 13, 9, 2, 13, 5, 4, 26, 4, 31, 3, 13, 5, 5, 26, 5, 31, 3, 18, 3, 2, 12]
+DEBUG:             False

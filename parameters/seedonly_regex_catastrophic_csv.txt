@@ -2,7 +2,6 @@ CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.500
-DEBUG:                  True
 EXPERIMENT_NAME:        Regex_Time_Improvement_mac_catastrophic_csv
 GENERATIONS:            100
 GENOME_INIT:            False
@@ -37,3 +36,4 @@ VERBOSE:                True
 TAILS:                  False
 SEMANTIC_LOCK:          False
 SEED_GENOME:            [2, 15, 4, 56, 2, 11, 3, 12, 3, 4, 44, 3, 4, 40, 3, 4, 51, 2, 4, 42, 3, 12, 3, 4, 59, 3, 5, 3, 11, 3, 5, 3, 11, 3, 4, 60, 2, 5, 4, 41]
+DEBUG:             False
