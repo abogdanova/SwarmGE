@@ -145,12 +145,12 @@ def subtree(ind):
     for i in range(params['MUTATION_EVENTS']):
         if params['SEMANTIC_LOCK']:
             ind.tree = semantic_mutate(ind.tree)
-        # else:
-        #     ind.tree = subtree_mutate(ind.tree)
-        elif choice([True, False]): # too much?
-            ind.tree = subtree_mutate(ind.tree)
         else:
-            ind.tree = subtree_mutate_delete(ind.tree)
+            ind.tree = subtree_mutate(ind.tree)
+#        elif choice([True, False]): # too much?
+#            ind.tree = subtree_mutate(ind.tree)
+#        else:
+#            ind.tree = subtree_mutate_delete(ind.tree)
             
     # Re-build a new individual with the newly mutated genetic information.
     try:

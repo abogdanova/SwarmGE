@@ -1,15 +1,15 @@
 CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              subtree
-CROSSOVER_PROBABILITY:  0.1
+CROSSOVER_PROBABILITY:  0.500
 DEBUG:                  True
-EXPERIMENT_NAME:        Regex_Time_Improvement_mac_catastrophic_csv
-GENERATIONS:            1000
+EXPERIMENT_NAME:        Regex_Time_Improvement_catastrophic_QT3TS
+GENERATIONS:            100
 GENOME_INIT:            False
 MAX_GENOME_LENGTH:      1000
 GENOME_OPERATIONS:      False
 GRAMMAR_FILE:           PCRE.bnf
-INITIALISATION:         seed_only
+INITIALISATION:         PI_grow
 INVALID_SELECTION:      False
 LOOKUP_BAD_FITNESS:     False
 LOOKUP_FITNESS:         True
@@ -20,12 +20,12 @@ MAX_WRAPS:              0
 MULTICORE:              False
 MUTATE_DUPLICATES:      False
 MUTATION:               subtree
-MUTATION_EVENTS:        2
+MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
 POPULATION_SIZE:        1000
 ELITE_SIZE:  		100
 FITNESS_FUNCTION:       RegexEval
-FITNESS_TEST_SUITE:     generate_catastrophic_csv
+FITNESS_TEST_SUITE:     generate_catastrophic_QT3TS_tests
 RANDOM_SEED:            None
 REPLACEMENT:            generational
 SAVE_ALL:               True
@@ -36,3 +36,4 @@ TOURNAMENT_SIZE:        2
 VERBOSE:                True
 TAILS:                  False
 SEMANTIC_LOCK:          False
+SEED_GENOME:            [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 11, 3, 15, 4, 44, 3, 12, 3, 4, 41, 3, 5, 4, 49, 2, 5, 4, 49]
