@@ -1,4 +1,16 @@
 ------------
+#Note on Regex Performance Improvement (Fork of PonyGE2)
+------------
+
+This repo is a fork of PonyGE2 with a fitness function which measures runtime and functionality of regexs.
+
+E.g.
+
+    $ python3.5 --parameters seedonly_regex_catastrophic_QT3TS_1.txt
+
+ - codykenny@gmail.com
+
+------------
 #Introduction
 ------------
 
