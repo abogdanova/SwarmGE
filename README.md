@@ -1,5 +1,5 @@
 ------------
-#Note on Regex Performance Improvement (Fork of PonyGE2)
+#Note on Regex Performance Improvement
 ------------
 
 This repo is a fork of PonyGE2 with a fitness function which measures runtime and functionality of regexs.
