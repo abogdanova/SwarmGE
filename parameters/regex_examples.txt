@@ -4,7 +4,6 @@
    regex=".X(.+)+[X]" input="bbbbXcXaaaaa" result="y"/>
    regex=".X(.+)+[X][X]" input="bbbbXcXXaaaaa" result="y"/>
    regex=".XX(.+)+[X]" input="bbbbXXcXaaaaa" result="y"/>
-   regex=".X(.+)+[X][X]" input="bbbbXXXaaaaaa" result="n"/>
    regex=".[X](.+)+[X]" input="bbbbXcXaaaaa" result="y"/>
    regex=".[X](.+)+[X][X]" input="bbbbXcXXaaaaa" result="y"/>
    regex=".[X][X](.+)+[X]" input="bbbbXXcXaaaaa" result="y"/>
