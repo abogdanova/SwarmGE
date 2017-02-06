@@ -424,7 +424,7 @@ class RegexEval:
         
         # If thread is active
         if prunner.is_alive():
-            print("      ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------          ------------      ------------      ------------    timeout reached, killing process")
+            print("Regex evaluation timeout reached, killing evaluation process")
             prunner.terminate()
             prunner.join()
             #p=None
