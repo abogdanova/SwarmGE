@@ -311,7 +311,6 @@ def map_PI_ind_from_genome(genome):
     return output, genome, None, nodes, False, max_depth, used_input
 
 
-
 def map_tree_from_genome(genome):
     """
     Maps a full tree from a given genome.

@@ -37,7 +37,8 @@ def crossover(parents):
         # Perform crossover on ind_0 and ind_1.
         inds = params['CROSSOVER'](ind_0, ind_1)
         
-        if any([ind.invalid for ind in inds]):
+        if params['NO_CROSSOVER_INVALIDS'] and \
+                any([ind.invalid for ind in inds]):
             # We have an invalid, need to do crossover again.
             pass
         

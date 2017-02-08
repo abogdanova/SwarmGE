@@ -65,6 +65,8 @@ params = {
         # "operators.initialisation.rhh"
         'MAX_INIT_TREE_DEPTH': 10,
         # Set the maximum tree depth for initialisation.
+        'MIN_INIT_TREE_DEPTH': None,
+        # Set the minimum tree depth for initialisation.
 
         # SELECTION
         'SELECTION': "operators.selection.tournament",
@@ -82,6 +84,8 @@ params = {
         # "operators.crossover.fixed_onepoint",
         # "operators.crossover.subtree",
         'CROSSOVER_PROBABILITY': 0.75,
+        'NO_CROSSOVER_INVALIDS': False,
+        # Prevents crossover from generating invalids.
 
         # MUTATION
         'MUTATION': "operators.mutation.int_flip",
@@ -89,6 +93,8 @@ params = {
         # "operators.mutation.int_flip",
         'MUTATION_PROBABILITY': None,
         'MUTATION_EVENTS': 1,
+        'NO_MUTATION_INVALIDS': False,
+        # Prevents mutation from generating invalids.
 
         # REPLACEMENT
         'REPLACEMENT': "operators.replacement.generational",

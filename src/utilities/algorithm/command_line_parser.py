@@ -68,21 +68,33 @@ def parse_cmd_args(arguments):
                 setattr(namespace, self.dest, float(value))
 
     # LOAD PARAMETERS FILE
-    parser.add_argument('--parameters', dest='PARAMETERS', type=str,
-                        help='ToDo')
+    parser.add_argument('--parameters',
+                        dest='PARAMETERS',
+                        type=str,
+                        help='Specifies the parameters file to be used. Must '
+                             'include the full file extension. Full file path'
+                             'does NOT need to be specified.')
 
     # LOAD STEP AND SEARCH LOOP FUNCTIONS
-    parser.add_argument('--search_loop', dest='SEARCH_LOOP', type=str,
+    parser.add_argument('--search_loop',
+                        dest='SEARCH_LOOP',
+                        type=str,
                         help='Sets the desired search loop function.')
-    parser.add_argument('--step', dest='STEP', type=str,
+    parser.add_argument('--step',
+                        dest='STEP',
+                        type=str,
                         help='Sets the desired search step function.')
 
     # POPULATION OPTIONS
-    parser.add_argument('--population', dest='POPULATION_SIZE', type=int,
-                        help='Sets the population size, requires int value')
-    parser.add_argument('--generations', dest='GENERATIONS', type=int,
+    parser.add_argument('--population',
+                        dest='POPULATION_SIZE',
+                        type=int,
+                        help='Sets the population size, requires int value.')
+    parser.add_argument('--generations',
+                        dest='GENERATIONS',
+                        type=int,
                         help='Sets the number of generations, requires int '
-                             'value')
+                             'value.')
     parser.add_argument('--hill_climbing_history',
                         dest='HILL_CLIMBING_HISTORY',
                         type=int,
@@ -90,153 +102,238 @@ def parse_cmd_args(arguments):
                         'and step-counting hill-climbing.')
 
     # INDIVIDUAL SIZE
-    parser.add_argument('--max_tree_depth', dest='MAX_TREE_DEPTH', type=int,
+    parser.add_argument('--max_tree_depth',
+                        dest='MAX_TREE_DEPTH',
+                        type=int,
                         help='Sets the max derivation tree depth for the '
                              'algorithm, requires int value.')
-    parser.add_argument('--max_tree_nodes', dest='MAX_TREE_NODES', type=int,
+    parser.add_argument('--max_tree_nodes',
+                        dest='MAX_TREE_NODES',
+                        type=int,
                         help='Sets the max derivation tree nodes for the '
                              'algorithm, requires int value.')
-    parser.add_argument('--codon_size', dest='CODON_SIZE', type=int,
+    parser.add_argument('--codon_size',
+                        dest='CODON_SIZE',
+                        type=int,
                         help='Sets the range from 0 to condon_size to be used '
                              'in genome, requires int value')
-    parser.add_argument('--max_genome_length', dest='MAX_GENOME_LENGTH',
-                        type=int, help='Sets the maximum chromosome length for'
-                                       ' the algorithm, requires int value')
-    parser.add_argument('--max_wraps', dest='MAX_WRAPS', type=int,
+    parser.add_argument('--max_genome_length',
+                        dest='MAX_GENOME_LENGTH',
+                        type=int,
+                        help='Sets the maximum chromosome length for the '
+                             'algorithm, requires int value.')
+    parser.add_argument('--max_wraps',
+                        dest='MAX_WRAPS',
+                        type=int,
                         help='Sets the maximum number of times the genome '
                              'mapping process can wrap over the length of the '
                              'genome. Requires int value.')
 
     # INITIALISATION
-    parser.add_argument('--max_init_tree_depth', dest='MAX_INIT_TREE_DEPTH',
-                        type=int, help='Sets the max tree depth for '
-                                       'initialisation')
+    parser.add_argument('--max_init_tree_depth',
+                        dest='MAX_INIT_TREE_DEPTH',
+                        type=int,
+                        help='Sets the max tree depth for initialisation.')
+    parser.add_argument('--min_init_tree_depth',
+                        dest='MIN_INIT_TREE_DEPTH',
+                        type=int,
+                        help='Sets the min tree depth for initialisation.')
     parser.add_argument('--max_init_genome_length',
-                        dest='MAX_INIT_GENOME_LENGTH', type=int,
+                        dest='MAX_INIT_GENOME_LENGTH',
+                        type=int,
                         help='Sets the maximum length for chromosomes to be '
-                             'initialised to, requires int value')
+                             'initialised to, requires int value.')
     parser.add_argument('--initialisation',
-                        dest='INITIALISATION', type=str,
-                        help='Sets the initialisation strategy, '
-                        'requires a string such as "rhh" or'
-                        ' a direct path string such as '
-                        '"operators.initialisation.rhh"')
+                        dest='INITIALISATION',
+                        type=str,
+                        help='Sets the initialisation strategy, requires a '
+                             'string such as "rhh" or a direct path string '
+                             'such as "operators.initialisation.rhh".')
 
     # SELECTION
-    parser.add_argument('--selection', dest='SELECTION', type=str,
+    parser.add_argument('--selection',
+                        dest='SELECTION',
+                        type=str,
                         help='Sets the selection to be used, requires string '
                              'such as "tournament" or direct path string such '
-                             'as "operators.selection.tournament"')
-    parser.add_argument('--invalid_selection', dest='INVALID_SELECTION',
-                        action='store_true', help='Allow for the selection of '
-                                                  'invalid individuals during '
-                                                  'selection')
-    parser.add_argument('--tournament_size', dest='TOURNAMENT_SIZE', type=int,
+                             'as "operators.selection.tournament".')
+    parser.add_argument('--invalid_selection',
+                        dest='INVALID_SELECTION',
+                        action='store_true',
+                        help='Allow for the selection of invalid individuals '
+                             'during selection.')
+    parser.add_argument('--tournament_size',
+                        dest='TOURNAMENT_SIZE',
+                        type=int,
                         help='Sets the number of indivs to contest tournament,'
-                             ' requires int')
-    parser.add_argument('--selection_proportion', dest='SELECTION_PROPORTION',
-                        action=FloatAction, help='Sets the proportion for '
-                                                 'truncation selection, '
-                                                 'requires float, e.g. 0.5')
+                             ' requires int.')
+    parser.add_argument('--selection_proportion',
+                        dest='SELECTION_PROPORTION',
+                        action=FloatAction,
+                        help='Sets the proportion for truncation selection, '
+                             'requires float, e.g. 0.5.')
 
     # EVALUATION
-    parser.add_argument('--multicore', dest='MULTICORE', default=None,
-                        action='store_true', help='Turns on multicore '
-                                                  'evaluation')
-    parser.add_argument('--cores', dest='CORES', type=int,
+    parser.add_argument('--multicore',
+                        dest='MULTICORE',
+                        default=None,
+                        action='store_true',
+                        help='Turns on multicore evaluation.')
+    parser.add_argument('--cores',
+                        dest='CORES',
+                        type=int,
                         help='Specify the number of cores to be used for '
                              'multicore evaluation. Requires int.')
 
     # CROSSOVER
-    parser.add_argument('--crossover', dest='CROSSOVER', type=str,
+    parser.add_argument('--crossover',
+                        dest='CROSSOVER',
+                        type=str,
                         help='Sets the type of crossover to be used, requires '
                              'string such as "subtree" or direct path string '
-                             'such as "operators.crossover.subtree"')
+                             'such as "operators.crossover.subtree".')
     parser.add_argument('--crossover_probability',
-                        dest='CROSSOVER_PROBABILITY', action=FloatAction,
+                        dest='CROSSOVER_PROBABILITY',
+                        action=FloatAction,
                         help='Sets the crossover probability, requires float, '
-                             'e.g. 0.9')
+                             'e.g. 0.9.')
+    parser.add_argument('--no_crossover_invalids',
+                        dest='NO_CROSSOVER_INVALIDS',
+                        default=None,
+                        action='store_true',
+                        help='Prevents invalid individuals from being '
+                             'generated by crossover.')
 
     # MUTATION
-    parser.add_argument('--mutation', dest='MUTATION', type=str,
+    parser.add_argument('--mutation',
+                        dest='MUTATION',
+                        type=str,
                         help='Sets the type of mutation to be used, requires '
                              'string such as "int_flip" or direct path string '
-                             'such as "operators.mutation.int_flip"')
-    parser.add_argument('--mutation_events', dest='MUTATION_EVENTS', type=int,
+                             'such as "operators.mutation.int_flip".')
+    parser.add_argument('--mutation_events',
+                        dest='MUTATION_EVENTS',
+                        type=int,
                         help='Sets the number of mutation events based on '
-                             'probability')
-    parser.add_argument('--mutation_probability', dest='MUTATION_PROBABILITY',
-                        action=FloatAction, help='Sets the rate of mutation '
-                                         'probability for linear genomes')
+                             'probability.')
+    parser.add_argument('--mutation_probability',
+                        dest='MUTATION_PROBABILITY',
+                        action=FloatAction,
+                        help='Sets the rate of mutation probability for linear'
+                             ' genomes')
+    parser.add_argument('--no_mutation_invalids',
+                        dest='NO_MUTATION_INVALIDS',
+                        default=None,
+                        action='store_true',
+                        help='Prevents invalid individuals from being '
+                             'generated by mutation.')
 
     # REPLACEMENT
-    parser.add_argument('--replacement', dest='REPLACEMENT', type=str,
+    parser.add_argument('--replacement',
+                        dest='REPLACEMENT',
+                        type=str,
                         help='Sets the replacement strategy, requires string '
                              'such as "generational" or direct path string '
-                             'such as "operators.replacement.generational"')
-    parser.add_argument('--elite_size', dest='ELITE_SIZE', type=int,
+                             'such as "operators.replacement.generational".')
+    parser.add_argument('--elite_size',
+                        dest='ELITE_SIZE',
+                        type=int,
                         help='Sets the number of elites to be used, requires '
-                             'int')
+                             'int value.')
 
     # PROBLEM SPECIFICS
-    parser.add_argument('--grammar_file', dest='GRAMMAR_FILE', type=str,
-                        help='Sets the grammar to be used, requires string')
-    parser.add_argument('--fitness_function', dest='FITNESS_FUNCTION',
-                        type=str, help='Sets the fitness function to be used. '
-                                       'Requires string such as "regression"')
-    parser.add_argument('--dataset', dest='DATASET', type=str,
+    parser.add_argument('--grammar_file',
+                        dest='GRAMMAR_FILE',
+                        type=str,
+                        help='Sets the grammar to be used, requires string.')
+    parser.add_argument('--fitness_function',
+                        dest='FITNESS_FUNCTION',
+                        type=str,
+                        help='Sets the fitness function to be used. '
+                             'Requires string such as "regression".')
+    parser.add_argument('--dataset',
+                        dest='DATASET',
+                        type=str,
                         help='For use with problems that use a dataset. '
                              'Requires string such as "Dow".')
-    parser.add_argument('--target', dest='TARGET', type=str,
+    parser.add_argument('--target',
+                        dest='TARGET',
+                        type=str,
                         help='For string match problem. Requires target '
                              'string.')
-    parser.add_argument('--experiment_name', dest='EXPERIMENT_NAME', type=str,
+    parser.add_argument('--experiment_name',
+                        dest='EXPERIMENT_NAME',
+                        type=str,
                         help='Optional parameter to save results in '
                              'results/[EXPERIMENT_NAME] folder. If not '
                              'specified then results are saved in default '
                              'results folder.')
-    parser.add_argument('--error_metric', dest='ERROR_METRIC', type=str,
+    parser.add_argument('--error_metric',
+                        dest='ERROR_METRIC',
+                        type=str,
                         help='Sets the error metric to be used with regression'
                              ' style problems. Requires string such as "mse" '
                              'or "rmse".')
     parser.add_argument('--extra_fitness_parameters',
-                        dest='EXTRA_FITNESS_PARAMETERS', type=str, help='ToDo')
+                        dest='EXTRA_FITNESS_PARAMETERS',
+                        type=str,
+                        help='Optional extra command line parameter for '
+                             'inclusion of any extra information required '
+                             'for user-specific runs. Can be whatever you '
+                             'want it to be.')
 
     # OPTIONS
-    parser.add_argument('--random_seed', dest='RANDOM_SEED', type=int,
-                        help='Sets the seed to be used, requires int value')
-    parser.add_argument('--debug', dest='DEBUG', default=None,
-                        action='store_true', help='Disables saving of all '
-                                                  'ancillary files.')
-    parser.add_argument('--verbose', dest='VERBOSE', default=None,
-                        action='store_true', help='Turns on the verbose output'
-                                                  ' of the program in terms of'
-                                                  ' command line and extra '
-                                                  'files')
-    parser.add_argument('--silent', dest='SILENT', default=None,
-                        action='store_true', help='Prevents any output from '
-                                                  'being printed to the '
-                                                  'command line.')
-    parser.add_argument('--save_all', dest='SAVE_ALL', default=None,
-                        action='store_true', help='Saves the best phenotypes '
-                                                  'at each generation.')
-    parser.add_argument('--save_plots', dest='SAVE_PLOTS', default=None,
-                        action='store_true', help='Saves plots for best '
-                                                  'fitness.')
+    parser.add_argument('--random_seed',
+                        dest='RANDOM_SEED',
+                        type=int,
+                        help='Sets the seed to be used, requires int value.')
+    parser.add_argument('--debug',
+                        dest='DEBUG',
+                        default=None,
+                        action='store_true',
+                        help='Disables saving of all ancillary files.')
+    parser.add_argument('--verbose',
+                        dest='VERBOSE',
+                        default=None,
+                        action='store_true',
+                        help='Turns on the verbose output of the program in '
+                             'terms of command line and extra files.')
+    parser.add_argument('--silent',
+                        dest='SILENT',
+                        default=None,
+                        action='store_true',
+                        help='Prevents any output from being printed to the '
+                             'command line.')
+    parser.add_argument('--save_all',
+                        dest='SAVE_ALL',
+                        default=None,
+                        action='store_true',
+                        help='Saves the best phenotypes at each generation.')
+    parser.add_argument('--save_plots',
+                        dest='SAVE_PLOTS',
+                        default=None,
+                        action='store_true',
+                        help='Saves plots for best fitness.')
     
     # STATE SAVING/LOADING
-    parser.add_argument('--save_state', dest='SAVE_STATE', default=None,
+    parser.add_argument('--save_state',
+                        dest='SAVE_STATE',
+                        default=None,
                         action='store_true',
                         help='Saves the state of the evolutionary run every '
                              'generation. You can specify how often you want '
                              'to save the state with the command '
                              '"--save_state_step".')
-    parser.add_argument('--save_state_step', dest='SAVE_STATE_STEP',
-                        default=None, type=int,
+    parser.add_argument('--save_state_step',
+                        dest='SAVE_STATE_STEP',
+                        default=None,
+                        type=int,
                         help='Specifies how often the state of the current '
                              'evolutionary run is saved (i.e. every n-th '
                              'generation). Requires int value.')
-    parser.add_argument('--load_state', dest='LOAD_STATE', type=str,
+    parser.add_argument('--load_state',
+                        dest='LOAD_STATE',
+                        type=str,
                         help='Load an evolutionary run from a saved state. '
                              'You must specify the full file path to the '
                              'desired state file. Note that state files have '
@@ -268,22 +365,31 @@ def parse_cmd_args(arguments):
     # that you cannot specify multiple caching options simultaneously,
     # only one at a time.
     caching_group = parser.add_mutually_exclusive_group()
-    caching_group.add_argument("--cache", dest='CACHE', action=CachingAction,
-                               CACHE=True, LOOKUP_FITNESS=True,
+    caching_group.add_argument("--cache",
+                               dest='CACHE',
+                               action=CachingAction,
+                               CACHE=True,
+                               LOOKUP_FITNESS=True,
                                help='Tracks unique phenotypes and is used to '
                                     'lookup duplicate fitnesses.')
-    caching_group.add_argument("--dont_lookup_fitness", dest='CACHE',
-                               action=CachingAction, LOOKUP_FITNESS=False,
+    caching_group.add_argument("--dont_lookup_fitness",
+                               dest='CACHE',
+                               action=CachingAction,
+                               LOOKUP_FITNESS=False,
                                help='Turns on the cache to track duplicate '
                                     'individuals, but does not use the cache '
                                     'to save fitness evaluations.')
-    caching_group.add_argument("--lookup_bad_fitness", dest='CACHE',
-                               action=CachingAction, LOOKUP_FITNESS=True,
+    caching_group.add_argument("--lookup_bad_fitness",
+                               dest='CACHE',
+                               action=CachingAction,
+                               LOOKUP_FITNESS=True,
                                LOOKUP_BAD_FITNESS=True,
                                help='Gives duplicate phenotypes a bad fitness '
                                     'when encountered, requires cache.')
-    caching_group.add_argument("--mutate_duplicates", dest='CACHE',
-                               action=CachingAction, LOOKUP_FITNESS=False,
+    caching_group.add_argument("--mutate_duplicates",
+                               dest='CACHE',
+                               action=CachingAction,
+                               LOOKUP_FITNESS=False,
                                MUTATE_DUPLICATES=True,
                                help='Replaces duplicate individuals with '
                                     'mutated versions. Requires cache.')
