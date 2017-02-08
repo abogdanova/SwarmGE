@@ -58,10 +58,13 @@ def get_stats(individuals, end=False):
 
     if end or params['VERBOSE'] or not params['DEBUG']:
 
-        # Time Stats
-        trackers.time_list.append(time() - stats['time_adjust'])
-        stats['time_taken'] = trackers.time_list[-1] - trackers.time_list[-2]
-        stats['total_time'] = trackers.time_list[-1] - trackers.time_list[0]
+        if not end:
+            # Time Stats
+            trackers.time_list.append(time() - stats['time_adjust'])
+            stats['time_taken'] = trackers.time_list[-1] - \
+                                  trackers.time_list[-2]
+            stats['total_time'] = trackers.time_list[-1] - \
+                                  trackers.time_list[0]
 
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
@@ -131,11 +134,13 @@ def get_stats(individuals, end=False):
         stats['best_ever'].fitness = stats['best_ever'].training_fitness
 
     # Save stats to list.
-    if params['VERBOSE'] or not params['DEBUG']:
+    if params['VERBOSE'] or not params['DEBUG'] and not end:
         trackers.stats_list.append(copy(stats))
 
     # Save stats to file.
     if not params['DEBUG']:
+        if stats['gen'] == 0:
+            save_stats_headers()
         save_stats_to_file(end)
         if params['SAVE_ALL']:
             save_best_ind_to_file(end, stats['gen'])
@@ -190,7 +195,7 @@ def save_stats_to_file(end=False):
         filename = path.join(params['FILE_PATH'], "stats.tsv")
         savefile = open(filename, 'a')
         for stat in sorted(stats.keys()):
-            savefile.write(str(stat) + "\t" + str(stats[stat]) + "\t")
+            savefile.write(str(stats[stat]) + "\t")
         savefile.write("\n")
         savefile.close()
 
@@ -317,4 +322,3 @@ def generate_folders_and_files():
                                     str(params['TIME_STAMP']))
 
     save_params_to_file()
-    save_stats_headers()
