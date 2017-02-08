@@ -2,13 +2,13 @@
 #Note on Regex Performance Improvement
 ------------
 
-This repo is a fork of PonyGE2 with a fitness function which measures runtime and functionality of regexs.
+This is a fork of PonyGE2 with a fitness function which measures runtime and functionality of regexs.
 
 E.g.
 
     $ python3.5 --parameters seedonly_regex_catastrophic_QT3TS_1.txt
 
- - codykenny@gmail.com
+ - If you're reading this, mail me - codykenny@gmail.com
 
 ------------
 #Introduction
