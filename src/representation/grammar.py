@@ -65,9 +65,14 @@ class Grammar(object):
         # combinations that can be created by a grammar at a range of depths.
         self.check_permutations()
         
-        # Set the minimum depth at which ramping can start where we can have
-        # unique solutions (no duplicates).
-        self.get_min_ramp_depth()
+        if params['MIN_INIT_TREE_DEPTH']:
+            # Set the minimum ramping tree depth from the command line.
+            self.min_ramp = params['MIN_INIT_TREE_DEPTH']
+        
+        else:
+            # Set the minimum depth at which ramping can start where we can
+            # have unique solutions (no duplicates).
+            self.get_min_ramp_depth()
             
     def read_bnf_file(self, file_name):
         """

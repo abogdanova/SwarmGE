@@ -142,6 +142,13 @@ where `[INT]` is an integer which specifies the number of generations. Higher
 numbers of generations can improve performance, but will lead to longer
 run-times.
 
+*__NOTE__ that in PonyGE2 the total number of generations refers to the*
+*number of generations over which evolution occurs, __NOT__ including*
+*initialisation. Thus, specifying 50 generations will mean 50 generations*
+*will be evolved. Since the initialised generation will be Generation 0,*
+*the total number of individuals evaluated across an entire evolutionary*
+*run will by __population x (generations + 1)__.*
+
 The typical breakdown of a population-based evolutionary algorithm is:
 
 1. Initialisation

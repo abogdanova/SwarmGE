@@ -21,10 +21,11 @@ params = {
         'EXPERIMENT_NAME': None,
 
         # Class of problem
-        'FITNESS_FUNCTION': "regression",
+        'FITNESS_FUNCTION': "supervised_learning",
         # "regression"
         # "string_match"
         # "classification"
+        # "supervised_learning"
 
         # Select problem dataset
         'DATASET': "Vladislavleva4",
@@ -39,6 +40,7 @@ params = {
         # "Dow.bnf"
         # "Banknote.bnf"
         # "letter.bnf"
+        # "supervised_learning.bnf"
 
         # Select error metric
         'ERROR_METRIC': None,
@@ -60,11 +62,14 @@ params = {
         'MAX_WRAPS': 0,
 
         # INITIALISATION
-        'INITIALISATION': "operators.initialisation.rhh",
+        'INITIALISATION': "operators.initialisation.PI_grow",
         # "operators.initialisation.uniform_genome"
         # "operators.initialisation.rhh"
+        # "operators.initialisation.PI_grow"
         'MAX_INIT_TREE_DEPTH': 10,
         # Set the maximum tree depth for initialisation.
+        'MIN_INIT_TREE_DEPTH': None,
+        # Set the minimum tree depth for initialisation.
 
         # SELECTION
         'SELECTION': "operators.selection.tournament",
@@ -82,6 +87,8 @@ params = {
         # "operators.crossover.fixed_onepoint",
         # "operators.crossover.subtree",
         'CROSSOVER_PROBABILITY': 0.75,
+        'NO_CROSSOVER_INVALIDS': False,
+        # Prevents crossover from generating invalids.
 
         # MUTATION
         'MUTATION': "operators.mutation.int_flip",
@@ -89,6 +96,8 @@ params = {
         # "operators.mutation.int_flip",
         'MUTATION_PROBABILITY': None,
         'MUTATION_EVENTS': 1,
+        'NO_MUTATION_INVALIDS': False,
+        # Prevents mutation from generating invalids.
 
         # REPLACEMENT
         'REPLACEMENT': "operators.replacement.generational",
@@ -247,21 +256,7 @@ def set_params(command_line_args):
         # Set the size of a generation
         params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - params[
             'ELITE_SIZE']
-    
-        # Set GENOME_OPERATIONS automatically for faster linear operations.
-        # TODO: there must be a cleaner way of doing this.
-        if params['MUTATION'] in ['operators.mutation.int_flip', 'int_flip'] \
-                and params['CROSSOVER'] in [
-                    'operators.crossover.fixed_onepoint',
-                    'operators.crossover.variable_onepoint',
-                    'operators.crossover.fixed_twopoint',
-                    'operators.crossover.variable_twopoint',
-                    'fixed_onepoint', 'variable_onepoint',
-                    'fixed_twopoint', 'variable_twopoint']:
-            params['GENOME_OPERATIONS'] = True
-        else:
-            params['GENOME_OPERATIONS'] = False
-            
+
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
         set_param_imports()
@@ -271,7 +266,14 @@ def set_params(command_line_args):
     
         # Initialise run lists and folders
         initialise_run_params()
-    
+
+        # Set GENOME_OPERATIONS automatically for faster linear operations.
+        if params['CROSSOVER'].representation == "linear" and \
+                params['MUTATION'].representation == "linear":
+            params['GENOME_OPERATIONS'] = True
+        else:
+            params['GENOME_OPERATIONS'] = False
+
         # Parse grammar file and set grammar class.
         params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
                                                 params['GRAMMAR_FILE']))
