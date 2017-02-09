@@ -10,7 +10,7 @@ from utilities.stats import trackers
 
 def check_python_version():
     """
-    Check the python version to ensure it is correct. PonyGE uses Python 3.
+    Check the python version to ensure it is correct. PonyGE uses Python 3.5
 
     :return: Nothing
     """

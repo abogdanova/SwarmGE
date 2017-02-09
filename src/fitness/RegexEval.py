@@ -7,6 +7,8 @@ from representation import individual
 from multiprocessing import Process, Queue
 # from multiprocessing.pool import ThreadPool
 
+# Author: Brendan Cody-Kenny - codykenny at gmail
+
 # http://stackoverflow.com/questions/24812253/how-can-i-capture-return-value-with-python-timeit-module/
 timeit.template = """
 def inner(_it, _timer{init}):
