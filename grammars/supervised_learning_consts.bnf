@@ -2,6 +2,6 @@
 	 	  (<e>-<e>) |
 		  (<e>*<e>) |
 		  aq(<e>,<e>) |
-		  x[<varidx>] |
-		  c[i]
-<varidx> ::= GE_RANGE:dataset_n_vars
+		  x[<idx>] |
+		  c[<idx>] # we allow limited number of constants: same as number of variables
+<idx> ::= GE_RANGE:dataset_n_vars
