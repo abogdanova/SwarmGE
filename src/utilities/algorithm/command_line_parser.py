@@ -185,6 +185,15 @@ def parse_cmd_args(arguments):
                         help='Specify the number of cores to be used for '
                              'multicore evaluation. Requires int.')
 
+    # OPERATOR OPTIONS
+    parser.add_argument('--within_used',
+                        dest='WITHIN_USED',
+                        default=None,
+                        action='store_true',
+                        help='Boolean flag for selecting whether or not '
+                             'mutation is confined to within the used portion '
+                             'of the genome. Default set to True.')
+    
     # CROSSOVER
     parser.add_argument('--crossover',
                         dest='CROSSOVER',

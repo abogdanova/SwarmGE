@@ -84,6 +84,11 @@ params = {
         'INVALID_SELECTION': False,
         # Allow for selection of invalid individuals during selection process.
 
+        # OPERATOR OPTIONS
+        'WITHIN_USED': True,
+        # Boolean flag for selecting whether or not mutation is confined to
+        # within the used portion of the genome. Default set to True.
+
         # CROSSOVER
         'CROSSOVER': "operators.crossover.variable_onepoint",
         # "operators.crossover.fixed_onepoint",

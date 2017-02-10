@@ -14,10 +14,13 @@ def mutation(pop):
     :return: A fully mutated population.
     """
 
+    print(params['MUTATION'].within_used)
+    quit()
+
     return list(map(params['MUTATION'], pop))
 
 
-def int_flip(ind, within_used=True):
+def int_flip(ind):
     """
     Mutate the genome of an individual by randomly choosing a new int with
     probability p_mut. Works per-codon. Mutation is performed over the
@@ -31,7 +34,7 @@ def int_flip(ind, within_used=True):
     """
 
     # Set effective genome length over which mutation will be performed.
-    if within_used:
+    if params['WITHIN_USED']:
         eff_length = min(len(ind.genome), ind.used_codons)
     else:
         eff_length = len(ind.genome)
@@ -56,7 +59,7 @@ def int_flip(ind, within_used=True):
     return new_ind
 
 
-def int_flip_per_ind(ind, within_used=True):
+def int_flip_per_ind(ind):
     """
     Mutate the genome of an individual by randomly choosing a new int with
     probability p_mut. Works per-individual. Mutation is performed over the
@@ -70,7 +73,7 @@ def int_flip_per_ind(ind, within_used=True):
     """
     
     # Set effective genome length over which mutation will be performed.
-    if within_used:
+    if params['WITHIN_USED']:
         eff_length = min(len(ind.genome), ind.used_codons)
     else:
         eff_length = len(ind.genome)

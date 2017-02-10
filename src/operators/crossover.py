@@ -65,7 +65,7 @@ def crossover(parents):
     return cross_pop
 
 
-def variable_onepoint(p_0, p_1, within_used=True):
+def variable_onepoint(p_0, p_1):
     """
     Given two individuals, create two children using one-point crossover and
     return them. A different point is selected on each genome for crossover
@@ -76,8 +76,6 @@ def variable_onepoint(p_0, p_1, within_used=True):
     
     :param p_0: Parent 0
     :param p_1: Parent 1
-    :param within_used: Boolean flag for selecting whether or not crossover
-    is performed within the used portion of the genome. Default set to True.
     :return: A list of crossed-over individuals.
     """
 
@@ -86,7 +84,7 @@ def variable_onepoint(p_0, p_1, within_used=True):
 
     # Uniformly generate crossover points. If within_used==True,
     # points will be within the used section.
-    if within_used:
+    if params['WITHIN_USED']:
         max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
     else:
         max_p_0, max_p_1 = len(genome_0), len(genome_1)
@@ -108,7 +106,7 @@ def variable_onepoint(p_0, p_1, within_used=True):
     return [ind_0, ind_1]
 
 
-def fixed_onepoint(p_0, p_1, within_used=True):
+def fixed_onepoint(p_0, p_1):
     """
     Given two individuals, create two children using one-point crossover and
     return them. The same point is selected on both genomes for crossover
@@ -118,8 +116,6 @@ def fixed_onepoint(p_0, p_1, within_used=True):
 
     :param p_0: Parent 0
     :param p_1: Parent 1
-    :param within_used: Boolean flag for selecting whether or not crossover
-    is performed within the used portion of the genome. Default set to True.
     :return: A list of crossed-over individuals.
     """
     
@@ -128,7 +124,7 @@ def fixed_onepoint(p_0, p_1, within_used=True):
     
     # Uniformly generate crossover points. If within_used==True,
     # points will be within the used section.
-    if within_used:
+    if params['WITHIN_USED']:
         max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
     else:
         max_p_0, max_p_1 = len(genome_0), len(genome_1)
@@ -150,7 +146,7 @@ def fixed_onepoint(p_0, p_1, within_used=True):
     return [ind_0, ind_1]
 
 
-def fixed_twopoint(p_0, p_1, within_used=True):
+def fixed_twopoint(p_0, p_1):
     """
     Given two individuals, create two children using two-point crossover and
     return them. The same points are selected on both genomes for crossover
@@ -160,8 +156,6 @@ def fixed_twopoint(p_0, p_1, within_used=True):
 
     :param p_0: Parent 0
     :param p_1: Parent 1
-    :param within_used: Boolean flag for selecting whether or not crossover
-    is performed within the used portion of the genome. Default set to True.
     :return: A list of crossed-over individuals.
     """
     
@@ -169,7 +163,7 @@ def fixed_twopoint(p_0, p_1, within_used=True):
 
     # Uniformly generate crossover points. If within_used==True, points will
     # be within the used section.
-    if within_used:
+    if params['WITHIN_USED']:
         max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
     else:
         max_p_0, max_p_1 = len(genome_0), len(genome_1)
@@ -192,7 +186,7 @@ def fixed_twopoint(p_0, p_1, within_used=True):
     return [ind_0, ind_1]
 
 
-def variable_twopoint(p_0, p_1, within_used=True):
+def variable_twopoint(p_0, p_1):
     """
     Given two individuals, create two children using two-point crossover and
     return them. Different points are selected on both genomes for crossover
@@ -202,8 +196,6 @@ def variable_twopoint(p_0, p_1, within_used=True):
 
     :param p_0: Parent 0
     :param p_1: Parent 1
-    :param within_used: Boolean flag for selecting whether or not crossover
-    is performed within the used portion of the genome. Default set to True.
     :return: A list of crossed-over individuals.
     """
     
@@ -211,7 +203,7 @@ def variable_twopoint(p_0, p_1, within_used=True):
     
     # Uniformly generate crossover points. If within_used==True, points will
     # be within the used section.
-    if within_used:
+    if params['WITHIN_USED']:
         max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
     else:
         max_p_0, max_p_1 = len(genome_0), len(genome_1)
