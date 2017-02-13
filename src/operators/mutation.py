@@ -14,9 +14,6 @@ def mutation(pop):
     :return: A fully mutated population.
     """
 
-    print(params['MUTATION'].within_used)
-    quit()
-
     return list(map(params['MUTATION'], pop))
 
 
