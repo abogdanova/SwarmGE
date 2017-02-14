@@ -30,7 +30,7 @@ def crossover(parents):
         ind_1 = inds_in[1].deep_copy()
 
         # Crossover cannot be performed on invalid individuals.
-        if ind_0.invalid or ind_1.invalid:
+        if not params['INVALID_SELECTION'] and ind_0.invalid or ind_1.invalid:
             s = "operators.crossover.crossover\nError: invalid individuals " \
                 "selected for crossover."
             raise Exception(s)
