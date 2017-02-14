@@ -56,11 +56,11 @@ params = {
         'TARGET': "ponyge_rocks",
 
         # Set max sizes of individuals
-        'MAX_TREE_DEPTH': 17,
+        'MAX_TREE_DEPTH': None,
         'MAX_TREE_NODES': None,
         'CODON_SIZE': 100000,
-        'MAX_INIT_GENOME_LENGTH': 200,
-        'MAX_GENOME_LENGTH': 500,
+        'MAX_INIT_GENOME_LENGTH': None,
+        'MAX_GENOME_LENGTH': None,
         'MAX_WRAPS': 0,
 
         # INITIALISATION
@@ -68,7 +68,7 @@ params = {
         # "operators.initialisation.uniform_genome"
         # "operators.initialisation.rhh"
         # "operators.initialisation.PI_grow"
-        'MAX_INIT_TREE_DEPTH': 10,
+        'MAX_INIT_TREE_DEPTH': None,
         # Set the maximum tree depth for initialisation.
         'MIN_INIT_TREE_DEPTH': None,
         # Set the minimum tree depth for initialisation.
@@ -209,7 +209,7 @@ def load_params(file_name):
             params[key] = value
 
 
-def set_params(command_line_args):
+def set_params(command_line_args, create_files=True):
     """
     This function parses all command line arguments specified by the user.
     If certain parameters are not set then defaults are used (e.g. random
@@ -287,7 +287,7 @@ def set_params(command_line_args):
         clean_stats.clean_stats()
 
         # Initialise run lists and folders
-        initialise_run_params()
+        initialise_run_params(create_files)
 
         # Set GENOME_OPERATIONS automatically for faster linear operations.
         if params['CROSSOVER'].representation == "linear" and \

@@ -24,7 +24,7 @@ def check_python_version():
         raise Exception(s)
 
 
-def initialise_run_params():
+def initialise_run_params(create_files):
     """
     Initialises all lists and trackers. Generates save folders and initial
     parameter files if debugging is not active.
@@ -56,7 +56,7 @@ def initialise_run_params():
     # Generate save folders and files
     if params['DEBUG']:
         print("Seed:\t", params['RANDOM_SEED'], "\n")
-    else:
+    elif create_files:
         generate_folders_and_files()
 
 
