@@ -21,7 +21,7 @@ params = {
         'EXPERIMENT_NAME': None,
 
         # Class of problem
-        'FITNESS_FUNCTION': "supervised_learning",
+        'FITNESS_FUNCTION': "regression",
         # "regression"
         # "string_match"
         # "classification"
