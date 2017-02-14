@@ -57,7 +57,7 @@ def parse_opts(command_line_args):
         opts, args = getopt.getopt(command_line_args[1:], "",
                                    ["help", "experiment_name=", "graph"])
     except getopt.GetoptError as err:
-        s = "stats.parse_stats.parse_opts\n" \
+        s = "scripts.parse_stats.parse_opts\n" \
             "Error: in order to parse stats you need to specify the location" \
             " of the target stats files.\n" \
             "       Run python parse_stats.py --help for more info."
@@ -65,7 +65,7 @@ def parse_opts(command_line_args):
         raise Exception(s)
 
     if not opts:
-        s = "stats.parse_stats.parse_opts\n" \
+        s = "scripts.parse_stats.parse_opts\n" \
             "Error: in order to parse stats you need to specify the location" \
             " of the target stats files.\n" \
             "       Run python parse_stats.py --help for more info."
@@ -78,7 +78,6 @@ def parse_opts(command_line_args):
         if opt == "--help":
             # Print help message.
             help_message()
-            # TODO: Find another way to stop the program here.
             exit()
         
         elif opt == "--experiment_name":
@@ -120,19 +119,20 @@ def parse_stats_from_runs(experiment_name, graph):
     # Since results files are not kept in source directory, need to escape
     # one folder.
     file_path = path.join(getcwd(), "..", "results")
-
+    
     # Check for use of experiment manager.
     if experiment_name:
         file_path = path.join(file_path, experiment_name)
     
     else:
-        s = "stats.parse_stats.parse_stats_from_runs\nError: " \
-            "experiment name not specified."
+        s = "scripts.parse_stats.parse_stats_from_runs\n" \
+            "Error: experiment name not specified."
         raise Exception(s)
     
     # Find list of all runs contained in the specified folder.
-    runs = [run for run in listdir(file_path) if "." not in run]
-
+    runs = [run for run in listdir(file_path) if
+            path.isdir(path.join(file_path, run))]
+    
     # Place to store the header for full stats file.
     header = ""
 
@@ -169,7 +169,7 @@ def parse_stats_from_runs(experiment_name, graph):
 
             except KeyError:
                 # The requested stat doesn't exist.
-                s = "stats.parse_stats.parse_stats_from_runs\nError: " \
+                s = "scripts.parse_stats.parse_stats_from_runs\nError: " \
                     "stat %s does not exist in run %s." % (stat, run)
                 raise Exception(s)
 
@@ -272,5 +272,6 @@ def save_average_plot_across_runs(filename):
 
 
 if __name__ == "__main__":
+    
     experiment_name, graph = parse_opts(sys.argv)
     parse_stats_from_runs(experiment_name, graph)
