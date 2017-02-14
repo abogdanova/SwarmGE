@@ -3,7 +3,6 @@ import scipy
 import re
 
 from algorithm.parameters import params
-from fitness.default_fitness import default_fitness
 from utilities.fitness.math_functions import plog, rlog, pdiv, psqrt, aq, ppow, psqrt2, ppow2
 
 

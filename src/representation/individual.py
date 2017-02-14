@@ -30,7 +30,7 @@ class Individual(object):
             # The individual does not need to be mapped.
             self.genome, self.tree = genome, ind_tree
 
-        self.fitness = default_fitness(params['FITNESS_FUNCTION'].maximise)
+        self.fitness = default_fitness()
         self.name = None
 
     def __lt__(self, other):
