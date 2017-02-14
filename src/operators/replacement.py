@@ -53,11 +53,11 @@ def steady_state(new_pop, old_pop):
     :return: The 'POPULATION_SIZE' new population.
     """
     
+    # Sort the original population
+    old_pop.sort(reverse=True)
+
     # Combine both populations
-    total_pop = old_pop + new_pop
-    
-    # Sort the combined population
-    total_pop.sort(reverse=True)
+    total_pop = old_pop[:-len(new_pop)] + new_pop
     
     # Return the top POPULATION_SIZE individuals of the combined population.
     return total_pop[:params['POPULATION_SIZE']]
