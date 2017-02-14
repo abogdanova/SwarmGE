@@ -31,8 +31,9 @@ def crossover(parents):
 
         # Crossover cannot be performed on invalid individuals.
         if ind_0.invalid or ind_1.invalid:
-            print("Error, invalid inds selected for crossover")
-            exit(2)
+            s = "operators.crossover.crossover\nError: invalid individuals " \
+                "selected for crossover."
+            raise Exception(s)
 
         # Perform crossover on ind_0 and ind_1.
         inds = params['CROSSOVER'](ind_0, ind_1)
