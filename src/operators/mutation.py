@@ -3,6 +3,7 @@ from random import randint, random, choice
 from algorithm.parameters import params
 from representation import individual
 from representation.derivation import generate_tree
+from utilities.representation.check_methods import check_ind
 
 
 def mutation(pop):
@@ -14,7 +15,29 @@ def mutation(pop):
     :return: A fully mutated population.
     """
 
-    return list(map(params['MUTATION'], pop))
+    # Initialise empty pop for mutated individuals.
+    new_pop = []
+    
+    # Iterate over entire population.
+    for ind in pop:
+        
+        # Perform mutation.
+        new_ind = params['MUTATION'](ind)
+        
+        # Check ind does not violate specified limits.
+        check = check_ind(new_ind, "mutation")
+        
+        while check:
+            # Perform mutation until the individual passess all tests.
+            new_ind = params['MUTATION'](ind)
+    
+            # Check ind does not violate specified limits.
+            check = check_ind(new_ind, "mutation")
+        
+        # Append mutated individual to population.
+        new_pop.append(new_ind)
+    
+    return new_pop
 
 
 def int_flip(ind):

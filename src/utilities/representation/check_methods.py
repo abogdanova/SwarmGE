@@ -1,13 +1,41 @@
-from algorithm import mapper
 from algorithm.parameters import params
 from representation import individual
 
 
-def check_ind(ind):
+def check_ind(ind, check):
     """
-    Checks all aspects of an individual to ensure everything is correct.
+    Check all shallow aspects of an individual to ensure everything is correct.
     
-    :param ind: An instance of the representation.individaul.Individual class.
+    :param ind: An individual to be checked.
+    :return: False if everything is ok, True if there is an issue.
+    """
+
+    if ind.invalid and \
+            ((check == "crossover" and params['NO_CROSSOVER_INVALIDS']) or
+             (check == "mutation" and params['NO_MUTATION_INVALIDS'])):
+        # We have an invalid.
+        return True
+
+    elif params['MAX_TREE_DEPTH'] and ind.depth > params['MAX_TREE_DEPTH']:
+        # Tree is too deep.
+        return True
+
+    elif params['MAX_TREE_NODES'] and ind.nodes > params['MAX_TREE_NODES']:
+        # Tree has too many nodes.
+        return True
+
+    elif params['MAX_GENOME_LENGTH'] and len(ind.genome) > \
+            params['MAX_GENOME_LENGTH']:
+        # Genome is too long.
+        return True
+
+
+def check_genome_mapping(ind):
+    """
+    Re-maps individual to ensure genome is correct, i.e. that it maps to the
+    correct phenotype and individual.
+    
+    :param ind: An instance of the representation.individual.Individual class.
     :return: Nothing.
     """
     
@@ -34,80 +62,12 @@ def check_ind(ind):
     if attributes_0 != attributes_1:
         s = "utilities.representation.check_methods.check_ind\n" \
             "Error: Individual attributes do not match correct " \
-            "attributes.\n       Original attributes:\n       %s" \
-            "\n       Correct attributes:\n       %s" \
+            "attributes.\n" \
+            "       Original attributes:\n" \
+            "       %s\n" \
+            "       Correct attributes:\n" \
+            "       %s" \
             % (attributes_0, attributes_1)
-        raise Exception(s)
-
-
-def print_dual_info(p1, g1, n1, i1, d1, c1,
-                    p2, n2, i2, d2, c2):
-    """Print information about two sets of data."""
-    
-    print("Phenotypes\n  ", p1, "\n  ", p2)
-    print("Nodes\n  ", n1, "\n  ", n2)
-    print("Depth\n  ", d1, "\n  ", d2)
-    print("Invalid\n  ", i1, "\n  ", i2)
-    print("Used Codons\n  ", c1, "\n  ", c2)
-    print("Genome\n  ", g1)
-
-
-def check_mapping(genome):
-    """
-    Checks both mapping methods to ensure a single genome gives the same
-    results. Checks mapper.map_tree_from_genome and mapper.map_ind_from_genome.
-    
-    :param genome: the genome of an individual
-    :return: Nothing.
-    """
-
-    p0, g0, t0, n0, i0, d0, c0 = mapper.map_tree_from_genome(genome)
-    p1, g1, t1, n1, i1, d1, c1 = mapper.map_ind_from_genome(genome)
-
-    if not i0:
-        if i0 == i1:
-            # Both individuals are valid.
-            
-            if p1 != p0:
-                s = "utilities.representation.check_methods.check_mapping" \
-                    "\nError: Phenotypes don't match."
-                print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                raise Exception(s)
-            
-            elif n1 != n0:
-                s = "utilities.representation.check_methods.check_mapping" \
-                    "\nError: Nodes don't match."
-                print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                raise Exception(s)
-            
-            elif d1 != d0:
-                s = "utilities.representation.check_methods.check_mapping" \
-                    "\nError: Tree depth doesn't match."
-                print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                raise Exception(s)
-            
-            elif c1 != c0:
-                s = "utilities.representation.check_methods.check_mapping" \
-                    "\nError: Used codons don't match."
-                print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                raise Exception(s)
-            
-            elif d1 > params['MAX_TREE_DEPTH']:
-                s = "utilities.representation.check_methods.check_mapping" \
-                    "\nError: Max tree depth limit exceeded."
-                print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                raise Exception(s)
-        
-        else:
-            s = "utilities.representation.check_methods.check_mapping" \
-                "\nError: Invalid doesn't match."
-            print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-            raise Exception(s)
-
-    else:
-        s = "utilities.representation.check_methods.check_mapping" \
-            "\nError: Individual is not valid."
-        print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
         raise Exception(s)
 
 

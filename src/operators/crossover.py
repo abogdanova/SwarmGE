@@ -2,6 +2,7 @@ from random import randint, random, sample, choice
 
 from algorithm.parameters import params
 from representation import individual
+from utilities.representation.check_methods import check_ind
 
 
 def crossover(parents):
@@ -62,26 +63,12 @@ def crossover_inds(parent_0, parent_1):
     # Perform crossover on ind_0 and ind_1.
     inds = params['CROSSOVER'](ind_0, ind_1)
 
-    if params['NO_CROSSOVER_INVALIDS'] and \
-            any([ind.invalid for ind in inds]):
-        # We have an invalid, need to do crossover again.
-        pass
+    # Check each individual is ok (i.e. does not violate specified limits).
+    checks = [check_ind(ind, "crossover") for ind in inds]
 
-    elif params['MAX_TREE_DEPTH'] and \
-            any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
-        # Tree is too deep, need to do crossover again.
-        pass
-
-    elif params['MAX_TREE_NODES'] and \
-            any([ind.nodes > params['MAX_TREE_NODES'] for ind in inds]):
-        # Tree has too many nodes, need to do crossover again.
-        pass
-
-    elif params['MAX_GENOME_LENGTH'] and \
-            any([len(ind.genome) > params['MAX_GENOME_LENGTH'] for ind in
-                 inds]):
-        # Genome is too long, need to do crossover again.
-        pass
+    if any(checks):
+        # An individual violates a limit.
+        return None
 
     else:
         # Crossover was successful, return crossed-over individuals.
