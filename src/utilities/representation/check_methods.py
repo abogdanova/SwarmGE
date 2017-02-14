@@ -32,11 +32,12 @@ def check_ind(ind):
     attributes_0['tree'], attributes_1['tree'] = None, None
     
     if attributes_0 != attributes_1:
-        print("Error: utilities.check_methods.check_ind."
-              "Individual attributes do not match correct attributes.")
-        print("Original attributes:\n", attributes_0)
-        print("Correct attributes:\n", attributes_1)
-        quit()
+        s = "utilities.representation.check_methods.check_ind\n" \
+            "Error: Individual attributes do not match correct " \
+            "attributes.\n       Original attributes:\n       %s" \
+            "\n       Correct attributes:\n       %s" \
+            % (attributes_0, attributes_1)
+        raise Exception(s)
 
 
 def print_dual_info(p1, g1, n1, i1, d1, c1,
@@ -68,46 +69,46 @@ def check_mapping(genome):
             # Both individuals are valid.
             
             if p1 != p0:
-                print("Error: utilities.check_methods.check_mapping."
-                      "Phenotypes don't match")
+                s = "utilities.representation.check_methods.check_mapping" \
+                    "\nError: Phenotypes don't match."
                 print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                quit()
+                raise Exception(s)
             
             elif n1 != n0:
-                print("Error: utilities.check_methods.check_mapping."
-                      "Nodes don't match")
+                s = "utilities.representation.check_methods.check_mapping" \
+                    "\nError: Nodes don't match."
                 print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                quit()
+                raise Exception(s)
             
             elif d1 != d0:
-                print("Error: utilities.check_methods.check_mapping."
-                      "Tree depth doesn't match")
+                s = "utilities.representation.check_methods.check_mapping" \
+                    "\nError: Tree depth doesn't match."
                 print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                quit()
+                raise Exception(s)
             
             elif c1 != c0:
-                print("Error: utilities.check_methods.check_mapping."
-                      "Used codons don't match")
+                s = "utilities.representation.check_methods.check_mapping" \
+                    "\nError: Used codons don't match."
                 print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                quit()
+                raise Exception(s)
             
             elif d1 > params['MAX_TREE_DEPTH']:
-                print("Error: utilities.check_methods.check_mapping."
-                      "Max tree depth limit exceeded")
+                s = "utilities.representation.check_methods.check_mapping" \
+                    "\nError: Max tree depth limit exceeded."
                 print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-                quit()
+                raise Exception(s)
         
         else:
-            print("Error: utilities.check_methods.check_mapping."
-                  "Invalid doesn't match.")
+            s = "utilities.representation.check_methods.check_mapping" \
+                "\nError: Invalid doesn't match."
             print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-            quit()
+            raise Exception(s)
 
     else:
-        print("Error: utilities.check_methods.check_mapping."
-              "Individual is not valid.")
+        s = "utilities.representation.check_methods.check_mapping" \
+            "\nError: Individual is not valid."
         print_dual_info(p0, g0, n0, i0, d0, c0, p1, n1, i1, d1, c1)
-        quit()
+        raise Exception(s)
 
 
 def check_genome_from_tree(ind_tree):
@@ -124,11 +125,10 @@ def check_genome_from_tree(ind_tree):
         # This node has children and thus must have an associated codon.
         
         if not ind_tree.codon:
-            print("Error: "
-                  "utilities.check_methods.check_genome_from_tree. "
-                  "Node with children has no codon.")
-            print(ind_tree.children)
-            quit()
+            s = "utilities.check_methods.check_genome_from_tree\n" \
+                "Error: Node with children has no codon.\n" \
+                "       %s" % (str(ind_tree.children))
+            raise Exception(s)
         
         # Check production choices for node root.
         productions = params['BNF_GRAMMAR'].rules[ind_tree.root]
@@ -147,12 +147,11 @@ def check_genome_from_tree(ind_tree):
         
         # Match production roots with children roots.
         if roots != prods:
-            print("Error: "
-                  "utilities.check_methods.check_genome_from_tree. "
-                  "Codons are incorrect for given tree.")
-            print("Codon productions:\t", prods)
-            print("Actual children:  \t", roots)
-            quit()
+            s = "utilities.check_methods.check_genome_from_tree\n" \
+                "Error: Codons are incorrect for given tree.\n" \
+                "       Codon productions:\t%s\n       " \
+                "       Actual children:\t%s" % (str(prods), str(roots))
+            raise Exception(s)
     
     for kid in ind_tree.children:
         # Recurse over all children.

@@ -50,9 +50,10 @@ def rhh(size):
     elif not depths:
         # If we have no depths to ramp from, then params['MAX_INIT_DEPTH'] is
         # set too low for the specified grammar.
-        print("Error: Maximum initialisation depth too low for specified "
-              "grammar.")
-        quit()
+        s = "operators.initialisation.rhh\n" \
+            "Error: Maximum initialisation depth too low for specified " \
+            "grammar."
+        raise Exception(s)
 
     else:
         if size % 2:
@@ -138,9 +139,10 @@ def PI_grow(size):
     elif not depths:
         # If we have no depths to ramp from, then params['MAX_INIT_DEPTH'] is
         # set too low for the specified grammar.
-        print("Error: Maximum initialisation depth too low for specified "
-              "grammar.")
-        quit()
+        s = "operators.initialisation.PI_grow\n" \
+            "Error: Maximum initialisation depth too low for specified " \
+            "grammar."
+        raise Exception(s)
 
     else:
         if size < len(depths):

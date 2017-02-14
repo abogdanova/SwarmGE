@@ -185,10 +185,10 @@ def load_params(file_name):
     try:
         open(file_name, "r")
     except FileNotFoundError:
-        print("Error: Parameters file not found. Ensure file\n"
-              "       extension is specified, e.g. "
-              "'regression.txt'.")
-        quit()
+        s = "algorithm.paremeters.load_params\n" \
+            "Error: Parameters file not found.\n" \
+            "       Ensure file extension is specified, e.g. 'regression.txt'."
+        raise Exception(s)
 
     with open(file_name, 'r') as parameters:
         # Read the whole parameters file.

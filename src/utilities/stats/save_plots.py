@@ -60,8 +60,9 @@ def save_plot_from_file(filename, stat_name):
     try:
         stat = list(data[stat_name])
     except KeyError:
-        print("\nError: stat", stat_name, "does not exist")
-        quit()
+        s = "utilities.stats.save_plots.save_plot_from_file\n" \
+            "Error: stat %s does not exist" % stat_name
+        raise Exception(s)
 
     # Plot the data
     fig = plt.figure()

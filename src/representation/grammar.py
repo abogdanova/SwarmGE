@@ -437,9 +437,10 @@ class Grammar(object):
         if depth < self.min_path:
             # There is a bug somewhere that is looking for a tree smaller than
             # any we can create
-            print("Error: cannot check permutations for tree smaller than the "
-                  "minimum size")
-            quit()
+            s = "representation.grammar.Grammar.check_all_permutations\n" \
+                "Error: cannot check permutations for tree smaller than the " \
+                "minimum size."
+            raise Exception(s)
         
         if depth in self.permutations.keys():
             # We have already calculated the permutations at the requested

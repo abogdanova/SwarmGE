@@ -60,10 +60,10 @@ def parse_cmd_args(arguments):
 
         def __call__(self, parser, namespace, value, option_string=None):
             if not 0 <= float(value) <= 1:
-                print("\nError: parameter '", option_string,
-                      "' outside allowed range [0:1]. "
-                      "Value given:", value)
-                quit()
+                s = "utilities.algorithm.command_line_parser.FloatAction\n" \
+                    "Error: parameter %s outside allowed range [0:1].\n" \
+                    "       Value given: %s" % (option_string, value)
+                raise Exception(s)
             else:
                 setattr(namespace, self.dest, float(value))
 
