@@ -229,10 +229,13 @@ def set_params(command_line_args):
     from utilities.stats import trackers, clean_stats
 
     cmd_args, unknown = parser.parse_cmd_args(command_line_args)
+    
     if unknown:
-        s = """Unknown parameters: %s
-You may wish to check the spelling, add code to recognise this parameter,
-or use --extra_fitness_parameters""" % str(unknown)
+        # We currently do not parse unknown parameters. Raise error.
+        s = "algorithm.parameters.set_params\nError: " \
+            "unknown parameters: %s\nYou may wish to check the spelling, " \
+            "add code to recognise this parameter, or use " \
+            "--extra_fitness_parameters" % str(unknown)
         raise Exception(s)
 
 
