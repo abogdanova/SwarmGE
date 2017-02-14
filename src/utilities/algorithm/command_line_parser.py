@@ -396,7 +396,7 @@ def parse_cmd_args(arguments):
                                action=CachingAction,
                                CACHE=True,
                                LOOKUP_FITNESS=False,
-                               help='Turns on the cache to track duplicate '
+                               help='Uses cache to track duplicate '
                                     'individuals, but does not use the cache '
                                     'to save fitness evaluations.')
     caching_group.add_argument("--lookup_bad_fitness",
@@ -406,7 +406,7 @@ def parse_cmd_args(arguments):
                                LOOKUP_FITNESS=False,
                                LOOKUP_BAD_FITNESS=True,
                                help='Gives duplicate phenotypes a bad fitness '
-                                    'when encountered, requires cache.')
+                                    'when encountered. Uses cache.')
     caching_group.add_argument("--mutate_duplicates",
                                dest='CACHE',
                                action=CachingAction,
@@ -414,7 +414,7 @@ def parse_cmd_args(arguments):
                                LOOKUP_FITNESS=False,
                                MUTATE_DUPLICATES=True,
                                help='Replaces duplicate individuals with '
-                                    'mutated versions. Requires cache.')
+                                    'mutated versions. Uses cache.')
 
     # Parse command line arguments using all above information.
     args, unknown = parser.parse_known_args(arguments)
