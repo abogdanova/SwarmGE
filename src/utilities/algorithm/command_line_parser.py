@@ -372,24 +372,29 @@ def parse_cmd_args(arguments):
 
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, 'CACHE', self.CACHE)
-            setattr(namespace, 'LOOKUP_FITNESS', self.LOOKUP_FITNESS)
-            setattr(namespace, 'LOOKUP_BAD_FITNESS', self.LOOKUP_BAD_FITNESS)
-            setattr(namespace, 'MUTATE_DUPLICATES', self.MUTATE_DUPLICATES)
+            if 'LOOKUP_FITNESS' not in namespace or getattr(namespace, 'LOOKUP_FITNESS') is not False:
+                # able to overwrite if True or None
+                setattr(namespace, 'LOOKUP_FITNESS', self.LOOKUP_FITNESS)
+            if self.LOOKUP_BAD_FITNESS and 'LOOKUP_BAD_FITNESS' not in namespace:
+                setattr(namespace, 'LOOKUP_BAD_FITNESS', self.LOOKUP_BAD_FITNESS)
+            if self.MUTATE_DUPLICATES and 'MUTATE_DUPLICATES' not in namespace:
+                setattr(namespace, 'MUTATE_DUPLICATES', self.MUTATE_DUPLICATES)
 
     # Generate a mutually exclusive group for caching options. This means
     # that you cannot specify multiple caching options simultaneously,
     # only one at a time.
+    parser.add_argument("--cache",
+                        dest='CACHE',
+                        action=CachingAction,
+                        CACHE=True,
+                        LOOKUP_FITNESS=True,
+                        help='Tracks unique phenotypes and is used to '
+                             'lookup duplicate fitnesses.')
     caching_group = parser.add_mutually_exclusive_group()
-    caching_group.add_argument("--cache",
-                               dest='CACHE',
-                               action=CachingAction,
-                               CACHE=True,
-                               LOOKUP_FITNESS=True,
-                               help='Tracks unique phenotypes and is used to '
-                                    'lookup duplicate fitnesses.')
     caching_group.add_argument("--dont_lookup_fitness",
                                dest='CACHE',
                                action=CachingAction,
+                               CACHE=True,
                                LOOKUP_FITNESS=False,
                                help='Turns on the cache to track duplicate '
                                     'individuals, but does not use the cache '
@@ -397,13 +402,15 @@ def parse_cmd_args(arguments):
     caching_group.add_argument("--lookup_bad_fitness",
                                dest='CACHE',
                                action=CachingAction,
-                               LOOKUP_FITNESS=True,
+                               CACHE=True,
+                               LOOKUP_FITNESS=False,
                                LOOKUP_BAD_FITNESS=True,
                                help='Gives duplicate phenotypes a bad fitness '
                                     'when encountered, requires cache.')
     caching_group.add_argument("--mutate_duplicates",
                                dest='CACHE',
                                action=CachingAction,
+                               CACHE=True,
                                LOOKUP_FITNESS=False,
                                MUTATE_DUPLICATES=True,
                                help='Replaces duplicate individuals with '
