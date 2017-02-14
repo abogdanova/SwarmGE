@@ -18,52 +18,74 @@ def crossover(parents):
 
     # Initialise an empty population.
     cross_pop = []
+    
     while len(cross_pop) < params['GENERATION_SIZE']:
         
         # Randomly choose two parents from the parent population.
         inds_in = sample(parents, 2)
 
-        # Create copies of the original parents. This is necessary as the
-        # original parents remain in the parent population and changes will
-        # affect the originals unless they are cloned.
-        ind_0 = inds_in[0].deep_copy()
-        ind_1 = inds_in[1].deep_copy()
-
-        # Crossover cannot be performed on invalid individuals.
-        if not params['INVALID_SELECTION'] and ind_0.invalid or ind_1.invalid:
-            s = "operators.crossover.crossover\nError: invalid individuals " \
-                "selected for crossover."
-            raise Exception(s)
-
-        # Perform crossover on ind_0 and ind_1.
-        inds = params['CROSSOVER'](ind_0, ind_1)
+        # Perform crossover on chosen parents.
+        inds_out = crossover_inds(inds_in[0], inds_in[1])
         
-        if params['NO_CROSSOVER_INVALIDS'] and \
-                any([ind.invalid for ind in inds]):
-            # We have an invalid, need to do crossover again.
-            pass
-        
-        elif params['MAX_TREE_DEPTH'] and \
-                any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
-            # Tree is too deep, need to do crossover again.
-            pass
-        
-        elif params['MAX_TREE_NODES'] and \
-                any([ind.nodes > params['MAX_TREE_NODES'] for ind in inds]):
-            # Tree has too many nodes, need to do crossover again.
-            pass
-        
-        elif params['MAX_GENOME_LENGTH'] and \
-                any([len(ind.genome) > params['MAX_GENOME_LENGTH'] for ind in
-                     inds]):
-            # Genome is too long, need to do crossover again.
+        if inds_out is None:
+            # Crossover failed.
             pass
         
         else:
-            # Crossover was successful, extend the new population.
-            cross_pop.extend(inds)
+            # Extend the new population.
+            cross_pop.extend(inds_out)
 
     return cross_pop
+
+
+def crossover_inds(parent_0, parent_1):
+    """
+    Perform crossover on two selected individuals.
+    
+    :param parent_0: Parent 0 selected for crossover.
+    :param parent_1: Parent 1 selected for crossover.
+    :return: Two crossed-over individuals.
+    """
+
+    # Create copies of the original parents. This is necessary as the
+    # original parents remain in the parent population and changes will
+    # affect the originals unless they are cloned.
+    ind_0 = parent_0.deep_copy()
+    ind_1 = parent_1.deep_copy()
+
+    # Crossover cannot be performed on invalid individuals.
+    if not params['INVALID_SELECTION'] and ind_0.invalid or ind_1.invalid:
+        s = "operators.crossover.crossover\nError: invalid individuals " \
+            "selected for crossover."
+        raise Exception(s)
+
+    # Perform crossover on ind_0 and ind_1.
+    inds = params['CROSSOVER'](ind_0, ind_1)
+
+    if params['NO_CROSSOVER_INVALIDS'] and \
+            any([ind.invalid for ind in inds]):
+        # We have an invalid, need to do crossover again.
+        pass
+
+    elif params['MAX_TREE_DEPTH'] and \
+            any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
+        # Tree is too deep, need to do crossover again.
+        pass
+
+    elif params['MAX_TREE_NODES'] and \
+            any([ind.nodes > params['MAX_TREE_NODES'] for ind in inds]):
+        # Tree has too many nodes, need to do crossover again.
+        pass
+
+    elif params['MAX_GENOME_LENGTH'] and \
+            any([len(ind.genome) > params['MAX_GENOME_LENGTH'] for ind in
+                 inds]):
+        # Genome is too long, need to do crossover again.
+        pass
+
+    else:
+        # Crossover was successful, return crossed-over individuals.
+        return inds
 
 
 def variable_onepoint(p_0, p_1):

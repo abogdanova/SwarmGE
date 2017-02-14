@@ -1,5 +1,8 @@
 from fitness.evaluation import evaluate_fitness
 from algorithm.parameters import params
+from operators.mutation import mutation
+from operators.crossover import crossover_inds
+from operators.selection import selection
 
 
 def replacement(new_pop, old_pop):
@@ -62,62 +65,30 @@ def steady_state(individuals):
     while ind_counter < params['POPULATION_SIZE']:
         
         # Select parents from the original population.
-        parents = params['SELECTION'](individuals)
+        parents = selection(individuals)
 
-        # Create copies of the original parents. This is necessary as the
-        # original parents remain in the parent population and changes will
-        # affect the originals unless they are cloned.
-        ind_0 = parents[0].deep_copy()
-        ind_1 = parents[1].deep_copy()
-
-        # Crossover cannot be performed on invalid individuals.
-        if not params['INVALID_SELECTION'] and ind_0.invalid or ind_1.invalid:
-            s = "operators.crossover.crossover\nError: invalid individuals " \
-                "selected for crossover."
-            raise Exception(s)
-
-        # Perform crossover on ind_0 and ind_1.
-        inds = params['CROSSOVER'](ind_0, ind_1)
-
-        if params['NO_CROSSOVER_INVALIDS'] and \
-                any([ind.invalid for ind in inds]):
-            # We have an invalid, need to do crossover again.
-            pass
-
-        elif params['MAX_TREE_DEPTH'] and \
-                any([ind.depth > params['MAX_TREE_DEPTH'] for ind in inds]):
-            # Tree is too deep, need to do crossover again.
-            pass
-
-        elif params['MAX_TREE_NODES'] and \
-                any([ind.nodes > params['MAX_TREE_NODES'] for ind in inds]):
-            # Tree has too many nodes, need to do crossover again.
-            pass
-
-        elif params['MAX_GENOME_LENGTH'] and \
-                any([len(ind.genome) > params['MAX_GENOME_LENGTH'] for ind in
-                     inds]):
-            # Genome is too long, need to do crossover again.
-            pass
-    
-        # Initialise empty pop for mutation
-        new_pop = []
+        # Perform crossover on selected parents.
+        cross_pop = crossover_inds(parents[0], parents[1])
         
-        for ind in inds:
-            # Mutate each individual.
-            new_pop.append(params['MUTATION'](ind))
-    
-        # Evaluate the fitness of the new population.
-        new_pop = evaluate_fitness(new_pop)
+        if cross_pop is None:
+            # Crossover failed.
+            pass
 
-        # Sort the original population
-        individuals.sort(reverse=True)
-
-        # Combine both populations
-        total_pop = individuals[:-len(new_pop)] + new_pop
+        else:
+            # Mutate the new population.
+            new_pop = mutation(cross_pop)
+        
+            # Evaluate the fitness of the new population.
+            new_pop = evaluate_fitness(new_pop)
     
-        # Increment the ind counter
-        ind_counter += params['GENERATION_SIZE']
+            # Sort the original population
+            individuals.sort(reverse=True)
+    
+            # Combine both populations
+            total_pop = individuals[:-len(new_pop)] + new_pop
+        
+            # Increment the ind counter
+            ind_counter += params['GENERATION_SIZE']
 
     # Return the combined population.
     return total_pop
