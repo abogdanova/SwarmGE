@@ -263,14 +263,21 @@ def set_params(command_line_args):
         setattr(trackers, "state_individuals", individuals)
 
     else:
-        # Elite size is set to either 1 or 1% of the population size, whichever is
-        # bigger if no elite size is previously set.
-        if params['ELITE_SIZE'] is None:
-            params['ELITE_SIZE'] = return_percent(1, params['POPULATION_SIZE'])
-
-        # Set the size of a generation
-        params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - params[
-            'ELITE_SIZE']
+        if params['REPLACEMENT'].split(".")[-1] == "steady_state":
+            # Set steady state step and replacement.
+            params['STEP'] = "steady_state_step"
+            params['GENERATION_SIZE'] = 2
+        
+        else:
+            # Elite size is set to either 1 or 1% of the population size,
+            # whichever is bigger if no elite size is previously set.
+            if params['ELITE_SIZE'] is None:
+                params['ELITE_SIZE'] = return_percent(1, params[
+                    'POPULATION_SIZE'])
+    
+            # Set the size of a generation
+            params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - \
+                                        params['ELITE_SIZE']
 
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.

@@ -29,7 +29,7 @@ def help_message():
                ["\t--experiment_name:", "The name of the containing folder in "
                                         "which target runs are saved, e.g. "
                                         "in /results/[EXPERIMENT_NAME]."],
-               ["\t--graph:", "Saves a .pdf figure of each stat specified."]]
+               ["\t--graph:", "Saves a .pdf figure of each stat."]]
 
     # This simply justifies the print statement such that it is visually
     # pleasing to look at.
