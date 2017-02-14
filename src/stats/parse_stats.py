@@ -57,17 +57,19 @@ def parse_opts(command_line_args):
         opts, args = getopt.getopt(command_line_args[1:], "",
                                    ["help", "experiment_name=", "graph"])
     except getopt.GetoptError as err:
-        print("In order to parse stats you need to specify the location of the"
-              " target stats files and a list of desired stats to parse. \n",
-              "Run python parse_stats.py --help for more info")
+        s = "stats.parse_stats.parse_opts\nError: " \
+            "in order to parse stats you need to specify the location of the" \
+            " target stats files. \nRun python parse_stats.py --help for " \
+            "more info."
         print(str(err))
-        exit(2)
+        raise Exception(s)
 
     if not opts:
-        print("In order to parse stats you need to specify the location of the"
-              " target stats files and a list of desired stats to parse. \n",
-              "Run python parse_stats.py --help for more info")
-        exit(2)
+        s = "stats.parse_stats.parse_opts\nError: " \
+            "in order to parse stats you need to specify the location of the" \
+            " target stats files. \nRun python parse_stats.py --help for " \
+            "more info."
+        raise Exception(s)
 
     experiment_name, graph = None, False
     
@@ -76,6 +78,7 @@ def parse_opts(command_line_args):
         if opt == "--help":
             # Print help message.
             help_message()
+            # TODO: Find another way to stop the program here.
             exit()
         
         elif opt == "--experiment_name":
