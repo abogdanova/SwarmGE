@@ -126,6 +126,7 @@ These steps are expanded on in detail hereafter.
 There are two main ways to initialise a GE individual: by generating a genome, or by generating a derivation tree. Generation of a genome can only be done by creating a random genome string, and as such the use of genome initialisation cannot guarantee control over any aspects of the initial population. Population initialisation via derivation tree generation on the other hand allows for fine control over many aspects of the initial population, e.g. depth limits. Unlike with genome initialisation,there are a number of different ways to initialise a population using derivation trees. Currently implemented methods are detailed below. 
 
 ###Genome
+==========
 
 ####Random
 
