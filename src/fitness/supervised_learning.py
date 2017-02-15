@@ -16,9 +16,12 @@ class supervised_learning:
     labels).
 
     We can pass in the error metric and the dataset via the params
-    dictionary. Of error metrics, MSE is suitable for regression,
+    dictionary. Of error metrics, eg RMSE is suitable for regression,
     while F1-score, hinge-loss and others are suitable for
     classification.
+
+    This is an abstract class which exists just to be subclassed:
+    should not be instantiated.
     """
 
     maximise = False
