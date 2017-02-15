@@ -61,6 +61,11 @@ def mapper(genome, tree):
             depth += 1  # because get_tree_info under-counts by 1.
 
             genome = _input
+    
+    if params['BNF_GRAMMAR'].python_mode and not invalid:
+        # Grammar contains python code
+
+        phenotype = python_filter(phenotype)
 
     return phenotype, genome, tree, nodes, invalid, depth, used_codons
 
@@ -170,11 +175,6 @@ def map_ind_from_genome(genome):
         # solution.
         return None, genome, None, nodes, True, max_depth, used_input
 
-    if bnf_grammar.python_mode:
-        # Grammar contains python code
-
-        output = python_filter(output)
-
     return output, genome, None, nodes, False, max_depth, used_input
 
 
@@ -196,11 +196,6 @@ def map_tree_from_genome(genome):
 
     # Build phenotype.
     phenotype = "".join(output)
-
-    if params['BNF_GRAMMAR'].python_mode:
-        # Grammar contains python code
-
-        phenotype = python_filter(phenotype)
 
     if invalid:
         # Return "None" phenotype if invalid
