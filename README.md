@@ -191,6 +191,31 @@ By default in PonyGE, initialisation ramping _begins_ at a depth where sufficien
 
 or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
 
+####Position Independent Grow (PI Grow)
+
+Position Independent Grow (PI Grow) initialisation in Grammatical Evolution mirrors Sensible/Ramped Half-Half initialisation by initialising a population of individuals over a ramped range of depths. However, while RHH uses two separate methods `Full` and `Grow` to generate pairs of individuals at each depth, PI Grow eschews the `Full` component and only uses the `Grow` aspect. There are two further differences between traditional GP `Grow` and PI Grow [Fagan *et al.*, 2016]:
+
+1. At least one branch of the derivation tree is forced to the specified maximum depth in PI Grow, and
+2. Non-terminals are expanded in random (i.e. position independent) order rather than the left-first derivation of traditional mappers. 
+
+Activate with:
+
+    --initialisation PI_grow
+
+or by setting the parameter `INITIALISATION` in either a parameters file or in the params dictionary.
+
+As with RHH initialisation, PI Grow initialisation generates individuals for a ramped range of depths. The maximum initialisation depth is set with the flag:
+
+    --max_init_tree_depth [INT]
+
+or by setting the parameter `MAX_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum depth to which derivation trees are to be initialised. The default value is set at 10.
+
+By default in PonyGE, initialisation ramping _begins_ at a depth where sufficient unique solutions can be generated for the number of required solutions at that depth [Nicolau & Fenton, 2016]. However, this value can be over-written in favor of a user-defined minimum ramping depth. This can be set with the flag:
+
+    --min_init_tree_depth [INT]
+
+or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
+
 ##Selection
 ---------
 
