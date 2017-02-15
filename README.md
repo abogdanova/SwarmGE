@@ -2,30 +2,21 @@
 #Introduction
 ------------
 
-Grammatical evolution (GE) is a population-based evolutionary
-algorithm, where a BNF-style grammar is used in the genotype to
-phenotype mapping process.
+Grammatical Evolution (GE) is a population-based evolutionary algorithm, where a BNF-style grammar is used in the genotype to phenotype mapping process.
 
-PonyGE2 is an implementation of GE in Python. It's intended as an advertisement
-and a starting-point for those new to GE, a reference for students and
-researchers, a rapid-prototyping medium for our own experiments, and as a
-Python workout.
+PonyGE2 is an implementation of GE in Python. It's intended as an advertisement and a starting-point for those new to GE, a reference for students and researchers, a rapid-prototyping medium for our own experiments, and as a Python workout.
 
-The original version of PonyGE (https://github.com/jmmcd/ponyge) was originally
-designed to be a small single-file implementation of GE. However, over time
-this has grown to a stage where a more formal structured approach was needed.
-This has led to the development of PonyGE2 (https://github.com/jmmcd/ponyge2),
-presented here.
+The original version of PonyGE (https://github.com/jmmcd/ponyge) was originally designed to be a small single-file implementation of GE. However, over time this has grown to a stage where a more formal structured approach was needed. This has led to the development of PonyGE2 (https://github.com/jmmcd/ponyge2), presented here.
 
 The PonyGE2 development team can be contacted at:
 
+    Michael Fenton <michaelfenton1@gmail.com>,
     James McDermott <jamesmichaelmcdermott@gmail.com>,
     Erik Hemberg <erik.hemberg@gmail.com>,
-    Michael Fenton <michaelfenton1@gmail.com>,
     David Fagan <fagan.david@gmail.com>,
     Stefan Forstenlechner.
 
-PonyGE2 is copyright (C) 2009-2016
+PonyGE2 is copyright (C) 2009-2017
 
 
 ------------
@@ -42,27 +33,19 @@ All requirements can be satisfied with Anaconda.
 #Running PonyGE
 --------------
 
-We don't provide any setup script. You can run an example problem (the default
-is regression, see below) just by typing:
+We don't provide any setup script. You can run an example problem (the default is regression, see below) just by typing:
 
     $ cd src
     $ python ponyge.py
 
-This will run an example problem and generate a results folder. The folder
-contains several files showing the run's stats, producing graphs and
-documenting the parameters used, as well as a file containing the best
-individuals. For a more verbose command line experience run the following:
+This will run an example problem and generate a results folder. The folder contains several files showing the run's stats, producing graphs and documenting the parameters used, as well as a file detailing the best individual. For a more verbose command line experience run the following:
 
     $ cd src
     $ python ponyge.py --verbose
 
-Each line of the output corresponds to a generation in the evolution, and
-prints out all statistics on the current run (only if `--verbose` is
-specified). Upon completion of a run, the best individual is printed to the
-command line, along with summary statistics.
+Each line of the verbose output corresponds to a generation in the evolution, and prints out all statistics on the current run (only if `--verbose` is specified). Upon completion of a run, the best individual is printed to the command line, along with summary statistics.
 
-There are a number of flags that can be used for passing values via the
-command-line. To see a full list of these just run the following:
+There are a number of flags that can be used for passing values via the command-line. To see a full list of these just run the following:
 
     $ python ponyge.py --help
 
@@ -71,42 +54,29 @@ command-line. To see a full list of these just run the following:
 #About PonyGE2
 -------------
 
-A full breakdown of the currently implemented elements in PonyGE2 is provided
-below. This includes a brief description of each individual component and how
-to activate them.
+PonyGE2 is primarily a Python implementation of canonical Grammatical Evolution, but it also includes a number of other popular techniques and EC aspects.  
+
+A full breakdown of the currently implemented elements in PonyGE2 is provided below. This includes a brief description of each individual component and how to activate them.
 
 #Evolutionary Parameters:
 ------------------------
 
-One of the central components of PonyGE is the `algorithm.parameters.params`
-dictionary. This dictionary is referenced throughout the entire program and
-is used to streamline the whole process by keeping all optional parameters
-in the one place. This also means that there is little to no need for arguments
-to the various functions in PonyGE, as these arguments can often be read 
-directly from the parameters dictionary. Furthermore, the parameters dictionary
-is used to specify and store optional functions such as `initialisation`, 
-`crossover`, `mutation`, and `replacement`.
+One of the central components of PonyGE is the `algorithm.parameters.params` dictionary. This dictionary is referenced throughout the entire program and is used to streamline the whole process by keeping all optional parameters in the one place. This also means that there is little to no need for arguments to the various functions in PonyGE, as these arguments can often be read directly from the parameters dictionary. Furthermore, the parameters dictionary is used to specify and store optional functions such as `initialisation`, `crossover`, `mutation`, and `replacement`.
 
 There are three different ways to specify operational parameters with PonyGE.
 
 1. The first and most basic method is to modify the algorithm.parameters.params dictionary directly in the code.
-2. The second method is to list your desired parameters in a specialised parameters text file. Example parameters files are located in the parameters folder. When using parameters files, it is necessary to specify the desired parameter file from the command line. This is done by calling
+2. The second method is to list your desired parameters in a specialised parameters text file. Example parameters files are located in the `parameters` folder. When using parameters files, it is necessary to specify the desired parameter file from the command line. This is done by calling
 
         --parameters [FULL FILE NAME INCLUDING EXTENSION]
     
-3. The third and final method is to list all desired parameters from the command line. To see a list of all currently available command-line arguments implemented in the parser, type
+3. The third and final method is to list desired parameters from the command line. To see a list of all currently available command-line arguments implemented in the parser, type
 
         $ python ponyge.py --help
     
-*__NOTE__ that each of the above three options successively supersedes the*
-*previous ones, i.e. parameters specified in a paremeters file will over-write*
-*those set in the original* `algorithm.parameters.params` *dictionary, and*
-*parameters set from the command line will over-write those set in the*
-*parameters file.*
+*__NOTE__ that each of the above three options successively supersedes the previous ones, i.e. parameters specified in a parameters file will over-write those set in the original* `algorithm.parameters.params` *dictionary, and parameters set from the command line will over-write those set in the parameters file.*
 
-PonyGE2 automatically parses the correct path for all operators, meaning you
-don't have to specify the full direct path but only the name of the desired
-operator, e.g.
+PonyGE2 automatically parses the correct path for all operators, meaning you don't have to specify the full direct path but only the name of the desired operator, e.g.
 
     --crossover subtree
 
@@ -114,40 +84,31 @@ instead of
 
     --crossover operators.crossover.subtree
 
-However, it is still possible to specify the full correct path if you so
-desire. Specifying the full direct path allows you to create new operators
-and place them wherever you like.
+However, it is still possible to specify the full correct path if you so desire. Specifying the full direct path allows you to create new operators and place them wherever you like.
 
 ##Population Size
 ---------------
 
-The size of the population. The default value is 500. This value can be
-changed with the flag:
+The population size controls the total number of individuals to be generated at each generation. The default value is 500. This value can be changed with the flag:
 
     --population_size [INT]
 
-where `[INT]` is an integer which specifies the population size. Higher
-population sizes can improve performance on difficult problems, but require
-more computational effort and may lead to premature convergence.
+or by setting the parameter `POPULATION_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the population size. 
+
+Higher population sizes can improve performance on difficult problems, but require more computational effort and may lead to premature convergence.
 
 ##Generations
 -----------
 
-The number of generations the evolutionary algorithm will run for. The default
-value is 50. This value can be changed with the flag:
+The number of generations the evolutionary algorithm will run for. The default value is 50. This value can be changed with the flag:
 
     --generations [INT]
 
-where `[INT]` is an integer which specifies the number of generations. Higher
-numbers of generations can improve performance, but will lead to longer
-run-times.
+or by setting the parameter `GENERATIONS` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of generations.
 
-*__NOTE__ that in PonyGE2 the total number of generations refers to the*
-*number of generations over which evolution occurs, __NOT__ including*
-*initialisation. Thus, specifying 50 generations will mean 50 generations*
-*will be evolved. Since the initialised generation will be Generation 0,*
-*the total number of individuals evaluated across an entire evolutionary*
-*run will by __population x (generations + 1)__.*
+Higher numbers of generations can improve performance, but will lead to longer run-times.
+
+*__NOTE__ that in PonyGE2 the total number of generations refers to the number of generations over which evolution occurs, __NOT__ including initialisation. Thus, specifying 50 generations will mean 50 generations will be evolved. Since the initialised generation will be Generation 0, the total number of individuals evaluated across an entire evolutionary run will by __population x (generations + 1)__.*
 
 The typical breakdown of a population-based evolutionary algorithm is:
 
@@ -162,87 +123,73 @@ These steps are expanded on in detail hereafter.
 ##Initialisation
 --------------
 
-There are two main ways to initialise a GE individual: by generating a genome,
-or by generating a subtree. Generation of a genome can only be done by creating
-a random genome string and as such individuals cannot be controlled. Subtree
-generation on the other hand can be forced to conform to specified limits,
-e.g. depth limits. This is implemented in ramped half-half initialisation
-(also called Sensible initialisation). It is also possible to initialise a
-population using randomly generated subtrees, which is similar in theory to
-random genome initialisation except there is far less bias than random
-genome initialisation as a result of the number of production choices in the
-grammar.
+There are two main ways to initialise a GE individual: by generating a genome, or by generating a derivation tree. Generation of a genome can only be done by creating a random genome string, and as such the use of genome initialisation cannot guarantee control over any aspects of the initial population. Population initialisation via derivation tree generation on the other hand allows for fine control over many aspects of the initial population, e.g. depth limits. Unlike with genome initialisation,there are a number of different ways to initialise a population using derivation trees. Currently implemented methods are detailed below. 
 
 ###Genome
 
 ####Random
 
-To generate individuals from initialised genomes, the only option currently
-implemented is to generate random genome strings. Thus, if you specify
-
-    --genome_init
-    
-at the command line, PonyGE will automatically initialise individuals using
-randomly generated genome strings. If you are using this option, there is no
-need to specify any `--initialisation` argument directly.
-
-*__NOTE__ that random genome initialisation in Grammatical Evolution should*
-*be used with caution as poor grammar design can have a negative impact on*
-*the quality of randomly initialised solutions due to the inherent bias*
-*capabilities of GE [Fagan et al., 2016; Nicolau & Fenton, 2016].*
-
-###Subtree
-
-If using subtree initialisation, there are two options for generating 
-individuals. You can either initialise a population of random subtrees,
-or you can use various "smart" initialisation methods implemented here.
-
-####Random
-
-Random subtree initialisation generates individuals by randomly building
-derivation trees up to the specified maximum initialisation depth limit.
+To generate individuals from initialised genomes, the only option currently implemented is to generate random genome strings.
 
 Activate with:
 
-    --initialisation random_init
-    
-*__NOTE__ that initialisation techniques use derivation tree methods by*
-*default. It is only necessary to specify the type of individual with which*
-*initialisation is to be run (e.g. genome or derivation tree) if you want*
-*to use genome-based methods.*
+    --initialisation uniform_genome
 
-*__NOTE__ that there is no obligation that randomly generated derivation*
-*trees will extend to the depth limit; they will be of random size*
-*[Fagan et al., 2016].*
+or by setting the parameter `INITIALISATION` in either a parameters file or in the params dictionary.
 
-*__NOTE__ that randomly generated derivation trees will have a tendency*
-*towards smaller tree sizes [Fagan et al., 2016].*
+By default in PonyGE2, genomes of length 200 codons are generated when using random genome initialisation. However, this parameter can be changed using the flag:
+
+    --init_genome_length [INT]
+
+or by setting the parameter `INIT_GENOME_LENGTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the length of genomes to be initialised.
+
+*__NOTE__ that random genome initialisation in Grammatical Evolution should be used with caution as poor grammar design can have a negative impact on the quality of randomly initialised solutions due to the inherent bias capabilities of GE [Fagan et al., 2016; Nicolau & Fenton, 2016].*
+
+###Derivation Tree
+
+There are currently three options provided in PonyGE2 for initialising a population of individuals using derivation tree methods. You can either initialise a population of random derivation trees, or you can use various "smart" initialisation methods implemented here.
+
+####Random
+
+Random derivation tree initialisation generates individuals by randomly building derivation trees up to the specified maximum initialisation depth limit.
+
+Activate with:
+
+    --initialisation uniform_tree
+
+or by setting the parameter `INITIALISATION` in either a parameters file or in the params dictionary.
+
+*__NOTE__ that there is no obligation that randomly generated derivation trees will extend to the depth limit; they will be of random size [Fagan et al., 2016].*
+
+*__NOTE__ that randomly generated derivation trees will have a tendency towards smaller tree sizes [Fagan et al., 2016].*
 
 ####Ramped Half-Half
 
-Ramped Half-Half initialisation in Grammatical Evolution is often called
-"Sensible Initialisation" [Ryan and Azad, 2003]. Sensible Initialisation 
-follows traditional GP Ramped Half-Half initialisation by initialising a 
-population of individuals using two separate methods: `Full` and `Grow`.
+Ramped Half-Half initialisation in Grammatical Evolution is often called "Sensible Initialisation" [Ryan and Azad, 2003]. Sensible Initialisation follows traditional GP Ramped Half-Half initialisation by initialising a population of individuals using two separate methods: `Full` and `Grow`.
 
-`Full` initialisation generates a derivation tree where all branches extend
-to the specified depth limit. This tends to generate very bushy, evenly 
-balanced trees [Fagan *et al.*, 2016].
+`Full` initialisation generates a derivation tree where all branches extend to the specified depth limit. This tends to generate very bushy, evenly balanced trees [Fagan *et al.*, 2016].
 
-`Grow` initialisation generates a randomly built derivation tree where no
-branch extends *past* the depth limit.
+`Grow` initialisation generates a randomly built derivation tree where no branch extends *past* the depth limit.
 
-*__NOTE__ that `Grow` is analogous to random derivation tree initialisation.*
-
-RHH initialisation generates pairs of solutions generated by both methods
-for a range of depths, up to a specified initialisation depth limit. This is
-known as "ramping". In PonyGE, ramping begins at a depth where sufficient
-unique solutions can be generated for the number of required solutions at
-that depth [Nicolau & Fenton, 2016].
+*__NOTE__ that `Grow` is analogous to random derivation tree initialisation, i.e. no branch in the tree is __forced__ to reach the specified depth.*
 
 Activate with:
 
     --initialisation rhh
+
+or by setting the parameter `INITIALISATION` in either a parameters file or in the params dictionary.
+
+RHH initialisation generates pairs of solutions using both `full` and `grow` methods for a ramped range of depths. The maximum initialisation depth is set with the flag:
+
+    --max_init_tree_depth [INT]
+
+or by setting the parameter `MAX_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum depth to which derivation trees are to be initialised. The default value is set at 10.
+
+By default in PonyGE, initialisation ramping _begins_ at a depth where sufficient unique solutions can be generated for the number of required solutions at that depth [Nicolau & Fenton, 2016]. However, this value can be over-written in favor of a user-defined minimum ramping depth. This can be set with the flag:
+
+    --min_init_tree_depth [INT]
+
+or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
 
 ##Selection
 ---------

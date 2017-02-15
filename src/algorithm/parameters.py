@@ -70,9 +70,9 @@ params = {
         # "operators.initialisation.uniform_genome"
         # "operators.initialisation.rhh"
         # "operators.initialisation.PI_grow"
-        'MAX_INIT_GENOME_LENGTH': None,
+        'INIT_GENOME_LENGTH': 200,
         # Set the maximum geneome length for initialisation.
-        'MAX_INIT_TREE_DEPTH': None,
+        'MAX_INIT_TREE_DEPTH': 10,
         # Set the maximum tree depth for initialisation.
         'MIN_INIT_TREE_DEPTH': None,
         # Set the minimum tree depth for initialisation.

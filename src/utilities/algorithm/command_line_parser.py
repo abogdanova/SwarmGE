@@ -138,11 +138,11 @@ def parse_cmd_args(arguments):
                         dest='MIN_INIT_TREE_DEPTH',
                         type=int,
                         help='Sets the min tree depth for initialisation.')
-    parser.add_argument('--max_init_genome_length',
-                        dest='MAX_INIT_GENOME_LENGTH',
+    parser.add_argument('--init_genome_length',
+                        dest='INIT_GENOME_LENGTH',
                         type=int,
-                        help='Sets the maximum length for chromosomes to be '
-                             'initialised to, requires int value.')
+                        help='Sets the length for chromosomes to be '
+                             'initialised to. Requires int value.')
     parser.add_argument('--initialisation',
                         dest='INITIALISATION',
                         type=str,

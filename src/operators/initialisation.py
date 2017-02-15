@@ -11,7 +11,7 @@ from utilities.representation.python_filter import python_filter
 def sample_genome():
     # Generate a random genome, uniformly
     genome = [randint(0, params['CODON_SIZE']) for _ in
-              range(params['MAX_INIT_GENOME_LENGTH'])]
+              range(params['INIT_GENOME_LENGTH'])]
     return genome
 
 
@@ -25,6 +25,18 @@ def uniform_genome(size):
 
     return [individual.Individual(sample_genome(), None) for _ in range(size)]
 
+
+def uniform_tree(size):
+    """
+    Create a population of individuals by generating random derivation trees.
+     
+    :param size: The size of the required population.
+    :return: A full population composed of randomly generated individuals.
+    """
+
+    return [generate_ind_tree(params['MAX_TREE_DEPTH'],
+                              "random") for _ in range(size)]
+    
 
 def rhh(size):
     """

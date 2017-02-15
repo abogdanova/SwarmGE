@@ -59,7 +59,8 @@ def steady_state(individuals):
     regardless of whether or not the new individuals are fitter than those
     they replace. Note that traditional GP crossover generates only 1 child,
     whereas linear GE crossover (and thus all crossover functions used in
-    PonyGE) generates 2 children from 2 parents.
+    PonyGE) generates 2 children from 2 parents. Thus, we use a deletion
+    strategy of 2.
 
     :param individuals: The current generation, upon which a single
     evolutionary generation will be imposed.
