@@ -56,6 +56,12 @@ There are a number of flags that can be used for passing values via the command-
 
 PonyGE2 is primarily a Python implementation of canonical Grammatical Evolution, but it also includes a number of other popular techniques and EC aspects.  
 
+
+##Representation
+
+TODO: Describe the different representations (i.e. linear, derivation tree).
+
+
 A full breakdown of the currently implemented elements in PonyGE2 is provided below. This includes a brief description of each individual component and how to activate them.
 
 #Evolutionary Parameters:
@@ -103,7 +109,6 @@ or by setting the parameter `POPULATION_SIZE` in either a parameters file or in 
 Higher population sizes can improve performance on difficult problems, but require more computational effort and may lead to premature convergence.
 
 ##Generations
-=============
 
 The number of generations the evolutionary algorithm will run for. The default value is 50. This value can be changed with the flag:
 
@@ -116,9 +121,36 @@ Higher numbers of generations can improve performance, but will lead to longer r
 *__NOTE__ that in PonyGE2 the total number of generations refers to the number of generations over which evolution occurs, __NOT__ including initialisation. Thus, specifying 50 generations will mean 50 generations will be evolved. Since the initialised generation will be Generation 0, the total number of individuals evaluated across an entire evolutionary run will by __population x (generations + 1)__.*
 
 ##Individual Size
-=================
 
 There are a number of parameters for controlling the size and various aspects of individuals. 
+
+###Linear Genome Parameters
+
+There are a number of aspects to a linear genome:
+
+1. the individual codons that make up that genome,
+2. the total length of the genome, and
+3. the number of times the mapping process will wrap across the genome.
+
+####Codon Size
+
+Each codon in a genome is an integer value. When generating a codon to represent a production choice, a random integer value is chosen that represents that correct production choice. The maximum value a codon can take is set by dafault at 10000. This value can be changed with the flag:
+
+    --codon_size [INT]
+    
+or by setting the parameter `CODON_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum value a codon can take.
+
+####Genome Length Limits
+
+The total length of a genome is a global parameter that is often used for controlling genetic bloat. If left unchecked, it is possible for the evolutionary process in GE to generated extremely long genomes if variable length linear crossover operators are used. As such, provision is made in PonyGE2 for a global length limit for genomes. If specified, this limit will prevent crossover from generating individuals whose genomes violate this length limit. The default value is set to `None`, i.e. there is no length limit on linear genomes by default. This limit can be specified with the flag:
+ 
+     --max_genome_length [INT]
+ 
+or by setting the parameter `MAX_GENOME_LENGTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum length a genome can take.
+
+####Wrapping
+
+###Derivation Tree Parameters
 
 #Initialisation
 --------------
@@ -126,7 +158,6 @@ There are a number of parameters for controlling the size and various aspects of
 There are two main ways to initialise a GE individual: by generating a genome, or by generating a derivation tree. Generation of a genome can only be done by creating a random genome string, and as such the use of genome initialisation cannot guarantee control over any aspects of the initial population. Population initialisation via derivation tree generation on the other hand allows for fine control over many aspects of the initial population, e.g. depth limits. Unlike with genome initialisation,there are a number of different ways to initialise a population using derivation trees. Currently implemented methods are detailed below. 
 
 ##Genome
-==========
 
 ###Random
 
@@ -147,7 +178,6 @@ or by setting the parameter `INIT_GENOME_LENGTH` in either a parameters file or 
 *__NOTE__ that random genome initialisation in Grammatical Evolution should be used with caution as poor grammar design can have a negative impact on the quality of randomly initialised solutions due to the inherent bias capabilities of GE [Fagan et al., 2016; Nicolau & Fenton, 2016].*
 
 ##Derivation Tree
-==================
 
 There are currently three options provided in PonyGE2 for initialising a population of individuals using derivation tree methods. You can either initialise a population of random derivation trees, or you can use various "smart" initialisation methods implemented here.
 
@@ -230,7 +260,6 @@ The mapping process in Grammatical Evolution can generate "invalid" individuals.
 or by setting the parameter `INVALID_SELECTION` in either a parameters file or in the params dictionary.
 
 ##Tournament
-=============
 
 Tournament selection selects `TOURNAMENT_SIZE` individuals from the overall population, sorts them, and then returns the single individual with the best fitness. Since no individuals are removed from the original population, it is possible that the same individuals may be selected multiple times to appear in multiple tournaments, although the same individual may not appear multiple times _in the same tournament_.
 
@@ -247,7 +276,6 @@ Tournament size is set by default at 2. This value can be changed with the flag:
 or by setting the parameter `TOURNAMENT_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the tournament size.
 
 ##Truncation
-=============
 
 Truncation selection takes an entire population, sorts it, and returns the best `SELECTION_PROPORTION` of that population.  
 
@@ -269,7 +297,6 @@ or by setting the parameter `SELECTION_PROPORTION` in either a parameters file o
 ---------
 
 ##Crossover
-============
 
 Crossover directly swaps genetic material between two chosen individuals. The
 probability of crossover occurring is set with the flag:
@@ -349,7 +376,6 @@ return them. Candidate subtrees are selected based on matching non-terminal
 nodes rather than matching terminal nodes.
 
 ##Mutation
-===========
 
 The ability to specify the number of mutation events per individual is
 provided. This works for both genome mutation and subtree mutation. The
@@ -394,7 +420,6 @@ randomly generated subtree. Guaranteed one event per individual, unless
 ----------
 
 ##Multicore evaluation
-=======================
 
 Evaluation of a population of individuals can be done in series (single core
 evaluation) or in parallel (multi core evaluation). Multicore evaluation can
@@ -425,7 +450,6 @@ fitness evaluations. The default value is to use all available cores.
 *rather than multiple multi-core experiments in series.*
 
 ##Caching
-==========
 
 Caching is provided in PonyGE2 to save on fitness evaluations and to track the
 number of unique solutions encountered during an evolutionary run. Cached
@@ -468,7 +492,6 @@ Activate with:
 -----------
 
 ##Generational
-===============
 
 Activate with:
 
@@ -484,7 +507,6 @@ between generations. Elites are saved between generations regardless of
 whether or not they are better or worse than the new population.
 
 ##Steady State
-===============
 
 Activate with:
 
