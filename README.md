@@ -147,6 +147,7 @@ or by setting the parameter `INIT_GENOME_LENGTH` in either a parameters file or 
 *__NOTE__ that random genome initialisation in Grammatical Evolution should be used with caution as poor grammar design can have a negative impact on the quality of randomly initialised solutions due to the inherent bias capabilities of GE [Fagan et al., 2016; Nicolau & Fenton, 2016].*
 
 ###Derivation Tree
+==================
 
 There are currently three options provided in PonyGE2 for initialising a population of individuals using derivation tree methods. You can either initialise a population of random derivation trees, or you can use various "smart" initialisation methods implemented here.
 
@@ -222,26 +223,31 @@ or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or
 
 The selection process is a key step in Evolutionary Algorithms.
 
-The mapping process in Grammatical Evolution can generate "invalid" individuals.
-Only valid individuals are selected by default. However, this can be changed
-with the flag:
+The mapping process in Grammatical Evolution can generate "invalid" individuals. Only valid individuals are selected by default. However, this can be changed with the flag:
 
     --invalid_selection
 
+or by setting the parameter `INVALID_SELECTION` in either a parameters file or in the params dictionary.
+
 ###Tournament
+=============
+
+Tournament selection selects `TOURNAMENT_SIZE` individuals from the overall population, sorts them, and then returns the single individual with the best fitness. Since no individuals are removed from the original population, it is possible that the same individuals may be selected multiple times to appear in multiple tournaments, although the same individual may not appear multiple times _in the same tournament_.
 
 Activate with:
 
     --selection tournament
 
-Tournament size is set by default at 2. This value can be changed with the
-flag:
+or by setting the parameter `SELECTION` in either a parameters file or in the params dictionary.
+
+Tournament size is set by default at 2. This value can be changed with the flag:
 
     --tournament_size [INT]
 
-where `[INT]` is an integer which specifies the tournament size.
+or by setting the parameter `TOURNAMENT_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the tournament size.
 
 ###Truncation
+=============
 
 Activate with:
 
@@ -256,7 +262,9 @@ where `[NUM]` is a float between 0 and 1.
 
 ##Variation
 ---------
+
 ###Crossover
+============
 
 Crossover directly swaps genetic material between two chosen individuals. The
 probability of crossover occurring is set with the flag:
@@ -336,6 +344,7 @@ return them. Candidate subtrees are selected based on matching non-terminal
 nodes rather than matching terminal nodes.
 
 ###Mutation
+===========
 
 The ability to specify the number of mutation events per individual is
 provided. This works for both genome mutation and subtree mutation. The
@@ -380,6 +389,7 @@ randomly generated subtree. Guaranteed one event per individual, unless
 ----------
 
 ###Multicore evaluation
+=======================
 
 Evaluation of a population of individuals can be done in series (single core
 evaluation) or in parallel (multi core evaluation). Multicore evaluation can
@@ -410,6 +420,7 @@ fitness evaluations. The default value is to use all available cores.
 *rather than multiple multi-core experiments in series.*
 
 ###Caching
+==========
 
 Caching is provided in PonyGE2 to save on fitness evaluations and to track the
 number of unique solutions encountered during an evolutionary run. Cached
@@ -452,6 +463,7 @@ Activate with:
 -----------
 
 ###Generational
+===============
 
 Activate with:
 
@@ -467,6 +479,7 @@ between generations. Elites are saved between generations regardless of
 whether or not they are better or worse than the new population.
 
 ###Steady State
+===============
 
 Activate with:
 
