@@ -410,18 +410,11 @@ class RegexEval:
         print("Number of test cases: {}".format(len(self.test_cases)))
 
     def initialise_test_cases(self):
-        if not hasattr(self, 'test_cases'):
+
             self.test_cases = list()
             seed_regex = individual.Individual(params['SEED_GENOME'], None).phenotype
-            self.test_cases = self.generate_test_suite(seed_regex)
+            self.generate_test_suite(seed_regex)
             self.time=True
-
-    """
-    Evaulate without timeout (without using separate process)
-    """
-    def eval_no_timeout(self, individual):
-        self.call_fitness(individual,q) 
-        return q.get()
     
     """
     When this class is instantiated with individual
@@ -432,7 +425,10 @@ class RegexEval:
 
         # originally called once by default constructor
         # moved here due to ordering of dependencies in params
-        self.initialise_test_cases()
+        if not hasattr(self, 'test_cases'):
+            self.initialise_test_cases()
+            self.call_fitness(individual,q) # q is global!
+            return q.get()
 
         global pstartup # gulp
         global prunner
@@ -546,8 +542,6 @@ class RegexEval:
                             "a46b  ",
                             "0.045e-10",
         ]
-        
-        test_cases=list()
         
         compiled_regex = re.compile(regex_string)
         for test_string in known_test_strings:
