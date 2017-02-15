@@ -53,6 +53,13 @@ def steady_state(individuals):
         Variation
         Evaluation
         Replacement
+        
+    Steady state replacement uses the Genitor model (Whitley, 1989) whereby
+    new individuals directly replace the worst individuals in the population
+    regardless of whether or not the new individuals are fitter than those
+    they replace. Note that traditional GP crossover generates only 1 child,
+    whereas linear GE crossover (and thus all crossover functions used in
+    PonyGE) generates 2 children from 2 parents.
 
     :param individuals: The current generation, upon which a single
     evolutionary generation will be imposed.
