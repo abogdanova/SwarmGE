@@ -273,10 +273,10 @@ def set_params(command_line_args):
     
         # Clean the stats dict to remove unused stats.
         clean_stats.clean_stats()
-    
+        
         # Initialise run lists and folders
         initialise_run_params()
-    
+
         # Parse grammar file and set grammar class.
         params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
                                                 params['GRAMMAR_FILE']))

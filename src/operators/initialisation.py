@@ -39,7 +39,7 @@ def seed_only(size):
         print("S")
 
     else:
-        print("Using seed_only initialisation without SEED_GENOME")
+        print("Using seed_only initialisation without SEED_INDIVIDUAL")
         exit()
     return population
 

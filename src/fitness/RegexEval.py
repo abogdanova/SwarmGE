@@ -5,7 +5,7 @@ import sys
 from algorithm.parameters import params
 from representation import individual
 from multiprocessing import Process, Queue
-# from multiprocessing.pool import ThreadPool
+# import json
 
 # Author: Brendan Cody-Kenny - codykenny at gmail
 
@@ -42,11 +42,14 @@ Sum of wall-clock time taken to execute the test strings.
 class RegexEval:
     maximise = False # lower fitness value is better
     
-    def __init__(self):
-        self.test_cases = list()
-        self.generate_tests()
-        self.time=True
-
+#    def __init__(self):
+        # The seed program is needed by the fitness function to generate test data
+        # but individual needs the fitness function! :/
+        # This could be done as part of the parameters setup,
+        # but keeping it here for the moment as it's regex specific
+#        self.test_cases = list()
+#        print(type(self.test_cases))
+        
     """
     This method is called when this class is instantiated with an individual (a regex)
     """    
@@ -108,6 +111,7 @@ class RegexEval:
         for a_result in eval_results:
             time_sum += a_result[0] 
             result_error += a_result[3].calc_match_errors(list(a_result[1]))
+
         # if fitness == seed_fitness:
         #     fitness = 100 * len(a_result) # identical result to seed penalised
         return result_error,time_sum
@@ -134,7 +138,8 @@ class RegexEval:
         iterations_per_repeat = iterations
         search_string = test_case.get_search_string()
         def wrap():
-            # Timing bug, lazy eval defers computation if we don't convert to list here
+            # Timing bug, lazy eval defers computation if we don't
+            # force (convert to list evals result here)
             # https://swizec.com/blog/python-and-lazy-evaluation/swizec/5148
             return list(compiled_regex.finditer(search_string)) 
         
@@ -386,9 +391,10 @@ class RegexEval:
         self.test_cases.append(a_test_string)
 
     """
-    Generate tests, as specified in the parameters file
+    Generate generic tests
     """    
     def generate_tests(self):
+
         test_gen_method = getattr(self, params['FITNESS_TEST_SUITE'])
         test_gen_method()
         # can be any of these:
@@ -403,14 +409,31 @@ class RegexEval:
         # self.generate_d3_interpolate_number()
         print("Number of test cases: {}".format(len(self.test_cases)))
 
+    def initialise_test_cases(self):
+        if not hasattr(self, 'test_cases'):
+            self.test_cases = list()
+            seed_regex = individual.Individual(params['SEED_GENOME'], None).phenotype
+            self.test_cases = self.generate_test_suite(seed_regex)
+            self.time=True
+
     """
-    When this class is instantiated, evaluted in a new process, timeout and kill process if it runs for 5 seconds
+    Evaulate without timeout (without using separate process)
+    """
+    def eval_no_timeout(self, individual):
+        self.call_fitness(individual,q) 
+        return q.get()
+    
+    """
+    When this class is instantiated with individual
+    evalute in a new process, timeout and kill process if it runs for 5 seconds
     Generating new processes is expensive, rework the code to reuse a process.
     """
     def __call__(self, individual):
-        # self.call_fitness(individual,q) # do it without using separate process
-        # return q.get()
-    
+
+        # originally called once by default constructor
+        # moved here due to ordering of dependencies in params
+        self.initialise_test_cases()
+
         global pstartup # gulp
         global prunner
         if(pstartup==None):
@@ -455,12 +478,101 @@ class RegexEval:
         # seed genome to go in regex.txt parameters file
         # [10082, 41053, 89472, 13943, 83234, 23739, 51472, 59723, 52910, 4880, 72071, 68514, 53866, 25754, 39758, 51472, 59723, 29655, 22034, 52910, 4880, 72071, 5630, 83669, 54528, 45876, 76718, 53866, 25754, 39758, 51472, 59723, 29655, 22034, 52910, 4880, 72071, 56000, 67442, 49372, 13302, 70567, 37415, 81973, 40820, 18637, 88657, 51472, 59723, 52910, 4880, 72071]
 
+
+
         
+    def generate_test_suite(self,regex_string):
+        # do some test generation
+        # find a string which the regex is able to match against
+        # find the minimal variant of this string which does not match
+        # test strategies - length, values
+        
+        # collect strings which identify the different regex
+        # cache and reuse these
+        known_test_strings=["5C0A5B634A82",
+                            "Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: ", 
+                            "Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: ",
+                            "26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: ", 
+                            " -> 140.105.63.164(50:j6:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)sdkfjhaklsjdhfglksjhdfgk", 
+                            " -> 140.105.63.16(50:06:04:9r:53:44):80 TCP flags: ****S* len:60 ttl:32)ssjdhfglksjhdfgk", 
+                            "Jan 12 06:26:20: ACCEPT service dns from 140.105.48.16 to firewall(pub-nic-dns), prefix: ",
+                            "Jan 12 06:27:09: DROP service 68->67(udp) from 216.34.211.83 to 216.34.253.94, prefix: ", 
+                            "105.63.1650:06:04:92:53:44:80", 
+                            " -> 140.105.63.164(50:06:g4:92:53:44):80 TCP flags: ****S* len:60 ttl:32)", 
+                            " -> 140.105.63.164(50:06:54:92:r3:44):80 TCP flags: ****S* len:60 ttl:32)", 
+                            "1,2,3,4,5,6,7,8,9,10,11,12,13777,5P,5,5,6,5P", 
+                            "1,2,3,4,5,6,7,8,9,10,11,12,13777,24,5P", 
+                            "1,2,3,4,5,6,7,8,9,10,11,12,13777,243,3P", 
+                            "1,2,3,4,5,6,7,8,9,10,11,12,13777,P", 
+                            "1,2,3,4,5,6,7,8,9,10,11,12,P", 
+                            "1,2,3,4,5,6,7,8,9,10,11,P", 
+                            "1,2,3,4,5,6,7,8,9,10,11,3P", 
+                            "1,2,3,4,5,6,7,8,9,10,P", 
+                            "codykenny@gmailcom",
+                            "2016-12-09T08:21:15.9+00:00",
+                            "2016-12-09T08:21:15.9+00:0",
+                            "2016-22-09T08:21:15.9+00:00000000000",
+                            "2016-22-09T08:21:15.9+00:00",
+                            "1911-02-19T22:35:42.3+08:43",
+                            "2016-09-05T15:22:26.286Z",
+                            "230.234E-10",
+                            "971.829E+26",
+                            "3566",
+                            "4",
+                            "-7",
+                            "+94",
+                            "            36",
+                            "78      ",
+                            "87465.345345",
+                            "2346.533",
+                            "0.045e-10",
+                            "3566.",
+                            ".3456",
+                            "<string> ::= <letter>|<letter><string>",
+                            "hryxioXcXXdornct",
+                            "bbbbXcyXXaaa",
+                            "230.234E-10",
+                            "971.829E+26",
+                            "3566",
+                            "4",
+                            "-7",
+                            "+94",
+                            "            36",
+                            "78      ",
+                            "87465.345345",
+                            "2346.533",
+                            "  3566.   ",
+                            " .3456  ",
+                            "a46b  ",
+                            "0.045e-10",
+        ]
+        
+        test_cases=list()
+        
+        compiled_regex = re.compile(regex_string)
+        for test_string in known_test_strings:
+            a_test_candidate = RegexTestString(test_string)
+            vals = self.time_regex_test_case(compiled_regex, a_test_candidate , 1)
+            if len(list(vals[1])) > 0: # the regex found a match, add it
+                a_positive_test= self.add_re_match_to_test(vals, a_test_candidate)
+                self.test_cases.append(a_positive_test)
+                # now find regex which negate
+                self.generate_equivalence_test_suite_replacement(a_positive_test,regex_string)
+                self.generate_equivalence_test_suite_length(a_positive_test, regex_string)
+        print("Number of test cases in suite: {}".format(len(self.test_cases)))        
+                
+    # take matching values as found by the regex library, and add them to our RegexTestString object
+    def add_re_match_to_test(self, vals, passing_test_string):
+        for a_match in vals[1]: # this vals[1] business is not good
+            passing_test_string.add_match(a_match.start(), a_match.end())
+        return passing_test_string
+            
 """
 Class which contains a test string and matches
 (We should probably just use the types which re library uses)
 """
 class RegexTestString:
+        
     def __init__(self,search_string):
         # print("Added regex search string: "+search_string)
         self.search_string = search_string
@@ -514,3 +626,7 @@ class RegexTestString:
         return self.search_string
 
     
+
+
+
+        

@@ -33,4 +33,5 @@ then
 fi
     
 # python3.5 ponyge.py --parameters test_seedonly_regex_catastrophic_csv_hill_schc.txt
+echo "Running: python3.5 ponyge.py --parameters \"$parameters_file\""
 python3.5 ponyge.py --parameters "$parameters_file"
