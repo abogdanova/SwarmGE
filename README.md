@@ -86,6 +86,10 @@ instead of
 
 However, it is still possible to specify the full correct path if you so desire. Specifying the full direct path allows you to create new operators and place them wherever you like.
 
+#Population Options
+
+There are a number of parameters within PonyGE2 for controlling both overall populations and the individuals within those populations.
+
 ##Population Size
 ---------------
 
@@ -120,15 +124,15 @@ The typical breakdown of a population-based evolutionary algorithm is:
 
 These steps are expanded on in detail hereafter.
 
-##Initialisation
+#Initialisation
 --------------
 
 There are two main ways to initialise a GE individual: by generating a genome, or by generating a derivation tree. Generation of a genome can only be done by creating a random genome string, and as such the use of genome initialisation cannot guarantee control over any aspects of the initial population. Population initialisation via derivation tree generation on the other hand allows for fine control over many aspects of the initial population, e.g. depth limits. Unlike with genome initialisation,there are a number of different ways to initialise a population using derivation trees. Currently implemented methods are detailed below. 
 
-###Genome
+##Genome
 ==========
 
-####Random
+###Random
 
 To generate individuals from initialised genomes, the only option currently implemented is to generate random genome strings.
 
@@ -146,12 +150,12 @@ or by setting the parameter `INIT_GENOME_LENGTH` in either a parameters file or 
 
 *__NOTE__ that random genome initialisation in Grammatical Evolution should be used with caution as poor grammar design can have a negative impact on the quality of randomly initialised solutions due to the inherent bias capabilities of GE [Fagan et al., 2016; Nicolau & Fenton, 2016].*
 
-###Derivation Tree
+##Derivation Tree
 ==================
 
 There are currently three options provided in PonyGE2 for initialising a population of individuals using derivation tree methods. You can either initialise a population of random derivation trees, or you can use various "smart" initialisation methods implemented here.
 
-####Random
+###Random
 
 Random derivation tree initialisation generates individuals by randomly building derivation trees up to the specified maximum initialisation depth limit.
 
@@ -165,7 +169,7 @@ or by setting the parameter `INITIALISATION` in either a parameters file or in t
 
 *__NOTE__ that randomly generated derivation trees will have a tendency towards smaller tree sizes [Fagan et al., 2016].*
 
-####Ramped Half-Half
+###Ramped Half-Half
 
 Ramped Half-Half initialisation in Grammatical Evolution is often called "Sensible Initialisation" [Ryan and Azad, 2003]. Sensible Initialisation follows traditional GP Ramped Half-Half initialisation by initialising a population of individuals using two separate methods: `Full` and `Grow`.
 
@@ -193,7 +197,7 @@ By default in PonyGE, initialisation ramping _begins_ at a depth where sufficien
 
 or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
 
-####Position Independent Grow (PI Grow)
+###Position Independent Grow (PI Grow)
 
 Position Independent Grow (PI Grow) initialisation in Grammatical Evolution mirrors Sensible/Ramped Half-Half initialisation by initialising a population of individuals over a ramped range of depths. However, while RHH uses two separate methods `Full` and `Grow` to generate pairs of individuals at each depth, PI Grow eschews the `Full` component and only uses the `Grow` aspect. There are two further differences between traditional GP `Grow` and PI Grow [Fagan *et al.*, 2016]:
 
@@ -218,7 +222,7 @@ By default in PonyGE, initialisation ramping _begins_ at a depth where sufficien
 
 or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
 
-##Selection
+#Selection
 ---------
 
 The selection process is a key step in Evolutionary Algorithms.
@@ -229,7 +233,7 @@ The mapping process in Grammatical Evolution can generate "invalid" individuals.
 
 or by setting the parameter `INVALID_SELECTION` in either a parameters file or in the params dictionary.
 
-###Tournament
+##Tournament
 =============
 
 Tournament selection selects `TOURNAMENT_SIZE` individuals from the overall population, sorts them, and then returns the single individual with the best fitness. Since no individuals are removed from the original population, it is possible that the same individuals may be selected multiple times to appear in multiple tournaments, although the same individual may not appear multiple times _in the same tournament_.
@@ -246,7 +250,7 @@ Tournament size is set by default at 2. This value can be changed with the flag:
 
 or by setting the parameter `TOURNAMENT_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the tournament size.
 
-###Truncation
+##Truncation
 =============
 
 Truncation selection takes an entire population, sorts it, and returns the best `SELECTION_PROPORTION` of that population.  
@@ -265,10 +269,10 @@ or by setting the parameter `SELECTION_PROPORTION` in either a parameters file o
 
 *__NOTE__ that unless the specified* `SELECTION_PROPORTION` *is 1 (i.e. 100%), truncation selection necessarily returns a selected parent population that is smaller in size than the original population.*
 
-##Variation
+#Variation
 ---------
 
-###Crossover
+##Crossover
 ============
 
 Crossover directly swaps genetic material between two chosen individuals. The
@@ -279,7 +283,7 @@ probability of crossover occurring is set with the flag:
 where `[NUM]` is a float between 0 and 1. The default value for crossover is
 0.75.
 
-####Fixed Onepoint
+###Fixed Onepoint
 
 Activate with:
 
@@ -292,7 +296,7 @@ int_flip mutation is used). Crossover points are selected within the
 used portion of the genome by default (i.e. crossover does not occur in 
 the tail of the individual).
 
-####Fixed Twopoint
+###Fixed Twopoint
 
 Activate with:
 
@@ -305,7 +309,7 @@ int_flip mutation is used). Crossover points are selected within the
 used portion of the genome by default (i.e. crossover does not occur in 
 the tail of the individual).
 
-####Variable Onepoint
+###Variable Onepoint
 
 Activate with:
 
@@ -320,7 +324,7 @@ default (i.e. crossover does not occur in the tail of the individual).
 *__NOTE__ that variable onepoint crossover can cause individuals to grow*
 *, leading to bloat.*
 
-####Variable Twopoint
+###Variable Twopoint
 
 Activate with:
 
@@ -338,7 +342,7 @@ default (i.e. crossover does not occur in the tail of the individual).
 For a more in-depth discussion on crossover in Grammatical Evolution,
 see [O'Neill *et al.*, 2003].
 
-####Subtree
+###Subtree
 
 Activate with:
 
@@ -348,7 +352,7 @@ Given two individuals, create two children using subtree crossover and
 return them. Candidate subtrees are selected based on matching non-terminal
 nodes rather than matching terminal nodes.
 
-###Mutation
+##Mutation
 ===========
 
 The ability to specify the number of mutation events per individual is
@@ -363,7 +367,7 @@ individual. Note that for subtree mutation exactly this number of mutation
 events will occur, but for integer flip mutation this will only affect the
 probability of mutation events occurring.
 
-####Int Flip
+###Int Flip
 
 Activate with:
 
@@ -380,7 +384,7 @@ performed over the entire length of the genome by default, but the flag
 within_used is provided to limit mutation to only the effective length of
 the genome.
 
-####Subtree
+###Subtree
 
 Activate with:
 
@@ -390,10 +394,10 @@ Mutate the individual by replacing a randomly selected subtree with a new
 randomly generated subtree. Guaranteed one event per individual, unless
 `params['MUTATION_EVENTS']` is specified as a higher number.
 
-##Evaluation
+#Evaluation
 ----------
 
-###Multicore evaluation
+##Multicore evaluation
 =======================
 
 Evaluation of a population of individuals can be done in series (single core
@@ -424,7 +428,7 @@ fitness evaluations. The default value is to use all available cores.
 *__always__ be faster to run multiple single-core experiments in parallel,*
 *rather than multiple multi-core experiments in series.*
 
-###Caching
+##Caching
 ==========
 
 Caching is provided in PonyGE2 to save on fitness evaluations and to track the
@@ -437,7 +441,7 @@ Caching can be activated with the flag:
 
 There are currently three options for use with the cache:
 
-####1. Fitness Lookup
+###1. Fitness Lookup
 
 This is the default case when caching is activated. Individuals which have
 already been evaluated have their previous fitness read directly from the
@@ -446,14 +450,14 @@ de-activated with:
 
     --dont_lookup_fitness
 
-####2. Fitness Penalty
+###2. Fitness Penalty
 
 Individuals which have already been evaluated are given a default bad
 fitness. Activate with:
 
     --lookup_bad_fitness
 
-####3. Mutate Duplicates
+###3. Mutate Duplicates
 
 Individuals which have already been evaluated are mutated to produce new
 unique individuals which have not been encountered yet by the search process.
@@ -464,10 +468,10 @@ Activate with:
 *__NOTE__ that the various caching options are __mutually exclusive__.*
 *For example, you cannot specify* `--mutate_duplicates` *with* `--lookup_bad_fitness`.
 
-##Replacement
+#Replacement
 -----------
 
-###Generational
+##Generational
 ===============
 
 Activate with:
@@ -483,7 +487,7 @@ where `[INT]` is an integer which specifies the number of elites to be saved
 between generations. Elites are saved between generations regardless of
 whether or not they are better or worse than the new population.
 
-###Steady State
+##Steady State
 ===============
 
 Activate with:
