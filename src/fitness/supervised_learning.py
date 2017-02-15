@@ -5,7 +5,6 @@ np.seterr(all="raise")
 
 from algorithm.parameters import params
 from utilities.fitness.get_data import get_data
-from fitness.default_fitness import default_fitness
 from utilities.fitness.math_functions import plog, rlog, pdiv, psqrt, aq, ppow, psqrt2, ppow2
 from utilities.fitness.optimize_constants import optimize_constants
 
@@ -23,6 +22,7 @@ class supervised_learning:
     """
 
     maximise = False
+    default_fitness = np.NaN
 
     def __init__(self):
         # Get training and test data
@@ -89,11 +89,10 @@ class supervised_learning:
                 # values first, the estimate second
                 fitness = params['ERROR_METRIC'](y, yhat)
 
-
         except (FloatingPointError, ZeroDivisionError, OverflowError):
             # FP err can happen through eg overflow (lots of pow/exp calls)
             # ZeroDiv can happen when using unprotected operators
-            fitness = default_fitness()
+            fitness = self.default_fitness
         except Exception as err:
             # other errors should not usually happen (unless we have
             # an unprotected operator) so user would prefer to see them
@@ -102,6 +101,6 @@ class supervised_learning:
 
         # don't use "not fitness" here, because what if fitness = 0.0?!
         if isnan(fitness):
-            fitness = default_fitness()
+            fitness = self.default_fitness
 
         return fitness

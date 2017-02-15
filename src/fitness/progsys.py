@@ -3,6 +3,7 @@ from os import listdir, getcwd, path
 import subprocess
 import json
 import sys
+import numpy as np
 
 class progsys:
     """"""
@@ -20,6 +21,7 @@ class progsys:
     FORCOUNTERUNNUMBERED = "forCounter%"
 
     maximise = False
+    default_fitness = np.NaN
 
     def __init__(self):
         self.training, self.test, self.embed_header, self.embed_footer = self.get_data(params['DATASET'])

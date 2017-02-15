@@ -12,7 +12,6 @@ from utilities.stats.save_plots import save_best_fitness_plot
 """Algorithm statistics"""
 stats = {
         "gen": 0,
-        "best_ever": None,
         "total_inds": 0,
         "regens": 0,
         "invalids": 0,
@@ -51,8 +50,8 @@ def get_stats(individuals, end=False):
     """
 
     best = max(individuals)
-    if not stats['best_ever'] or best > stats['best_ever']:
-        stats['best_ever'] = best
+    if not trackers.best_ever or best > trackers.best_ever:
+        trackers.best_ever = best
 
     if end or params['VERBOSE'] or not params['DEBUG']:
 
@@ -72,6 +71,8 @@ def get_stats(individuals, end=False):
                                            stats['total_inds']*100
 
         available = [i for i in individuals if not i.invalid]
+        
+        
 
         # Genome Stats
         genome_lengths = [len(i.genome) for i in available]
@@ -100,12 +101,12 @@ def get_stats(individuals, end=False):
         # Fitness Stats
         fitnesses = [i.fitness for i in available]
         stats['ave_fitness'] = ave(fitnesses)
-        stats['best_fitness'] = stats['best_ever'].fitness
+        stats['best_fitness'] = trackers.best_ever.fitness
 
     # Save fitness plot information
     if params['SAVE_PLOTS'] and not params['DEBUG']:
         if not end:
-            trackers.best_fitness_list.append(stats['best_ever'].fitness)
+            trackers.best_fitness_list.append(trackers.best_ever.fitness)
 
         if params['VERBOSE'] or end:
             save_best_fitness_plot()
@@ -122,10 +123,10 @@ def get_stats(individuals, end=False):
 
     # Generate test fitness on regression problems
     if hasattr(params['FITNESS_FUNCTION'], "training_test") and end:
-        stats['best_ever'].training_fitness = copy(stats['best_ever'].fitness)
-        stats['best_ever'].test_fitness = params['FITNESS_FUNCTION'](
-            stats['best_ever'], dist='test')
-        stats['best_ever'].fitness = stats['best_ever'].training_fitness
+        trackers.best_ever.training_fitness = copy(trackers.best_ever.fitness)
+        trackers.best_ever.test_fitness = params['FITNESS_FUNCTION'](
+            trackers.best_ever, dist='test')
+        trackers.best_ever.fitness = trackers.best_ever.training_fitness
 
     # Save stats to list.
     if params['VERBOSE'] or not params['DEBUG'] and not end:
@@ -167,12 +168,12 @@ def print_final_stats():
 
     if hasattr(params['FITNESS_FUNCTION'], "training_test"):
         print("\n\nBest:\n  Training fitness:\t",
-              stats['best_ever'].training_fitness)
-        print("  Test fitness:\t\t", stats['best_ever'].test_fitness)
+              trackers.best_ever.training_fitness)
+        print("  Test fitness:\t\t", trackers.best_ever.test_fitness)
     else:
-        print("\n\nBest:\n  Fitness:\t", stats['best_ever'].fitness)
-    print("  Phenotype:", stats['best_ever'].phenotype)
-    print("  Genome:", stats['best_ever'].genome)
+        print("\n\nBest:\n  Fitness:\t", trackers.best_ever.fitness)
+    print("  Phenotype:", trackers.best_ever.phenotype)
+    print("  Genome:", trackers.best_ever.genome)
     print_generation_stats()
 
 
@@ -265,19 +266,19 @@ def save_best_ind_to_file(end=False, name="best"):
     filename = path.join(params['FILE_PATH'], (str(name) + ".txt"))
     savefile = open(filename, 'w')
     savefile.write("Generation:\n" + str(stats['gen']) + "\n\n")
-    savefile.write("Phenotype:\n" + str(stats['best_ever'].phenotype) + "\n\n")
-    savefile.write("Genotype:\n" + str(stats['best_ever'].genome) + "\n")
-    savefile.write("Tree:\n" + str(stats['best_ever'].tree) + "\n")
+    savefile.write("Phenotype:\n" + str(trackers.best_ever.phenotype) + "\n\n")
+    savefile.write("Genotype:\n" + str(trackers.best_ever.genome) + "\n")
+    savefile.write("Tree:\n" + str(trackers.best_ever.tree) + "\n")
     if hasattr(params['FITNESS_FUNCTION'], "training_test"):
         if end:
             savefile.write("\nTraining fitness:\n" +
-                           str(stats['best_ever'].training_fitness))
+                           str(trackers.best_ever.training_fitness))
             savefile.write("\nTest fitness:\n" +
-                           str(stats['best_ever'].test_fitness))
+                           str(trackers.best_ever.test_fitness))
         else:
-            savefile.write("\nFitness:\n" + str(stats['best_ever'].fitness))
+            savefile.write("\nFitness:\n" + str(trackers.best_ever.fitness))
     else:
-        savefile.write("\nFitness:\n" + str(stats['best_ever'].fitness))
+        savefile.write("\nFitness:\n" + str(trackers.best_ever.fitness))
     savefile.close()
 
 

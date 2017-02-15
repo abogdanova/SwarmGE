@@ -145,14 +145,14 @@ def parse_stats_from_runs(experiment_name, graph):
 
     # Load in data and get the names of all stats.
     stats = list(pd.read_csv(ping_file, sep="\t"))
-
+    
     # Make list of stats we do not wish to parse.
-    no_parse_list = ["best_ever", "gen", "total_inds", "time_adjust"]
+    no_parse_list = ["gen", "total_inds", "time_adjust"]
     
     for stat in [stat for stat in stats if stat not in no_parse_list and
                  not stat.startswith("Unnamed")]:
         # Iterate over all stats.
-
+        print("Parsing", stat)
         summary_stats = []
 
         # Iterate over all runs
@@ -165,7 +165,12 @@ def parse_stats_from_runs(experiment_name, graph):
 
             try:
                 # Try to extract specific stat from the data.
-                summary_stats.append(list(data[stat]))
+                if list(data[stat]):
+                    summary_stats.append(list(data[stat]))
+                else:
+                    s = "scripts.parse_stats.parse_stats_from_runs\n" \
+                        "Error: stat %s is empty for run %s." % (stat, run)
+                    raise Exception(s)
 
             except KeyError:
                 # The requested stat doesn't exist.
@@ -175,7 +180,7 @@ def parse_stats_from_runs(experiment_name, graph):
 
         # Generate numpy array of all stats
         summary_stats = np.array(summary_stats)
-
+        
         # Append Stat to header.
         header = header + stat + "_mean" + ","
         

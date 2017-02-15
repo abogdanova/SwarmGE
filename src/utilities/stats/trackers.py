@@ -16,3 +16,6 @@ time_list = []
 stats_list = []
 # List for storing stats at each generation
 # Used when verbose mode is off to speed up program
+
+best_ever = None
+# Store the best ever individual here.

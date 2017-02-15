@@ -1,7 +1,6 @@
 from multiprocessing import Pool
 
 from algorithm.parameters import params
-from fitness.default_fitness import default_fitness
 from stats.stats import stats
 from utilities.stats.trackers import cache
 
@@ -40,7 +39,7 @@ def evaluate_fitness(individuals):
         if ind.invalid:
             # Invalid individuals cannot be evaluated and are given a bad
             # default fitness.
-            ind.fitness = default_fitness()
+            ind.fitness = params['FITNESS_FUNCTION'].default_fitness
             stats['invalids'] += 1
 
         else:
@@ -59,7 +58,7 @@ def evaluate_fitness(individuals):
 
                 elif params['LOOKUP_BAD_FITNESS']:
                     # Give the individual a bad default fitness.
-                    ind.fitness = default_fitness()
+                    ind.fitness = params['FITNESS_FUNCTION'].default_fitness
                     eval_ind = False
 
                 elif params['MUTATE_DUPLICATES']:
