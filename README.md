@@ -86,12 +86,13 @@ instead of
 
 However, it is still possible to specify the full correct path if you so desire. Specifying the full direct path allows you to create new operators and place them wherever you like.
 
+
 #Population Options
+-------------------
 
 There are a number of parameters within PonyGE2 for controlling both overall populations and the individuals within those populations.
 
 ##Population Size
----------------
 
 The population size controls the total number of individuals to be generated at each generation. The default value is 500. This value can be changed with the flag:
 
@@ -102,7 +103,7 @@ or by setting the parameter `POPULATION_SIZE` in either a parameters file or in 
 Higher population sizes can improve performance on difficult problems, but require more computational effort and may lead to premature convergence.
 
 ##Generations
------------
+=============
 
 The number of generations the evolutionary algorithm will run for. The default value is 50. This value can be changed with the flag:
 
@@ -114,15 +115,10 @@ Higher numbers of generations can improve performance, but will lead to longer r
 
 *__NOTE__ that in PonyGE2 the total number of generations refers to the number of generations over which evolution occurs, __NOT__ including initialisation. Thus, specifying 50 generations will mean 50 generations will be evolved. Since the initialised generation will be Generation 0, the total number of individuals evaluated across an entire evolutionary run will by __population x (generations + 1)__.*
 
-The typical breakdown of a population-based evolutionary algorithm is:
+##Individual Size
+=================
 
-1. Initialisation
-2. Selection
-3. Variation
-4. Evaluation
-5. Replacement
-
-These steps are expanded on in detail hereafter.
+There are a number of parameters for controlling the size and various aspects of individuals. 
 
 #Initialisation
 --------------
