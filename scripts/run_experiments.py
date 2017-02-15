@@ -56,9 +56,32 @@ def execute_runs():
     parse_stats_from_runs(params['EXPERIMENT_NAME'], True)
 
 
+def check_params():
+    """
+    Checks the params to ensure an experiment name has been specified and
+    that the number of runs has been specified.
+    
+    :return: Nothing.
+    """
+
+    if not params['EXPERIMENT_NAME']:
+        s = "scripts.run_experiments.check_params\n" \
+            "Error: Experiment Name not specified.\n" \
+            "       Please specify a name for this set of runs."
+        raise Exception(s)
+    
+    if params['RUNS'] == 1:
+        print("Warning: Only 1 run has been specified for this set of runs.")
+        print("         The number of runs can be specified with the command-"
+              "line parameter `--runs`.")
+
+
 if __name__ == "__main__":
     # Setup run parameters.
     set_params(sys.argv[1:], create_files=False)
+    
+    # Check the correct parameters are set for this set of runs.
+    check_params()
     
     # Execute multiple runs.
     execute_runs()
