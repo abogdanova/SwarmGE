@@ -277,6 +277,12 @@ def parse_cmd_args(arguments):
                              'results/[EXPERIMENT_NAME] folder. If not '
                              'specified then results are saved in default '
                              'results folder.')
+    parser.add_argument('--runs',
+                        dest='RUNS',
+                        type=int,
+                        help='Optional parameter to specify the number of '
+                             'runs to be performed for an experiment. Only '
+                             'used with experiment manager.')
     parser.add_argument('--error_metric',
                         dest='ERROR_METRIC',
                         type=str,

@@ -19,6 +19,9 @@ params = {
 
         # Set optional experiment name
         'EXPERIMENT_NAME': None,
+        # Set default number of runs to be done. ONLY USED WITH EXPERIMENT
+        # MANAGER.
+        'RUNS': 1,
 
         # Class of problem
         'FITNESS_FUNCTION': "regression",
