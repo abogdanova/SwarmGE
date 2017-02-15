@@ -134,7 +134,7 @@ There are a number of aspects to a linear genome:
 
 ####Codon Size
 
-Each codon in a genome is an integer value. When generating a codon to represent a production choice, a random integer value is chosen that represents that correct production choice. The maximum value a codon can take is set by dafault at 10000. This value can be changed with the flag:
+Each codon in a genome is an integer value. When generating a codon to represent a production choice, a random integer value is chosen that represents that correct production choice. The maximum value a codon can take is set by default at 10000. This value can be changed with the flag:
 
     --codon_size [INT]
     
@@ -149,6 +149,8 @@ The total length of a genome is a global parameter that is often used for contro
 or by setting the parameter `MAX_GENOME_LENGTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum length a genome can take.
 
 ####Wrapping
+
+TODO: Explain wrapping here. Cite wrapping paper.
 
 ###Derivation Tree Parameters
 
