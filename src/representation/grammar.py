@@ -533,14 +533,14 @@ class Grammar(object):
         unique solutions (no duplicates).
 
         :param self: An instance of the representation.grammar.grammar class.
-        :return: The minimum depth at which unuique solutions can be generated
+        :return: The minimum depth at which unique solutions can be generated
         """
 
-        max_tree_deth = params['MAX_TREE_DEPTH']
+        max_tree_depth = params['MAX_TREE_DEPTH']
         size = params['POPULATION_SIZE']
 
         # Specify the range of ramping depths
-        depths = range(self.min_path, max_tree_deth + 1)
+        depths = range(self.min_path, max_tree_depth + 1)
 
         if size % 2:
             # Population size is odd
