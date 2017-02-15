@@ -62,7 +62,6 @@ params = {
         'MAX_TREE_DEPTH': None,
         'MAX_TREE_NODES': None,
         'CODON_SIZE': 100000,
-        'MAX_INIT_GENOME_LENGTH': None,
         'MAX_GENOME_LENGTH': None,
         'MAX_WRAPS': 0,
 
@@ -71,6 +70,8 @@ params = {
         # "operators.initialisation.uniform_genome"
         # "operators.initialisation.rhh"
         # "operators.initialisation.PI_grow"
+        'MAX_INIT_GENOME_LENGTH': None,
+        # Set the maximum geneome length for initialisation.
         'MAX_INIT_TREE_DEPTH': None,
         # Set the maximum tree depth for initialisation.
         'MIN_INIT_TREE_DEPTH': None,
