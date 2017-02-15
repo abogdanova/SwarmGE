@@ -249,16 +249,21 @@ or by setting the parameter `TOURNAMENT_SIZE` in either a parameters file or in 
 ###Truncation
 =============
 
+Truncation selection takes an entire population, sorts it, and returns the best `SELECTION_PROPORTION` of that population.  
+
 Activate with:
 
     --selection truncation
 
-Selection proportion is set by default at 0.5. This value can be changed
-with the flag:
+or by setting the parameter `SELECTION` in either a parameters file or in the params dictionary.
+
+Selection proportion is set by default at 0.5 (i.e. return the top 50% of the population). This value can be changed with the flag:
 
     --selection_proportion [NUM]
 
-where `[NUM]` is a float between 0 and 1.
+or by setting the parameter `SELECTION_PROPORTION` in either a parameters file or in the params dictionary, where `[NUM]` is a float between 0 and 1.
+
+*__NOTE__ that unless the specified* `SELECTION_PROPORTION` *is 1 (i.e. 100%), truncation selection necessarily returns a selected parent population that is smaller in size than the original population.*
 
 ##Variation
 ---------
