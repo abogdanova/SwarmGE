@@ -3,9 +3,9 @@ from copy import copy
 from time import time
 from os import getcwd, path, makedirs
 from sys import stdout
+import numpy as np
 
 from algorithm.parameters import params
-from utilities.fitness.math_functions import ave
 from utilities.stats import trackers
 from utilities.stats.save_plots import save_best_fitness_plot
 
@@ -50,6 +50,7 @@ def get_stats(individuals, end=False):
     """
 
     best = max(individuals)
+
     if not trackers.best_ever or best > trackers.best_ever:
         trackers.best_ever = best
 
@@ -69,38 +70,34 @@ def get_stats(individuals, end=False):
             stats['unique_inds'] = len(trackers.cache)
             stats['unused_search'] = 100 - stats['unique_inds'] / \
                                            stats['total_inds']*100
-
-        available = [i for i in individuals if not i.invalid]
         
-        
-
         # Genome Stats
-        genome_lengths = [len(i.genome) for i in available]
-        stats['max_genome_length'] = max(genome_lengths)
-        stats['ave_genome_length'] = ave(genome_lengths)
-        stats['min_genome_length'] = min(genome_lengths)
+        genome_lengths = [len(i.genome) for i in individuals]
+        stats['max_genome_length'] = np.nanmax(genome_lengths)
+        stats['ave_genome_length'] = np.nanmean(genome_lengths)
+        stats['min_genome_length'] = np.nanmin(genome_lengths)
 
         # Used Codon Stats
-        codons = [i.used_codons for i in available]
-        stats['max_used_codons'] = max(codons)
-        stats['ave_used_codons'] = ave(codons)
-        stats['min_used_codons'] = min(codons)
+        codons = [i.used_codons for i in individuals]
+        stats['max_used_codons'] = np.nanmax(codons)
+        stats['ave_used_codons'] = np.nanmean(codons)
+        stats['min_used_codons'] = np.nanmin(codons)
 
         # Tree Depth Stats
-        depths = [i.depth for i in available]
-        stats['max_tree_depth'] = max(depths)
-        stats['ave_tree_depth'] = ave(depths)
-        stats['min_tree_depth'] = min(depths)
+        depths = [i.depth for i in individuals]
+        stats['max_tree_depth'] = np.nanmax(depths)
+        stats['ave_tree_depth'] = np.nanmean(depths)
+        stats['min_tree_depth'] = np.nanmin(depths)
 
         # Tree Node Stats
-        nodes = [i.nodes for i in available]
-        stats['max_tree_nodes'] = max(nodes)
-        stats['ave_tree_nodes'] = ave(nodes)
-        stats['min_tree_nodes'] = min(nodes)
+        nodes = [i.nodes for i in individuals]
+        stats['max_tree_nodes'] = np.nanmax(nodes)
+        stats['ave_tree_nodes'] = np.nanmean(nodes)
+        stats['min_tree_nodes'] = np.nanmin(nodes)
 
         # Fitness Stats
-        fitnesses = [i.fitness for i in available]
-        stats['ave_fitness'] = ave(fitnesses)
+        fitnesses = [i.fitness for i in individuals]
+        stats['ave_fitness'] = np.nanmean(fitnesses)
         stats['best_fitness'] = trackers.best_ever.fitness
 
     # Save fitness plot information
