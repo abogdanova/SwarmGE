@@ -51,4 +51,6 @@ echo "(or in screen) "
 echo " "
 echo "    while [ 1 -eq 1 ] ; do for file in \$( ls ../parameters/*regex_* | awk -F\/ '{ print $NF }' | shuf ) ; do python3.5 ponyge.py --parameters $file > \$(date +\"%Y%m%d%H%M%S\")_\$(hostname)_\"\$file\"_Seed_raw_results.txt ; done ; done"
 
-
+# while [ 1 -eq 1 ] ; do for file in $( ls ../parameters/*regex_* | awk -F\/ '{ print $NF }' | shuf ) ; do python3.5 ponyge.py --parameters $file > $(date +"%Y%m%d%H%M%S")_$(hostname)_"$file"_Seed_raw_results.txt ; done ; done
+# while [ 1 -eq 1 ] ; do for file in $( ls ../parameters/*regex_* | awk -F\/ '{ print $NF }' | shuf ) ; do python3.5 ponyge.py --search_loop algorithm.hill_climbing.LAHC_search_loop --parameters $file > $(date +"%Y%m%d%H%M%S")_$(hostname)_"$file"_Seed_LAHC_raw_results.txt ; done ; done
+# while [ 1 -eq 1 ] ; do for file in $( ls ../parameters/*regex_* | awk -F\/ '{ print $NF }' | shuf ) ; do python3.5 ponyge.py --search_loop algorithm.hill_climbing.SCHC_search_loop --parameters $file > $(date +"%Y%m%d%H%M%S")_$(hostname)_"$file"_Seed_SCHC_raw_results.txt ; done ; done
