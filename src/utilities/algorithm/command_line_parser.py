@@ -106,12 +106,18 @@ def parse_cmd_args(arguments):
                         dest='MAX_TREE_DEPTH',
                         type=int,
                         help='Sets the max derivation tree depth for the '
-                             'algorithm, requires int value.')
+                             'algorithm, requires int value. The default max '
+                             'tree depth is set to None, i.e. trees can grow'
+                             'indefinitely. This can also be set by '
+                             'specifying the max tree depth to be 0.')
     parser.add_argument('--max_tree_nodes',
                         dest='MAX_TREE_NODES',
                         type=int,
                         help='Sets the max derivation tree nodes for the '
-                             'algorithm, requires int value.')
+                             'algorithm, requires int value. The default max '
+                             'tree nodes is set to None, i.e. trees can grow'
+                             'indefinitely. This can also be set by '
+                             'specifying the max tree nodes to be 0.')
     parser.add_argument('--codon_size',
                         dest='CODON_SIZE',
                         type=int,
@@ -121,7 +127,10 @@ def parse_cmd_args(arguments):
                         dest='MAX_GENOME_LENGTH',
                         type=int,
                         help='Sets the maximum chromosome length for the '
-                             'algorithm, requires int value.')
+                             'algorithm, requires int value. The default max '
+                             'genome length is set to None, i.e. gemomes can '
+                             'grow indefinitely. This can also be set by '
+                             'specifying the max genome length to be 0.')
     parser.add_argument('--max_wraps',
                         dest='MAX_WRAPS',
                         type=int,
