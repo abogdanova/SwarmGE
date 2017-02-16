@@ -270,3 +270,8 @@ def generate_PI_ind_tree(max_depth):
                            _ in range(int(ind.used_codons / 2))]
 
     return ind
+
+
+# Set ramping attributes for ramped initialisers.
+PI_grow.ramping = True
+rhh.ramping = True

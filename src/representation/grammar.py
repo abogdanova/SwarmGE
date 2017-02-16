@@ -69,7 +69,7 @@ class Grammar(object):
             # Set the minimum ramping tree depth from the command line.
             self.min_ramp = params['MIN_INIT_TREE_DEPTH']
 
-        else:
+        elif hasattr(params['INITIALISATION'], "ramping"):
             # Set the minimum depth at which ramping can start where we can
             # have unique solutions (no duplicates).
             self.get_min_ramp_depth()
