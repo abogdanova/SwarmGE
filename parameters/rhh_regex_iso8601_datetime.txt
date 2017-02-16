@@ -21,7 +21,7 @@ MUTATE_DUPLICATES:      False
 MUTATION:               subtree
 MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
-POPULATION_SIZE:        1000
+POPULATION_SIZE:        100
 ELITE_SIZE:  		100
 FITNESS_FUNCTION:       RegexEval
 FITNESS_TEST_SUITE:     generate_iso8601_datetime_tests
