@@ -96,7 +96,7 @@ class Individual(object):
         # Create a copy of self by initialising a new individual.
         new_ind = Individual(list(self.genome), new_tree, map_ind=False)
 
-        # Set new individaul parameters (no need to map genome to new
+        # Set new individual parameters (no need to map genome to new
         # individual).
         new_ind.phenotype, new_ind.invalid = self.phenotype, self.invalid
         new_ind.depth, new_ind.nodes = self.depth, self.nodes
