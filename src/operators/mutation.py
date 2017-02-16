@@ -137,14 +137,14 @@ def subtree(ind):
         # Set the depth limits for the new subtree.
         if params['MAX_TREE_DEPTH']:
             # Set the limit to the tree depth.
-            new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
+            max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
         
         else:
             # There is no limit to tree depth.
-            new_tree.max_depth = None
+            max_depth = None
     
         # Mutate a new subtree.
-        generate_tree(new_tree, [], [], "random", 0, 0, 0, new_tree.max_depth)
+        generate_tree(new_tree, [], [], "random", 0, 0, 0, max_depth)
     
         return ind_tree
 
