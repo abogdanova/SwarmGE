@@ -214,183 +214,6 @@ class RegexEval:
         return a_test_string
             
     """
-    Multiple search_strings should be used to guide toward generality.
-    """
-    def generate_iso8601_datetime_tests(self):
-        # target: ^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$
-        a_test_string = self.add_test("2016-12-09T08:21:15.9+00:00",[0,27])
-        self.generate_equivalence_test_suite_replacement(a_test_string,"^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$")
-        self.add_test("2016-12-09T08:21:15.9+00:0", None)
-        self.add_test("2016-22-09T08:21:15.9+00:00000000000",None) # 
-        self.add_test("2016-22-09T08:21:15.9+00:00",None) # no match, as 22 is not a valid month
-        self.add_test("1911-02-19T22:35:42.3+08:43",[0,27])
-        self.add_test("2016-09-05T15:22:26.286Z",[0,24])
-
-    """
-    From: https://github.com/angular/angular.js/blob/a24777a2c4ad2ac087d9e3aa278fa2e61e8cc740/src/ng/directive/input.js
-    """
-    def generate_scientific_number_tests(self):
-        self.add_test("230.234E-10", [0,10])
-        self.add_test("971.829E+26", [0,10])
-        self.add_test("3566", [0,3])
-        self.add_test("4", [0,0])
-        self.add_test("-7", [0,1])
-        self.add_test("+94", [0,2])
-        self.add_test("            36", [0,13])
-        self.add_test("78      ", [0,8])
-        self.add_test("87465.345345", [0,11])
-        self.add_test("2346.533", [0,7])
-        a_test_string = self.add_test("0.045e-10", [0,8])
-        known_regex = "^\s*(-|\+)?(\d+|(\d*(\.\d*)))([eE][+-]?\d+)?\s*$"
-        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
-        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
-        # self.add_test("3566.", None) # this is allowed per the original regex 
-        # self.add_test(".3456", None) # this is allowed per the original regex 
-
-    """
-    From: https://github.com/jmmcd/PonyGE2/blob/c256f9a36331078b9ca298af4d73034b623dd8a0/src/representation/grammar.py
-    """
-    def generate_PonyGE2_Grammar_File_Rule_tests(self):
-        known_regex = "(?P<rulename><\S+>)\s*::=\s*(?P<production>(?:(?=\#)\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)"
-        a_test_string = self.add_test("<string> ::= <letter>|<letter><string>", [0,37])
-        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
-        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
-
-    """
-    From: https://github.com/jmmcd/PonyGE2/blob/c256f9a36331078b9ca298af4d73034b623dd8a0/src/representation/grammar.py
-    """
-    def generate_catastrophic_QT3TS_tests(self):
-        known_regex = ".X(.+)+XX"
-        self.add_test("hryxioXcXXdornct", [5,9])
-        a_test_string = self.add_test("bbbbXcyXXaaa", [3,8])
-        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
-        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
-
-    """
-    From: https://github.com/d3/d3/commit/4ffe6b40f367c696107b9c01a67812559159633a
-    (This is similar to generate_scientific_number_tests, though used for extraction, as opposed to validation)
-    """
-    def generate_d3_interpolate_number(self):    
-        known_regex = "[-+]?(?:\d+\.?\d*|\d*\.?\d+)(?:[eE][-+]?\d+)?"
-        self.add_test("230.234E-10", [0,10])
-        self.add_test("971.829E+26", [0,10])
-        self.add_test("3566", [0,3])
-        self.add_test("4", [0,0])
-        self.add_test("-7", [0,1])
-        self.add_test("+94", [0,2])
-        self.add_test("            36", [12,13])
-        self.add_test("78      ", [0,1])
-        self.add_test("87465.345345", [0,11])
-        self.add_test("2346.533", [0,7])
-        self.add_test("  3566.   ", [2,6]) # this is allowed per the original regex 
-        self.add_test(" .3456  ", [1,5]) # this is allowed per the original regex
-        self.add_test("a46b  ", [1,2])
-        a_test_string = self.add_test("0.045e-10", [0,8])
-        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
-        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
-
-    """
-    From https://github.com/ghiscoding/angular-validation/wiki/Regular-Expression-Pattern
-    """        
-    def generate_macaddress_validation_tests(self):
-        a_test_string = RegexTestString("5C0A5B634A82")
-        a_test_string.add_match(0,12)
-        self.test_cases.append(a_test_string)
-
-        self.generate_equivalence_test_suite_length(a_test_string, "^[0-9A-F]{12}$")
-        self.generate_equivalence_test_suite_replacement(a_test_string, "^[0-9A-F]{12}$")
-
-        
-    def generate_regex_mac_search_string_tests(self):
-        #a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 14") 
-        #a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
-        a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl")
-        a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
-        a_test_string.add_match(161,178) # 50:06:04:92:53:44
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.1sdkfjhakljwesjdhfglksjhdfgk")
-        a_test_string.add_match(109,126) # 5c:0a:5b:63:4a:82
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString(" -> 140.105.63.164(50:j6:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)sdkfjhaklsjdhfglksjhdfgk")
-        # a_test_string.add_match(19,36) # 50:06:04:92:53:44
-        # self.test_cases.append(a_test_string)
-
-        # Longer is better for appropriate testing of regex time. (Why is a longer test better than more iterations on a smaller test?) Smaller tests introduce more variability, but why?
-        a_test_string = RegexTestString(" -> 140.105.63.16(50:06:04:9r:53:44):80 TCP flags: ****S* len:60 ttl:32)ssjdhfglksjhdfgk")
-        #a_test_string.add_match(18,35) # 50:06:04:92:53:44
-        # self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("Jan 12 06:26:20: ACCEPT service dns from 140.105.48.16 to firewall(pub-nic-dns), prefix: \"none\" (in: eth0 140.105.48.16(00:21:dd:bc:95:44):4263 -> 140.105.63.158(00:14:31:83:c6:8d):53 UDP len:76 ")
-        a_test_string.add_match(120,137)
-        a_test_string.add_match(162,179)
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("Jan 12 06:27:09: DROP service 68->67(udp) from 216.34.211.83 to 216.34.253.94, prefix: \"spoof iana-0/8\" (in: eth0 213.92.153.78(00:1f:d6:19:0a:80):68 -> 69.43.177.110(00:30:fe:fd:d6:51):67 UDP le")
-        a_test_string.add_match(128,145)
-        a_test_string.add_match(167,184)
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("105.63.1650:06:04:92:53:44:80")
-        a_test_string.add_match(7,27) # 50:06:04:92:53:44
-        # self.test_cases.append(a_test_string)
-        self.generate_equivalence_test_suite_replacement(a_test_string, "([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})")
-        
-        # a_test_string = RegexTestString(" -> 140.105.63.164(50:06:g4:92:53:44):80 TCP flags: ****S* len:60 ttl:32)") # negative match!
-        # self.test_cases.append(a_test_string)
-        # a_test_string = RegexTestString(" -> 140.105.63.164(50:06:54:92:r3:44):80 TCP flags: ****S* len:60 ttl:32)") # negative match!
-        # self.test_cases.append(a_test_string)
-
-
-    def generate_catastrophic_csv(self):
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,5P,5,5,6,5P") 
-        self.test_cases.append(a_test_string)
-
-        # http://www.regular-expressions.info/catastrophic.html
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,24,5P")
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,243,3P") # catastrophic
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,P")
-        a_test_string.add_match(0,33)
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,P")
-        a_test_string.add_match(0,27)
-        self.test_cases.append(a_test_string)
-        
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,P")
-        a_test_string.add_match(0,24)
-        self.test_cases.append(a_test_string)
-
-        #        self.generate_equivalence_test_suite_replacement(a_test_string,"^(.*?,){11}P")
-        self.generate_equivalence_test_suite_length(a_test_string,"^(.*?,){11}P")
-
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,3P")
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,P")
-        self.test_cases.append(a_test_string)
-
-    def generate_email_validation_tests(self):
-        a_test_string = RegexTestString("codykenny@gmail.com")
-        a_test_string.add_match(0,18)
-        self.test_cases.append(a_test_string)
-
-        self.generate_equivalence_test_suite_replacement(a_test_string,"^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$")
-        self.generate_equivalence_test_suite_length(a_test_string,"^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$")
-
-        a_test_string = RegexTestString("codykennygmail.com")
-        self.test_cases.append(a_test_string)
-
-        a_test_string = RegexTestString("codykenny@gmailcom")
-        a_test_string.add_match(0,17)
-        self.test_cases.append(a_test_string)
-
-    """
     Generate generic tests
     """    
     def generate_tests(self):
@@ -473,9 +296,6 @@ class RegexEval:
         # worst regex: .* (.*)\[(.*)\]:.*
         # seed genome to go in regex.txt parameters file
         # [10082, 41053, 89472, 13943, 83234, 23739, 51472, 59723, 52910, 4880, 72071, 68514, 53866, 25754, 39758, 51472, 59723, 29655, 22034, 52910, 4880, 72071, 5630, 83669, 54528, 45876, 76718, 53866, 25754, 39758, 51472, 59723, 29655, 22034, 52910, 4880, 72071, 56000, 67442, 49372, 13302, 70567, 37415, 81973, 40820, 18637, 88657, 51472, 59723, 52910, 4880, 72071]
-
-
-
         
     def generate_test_suite(self,regex_string):
         # do some test generation
@@ -486,6 +306,8 @@ class RegexEval:
         # collect strings which identify the different regex
         # cache and reuse these
         known_test_strings=["5C0A5B634A82",
+                            "Jan 12 06:26:20: ACCEPT service dns from 140.105.48.16 to firewall(pub-nic-dns), prefix: \"none\" (in: eth0 140.105.48.16(00:21:dd:bc:95:44):4263 -> 140.105.63.158(00:14:31:83:c6:8d):53 UDP len:76",
+                            "Jan 12 06:27:09: DROP service 68->67(udp) from 216.34.211.83 to 216.34.253.94, prefix: \"spoof iana-0/8\" (in: eth0 213.92.153.78(00:1f:d6:19:0a:80):68 -> 69.43.177.110(00:30:fe:fd:d6:51):67 UDP le"
                             "Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: ", 
                             "Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: ",
                             "26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: ", 
@@ -624,3 +446,179 @@ class RegexTestString:
 
 
         
+#    """
+#    Multiple search_strings should be used to guide toward generality.
+#    """
+#    def generate_iso8601_datetime_tests(self):
+#        # target: ^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$
+#        a_test_string = self.add_test("2016-12-09T08:21:15.9+00:00",[0,27])
+#        self.generate_equivalence_test_suite_replacement(a_test_string,"^\d{4,}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)$")
+#        self.add_test("2016-12-09T08:21:15.9+00:0", None)
+#        self.add_test("2016-22-09T08:21:15.9+00:00000000000",None) # 
+#        self.add_test("2016-22-09T08:21:15.9+00:00",None) # no match, as 22 is not a valid month
+#        self.add_test("1911-02-19T22:35:42.3+08:43",[0,27])
+#        self.add_test("2016-09-05T15:22:26.286Z",[0,24])
+#
+#    """
+#    From: https://github.com/angular/angular.js/blob/a24777a2c4ad2ac087d9e3aa278fa2e61e8cc740/src/ng/directive/input.js
+#    """
+#    def generate_scientific_number_tests(self):
+#        self.add_test("230.234E-10", [0,10])
+#        self.add_test("971.829E+26", [0,10])
+#        self.add_test("3566", [0,3])
+#        self.add_test("4", [0,0])
+#        self.add_test("-7", [0,1])
+#        self.add_test("+94", [0,2])
+#        self.add_test("            36", [0,13])
+#        self.add_test("78      ", [0,8])
+#        self.add_test("87465.345345", [0,11])
+#        self.add_test("2346.533", [0,7])
+#        a_test_string = self.add_test("0.045e-10", [0,8])
+#        known_regex = "^\s*(-|\+)?(\d+|(\d*(\.\d*)))([eE][+-]?\d+)?\s*$"
+#        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
+#        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
+#        # self.add_test("3566.", None) # this is allowed per the original regex 
+#        # self.add_test(".3456", None) # this is allowed per the original regex 
+#
+#    """
+#    From: https://github.com/jmmcd/PonyGE2/blob/c256f9a36331078b9ca298af4d73034b623dd8a0/src/representation/grammar.py
+#    """
+#    def generate_PonyGE2_Grammar_File_Rule_tests(self):
+#        known_regex = "(?P<rulename><\S+>)\s*::=\s*(?P<production>(?:(?=\#)\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)"
+#        a_test_string = self.add_test("<string> ::= <letter>|<letter><string>", [0,37])
+#        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
+#        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
+#
+#    """
+#    From: https://github.com/jmmcd/PonyGE2/blob/c256f9a36331078b9ca298af4d73034b623dd8a0/src/representation/grammar.py
+#    """
+#    def generate_catastrophic_QT3TS_tests(self):
+#        known_regex = ".X(.+)+XX"
+#        self.add_test("hryxioXcXXdornct", [5,9])
+#        a_test_string = self.add_test("bbbbXcyXXaaa", [3,8])
+#        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
+#        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
+#
+#    """
+#    From: https://github.com/d3/d3/commit/4ffe6b40f367c696107b9c01a67812559159633a
+#    (This is similar to generate_scientific_number_tests, though used for extraction, as opposed to validation)
+#    """
+#    def generate_d3_interpolate_number(self):    
+#        known_regex = "[-+]?(?:\d+\.?\d*|\d*\.?\d+)(?:[eE][-+]?\d+)?"
+#        self.add_test("230.234E-10", [0,10])
+#        self.add_test("971.829E+26", [0,10])
+#        self.add_test("3566", [0,3])
+#        self.add_test("4", [0,0])
+#        self.add_test("-7", [0,1])
+#        self.add_test("+94", [0,2])
+#        self.add_test("            36", [12,13])
+#        self.add_test("78      ", [0,1])
+#        self.add_test("87465.345345", [0,11])
+#        self.add_test("2346.533", [0,7])
+#        self.add_test("  3566.   ", [2,6]) # this is allowed per the original regex 
+#        self.add_test(" .3456  ", [1,5]) # this is allowed per the original regex
+#        self.add_test("a46b  ", [1,2])
+#        a_test_string = self.add_test("0.045e-10", [0,8])
+#        self.generate_equivalence_test_suite_length(a_test_string, known_regex)
+#        self.generate_equivalence_test_suite_replacement(a_test_string, known_regex)
+#
+#    """
+#    From https://github.com/ghiscoding/angular-validation/wiki/Regular-Expression-Pattern
+#    """        
+#    def generate_macaddress_validation_tests(self):
+#        a_test_string = RegexTestString("5C0A5B634A82")
+#        a_test_string.add_match(0,12)
+#        self.test_cases.append(a_test_string)
+#
+#        self.generate_equivalence_test_suite_length(a_test_string, "^[0-9A-F]{12}$")
+#        self.generate_equivalence_test_suite_replacement(a_test_string, "^[0-9A-F]{12}$")
+#
+#        
+#    def generate_regex_mac_search_string_tests(self):
+#        #a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 14") 
+#        #a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
+#        a_test_string = RegexTestString("Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl")
+#        a_test_string.add_match(119,136) # 5c:0a:5b:63:4a:82
+#        a_test_string.add_match(161,178) # 50:06:04:92:53:44
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.1sdkfjhakljwesjdhfglksjhdfgk")
+#        a_test_string.add_match(109,126) # 5c:0a:5b:63:4a:82
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString(" -> 140.105.63.164(50:j6:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)sdkfjhaklsjdhfglksjhdfgk")
+#        # a_test_string.add_match(19,36) # 50:06:04:92:53:44
+#        # self.test_cases.append(a_test_string)
+#
+#        # Longer is better for appropriate testing of regex time. (Why is a longer test better than more iterations on a smaller test?) Smaller tests introduce more variability, but why?
+#        a_test_string = RegexTestString(" -> 140.105.63.16(50:06:04:9r:53:44):80 TCP flags: ****S* len:60 ttl:32)ssjdhfglksjhdfgk")
+#        #a_test_string.add_match(18,35) # 50:06:04:92:53:44
+#        # self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("Jan 12 06:26:20: ACCEPT service dns from 140.105.48.16 to firewall(pub-nic-dns), prefix: \"none\" (in: eth0 140.105.48.16(00:21:dd:bc:95:44):4263 -> 140.105.63.158(00:14:31:83:c6:8d):53 UDP len:76 ")
+#        a_test_string.add_match(120,137)
+#        a_test_string.add_match(162,179)
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("Jan 12 06:27:09: DROP service 68->67(udp) from 216.34.211.83 to 216.34.253.94, prefix: \"spoof iana-0/8\" (in: eth0 213.92.153.78(00:1f:d6:19:0a:80):68 -> 69.43.177.110(00:30:fe:fd:d6:51):67 UDP le")
+#        a_test_string.add_match(128,145)
+#        a_test_string.add_match(167,184)
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("105.63.1650:06:04:92:53:44:80")
+#        a_test_string.add_match(7,27) # 50:06:04:92:53:44
+#        # self.test_cases.append(a_test_string)
+#        self.generate_equivalence_test_suite_replacement(a_test_string, "([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})")
+#        
+#        # a_test_string = RegexTestString(" -> 140.105.63.164(50:06:g4:92:53:44):80 TCP flags: ****S* len:60 ttl:32)") # negative match!
+#        # self.test_cases.append(a_test_string)
+#        # a_test_string = RegexTestString(" -> 140.105.63.164(50:06:54:92:r3:44):80 TCP flags: ****S* len:60 ttl:32)") # negative match!
+#        # self.test_cases.append(a_test_string)
+#
+#
+#    def generate_catastrophic_csv(self):
+#        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,5P,5,5,6,5P") 
+#        self.test_cases.append(a_test_string)
+#
+#        # http://www.regular-expressions.info/catastrophic.html
+#        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,24,5P")
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,243,3P") # catastrophic
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,13777,P")
+#        a_test_string.add_match(0,33)
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,12,P")
+#        a_test_string.add_match(0,27)
+#        self.test_cases.append(a_test_string)
+#        
+#        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,P")
+#        a_test_string.add_match(0,24)
+#        self.test_cases.append(a_test_string)
+#
+#        #        self.generate_equivalence_test_suite_replacement(a_test_string,"^(.*?,){11}P")
+#        self.generate_equivalence_test_suite_length(a_test_string,"^(.*?,){11}P")
+#
+#        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,11,3P")
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("1,2,3,4,5,6,7,8,9,10,P")
+#        self.test_cases.append(a_test_string)
+#
+#    def generate_email_validation_tests(self):
+#        a_test_string = RegexTestString("codykenny@gmail.com")
+#        a_test_string.add_match(0,18)
+#        self.test_cases.append(a_test_string)
+#
+#        self.generate_equivalence_test_suite_replacement(a_test_string,"^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$")
+#        self.generate_equivalence_test_suite_length(a_test_string,"^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$")
+#
+#        a_test_string = RegexTestString("codykennygmail.com")
+#        self.test_cases.append(a_test_string)
+#
+#        a_test_string = RegexTestString("codykenny@gmailcom")
+#        a_test_string.add_match(0,17)
+#        self.test_cases.append(a_test_string)
