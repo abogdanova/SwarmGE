@@ -3,7 +3,7 @@ from algorithm.parameters import params
 
 class Tree:
 
-    def __init__(self, expr, parent, depth_limit=20):
+    def __init__(self, expr, parent, depth_limit=None):
         """
         Initialise an instance of the tree class.
         
@@ -206,6 +206,12 @@ class Tree:
             # The current node has only terminal children, increment number
             # of tree nodes.
             nodes += 1
+
+            # Terminal children increase the current node depth by one.
+            # Check the recorded max_depth.
+            if self.depth + 1 > max_depth:
+                # Set new max tree depth.
+                max_depth = self.depth + 1
 
         for child in self.children:
             # Recurse on all children.
