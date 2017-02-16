@@ -1,4 +1,5 @@
 from collections import deque
+import numpy as np
 
 from algorithm.parameters import params
 from representation.tree import Tree
@@ -65,6 +66,10 @@ def mapper(genome, tree):
         # Grammar contains python code
 
         phenotype = python_filter(phenotype)
+
+    if invalid:
+        # Set values for invalid individuals.
+        phenotype, nodes, depth, used_codons = None, np.NaN, np.NaN, np.NaN
 
     return phenotype, genome, tree, nodes, invalid, depth, used_codons
 
