@@ -177,7 +177,7 @@ def get_nodes_and_depth(tree, nodes=0, max_depth=0):
     :param max_depth: The maximum depth of any node in the tree.
     :return: number, max_depth.
     """
-    
+
     # Increment number of nodes in the tree.
     nodes += 1
 
@@ -195,9 +195,14 @@ def get_nodes_and_depth(tree, nodes=0, max_depth=0):
     NT_kids = [kid for kid in tree.children if kid.root in
                params['BNF_GRAMMAR'].non_terminals]
     
-    if not NT_kids:
+    if not NT_kids and get_output(tree):
         # Current node has only terminal children.
         nodes += 1
+        
+        # Terminal children increase the current node depth by one.
+        # Check the recorded max_depth.
+        if tree.depth + 1 > max_depth:
+            max_depth = tree.depth + 1
     
     else:
         for child in NT_kids:
