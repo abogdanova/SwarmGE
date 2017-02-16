@@ -65,7 +65,7 @@ class Individual(object):
                 return False
             else:
                 if np.isnan(other.fitness):
-                    return True
+                    return False
                 else:
                     return other.fitness < self.fitness
 
