@@ -204,10 +204,9 @@ def generate_ind_tree(max_depth, method):
     :param method: The method of subtree initialisation required.
     :return: A fully built individual.
     """
-    
+
     # Initialise an instance of the tree class
-    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None,
-                    depth_limit=max_depth)
+    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
     genome, output, nodes, _, depth = generate_tree(ind_tree, [], [], method,
@@ -245,8 +244,7 @@ def generate_PI_ind_tree(max_depth):
     """
 
     # Initialise an instance of the tree class
-    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None,
-                    depth_limit=max_depth)
+    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
     genome, output, nodes, depth = pi_grow(ind_tree, max_depth)

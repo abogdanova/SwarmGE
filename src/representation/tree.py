@@ -3,19 +3,17 @@ from algorithm.parameters import params
 
 class Tree:
 
-    def __init__(self, expr, parent, depth_limit=None):
+    def __init__(self, expr, parent):
         """
         Initialise an instance of the tree class.
         
         :param expr: A non-terminal from the params['BNF_GRAMMAR'].
         :param parent: The parent of the current node. None if node is tree
         root.
-        :param depth_limit: The maximum depth the tree can expand to.
         """
         
         self.parent = parent
         self.codon = None
-        self.depth_limit = depth_limit
         self.depth = 1
         self.root = expr
         self.children = []
@@ -56,7 +54,7 @@ class Tree:
         """
 
         # Copy current tree by initialising a new instance of the tree class.
-        tree_copy = Tree(self.root, self.parent, self.depth_limit)
+        tree_copy = Tree(self.root, self.parent)
         
         # Set node parameters.
         tree_copy.codon, tree_copy.depth = self.codon, self.depth

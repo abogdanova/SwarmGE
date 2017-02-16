@@ -58,7 +58,6 @@ def mapper(genome, tree):
                                        .non_terminals.keys(),
                                        [], [])
             used_codons, phenotype = len(_input), "".join(output)
-            depth += 1  # because get_tree_info under-counts by 1.
 
             genome = _input
     
@@ -103,12 +102,13 @@ def map_ind_from_genome(genome):
     # Initialise the list of unexpanded non-terminals with the start rule.
     unexpanded_symbols = deque([(bnf_grammar.start_rule, 1)])
 
-    while (wraps < max_wraps) and \
-            unexpanded_symbols and \
-            (max_depth <= max_tree_depth):
+    while (wraps < max_wraps) and unexpanded_symbols:
         # While there are unexpanded non-terminals, and we are below our
-        # wrapping limit, and we haven't breached our maximum tree depth, we
-        # can continue to map the genome.
+        # wrapping limit, we can continue to map the genome.
+
+        if max_tree_depth and (max_depth > max_tree_depth):
+            # We have breached our maximum tree depth limit.
+            break
 
         if used_input % n_input == 0 and \
                         used_input > 0 and \
@@ -187,8 +187,7 @@ def map_tree_from_genome(genome):
     """
 
     # Initialise an instance of the tree class
-    tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]),
-                None, depth_limit=params['MAX_TREE_DEPTH'])
+    tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Map tree from the given genome
     output, used_codons, nodes, depth, max_depth, invalid = \
@@ -231,11 +230,13 @@ def genome_tree_map(tree, genome, output, index, depth, max_depth, nodes,
              individual is invalid.
     """
 
-    if not invalid and index < len(genome) * (params['MAX_WRAPS'] + 1) and \
-        max_depth <= params['MAX_TREE_DEPTH']:
+    if not invalid and index < len(genome) * (params['MAX_WRAPS'] + 1):
         # If the solution is not invalid thus far, and if we still have
-        # remaining codons in the genome, and if we have not exceeded our
-        # maximum depth, then we can continue to map the tree.
+        # remaining codons in the genome, then we can continue to map the tree.
+
+        if params['MAX_TREE_DEPTH'] and (max_depth > params['MAX_TREE_DEPTH']):
+            # We have breached our maximum tree depth limit.
+            invalid = True
 
         # Increment and set number of nodes and current depth.
         nodes += 1
@@ -304,7 +305,7 @@ def genome_tree_map(tree, genome, output, index, depth, max_depth, nodes,
             # Set the new maximum depth.
             max_depth = depth
 
-        if max_depth > params['MAX_TREE_DEPTH']:
+        if params['MAX_TREE_DEPTH'] and (max_depth > params['MAX_TREE_DEPTH']):
             # If our maximum depth exceeds the limit, the solution is invalid.
             invalid = True
 
