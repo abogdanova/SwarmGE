@@ -385,12 +385,12 @@ def subtree(p_0, p_1):
         input_0, output_0, invalid_0, depth_0, nodes_0 = \
             ret_tree0.get_tree_info(nt_keys, [], [])
         used_codons_0, phenotype_0 = len(input_0), "".join(output_0)
-        genome_0, depth_0 = input_0 + tail_0, depth_0 + 1
+        genome_0 = input_0 + tail_0
 
         input_1, output_1, invalid_1, depth_1, nodes_1 = \
             ret_tree1.get_tree_info(nt_keys, [], [])
         used_codons_1, phenotype_1 = len(input_1), "".join(output_1)
-        genome_1, depth_1 = input_1 + tail_1, depth_1 + 1
+        genome_1 = input_1 + tail_1
         
         # Initialise new individuals. No need to map as we have all info.
         ind0 = individual.Individual(genome_0, ret_tree0, map_ind=False)
