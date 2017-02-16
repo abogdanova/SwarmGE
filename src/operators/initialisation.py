@@ -33,7 +33,7 @@ def uniform_tree(size):
     :param size: The size of the required population.
     :return: A full population composed of randomly generated individuals.
     """
-
+    
     return [generate_ind_tree(params['MAX_TREE_DEPTH'],
                               "random") for _ in range(size)]
     
@@ -171,6 +171,7 @@ def PI_grow(size):
         for depth in depths:
             # Iterate over number of required individuals per depth.
             for i in range(times):
+
                 # Generate individual using "Grow"
                 ind = generate_PI_ind_tree(depth)
 
@@ -201,16 +202,16 @@ def generate_ind_tree(max_depth, method):
 
     :param max_depth: The maximum depth for the initialised subtree.
     :param method: The method of subtree initialisation required.
-    :return:
+    :return: A fully built individual.
     """
-
+    
     # Initialise an instance of the tree class
     ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None,
-                    depth_limit=max_depth - 1)
+                    depth_limit=max_depth)
 
     # Generate a tree
     genome, output, nodes, _, depth = generate_tree(ind_tree, [], [], method,
-                                                    0, 0, 0, max_depth - 1)
+                                                    0, 0, 0, max_depth)
 
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
@@ -239,16 +240,16 @@ def generate_PI_ind_tree(max_depth):
     Generate an individual using a given Position Independent subtree
     initialisation method.
 
-    :param method: The method of subtree initialisation required.
-    :return:
+    :param max_depth: The maximum depth for the initialised subtree.
+    :return: A fully built individual.
     """
 
     # Initialise an instance of the tree class
     ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None,
-                    depth_limit=max_depth - 1)
+                    depth_limit=max_depth)
 
     # Generate a tree
-    genome, output, nodes, depth = pi_grow(ind_tree, max_depth - 1)
+    genome, output, nodes, depth = pi_grow(ind_tree, max_depth)
 
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
