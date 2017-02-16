@@ -536,7 +536,7 @@ class Grammar(object):
         :return: The minimum depth at which unique solutions can be generated
         """
 
-        max_tree_depth = params['MAX_TREE_DEPTH']
+        max_tree_depth = params['MAX_INIT_TREE_DEPTH']
         size = params['POPULATION_SIZE']
 
         # Specify the range of ramping depths
