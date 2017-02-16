@@ -1,7 +1,7 @@
 from . import supervised_learning
 
 from algorithm.parameters import params
-from utilities.fitness.error_metric import mse
+from utilities.fitness.error_metric import rmse
 
 
 class regression(supervised_learning.supervised_learning):
