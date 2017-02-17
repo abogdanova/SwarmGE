@@ -643,7 +643,7 @@ For subtree mutation, exactly `MUTATION_EVENTS` number of mutation events will o
 
 For linear genome mutation operators, the `MUTATION_EVENTS` parameter operates slightly differently to subtree mutation. As detailed previously, with the linear mutation operator `int_flip_per_ind`, exactly `MUTATION_EVENTS` mutations will occur on the genome (i.e. there is no `MUTATION_PROBABILITY` used). However, with `int_flip_per_codon` mutation the `MUTATION_EVENTS` parameter will only affect the *probability* of per-codon mutation events occurring. This is done by changing the probability of mutation to `MUTATION_EVENTS` divided by the length of the genome. 
 
-*__NOTE__ that the default value for* `MUTATION_EVENTS` *is 1, leading to the default mutation probability for* `int_flip_per_codon` *mutation of 1 divided by the length of the genome.*
+*__NOTE__ that the default value for* `MUTATION_EVENTS` *is 1, meaning to the default mutation probability for* `int_flip_per_codon` *mutation is 1 divided by the length of the genome unless either* `MUTATION_EVENTS` *or* `MUTATION_PROBABILITY` *are explicitly specified.*
 
 *__NOTE__ that the parameters* `MUTATION_EVENTS` *and* `MUTATION_PROBABILITY` *cannot both be specified for* `int_flip_per_codon` *mutation as these are mutually exclusive parameters in this case.*
 
