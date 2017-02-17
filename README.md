@@ -60,7 +60,17 @@ PonyGE2 is primarily a Python implementation of canonical Grammatical Evolution,
 #Representation
 ---------------
 
-TODO: Describe the different representations (i.e. linear, derivation tree).
+There are two ways in which an individual can be represented in PonyGE2: with a linear genome, and with a derivation tree.
+
+##Linear Genome Representation
+
+Traditional Grammatical Evolution uses linear genomes (also called chromosomes) to encode genetic information [O'Neill & Ryan, 2003]. These linear genomes are then mapped via the use of a formal BNF-style grammar to produce a phenotypic output. All individuals in PonyGE2 have an associated linear genome which can be used to exactly reproduce that individual.
+ 
+PonyGE2 contains a number of operators that manage linear genomes. These are discussed in later sections.
+
+*__NOTE__ that in general the use of a linear genome does not allow for "intelligent" operations. Although intelligent linear genome operators exist [Byrne et al., 2009], they are not implemented here as similar functions can be performed using derivation-tree based operations.*
+
+##Derivation Tree Representation
 
 ##Bloat
 
@@ -268,7 +278,7 @@ or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or
 
 ###Position Independent Grow (PI Grow)
 
-Position Independent Grow (PI Grow) initialisation in Grammatical Evolution mirrors Sensible/Ramped Half-Half initialisation by initialising a population of individuals over a ramped range of depths. However, while RHH uses two separate methods `Full` and `Grow` to generate pairs of individuals at each depth, PI Grow eschews the `Full` component and only uses the `Grow` aspect. There are two further differences between traditional GP `Grow` and PI Grow [Fagan *et al.*, 2016]:
+Position Independent Grow (PI Grow) initialisation in Grammatical Evolution mirrors Sensible/Ramped Half-Half initialisation by initialising a population of individuals over a ramped range of depths. However, while RHH uses two separate methods `Full` and `Grow` to generate pairs of individuals at each depth, PI Grow eschews the `Full` component and only uses the `Grow` aspect. There are two further differences between traditional GP `Grow` and PI Grow [Fagan et al., 2016]:
 
 1. At least one branch of the derivation tree is forced to the specified maximum depth in PI Grow, and
 2. Non-terminals are expanded in random (i.e. position independent) order rather than the left-first derivation of traditional mappers. 
@@ -911,3 +921,5 @@ Computation, Vancouver, Canada. IEEE Press.
 Nicolau, M. and Fenton, M., 2016. "Managing Repitition in Grammar-based 
 Genetic Programming." ACM GECCO 2016 Proceedings of the Genetic and 
 Evolutionary Computation Conference, Denver, Colorado, USA.
+
+Byrne, J., O'Neill, M. and Brabazon, A., 2009, "Structural and nodal mutation in grammatical evolution." In Proceedings of the 11th Annual conference on Genetic and evolutionary computation (pp. 1881-1882). ACM.
