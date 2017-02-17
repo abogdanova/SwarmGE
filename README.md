@@ -593,6 +593,16 @@ There are currently two linear mutation operators and one subtree mutation opera
 
 *__NOTE__ that linear genome mutation operators are not intelligent, i.e. mutation is applied randomly. It is therefore possible for linear mutation operators to generate invalid individuals (i.e. individuals who do not terminate mapping).*
 
+Since linear genome mutation operators are not intelligent, i.e. mutation is applied randomly, it is therefore possible for linear mutation operators to generate invalid individuals (i.e. individuals who do not terminate mapping). In order to mitigate this issue, provision has been made in PonyGE2 to prevent mutation from generating invalid solutions. While this option is set to `False` by default, it can be selected with the flag:
+
+    --no_mutation_invalids
+    
+or by setting the parameter `NO_MUTATION_INVALIDS` to `True` in either a parameters file or in the params dictionary.
+
+If the `NO_MUTATION_INVALIDS` parameter is used, mutation will be performed on the individual indefinitely until a valid solution is created.
+
+*__NOTE__ that even though the* `NO_MUTATION_INVALIDS` *parameter uses a* `while` *loop to force mutation to generate valid solutions, unlike with crossover it is not possible for mutation to get stuck in an infinite loop if this option is selected.*
+
 ###Int Flip Per Codon
 
 Int Flip Per Codon mutation operates on linear genomes and randomly mutates every individual codon in the genome with a probability `[MUTATION_PROBABILITY]`. Int Flip Per Codon mutation can be activated with the flag:
