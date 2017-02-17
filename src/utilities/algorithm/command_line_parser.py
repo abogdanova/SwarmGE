@@ -227,8 +227,9 @@ def parse_cmd_args(arguments):
                         dest='MUTATION',
                         type=str,
                         help='Sets the type of mutation to be used, requires '
-                             'string such as "int_flip" or direct path string '
-                             'such as "operators.mutation.int_flip".')
+                             'string such as "int_flip_per_codon" or direct '
+                             'path string such as '
+                             '"operators.mutation.int_flip_per_codon".')
     parser.add_argument('--mutation_events',
                         dest='MUTATION_EVENTS',
                         type=int,

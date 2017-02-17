@@ -102,9 +102,10 @@ params = {
         # Prevents crossover from generating invalids.
 
         # MUTATION
-        'MUTATION': "operators.mutation.int_flip",
+        'MUTATION': "operators.mutation.int_flip_per_codon",
         # "operators.mutation.subtree",
-        # "operators.mutation.int_flip",
+        # "operators.mutation.int_flip_per_codon",
+        # "operators.mutation.int_flip_per_ind",
         'MUTATION_PROBABILITY': None,
         'MUTATION_EVENTS': 1,
         'NO_MUTATION_INVALIDS': False,

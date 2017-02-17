@@ -40,7 +40,7 @@ def mutation(pop):
     return new_pop
 
 
-def int_flip(ind):
+def int_flip_per_codon(ind):
     """
     Mutate the genome of an individual by randomly choosing a new int with
     probability p_mut. Works per-codon. Mutation is performed over the
@@ -93,6 +93,7 @@ def int_flip_per_ind(ind):
         eff_length = min(len(ind.genome), ind.used_codons)
     else:
         eff_length = len(ind.genome)
+    
     for _ in params['MUTATION_EVENTS']:
         idx = randint(0, eff_length-1)
         ind.genome[idx] = randint(0, params['CODON_SIZE'])
@@ -161,6 +162,6 @@ def subtree(ind):
 
 
 # Set attributes for all operators to define linear or subtree representations.
-int_flip.representation = "linear"
+int_flip_per_codon.representation = "linear"
 int_flip_per_ind.representation = "linear"
 subtree.representation = "subtree"

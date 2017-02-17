@@ -508,7 +508,15 @@ There are currently four linear genome crossover operators implemented in PonyGE
 
 There is also currently one derivation tree based crossover method implemented in PonyGE2.
 
-*__NOTE__ that linear genome crossover operators are not intelligent, i.e. crossover is applied randomly. It is therefore possible for linear crossover operators to generate invalid individuals (i.e. individuals who do not terminate mapping).*
+Since linear genome crossover operators are not intelligent, i.e. crossover is applied randomly, it is therefore possible for linear crossover operators to generate invalid individuals (i.e. individuals who do not terminate mapping). In order to mitigate this issue, provision has been made in PonyGE2 to prevent crossover from generating invalid solutions. While this option is set to `False` by default, it can be selected with the flag:
+
+    --no_crossover_invalids
+    
+or by setting the parameter `NO_CROSSOVER_INVALIDS` to `True` in either a parameters file or in the params dictionary.
+
+If the `NO_CROSSOVER_INVALIDS` parameter is used, crossover will select two new parents and perform crossover again in order to generate two valid children. This process loops until valid children are created.
+
+*__NOTE__ that since the* `NO_CROSSOVER_INVALIDS` *parameter uses a* `while` *loop to force crossover to generate valid solutions, it is possible for crossover to get stuck in an infinite loop if this option is selected. As such, caution is advised when using this option.*
 
 *__NOTE__ that since crossover operators modify the parents in some fashion, copies of the parents must first be made before crossover is applied. If copies are not made, then the original parents in the selected parent population would be modified in-place, and subsequent modification of these parents would change any children so produced.*
 
@@ -579,25 +587,15 @@ or by setting the parameter `CROSSOVER` to `subtree` in either a parameters file
 
 ##Mutation
 
-The ability to specify the number of mutation events per individual is
-provided. This works for both genome mutation and subtree mutation. The
-default number of mutation events is 1 per individual. This value can be
-changed with the flag:
-
-    --mutation_events [INT]
-
-where `[INT]` is an integer which specifies the number of mutation events per
-individual. Note that for subtree mutation exactly this number of mutation
-events will occur, but for integer flip mutation this will only affect the
-probability of mutation events occurring.
+While crossover operates on pairs of selected parents to produce new children, mutation in Grammatical Evolution operates on every individual in the child population *after* crossover has been applied. Note that this is different in implementation so canonical GP crossover and mutation, whereby a certain percentage of the population would be selected for crossover with the remaining members of the population subjected to mutation [Koza, 1992].
 
 *__NOTE__ that linear genome mutation operators are not intelligent, i.e. mutation is applied randomly. It is therefore possible for linear mutation operators to generate invalid individuals (i.e. individuals who do not terminate mapping).*
 
-###Int Flip
+###Int Flip Per Codon
 
 Activate with:
 
-    --mutation int_flip
+    --mutation int_flip_per_codon
 
 Default mutation probability is 1 over the length of the genome. This can be
 changed with the flag:
@@ -610,6 +608,24 @@ performed over the entire length of the genome by default, but the flag
 within_used is provided to limit mutation to only the effective length of
 the genome.
 
+###Int Flip Per Ind
+
+Activate with:
+
+    --mutation int_flip_per_ind
+
+Default mutation probability is 1 over the length of the genome. This can be
+changed with the flag:
+
+    --mutation_probability [NUM]
+
+where `[NUM]` is a float between 0 and 1. This will change the mutation
+probability for each codon to the probability specified. Mutation is
+performed over the entire length of the genome by default, but the flag
+within_used is provided to limit mutation to only the effective length of
+the genome.
+
+
 ###Subtree
 
 Activate with:
@@ -619,6 +635,19 @@ Activate with:
 Mutate the individual by replacing a randomly selected subtree with a new
 randomly generated subtree. Guaranteed one event per individual, unless
 `params['MUTATION_EVENTS']` is specified as a higher number.
+
+###Mutation Events
+
+The ability to specify the number of mutation events per individual is provided in PonyGE2. This works for all mutation operators currently implemented, but works slightly differently in each case. The default number of mutation events is 1 per individual. This value can be changed with the flag:
+
+    --mutation_events [INT]
+
+or by setting the parameter `MUTATION_EVENTS` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of mutation events per individual. 
+
+For subtree mutation, exactly `MUTATION_EVENTS` number of mutation events will occur. This is accomplished by calling the subtree mutation operator `MUTATION_EVENTS` times for each individual. *__NOTE__ that this means that the same subtree can be mutated multiple times.*
+
+For linear genome mutation operators, the `MUTATION_EVENTS` parameter operates slightly differently to subtree mutation. With the linear mutation operator `int_flip_per_ind`, exactly `MUTATION_EVENTS` mutations will occur on the genome (i.e. there is no `MUTATION_PROBABILITY` used). However, with `int_flip_per_codon` mutation the `MUTATION_EVENTS` parameter will only affect the *probability* of per-codon mutation events occurring.
+
 
 #Evaluation
 ----------
