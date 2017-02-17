@@ -62,8 +62,6 @@ PonyGE2 is primarily a Python implementation of canonical Grammatical Evolution,
 #Grammars
 ---------
 
-##Grammars
-
 When tackling a problem with GE, a suitable BNF (Backus Naur Form) grammar definition must initially be defined. The BNF can be either the specification of an entire language or, perhaps more usefully, a subset of a language geared towards the problem at hand. 
 
 In GE, a BNF definition is used to describe the output language to be produced by the system. BNF is a notation for expressing the grammar of a language in the form of production rules. BNF grammars consist of terminals, which are items that can appear in the language, e.g. locally or globally defined variables, binary boolean operators `and`, `or`, `xor`, and `nand`, unary boolean operators `not`, constants, `True` and `False` etc. and non-terminals, which can be expanded into one or more terminals and non-terminals.
@@ -90,8 +88,6 @@ In PonyGE2 the BNF definition is comprised entirely of the set of production rul
 
 ###Writing Grammars
 
-Grammars are parsed using regular expressions.
-
 You can have:
 - production separators in multiple lines,
 - entire lines of commented text,
@@ -99,9 +95,9 @@ You can have:
 - single quotation within double quotation and vice versa, and
 - any characters can be used in quotation, even separators (`"|"`) or angle brackets (`"<"` / `">"`).
 
-Additionally, the code becomes more readable as well as maintainable and it is not as error prone.
+Additionally, the code becomes more readable as well as maintainable and it is not as error prone. Example grammars are provided in the `grammars` folder.
 
-Examples on parsing some of grammars can be found here:
+Grammars are parsed using regular expressions. Examples on parsing some of grammars can be found here:
 - [Whole grammar](https://regex101.com/r/oY2dK0/3)
 - [Rule](https://regex101.com/r/rU9tA7/2)
 - [Production](https://regex101.com/r/sE7eM8/1)
