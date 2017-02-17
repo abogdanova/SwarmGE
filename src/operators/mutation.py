@@ -48,8 +48,6 @@ def int_flip(ind):
     within_used=False switches this off.
     
     :param ind: An individual to be mutated.
-    :param within_used: Boolean flag for selecting whether or not mutation
-    is confined to within the used portion of the genome. Default set to True.
     :return: A mutated individual.
     """
 
@@ -87,8 +85,6 @@ def int_flip_per_ind(ind):
     provided to limit mutation to only the effective length of the genome.
     
     :param ind: An individual to be mutated.
-    :param within_used: Boolean flag for selecting whether or not mutation
-    is confined to within the used portion of the genome. Default set to True.
     :return: A mutated individual.
     """
     
