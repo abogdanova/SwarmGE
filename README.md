@@ -206,7 +206,7 @@ Traditional Grammatical Evolution uses linear genomes (also called chromosomes) 
  
 PonyGE2 contains a number of operators that manage linear genomes. These are discussed in later sections.
 
-*__NOTE__ that in general the use of a linear genome does not allow for "intelligent" operations. Although intelligent linear genome operators exist [Byrne et al., 2009], they are not implemented here as similar functions can be performed using derivation-tree based operations.*
+*__NOTE__ that in general the use of a linear genome does not allow for "intelligent" operations. Although intelligent linear genome operators exist, e.g. [Byrne et al., 2009], they are not implemented here as similar functions can be performed in a simpler manner using derivation-tree based operations.*
 
 ###Codon Size
 
