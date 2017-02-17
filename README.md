@@ -132,8 +132,24 @@ The original design decision on unit productions was also taken before the intro
 In summary, the merits for not consuming a codon for unit productions are not clearly defined in the literature. The benefits in consuming codons are a reduction in computation and improved speed with linear tree style operations. Other benefits are an increase in non-coding regions in the chromosome (more in line with nature) that through evolution of the grammar may then express useful information.
 
 
-#Genotype-Phenotype Mapping Process
------------------------------------
+#Linear Genome Representation
+-----------------------------
+
+Canonical Grammatical Evolution uses linear genomes (also called chromosomes) to encode genetic information [O'Neill & Ryan, 2003]. These linear genomes are then mapped via the use of a formal BNF-style grammar to produce a phenotypic output. All individuals in PonyGE2 have an associated linear genome which can be used to exactly reproduce that individual.
+ 
+PonyGE2 contains a number of operators that manage linear genomes. These are discussed in later sections.
+
+*__NOTE__ that in general the use of a linear genome does not allow for "intelligent" operations. Although intelligent linear genome operators exist, e.g. [Byrne et al., 2009], they are not implemented here as similar functions can be performed in a simpler manner using derivation-tree based operations.*
+
+##Codon Size
+
+Each codon in a genome is an integer value that maps to a specific production choice when passed through the grammar. When generating a codon to represent a production choice, a random integer value is chosen that represents that correct production choice. The maximum value a codon can take is set by default at 10000. This value can be changed with the flag:
+
+    --codon_size [INT]
+    
+or by setting the parameter `CODON_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum value a codon can take.
+
+##Genotype-Phenotype Mapping Process
 
 The genotype is used to map the start symbol as defined in the Grammar onto terminals by reading codons to generate a corresponding integer value, from which an appropriate production rule is selected by using the following mapping function:
 
@@ -195,38 +211,36 @@ Since the genome has been completely traversed (even after wrapping), and the de
 To reduce the number of invalid individuals being passed from generation to generation various strategies can be employed. Strong selection pressure could be applied, for example, through a steady state replacement. One consequence of the use of a steady state method is its tendency to maintain fit individuals at the expense of less fit, and in particular, invalid individuals. Alternatively, a repair strategy can be adopted, which ensures that every individual results in a valid program. For example, in the case that there are non-terminals remaining after using all the genetic material of an individual (with or without the use of wrapping) default rules for each non-terminal can be pre-specified that are used to complete the mapping in a deterministic fashion. Another strategy is to remove the recursive production rules that cause an individual’s phenotype to grow, and then to reuse the genotype to select from the remaining non-recursive rules. Finally, the use of genetic operators which manipulate the derivation tree rather than the linear genome can be used to ensure the generation of completely mapped phenotype strings.
 
 
-#Representation
----------------
+#Derivation Tree Representation
+-------------------------------
 
-There are two ways in which an individual can be represented in PonyGE2: with a linear genome, and with a derivation tree.
+During the genotype-to-phenotype mapping process, a derivation tree is implicitly generated. Since each production choice generates a codon, it can be viewed as a node in an overall derivation tree. The parent rule that generated that choice is viewed as the parent node, and any production choices resultant from non-terminals in the current production choice are viewed as child nodes. The depth of a particular node is defined as how many parents exist in the tree directly above it, with the root node of the entire tree (the start symbol of the grammar) being at depth 1. Finally, the root of each individual node in the derivation tree is the non-terminal production rule that generated the node choice itself.
 
-##Linear Genome Representation
+While linear genome mapping means that each individual codon specifies the production choice to be selected from the given production rule, it is possible to do the opposite. Deriving an individual solution purely using the derivation tree (i.e. *not* using the genotype-to-phenotype mapping process) is entirely possible, and indeed provides a lot more flexibility towards the generation of individuals than a linear mapping.
 
-Traditional Grammatical Evolution uses linear genomes (also called chromosomes) to encode genetic information [O'Neill & Ryan, 2003]. These linear genomes are then mapped via the use of a formal BNF-style grammar to produce a phenotypic output. All individuals in PonyGE2 have an associated linear genome which can be used to exactly reproduce that individual.
- 
-PonyGE2 contains a number of operators that manage linear genomes. These are discussed in later sections.
+In a derivation tree based mapping process, each individual begins with the start rule of the grammar (as with the linear mapping). However, instead of a codon from the genome defining the production to be chosen from the given rule, a random production is chosen. Once a production is chosen, it is then possible to retroactively *create* a codon that would result in that same production being chosen if a linear mapping were to be used. In order to generate a viable codon, first the index of the chosen production is taken from the overall list of production choices for that rule. Then, a random integer from within the range `[number of choices : number of choices : CODON_SIZE]` (i.e. a number from `number of choices` to `CODON_SIZE` with a step size of `number of choices`). Finally, the index of the chosen production is added to this random integer. This results in a codon which will re-produce the production choice. For example, consider the following rule: 
 
-*__NOTE__ that in general the use of a linear genome does not allow for "intelligent" operations. Although intelligent linear genome operators exist, e.g. [Byrne et al., 2009], they are not implemented here as similar functions can be performed in a simpler manner using derivation-tree based operations.*
+    <e> ::= a | b | c
 
-###Codon Size
+Now, let us randomly select the production choice `b`. The index of production choice `b` is 1. Next, we randomly select an integer from within the range `[3, CODON_SIZE]`, giving us a random number of 768. Finally, we add the index of production choice `b`, to give a codon of 769. In this manner it is possible to build a derivation tree, where each node will have an associated codon. Simply combining all codons into a list gives the full genome for the individual.
 
-Each codon in a genome is an integer value that maps to a specific production choice when passed through the grammar. When generating a codon to represent a production choice, a random integer value is chosen that represents that correct production choice. The maximum value a codon can take is set by default at 10000. This value can be changed with the flag:
+Importantly, since the genome does not define the mapping process, it is not possible for "invalid" solutions to be generated by derivation tree based methods. 
 
-    --codon_size [INT]
-    
-or by setting the parameter `CODON_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum value a codon can take.
+##Intelligent Operations
 
+Since production choices are not set with the use of a derivation tree representation (i.e. the production choice defines the codon, rather than the codon defining the production choice), it is possible to build derivation trees in an intelligent manner by restricting certain production choices. For example, it is possible to force derivation trees to a certain depth by only allowing recursive production choices to be made until the tree is deep enough that branches can be terminated at the desired depth. This is the basis of "intelligent" derivation methods such as Ramped Half-Half (or Sensible) initialisation.
 
-##Derivation Tree Representation
+It is also possible to perform intelligent variation operations using derivation tree methods. For example, crossover and mutation can be controlled by only selecting desired types of sub-trees for variation. Such operators are included in PonyGE2, and are described in later sections.
 
-##Bloat
+#Bloat
+------
 
-There are currently three methods implemented to control genetic bloat in PonyGE2:
+Bloat occurs in evolutionary algorithms when large increases in genetic material are observed without an observed increas in fitness. There are currently three methods implemented to control genetic bloat in PonyGE2:
 1. Limiting the maximum derivation tree depth
 2. Limiting the number of nodes in a derivation tree
 3. Limiting the maximum length of the genome.   
 
-###Max Tree Depth
+##Max Tree Depth
 
 By default there are no limits to the maximum depth a derivation tree can take. This can lead to genetic bloat, dramaticaly slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum tree depth with the flag:
 
@@ -238,7 +252,7 @@ or by setting the parameter `MAX_TREE_DEPTH` in either a parameters file or in t
 
 *__NOTE__ that the parameter* `MAX_TREE_DEPTH` *is distinct from the parameter* `MAX_INIT_TREE_DEPTH`, *which is used solely to control derivation tree depth during derivation tree-based initialisation.*
 
-###Max Tree Nodes
+##Max Tree Nodes
 
 By default there are no limits to the maximum number of nodes a derivation tree can have. This can lead to genetic bloat, dramaticaly slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum number of derivation tree nodes with the flag:
 
@@ -248,7 +262,7 @@ or by setting the parameter `MAX_TREE_NODES` in either a parameters file or in t
 
 *__NOTE__ that setting the parameter* `MAX_TREE_NODES` *or flag* `--max_tree_nodes` *to 0 is the same as setting no limit on the maximum number of nodes a derivation tree can have, i.e. trees will be allowed to grow in an un-controlled manner.*
 
-###Max Genome Length
+##Max Genome Length
 
 By default there are no limits to the maximum length a genome can take. This can lead to genetic bloat, dramaticaly slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum genome length with the flag:
 
@@ -263,7 +277,7 @@ or by setting the parameter `MAX_GENOME_LENGTH` in either a parameters file or i
 A full breakdown of the currently implemented elements in PonyGE2 is provided below. This includes a brief description of each individual component and how to activate them.
 
 #Evolutionary Parameters:
-------------------------
+-------------------------
 
 One of the central components of PonyGE is the `algorithm.parameters.params` dictionary. This dictionary is referenced throughout the entire program and is used to streamline the whole process by keeping all optional parameters in the one place. This also means that there is little to no need for arguments to the various functions in PonyGE, as these arguments can often be read directly from the parameters dictionary. Furthermore, the parameters dictionary is used to specify and store optional functions such as `initialisation`, `crossover`, `mutation`, and `replacement`.
 
