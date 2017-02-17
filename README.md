@@ -132,6 +132,69 @@ The original design decision on unit productions was also taken before the intro
 In summary, the merits for not consuming a codon for unit productions are not clearly defined in the literature. The benefits in consuming codons are a reduction in computation and improved speed with linear tree style operations. Other benefits are an increase in non-coding regions in the chromosome (more in line with nature) that through evolution of the grammar may then express useful information.
 
 
+#Genotype-Phenotype Mapping Process
+-----------------------------------
+
+The genotype is used to map the start symbol as defined in the Grammar onto terminals by reading codons to generate a corresponding integer value, from which an appropriate production rule is selected by using the following mapping function:
+
+    Rule = c mod r
+
+where `c` is the codon integer value, and `r` is the number of rule choices for the current non-terminal symbol.
+
+Consider the following rule from the given grammar, i.e., given the non-terminal `<op>`, which describes the set of mathematical operators that can be used, there are four production rules to select from. As can be seen, the choices are effectively labelled with integers counting from zero.
+
+        <op> ::= + (0)
+               | - (1)
+               | * (2)
+               | / (3)
+
+If we assume the codon being read produces the integer 6, then 
+
+    6 mod 4 = 2
+    
+would select rule (2) `*`. Therefore, the non-terminal `<op>` is replaced with the terminal `*` in the derivation string. Each time a production rule has to be selected to transform a non-terminal, another codon is read. In this way the system traverses the genome.
+
+##Wrapping
+
+During the genotype-to-phenotype mapping process, it is possible for the genome to run out of codons before the mapping process has terminated. In this case, a *wrapping* operator can applied which results in the mapping process re-reading the genome again from the start (i.e. wrapping past the end of the genome back to the beginning). As such, codons are reused when wrapping occurs. This is quite an unusual approach in evolutionary algorithms as it is entirely possible for certain codons to be used two or more times depending on the number of wraps specified. This technique of wrapping the individual draws inspiration from the gene-overlapping phenomenon that has been observed in many organisms [Lewin, 2000]. GE works with or without wrapping, and wrapping has been shown to be useful on some problems [O'Neill & Ryan, 2003], however, it does come at the cost of introducing functional dependencies between codons that would not otherwise arise.
+
+By default, wrapping in PonyGE2 is not used (i.e. the `MAX_WRAPS` parameter is set to 0). This can be changed with the flag:
+
+    --max_wraps [INT]
+    
+or by setting the parameter `MAX_WRAPS` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum number of times the mapping process is permitted to wrap past the end of the genome back to the beginning again.
+
+*__NOTE__ that __permitting__ the mapping process to wrap on genomes does not necessarily mean it __will__ wrap across genomes. The provision is merely allowed.*
+
+##Invalid Individuals
+
+In GE each time the same codon is expressed it will always generate the same integer value, but depending on the current non-terminal to which it is being applied, it may result in the selection of a different production rule. This feature is referred to as *intrinsic polymorphism*. What is crucial however, is that each time a particular individual is mapped from its genotype to its phenotype, the same output is generated. This is the case because the same choices are made each time. It is possible that an incomplete mapping could occur, even after several wrapping events, and typically in this case the mapping process is aborted and the individual in question is given the lowest possible fitness value. The selection and replacement mechanisms then operate accordingly to increase the likelihood that this individual is removed from the population.
+
+An incomplete mapping could arise if the integer values expressed by the genotype were applying the same production rules repeatedly. For example, consider an individual whose full genome consists of three codons `[3, 21, 9]`, all three of which map to production choice 0 from the following rule:
+
+    <e> ::= (<e><op><e>) (0)
+          | <e>          (1)
+          | <op>         (2)
+
+Even after wrapping, the mapping process would be incomplete and would carry on indefinitely unless terminated. This occurs because the non-terminal `<e>` is being mapped recursively by production rule 0, i.e., `<e>` becomes `(<e><op><e>)`. Therefore, the leftmost `<e>` after each application of a production would itself be mapped to a `(<e><op><e>)`, resulting in an expression continually growing as follows:
+
+    ((<e><op><e>)<op><e>)
+    
+followed by
+
+    (((<e><op><e>)<op><e>)<op><e>
+    
+and so on.
+
+Since the genome has been completely traversed (even after wrapping), and the derivation string (i.e. the derived expression) still contains non-terminals, such an individual is dubbed *invalid* as it will never undergo a complete mapping to a set of terminals. For this reason an upper limit on the number of wrapping events that can occur is imposed (as specified by the parameter `MAX_WRAPS`, detailed above), otherwise mapping could continue indefinitely in this case. During the mapping process therefore, beginning from the left hand side of the genome codon integer values are generated and used to select rules from the BNF grammar, until one of the following situations arise:
+
+1. A complete program is generated. This occurs when all the non-terminals in the expression being mapped are transformed into elements from the terminal set of the BNF grammar.
+2. The end of the genome is reached, in which case the wrapping operator is invoked. This results in the return of the genome reading frame to the left hand side of the genome once again. The reading of codons will then continue, unless an upper threshold representing the maximum number of wrapping events has occurred during this individual’s mapping process.
+3. In the event that a threshold on the number of wrapping events has occurred and the individual is still incompletely mapped, the mapping process is halted, and the individual is assigned a `NaN` fitness value.
+
+To reduce the number of invalid individuals being passed from generation to generation various strategies can be employed. Strong selection pressure could be applied, for example, through a steady state replacement. One consequence of the use of a steady state method is its tendency to maintain fit individuals at the expense of less fit, and in particular, invalid individuals. Alternatively, a repair strategy can be adopted, which ensures that every individual results in a valid program. For example, in the case that there are non-terminals remaining after using all the genetic material of an individual (with or without the use of wrapping) default rules for each non-terminal can be pre-specified that are used to complete the mapping in a deterministic fashion. Another strategy is to remove the recursive production rules that cause an individual’s phenotype to grow, and then to reuse the genotype to select from the remaining non-recursive rules. Finally, the use of genetic operators which manipulate the derivation tree rather than the linear genome can be used to ensure the generation of completely mapped phenotype strings.
+
+
 #Representation
 ---------------
 
@@ -144,6 +207,15 @@ Traditional Grammatical Evolution uses linear genomes (also called chromosomes) 
 PonyGE2 contains a number of operators that manage linear genomes. These are discussed in later sections.
 
 *__NOTE__ that in general the use of a linear genome does not allow for "intelligent" operations. Although intelligent linear genome operators exist [Byrne et al., 2009], they are not implemented here as similar functions can be performed using derivation-tree based operations.*
+
+###Codon Size
+
+Each codon in a genome is an integer value that maps to a specific production choice when passed through the grammar. When generating a codon to represent a production choice, a random integer value is chosen that represents that correct production choice. The maximum value a codon can take is set by default at 10000. This value can be changed with the flag:
+
+    --codon_size [INT]
+    
+or by setting the parameter `CODON_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum value a codon can take.
+
 
 ##Derivation Tree Representation
 
@@ -246,39 +318,6 @@ Higher numbers of generations can improve performance, but will lead to longer r
 
 *__NOTE__ that in PonyGE2 the total number of generations refers to the number of generations over which evolution occurs, __NOT__ including initialisation. Thus, specifying 50 generations will mean 50 generations will be evolved. Since the initialised generation will be Generation 0, the total number of individuals evaluated across an entire evolutionary run will by __population x (generations + 1)__.*
 
-##Individual Size
-
-There are a number of parameters for controlling the size and various aspects of individuals. 
-
-###Linear Genome Parameters
-
-There are a number of aspects to a linear genome:
-
-1. the individual codons that make up that genome,
-2. the total length of the genome, and
-3. the number of times the mapping process will wrap across the genome.
-
-####Codon Size
-
-Each codon in a genome is an integer value. When generating a codon to represent a production choice, a random integer value is chosen that represents that correct production choice. The maximum value a codon can take is set by default at 10000. This value can be changed with the flag:
-
-    --codon_size [INT]
-    
-or by setting the parameter `CODON_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum value a codon can take.
-
-####Genome Length Limits
-
-The total length of a genome is a global parameter that is often used for controlling genetic bloat. If left unchecked, it is possible for the evolutionary process in GE to generated extremely long genomes if variable length linear crossover operators are used. As such, provision is made in PonyGE2 for a global length limit for genomes. If specified, this limit will prevent crossover from generating individuals whose genomes violate this length limit. The default value is set to `None`, i.e. there is no length limit on linear genomes by default. This limit can be specified with the flag:
- 
-     --max_genome_length [INT]
- 
-or by setting the parameter `MAX_GENOME_LENGTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum length a genome can take.
-
-####Wrapping
-
-TODO: Explain wrapping here. Cite wrapping paper.
-
-###Derivation Tree Parameters
 
 #Initialisation
 --------------
@@ -900,3 +939,5 @@ Nicolau, M. and Fenton, M., 2016. "Managing Repitition in Grammar-based Genetic 
 Byrne, J., O'Neill, M. and Brabazon, A., 2009, "Structural and nodal mutation in grammatical evolution." In Proceedings of the 11th Annual conference on Genetic and evolutionary computation (pp. 1881-1882). ACM.
 
 Koza, J.R., 1992. "Genetic programming: on the programming of computers by means of natural selection (Vol. 1)". MIT press.
+
+Lewin B., 2000. "Genes VII". Oxford University Press.
