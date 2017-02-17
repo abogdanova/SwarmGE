@@ -589,52 +589,47 @@ or by setting the parameter `CROSSOVER` to `subtree` in either a parameters file
 
 While crossover operates on pairs of selected parents to produce new children, mutation in Grammatical Evolution operates on every individual in the child population *after* crossover has been applied. Note that this is different in implementation so canonical GP crossover and mutation, whereby a certain percentage of the population would be selected for crossover with the remaining members of the population subjected to mutation [Koza, 1992].
 
+There are currently two linear mutation operators and one subtree mutation operator implemented in PonyGE2.
+
 *__NOTE__ that linear genome mutation operators are not intelligent, i.e. mutation is applied randomly. It is therefore possible for linear mutation operators to generate invalid individuals (i.e. individuals who do not terminate mapping).*
 
 ###Int Flip Per Codon
 
-Activate with:
+Int Flip Per Codon mutation operates on linear genomes and randomly mutates every individual codon in the genome with a probability `[MUTATION_PROBABILITY]`. Int Flip Per Codon mutation can be activated with the flag:
 
     --mutation int_flip_per_codon
 
-Default mutation probability is 1 over the length of the genome. This can be
-changed with the flag:
+or by setting the parameter `MUTATION` to `int_flip_per_codon` in either a parameters file or in the params dictionary. The default mutation probability is for every codon 1 over the entire length of the genome. This can be changed with the flag:
 
     --mutation_probability [NUM]
 
-where `[NUM]` is a float between 0 and 1. This will change the mutation
-probability for each codon to the probability specified. Mutation is
-performed over the entire length of the genome by default, but the flag
-within_used is provided to limit mutation to only the effective length of
-the genome.
+or by setting the parameter `MUTATION_PROBABILITY` to `[NUM]` in either a parameters file or in the params dictionary, where `[NUM]` is a float between 0 and 1. This will change the mutation probability for each codon to the probability specified. Mutation is performed over the entire genome by default, but the flag `within_used` is provided to limit mutation to only the effective length of the genome.
+
+*__NOTE__ that specifying the* `within_used` *flag for* `int_flip_per_codon` *mutation will alter the probability of per-codon mutation accordingly as the used portion of the genome may be shorter than the overall length of the genome.*
 
 ###Int Flip Per Ind
 
-Activate with:
+Int Flip Per Ind mutation operates on linear genomes and mutates `MUTATION_EVENTS` randomly selected codons in the genome. Int Flip Per Ind mutation can be activated with the flag:
 
     --mutation int_flip_per_ind
 
-Default mutation probability is 1 over the length of the genome. This can be
-changed with the flag:
+or by setting the parameter `MUTATION` to `int_flip_per_ind` in either a parameters file or in the params dictionary. The default mutation events is set to 1. This can be changed with the flag:
 
-    --mutation_probability [NUM]
+    --mutation_events [INT]
 
-where `[NUM]` is a float between 0 and 1. This will change the mutation
-probability for each codon to the probability specified. Mutation is
-performed over the entire length of the genome by default, but the flag
-within_used is provided to limit mutation to only the effective length of
-the genome.
+or by setting the parameter `MUTATION_EVENTS` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer specifying the number of desired mutation events across the entire genome. Mutation is performed over the entire genome by default, but the flag `within_used` is provided to limit mutation to only the effective length of the genome.
 
+*__NOTE__ that the parameter* `MUTATION_PROBABILITY` *does not apply to* `int_flip_per_ind` *mutation.*
 
 ###Subtree
 
-Activate with:
+Subtree mutation randomly selects a subtree from the overall derivation tree of an individual and mutates that subtree by building a new random subtree from the root node. Subtree mutation uses the same random derivation function as the `Grow` component of Ramped Half-Half initialisation. Subtree mutation can be activated with the flag:
 
     --mutation subtree
 
-Mutate the individual by replacing a randomly selected subtree with a new
-randomly generated subtree. Guaranteed one event per individual, unless
-`params['MUTATION_EVENTS']` is specified as a higher number.
+or by setting the parameter `MUTATION` to `subtree` in either a parameters file or in the params dictionary.
+
+*__NOTE__ that the parameter* `MUTATION_PROBABILITY` *does not apply to* `subtree` *mutation, i.e. each individual is guaranteed* `MUTATION_EVENTS` *mutation events.*
 
 ###Mutation Events
 
@@ -646,8 +641,11 @@ or by setting the parameter `MUTATION_EVENTS` to `[INT]` in either a parameters 
 
 For subtree mutation, exactly `MUTATION_EVENTS` number of mutation events will occur. This is accomplished by calling the subtree mutation operator `MUTATION_EVENTS` times for each individual. *__NOTE__ that this means that the same subtree can be mutated multiple times.*
 
-For linear genome mutation operators, the `MUTATION_EVENTS` parameter operates slightly differently to subtree mutation. With the linear mutation operator `int_flip_per_ind`, exactly `MUTATION_EVENTS` mutations will occur on the genome (i.e. there is no `MUTATION_PROBABILITY` used). However, with `int_flip_per_codon` mutation the `MUTATION_EVENTS` parameter will only affect the *probability* of per-codon mutation events occurring.
+For linear genome mutation operators, the `MUTATION_EVENTS` parameter operates slightly differently to subtree mutation. As detailed previously, with the linear mutation operator `int_flip_per_ind`, exactly `MUTATION_EVENTS` mutations will occur on the genome (i.e. there is no `MUTATION_PROBABILITY` used). However, with `int_flip_per_codon` mutation the `MUTATION_EVENTS` parameter will only affect the *probability* of per-codon mutation events occurring. This is done by changing the probability of mutation to `MUTATION_EVENTS` divided by the length of the genome. 
 
+*__NOTE__ that the default value for* `MUTATION_EVENTS` *is 1, leading to the default mutation probability for* `int_flip_per_codon` *mutation of 1 divided by the length of the genome.*
+
+*__NOTE__ that the parameters* `MUTATION_EVENTS` *and* `MUTATION_PROBABILITY` *cannot both be specified for* `int_flip_per_codon` *mutation as these are mutually exclusive parameters in this case.*
 
 #Evaluation
 ----------
