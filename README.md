@@ -147,7 +147,7 @@ Each codon in a genome is an integer value that maps to a specific production ch
 
     --codon_size [INT]
     
-or by setting the parameter `CODON_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum value a codon can take.
+or by setting the parameter `CODON_SIZE` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum value a codon can take.
 
 ##Genotype-Phenotype Mapping Process
 
@@ -178,7 +178,7 @@ By default, wrapping in PonyGE2 is not used (i.e. the `MAX_WRAPS` parameter is s
 
     --max_wraps [INT]
     
-or by setting the parameter `MAX_WRAPS` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum number of times the mapping process is permitted to wrap past the end of the genome back to the beginning again.
+or by setting the parameter `MAX_WRAPS` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum number of times the mapping process is permitted to wrap past the end of the genome back to the beginning again.
 
 *__NOTE__ that __permitting__ the mapping process to wrap on genomes does not necessarily mean it __will__ wrap across genomes. The provision is merely allowed.*
 
@@ -249,7 +249,7 @@ By default there are no limits to the maximum depth a derivation tree can take. 
 
     --max_tree_depth [INT]
     
-or by setting the parameter `MAX_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum depth limit for derivation trees.
+or by setting the parameter `MAX_TREE_DEPTH` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum depth limit for derivation trees.
 
 *__NOTE__ that setting the parameter* `MAX_TREE_DEPTH` *or flag* `--max_tree_depth` *to 0 is the same as setting no maximum tree depth, i.e. trees will be allowed to grow in an un-controlled manner.*
 
@@ -261,7 +261,7 @@ By default there are no limits to the maximum number of nodes a derivation tree 
 
     --max_tree_nodes [INT]
     
-or by setting the parameter `MAX_TREE_NODES` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum number of nodes for derivation trees.
+or by setting the parameter `MAX_TREE_NODES` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum number of nodes for derivation trees.
 
 *__NOTE__ that setting the parameter* `MAX_TREE_NODES` *or flag* `--max_tree_nodes` *to 0 is the same as setting no limit on the maximum number of nodes a derivation tree can have, i.e. trees will be allowed to grow in an un-controlled manner.*
 
@@ -271,7 +271,7 @@ By default there are no limits to the maximum length a genome can take. This can
 
     --max_genome_length [INT]
     
-or by setting the parameter `MAX_GENOME_LENGTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum global genome length.
+or by setting the parameter `MAX_GENOME_LENGTH` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the desired maximum global genome length.
 
 *__NOTE__ that setting the parameter* `MAX_GENOME_LENGTH` *or flag* `--max_genome_length` *to 0 is the same as setting no limit to the lengths of genomes, i.e. genomes will be allowed to grow in an un-controlled manner.*
 
@@ -311,7 +311,7 @@ However, it is still possible to specify the full correct path if you so desire.
 #Population Options
 -------------------
 
-There are a number of parameters within PonyGE2 for controlling both overall populations and the individuals within those populations.
+There are a number of parameters within PonyGE2 for controlling overall populations.
 
 ##Population Size
 
@@ -319,7 +319,7 @@ The population size controls the total number of individuals to be generated at 
 
     --population_size [INT]
 
-or by setting the parameter `POPULATION_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the population size. 
+or by setting the parameter `POPULATION_SIZE` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the population size. 
 
 Higher population sizes can improve performance on difficult problems, but require more computational effort and may lead to premature convergence.
 
@@ -329,7 +329,7 @@ The number of generations the evolutionary algorithm will run for. The default v
 
     --generations [INT]
 
-or by setting the parameter `GENERATIONS` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of generations.
+or by setting the parameter `GENERATIONS` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of generations.
 
 Higher numbers of generations can improve performance, but will lead to longer run-times.
 
@@ -339,7 +339,7 @@ Higher numbers of generations can improve performance, but will lead to longer r
 #Initialisation
 --------------
 
-There are two main ways to initialise a GE individual: by generating a genome, or by generating a derivation tree. Generation of a genome can only be done by creating a random genome string, and as such the use of genome initialisation cannot guarantee control over any aspects of the initial population. Population initialisation via derivation tree generation on the other hand allows for fine control over many aspects of the initial population, e.g. depth limits. Unlike with genome initialisation,there are a number of different ways to initialise a population using derivation trees. Currently implemented methods are detailed below. 
+As detailed previously, there are two main ways to initialise a GE individual: by generating a genome, or by generating a derivation tree. Generation of a genome can only be done by creating a random genome string, and as such the use of genome initialisation cannot guarantee control over any aspects of the initial population. Population initialisation via derivation tree generation on the other hand allows for fine control over many aspects of the initial population, e.g. depth limits or derivation tree shape. Unlike with genome initialisation, there are a number of different ways to initialise a population using derivation trees. Currently implemented methods are detailed below. 
 
 ##Genome
 
@@ -351,13 +351,13 @@ Activate with:
 
     --initialisation uniform_genome
 
-or by setting the parameter `INITIALISATION` in either a parameters file or in the params dictionary.
+or by setting the parameter `INITIALISATION` to `uniform_genome` in either a parameters file or in the params dictionary.
 
 By default in PonyGE2, genomes of length 200 codons are generated when using random genome initialisation. However, this parameter can be changed using the flag:
 
     --init_genome_length [INT]
 
-or by setting the parameter `INIT_GENOME_LENGTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the length of genomes to be initialised.
+or by setting the parameter `INIT_GENOME_LENGTH` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the length of genomes to be initialised.
 
 *__NOTE__ that random genome initialisation in Grammatical Evolution should be used with caution as poor grammar design can have a negative impact on the quality of randomly initialised solutions due to the inherent bias capabilities of GE [Fagan et al., 2016; Nicolau & Fenton, 2016].*
 
@@ -373,11 +373,11 @@ Activate with:
 
     --initialisation uniform_tree
 
-or by setting the parameter `INITIALISATION` in either a parameters file or in the params dictionary.
+or by setting the parameter `INITIALISATION` to `uniform_tree` in either a parameters file or in the params dictionary.
 
 *__NOTE__ that there is no obligation that randomly generated derivation trees will extend to the depth limit; they will be of random size [Fagan et al., 2016].*
 
-*__NOTE__ that randomly generated derivation trees will have a tendency towards smaller tree sizes [Fagan et al., 2016].*
+*__NOTE__ that randomly generated derivation trees will have a tendency towards smaller tree sizes with the use of a grammar-based mapping [Fagan et al., 2016].*
 
 ###Ramped Half-Half
 
@@ -387,25 +387,27 @@ Ramped Half-Half initialisation in Grammatical Evolution is often called "Sensib
 
 `Grow` initialisation generates a randomly built derivation tree where no branch extends *past* the depth limit.
 
-*__NOTE__ that `Grow` is analogous to random derivation tree initialisation, i.e. no branch in the tree is __forced__ to reach the specified depth.*
+*__NOTE__ that `Grow` is analogous to random derivation tree initialisation, i.e. no branch in the tree is __forced__ to reach the specified depth. Depending on how the grammar is written, this can result in a very high probability of small trees being generated, regardless of the specified depth limit.*
 
 Activate with:
 
     --initialisation rhh
 
-or by setting the parameter `INITIALISATION` in either a parameters file or in the params dictionary.
+or by setting the parameter `INITIALISATION` to `rhh` in either a parameters file or in the params dictionary.
 
 RHH initialisation generates pairs of solutions using both `full` and `grow` methods for a ramped range of depths. The maximum initialisation depth is set with the flag:
 
     --max_init_tree_depth [INT]
 
-or by setting the parameter `MAX_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum depth to which derivation trees are to be initialised. The default value is set at 10.
+or by setting the parameter `MAX_INIT_TREE_DEPTH` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum depth to which derivation trees are to be initialised. The default value is set at 10.
 
 By default in PonyGE, initialisation ramping _begins_ at a depth where sufficient unique solutions can be generated for the number of required solutions at that depth [Nicolau & Fenton, 2016]. However, this value can be over-written in favor of a user-defined minimum ramping depth. This can be set with the flag:
 
     --min_init_tree_depth [INT]
 
-or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
+or by setting the parameter `MIN_INIT_TREE_DEPTH` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
+
+*__NOTE__ that RHH initialisation with the use of a grammar-based mapping process such as GE can potentially result in a high number of duplicate individuals in the initial generation, resulting from a potentially high number of very small solutions [Nicolau & Fenton, 2016, Fagan et al., 2016]. As such, caution is advised when using RHH initialisation in grammar-based systems, as particular care needs to be given to grammar design in order to minimise this effect [Fagan et al., 2016].*
 
 ###Position Independent Grow (PI Grow)
 
@@ -418,30 +420,30 @@ Activate with:
 
     --initialisation PI_grow
 
-or by setting the parameter `INITIALISATION` in either a parameters file or in the params dictionary.
+or by setting the parameter `INITIALISATION` to to `PI_grow` in either a parameters file or in the params dictionary.
 
 As with RHH initialisation, PI Grow initialisation generates individuals for a ramped range of depths. The maximum initialisation depth is set with the flag:
 
     --max_init_tree_depth [INT]
 
-or by setting the parameter `MAX_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum depth to which derivation trees are to be initialised. The default value is set at 10.
+or by setting the parameter `MAX_INIT_TREE_DEPTH` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the maximum depth to which derivation trees are to be initialised. The default value is set at 10.
 
 By default in PonyGE, initialisation ramping _begins_ at a depth where sufficient unique solutions can be generated for the number of required solutions at that depth [Nicolau & Fenton, 2016]. However, this value can be over-written in favor of a user-defined minimum ramping depth. This can be set with the flag:
 
     --min_init_tree_depth [INT]
 
-or by setting the parameter `MIN_INIT_TREE_DEPTH` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
+or by setting the parameter `MIN_INIT_TREE_DEPTH` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the minimum depth from which derivation trees are to be initialised.
 
 #Selection
 ---------
 
-The selection process is a key step in Evolutionary Algorithms.
+The selection process is a key step in Evolutionary Algorithms. Selection drives the search process towards specific areas of the search space. The selection process operates on a population of individuals, and produces a population of "parents". These parents are then traditionally used by variation operators (detailed in the next section).
 
-The mapping process in Grammatical Evolution can generate "invalid" individuals. Only valid individuals are selected by default. However, this can be changed with the flag:
+The linear genome mapping process in Grammatical Evolution can generate "invalid" individuals. Only valid individuals are selected by default in PonyGE2, however this can be changed with the flag:
 
     --invalid_selection
 
-or by setting the parameter `INVALID_SELECTION` in either a parameters file or in the params dictionary.
+or by setting the parameter `INVALID_SELECTION` to `True` in either a parameters file or in the params dictionary.
 
 ##Tournament
 
@@ -451,13 +453,13 @@ Activate with:
 
     --selection tournament
 
-or by setting the parameter `SELECTION` in either a parameters file or in the params dictionary.
+or by setting the parameter `SELECTION` to `tournament` in either a parameters file or in the params dictionary.
 
 Tournament size is set by default at 2. This value can be changed with the flag:
 
     --tournament_size [INT]
 
-or by setting the parameter `TOURNAMENT_SIZE` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the tournament size.
+or by setting the parameter `TOURNAMENT_SIZE` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the tournament size.
 
 ##Truncation
 
@@ -467,97 +469,113 @@ Activate with:
 
     --selection truncation
 
-or by setting the parameter `SELECTION` in either a parameters file or in the params dictionary.
+or by setting the parameter `SELECTION` to `truncation` in either a parameters file or in the params dictionary.
 
 Selection proportion is set by default at 0.5 (i.e. return the top 50% of the population). This value can be changed with the flag:
 
     --selection_proportion [NUM]
 
-or by setting the parameter `SELECTION_PROPORTION` in either a parameters file or in the params dictionary, where `[NUM]` is a float between 0 and 1.
+or by setting the parameter `SELECTION_PROPORTION` to `[NUM]` in either a parameters file or in the params dictionary, where `[NUM]` is a float between 0 and 1.
 
-*__NOTE__ that unless the specified* `SELECTION_PROPORTION` *is 1 (i.e. 100%), truncation selection necessarily returns a selected parent population that is smaller in size than the original population.*
+*__NOTE__ that unless the specified* `SELECTION_PROPORTION` *is 1.0 (i.e. 100%), truncation selection necessarily returns a selected parent population that is smaller in size than the original population.*
 
 #Variation
 ---------
 
+Variation operators in evolutionary algorithms explore the search space by varying genetic material of individuals in order to explore new areas of the search space. There are two main types of variation operator:
+
+1. Crossover
+2. Mutation
+
 ##Crossover
 
-Crossover directly swaps genetic material between two chosen individuals. The
-probability of crossover occurring is set with the flag:
+Given a parent population of individuals picked using the given selection process described in the previous section, crossover randomly selects two parents and directly swaps genetic material between them. Parents are selected from the parent population in a non-exclusive manner, i.e. it is possible to select the same parent multiple times for multiple crossover events. 
+
+Given these two parents, the crossover probability defines the probability that a given crossover operator will perform crossover on their genetic material. The probability of crossover occurring is set with the flag:
 
     "--crossover_probability [NUM]
 
-where `[NUM]` is a float between 0 and 1. The default value for crossover is
-0.75.
+or by setting the parameter `CROSSOVER_PROBABILITY` to `[NUM]` in either a parameters file or in the params dictionary, where `[NUM]` is a float between 0 and 1. The default value for crossover is 0.75 (i.e. two selected parent individuals have a 75% chance of having genetic material crossed over between them).
+
+Unlike canonical Genetic Programming [Koza, 1992], crossover in Grammatical Evolution always produces **two children** given two parents [O'Neill et al., 2003]. However, this is not a requirement for PonyGE2; the user is free to add new crossover operators producing as many children as desired.
+
+There are currently four linear genome crossover operators implemented in PonyGE2:
+
+1. Fixed Onepoint
+2. Fixed Twopoint
+3. Variable Onepoint
+4. Variable Twopoint
+
+There is also currently one derivation tree based crossover method implemented in PonyGE2.
+
+*__NOTE__ that linear genome crossover operators are not intelligent, i.e. crossover is applied randomly. It is therefore possible for linear crossover operators to generate invalid individuals (i.e. individuals who do not terminate mapping).*
+
+*__NOTE__ that since crossover operators modify the parents in some fashion, copies of the parents must first be made before crossover is applied. If copies are not made, then the original parents in the selected parent population would be modified in-place, and subsequent modification of these parents would change any children so produced.*
 
 ###Fixed Onepoint
 
-Activate with:
+Given two individuals, fixed onepoint crossover creates two children by selecting the same point on both genomes for crossover to occur. The head of genome 0 is then combined with the tail of genome 1, and the head of genome 1 is combined with the tail of genome 2. This means that genomes will always remain the same length after crossover. Fixed onepoint crossover can be activated with the flag:
 
     --crossover fixed_onepoint
 
-Given two individuals, create two children using fixed one-point crossover and return
-them. The same point is selected on both genomes for crossover to occur.
-This means that genomes will always remain the same length (as long as 
-int_flip mutation is used). Crossover points are selected within the 
-used portion of the genome by default (i.e. crossover does not occur in 
-the tail of the individual).
+or by setting the parameter `CROSSOVER` to `fixed_onepoint` in either a parameters file or in the params dictionary.
+
+Crossover points are selected within the used portion of the genome by default (i.e. crossover does not occur in the unused tail of the individual). This parameter can be selected with the flag:
+
+    --within_used
+
+or by setting the parameter `WITHIN_USED` to either `True` or `False` in either a parameters file or in the params dictionary.
+
+*__NOTE__ that by default* `WITHIN_USED` *is set to* `True`*.*
+
+*__NOTE__ that selecting the flag* `--within_used` *will also set the* `WITHIN_USED` *parameter to* `True` *As such, the only way to change the* `WITHIN_USED` *parameter to* `False` *is to set so in either a parameters file or in the params dictionary.*
 
 ###Fixed Twopoint
 
-Activate with:
+Given two individuals, fixed twopoint crossover creates two children by selecting the same points on both genomes for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid_section of genome 2. This means that genomes will always remain the same length after crossover. Fixed twopoint crossover can be activated with the flag:
 
-    --crossover fixed_twopoint
+    --crossover fixed_onepoint
 
-Given two individuals, create two children using fixed two-point crossover and return
-them. The same points are selected on both genomes for crossover to occur.
-This means that genomes will always remain the same length (as long as 
-int_flip mutation is used). Crossover points are selected within the 
-used portion of the genome by default (i.e. crossover does not occur in 
-the tail of the individual).
+or by setting the parameter `CROSSOVER` to `fixed_twopoint` in either a parameters file or in the params dictionary.
+
+As with all linear genome crossovers, crossover points are selected within the used portion of the genome by default (i.e. crossover does not occur in the unused tail of the individual).
 
 ###Variable Onepoint
 
-Activate with:
+Given two individuals, variable onepoint crossover creates two children by selecting a different point on each genome for crossover to occur. The head of genome 0 is then combined with the tail of genome 1, and the head of genome 1 is combined with the tail of genome 2. This allows genomes to grow or shrink in length. Variable onepoint crossover can be activated with the flag:
 
     --crossover variable_onepoint
 
-Given two individuals, create two children using variable one-point 
-crossover and return them. A different point is selected on each genome 
-for crossover to occur. This allows genomes to grow or shrink in length.
-Crossover points areselected within the used portion of the genome by 
-default (i.e. crossover does not occur in the tail of the individual).
+or by setting the parameter `CROSSOVER` to `variable_onepoint` in either a parameters file or in the params dictionary.
 
-*__NOTE__ that variable onepoint crossover can cause individuals to grow*
-*, leading to bloat.*
+As with all linear genome crossovers, crossover points are selected within the used portion of the genome by default (i.e. crossover does not occur in the unused tail of the individual).
+
+*__NOTE__ that variable linear crossovers can cause individuals to grow in size, leading to bloat.*
 
 ###Variable Twopoint
 
-Activate with:
+Given two individuals, variable twopoint crossover creates two children by selecting two different points on each genome for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid_section of genome 2. This allows genomes to grow or shrink in length. Variable twopoint crossover can be activated with the flag:
 
     --crossover variable_twopoint
 
-Given two individuals, create two children using variable two-point 
-crossover and return them. Two different points are selected on each genome 
-for crossover to occur. This allows genomes to grow or shrink in length.
-Crossover points are selected within the used portion of the genome by 
-default (i.e. crossover does not occur in the tail of the individual).
+or by setting the parameter `CROSSOVER` to `variable_twopoint` in either a parameters file or in the params dictionary.
 
-*__NOTE__ that variable onepoint crossover can cause individuals to grow*
-*, leading to bloat.*
+As with all linear genome crossovers, crossover points are selected within the used portion of the genome by default (i.e. crossover does not occur in the unused tail of the individual).
 
-For a more in-depth discussion on crossover in Grammatical Evolution,
-see [O'Neill *et al.*, 2003].
+*__NOTE__ that variable linear crossovers can cause individuals to grow in size, leading to bloat.*
 
 ###Subtree
 
-Activate with:
+Given two individuals, subtree crossover creates two children by selecting candidate subtrees from both parents based on matching non-terminal
+nodes. The chosen subtrees are then swapped between parents, creating new children. Subtree crossover can be activated with the flag:
 
     --crossover subtree
 
-Given two individuals, create two children using subtree crossover and
-return them. Candidate subtrees are selected based on matching non-terminal
-nodes rather than matching terminal nodes.
+or by setting the parameter `CROSSOVER` to `subtree` in either a parameters file or in the params dictionary.
+
+*__NOTE__ that subtree crossover can cause individuals to grow in size, leading to bloat.*
+
+*__NOTE__ that subtree crossover will __not__ produce invalid individuals, i.e. given two valid parents, both children are guaranteed to be valid.*
 
 ##Mutation
 
@@ -572,6 +590,8 @@ where `[INT]` is an integer which specifies the number of mutation events per
 individual. Note that for subtree mutation exactly this number of mutation
 events will occur, but for integer flip mutation this will only affect the
 probability of mutation events occurring.
+
+*__NOTE__ that linear genome mutation operators are not intelligent, i.e. mutation is applied randomly. It is therefore possible for linear mutation operators to generate invalid individuals (i.e. individuals who do not terminate mapping).*
 
 ###Int Flip
 
