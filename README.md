@@ -76,7 +76,7 @@ A full grammar is built up of any combinations of such rules.
  
 *__NOTE__ that all non-terminals must be fully defined in the grammar, i.e. every non-terminal that appears in the grammar must have a full production rule with defined production choices.*
 
-###Recursion
+##Recursion
 
 One of the most powerful aspects of GE is that the representation can be variable in length. Notably, rules can be recursive (i.e. a non-terminal production rule can contain itself as a production choice), which can allow GE to generate solutions of arbitrary size, e.g.:
 
@@ -86,7 +86,7 @@ The code produced by a grammar will consist of elements of the terminal set `T`.
 
 In PonyGE2 the BNF definition is comprised entirely of the set of production rules, with the definition of terminals and non-terminals implicit in these rules. The first non-terminal symbol is by default the start symbol. As the BNF definition is a plug-in component of the system, it means that GE can produce code in any language thereby giving the system a unique flexibility.
 
-###Writing Grammars
+##Writing Grammars
 
 You can have:
 - production separators in multiple lines,
@@ -102,7 +102,7 @@ Grammars are parsed using regular expressions. Examples on parsing some of gramm
 - [Rule](https://regex101.com/r/rU9tA7/2)
 - [Production](https://regex101.com/r/sE7eM8/1)
 
-###Variable ranges in grammars
+##Variable ranges in grammars
 
 A useful special case is available when writing grammars: a production can be given as `GE_RANGE:4`, for example, and this will be replaced by a set of productions: `0 | 1 | 2 | 3`. With `GE_RANGE:dataset_n_vars`, the number of productions will be set by the number of columns in the file given by the `--dataset` argument, if any. Using grammar productions like the following, we can avoid hard-coding the number of independent variables in the grammar:
 
@@ -113,7 +113,7 @@ See `grammars/supervised_learning.bnf` for a full example.
 
 Along with the fitness function, grammars are one of the most problem-specific components of the PonyGE2 algorithm. The performance of PonyGE2 can be vastly affected by the quality of the grammar used.
 
-###Grammar Files
+##Grammar Files
 
 All grammars are stored in the grammars folder. Grammars can be set with the flag:
 
