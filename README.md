@@ -235,10 +235,13 @@ It is also possible to perform intelligent variation operations using derivation
 #Bloat
 ------
 
-Bloat occurs in evolutionary algorithms when large increases in genetic material are observed without an observed increas in fitness. There are currently three methods implemented to control genetic bloat in PonyGE2:
+Bloat occurs in evolutionary algorithms when large increases in genetic material are observed without an observed increase in fitness. There are currently three methods implemented to control genetic bloat in PonyGE2:
+
 1. Limiting the maximum derivation tree depth
 2. Limiting the number of nodes in a derivation tree
 3. Limiting the maximum length of the genome.   
+
+Any combination of these three methods can be used with PonyGE2. Furthermore, these bloat control measures are **not** limited to specific representation types; it is possible to use genome length limitation with derivation tree based operators, and vice versa.
 
 ##Max Tree Depth
 
