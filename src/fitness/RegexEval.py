@@ -162,9 +162,9 @@ class RegexEval:
     When we go to evolve new regexs, we can use the test suite to measure functionality equivalence 
     with the original test regex.
     """
-    def generate_equivalence_test_suite_replacement(self, a_match, a_regex):
+    def generate_equivalence_test_suite_replacement(self, a_match, compiled_regex):
         # go through the whole known search string, changing letters until you find one which does not match.
-        compiled_regex = re.compile(a_regex)
+        # compiled_regex = re.compile(a_regex)
         if len(a_match.matches) > 0 :
             for i in range(0, len(a_match.search_string)):
                 for char in [ a for a in range(ord('0'), ord('9'))] + [ord('a'), ord('Z') ]:
@@ -177,9 +177,9 @@ class RegexEval:
     """
     Generate shorter or longer test cases, add those which do not match
     """
-    def generate_equivalence_test_suite_length(self, a_match, a_regex):        
+    def generate_equivalence_test_suite_length(self, a_match, compiled_regex):        
         # add and remove characters from the string until we find a regex which fails
-        compiled_regex = re.compile(a_regex)
+        # compiled_regex = re.compile(a_regex)
         if len(a_match.matches) > 0 :
             new_search_string = 'a'+ a_match.search_string # check string with one character added at the front
             self.add_test_case_if_fails(new_search_string, compiled_regex)
@@ -363,26 +363,37 @@ class RegexEval:
                             " .3456  ",
                             "a46b  ",
                             "0.045e-10",
+                            "aXXXXas",
         ]
         
         compiled_regex = re.compile(regex_string)
         for test_string in known_test_strings:
-            a_test_candidate = RegexTestString(test_string)
-            vals = self.time_regex_test_case(compiled_regex, a_test_candidate , 1)
-            if len(list(vals[1])) > 0: # the regex found a match, add it
-                a_positive_test= self.add_re_match_to_test(vals, a_test_candidate)
-                self.test_cases.append(a_positive_test)
-                # now find regex which negate
-                self.generate_equivalence_test_suite_replacement(a_positive_test,regex_string)
-                self.generate_equivalence_test_suite_length(a_positive_test, regex_string)
-        print("Number of test cases in suite: {}".format(len(self.test_cases)))        
+            self.generate_tests_if_string_match(compiled_regex, test_string)
+
+         # if we don't have any known test strings, see if the regex matches itself
+        self.generate_tests_if_string_match(compiled_regex, regex_string)
+            
+        print("Number of test cases in suite: {}".format(len(self.test_cases)))
+        if (len(self.test_cases) ==0 ):
+            raise ValueError('PonyGE2 couldn\'t find any passing test cases for this regex!')
                 
     # take matching values as found by the regex library, and add them to our RegexTestString object
     def add_re_match_to_test(self, vals, passing_test_string):
         for a_match in vals[1]: # this vals[1] business is not good
             passing_test_string.add_match(a_match.start(), a_match.end())
         return passing_test_string
+
+    def generate_tests_if_string_match(self,compiled_regex, test_string):
+        a_test_candidate = RegexTestString(test_string)
+        vals = self.time_regex_test_case(compiled_regex, a_test_candidate , 1)
+        if len(list(vals[1])) > 0: # the regex found a match, add it
+            a_positive_test= self.add_re_match_to_test(vals, a_test_candidate)
+            self.test_cases.append(a_positive_test)
+            # now find regex which negate
+            self.generate_equivalence_test_suite_replacement(a_positive_test,compiled_regex)
+            self.generate_equivalence_test_suite_length(a_positive_test, compiled_regex)
             
+    
 """
 Class which contains a test string and matches
 (We should probably just use the types which re library uses)

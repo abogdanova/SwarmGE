@@ -12,7 +12,7 @@ fi
 grammar_file="PCRE.bnf" # "$2"
 regex_genome_file=regex_genome_$(date +"%Y%m%d%H%M%S").txt
 params_template="template_seedonly_regex.txt"
-parameters_file=seedonly_regex_"$(echo $regex_string | sha1sum | awk '{ print $1 }')".txt
+parameters_file=gen_seedonly_regex_"$(echo $regex_string | sha1sum | awk '{ print $1 }')".txt
 
 grep SEED_GENOME ../parameters/"$parameters_file"
 
