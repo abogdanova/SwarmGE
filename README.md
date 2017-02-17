@@ -286,7 +286,7 @@ One of the central components of PonyGE is the `algorithm.parameters.params` dic
 
 There are three different ways to specify operational parameters with PonyGE.
 
-1. The first and most basic method is to modify the algorithm.parameters.params dictionary directly in the code.
+1. The first and most basic method is to modify the `algorithm.parameters.params` dictionary directly in the code. This is not encouraged, as the `algorithm.parameters.params` dictionary contains the default values for many parameters.
 2. The second method is to list your desired parameters in a specialised parameters text file. Example parameters files are located in the `parameters` folder. When using parameters files, it is necessary to specify the desired parameter file from the command line. This is done by calling
 
         --parameters [FULL FILE NAME INCLUDING EXTENSION]
