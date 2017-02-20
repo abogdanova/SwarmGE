@@ -305,8 +305,8 @@ def parse_cmd_args(arguments):
                         help='Whether to optimize numerical constants by '
                              'gradient descent in supervised learning problems.'
                              ' Requires True or False, default False.')
-    parser.add_argument('--extra_fitness_parameters',
-                        dest='EXTRA_FITNESS_PARAMETERS',
+    parser.add_argument('--extra_parameters',
+                        dest='EXTRA_PARAMETERS',
                         type=str,
                         help='Optional extra command line parameter for '
                              'inclusion of any extra information required '
