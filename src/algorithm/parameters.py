@@ -240,7 +240,7 @@ def set_params(command_line_args, create_files=True):
         s = "algorithm.parameters.set_params\nError: " \
             "unknown parameters: %s\nYou may wish to check the spelling, " \
             "add code to recognise this parameter, or use " \
-            "--extra_fitness_parameters" % str(unknown)
+            "--extra_parameters" % str(unknown)
         raise Exception(s)
 
 
