@@ -296,9 +296,9 @@ def parse_cmd_args(arguments):
     parser.add_argument('--error_metric',
                         dest='ERROR_METRIC',
                         type=str,
-                        help='Sets the error metric to be used with regression'
-                             ' style problems. Requires string such as "mse" '
-                             'or "rmse".')
+                        help='Sets the error metric to be used with supervised'
+                             ' learning problems. Requires string such as '
+                             '"mse" or "rmse".')
     parser.add_argument('--optimize_constants',
                         dest='OPTIMIZE_CONSTANTS',
                         type=bool,
