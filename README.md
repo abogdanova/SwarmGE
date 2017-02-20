@@ -672,15 +672,9 @@ All newly implemented fitness functions in PonyGE2 *must* have a `default_fitnes
 
 All newly implemented fitness functions in PonyGE2 should require only one input to the `__call__` method: the individual itself. Fitness functions are called from `representation.individual.Individual.evaluate`.
 
-For supervised learning fitness functions which evaluate solutions on either
- training or test data, PonyGE2 requires the fitness function to have a 
- `training_test` attribute. This allows PonyGE2 to evaluate individuals on 
- training data by default, and on test data by specifying the correct optional 
- input argument to the fitness function call itself. There are a number of 
- example supervised learning problems implemented in PonyGE2 which demonstrate these attributes. 
+For supervised learning fitness functions which evaluate solutions on either training or test data, PonyGE2 requires the fitness function to have a `training_test` attribute. This allows PonyGE2 to evaluate individuals on training data by default, and on test data by specifying the correct optional input argument to the fitness function call itself. There are a number of example supervised learning problems implemented in PonyGE2 which demonstrate these attributes. 
  
-*__NOTE__ that the call to evaluate individuals on optional test data for 
-supervised learning problems is made in* `stats.stats.get_stats`.
+*__NOTE__ that the call to evaluate individuals on optional test data for supervised learning problems is made in* `stats.stats.get_stats`.
 
 Fitness functions can be specified with the argument:
 
@@ -698,72 +692,91 @@ or by setting the parameter `ERROR_METRIC` to `[ERROR_METRIC_NAME]` in either a 
 
 *__NOTE__ that for some supervised learning problems that use specified error metrics (e.g. mean-squared error), these error metrics have their own *`maximise`* attributes. This* `maximise` *attribute is automatically used by the specified supervised learning fitness function.*
 
+###Datasets
+
+Some fitness functions may require a dataset across which to be evaluated. Datasets for PonyGE2 are saved in the `datasets` folder. For supervised learning problems, datasets are split in twain, with the filename of the training dataset ending in `-Train` and the filename of the testing dataset ending in `-Test`. Datasets in PonyGE2 require a `.txt` file extension.
+
+Datasets can be specified with the argument:
+
+    --dataset [DATASET_NAME]
+
+or by setting the parameter `DATASET` to `[DATASET_NAME]` in either a parameters file or in the params dictionary, where `[DATASET_NAME]` is a string specifying the name of the desired dataset.
+
+*__NOTE__ that you do __not__ need to specify either* `-Train` *or* `-Test` *in the name of the dataset when specifying the dataset name. For example, specifying the argument:*
+
+    --dataset Dow
+
+*will automatically load in both the training and testing datasets for the* `Dow` *problem.*
+
+*__NOTE__ that you do __not__ need to specify the file extension when specifying the dataset name.*
+
+###Targets
+
+Some fitness functions may require a target. For example, a string match fitness function will require a target value to match. All target values will be stored in PonyGE2 as a string by default. If a fitness function requires any data structure other than a string, the target string itself must be parsed to the desired data structure within the fitness function itself (*__NOTE__ that if this parsing is done in the* `__init__()` *call of the fitness function, it only needs to be done once rather than at every fitness evaluation.*)
+ 
+Target strings can be specified with the argument:
+
+    --target [TARGET_STRING]
+
+or by setting the parameter `TARGET` to `[TARGET_STRING]` in either a parameters file or in the params dictionary, where `[TARGET_STRING]` is a string specifying the desired target string.
+
 ##Multicore evaluation
 
 Evaluation of a population of individuals can be done in series (single core evaluation) or in parallel (multi core evaluation). Multicore evaluation can be activated with the argument:
 
     --multicore
 
-Additionally, the number of processor cores used for multicore evaluation
-can be controlled with the argument:
+or by setting the parameter `MULTICORE` to `True` in either a parameters file or in the params dictionary.
+
+Additionally, the number of processor cores used for multicore evaluation can be controlled with the argument:
 
     --cores [INT]
 
-where `[INT]` is an integer which specifies the number of cores used for
-fitness evaluations. The default value is to use all available cores.
+or by setting the parameter `CORES` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of cores used for fitness evaluations. The default value is one core less than all available cores (i.e. [available cores] - 1).
 
-*__NOTE__ that multicore evaluations may not necessarily improve computational*
-*runtime for small problems as a certain overhead is necessary to run the*
-*multicore evaluation process.*
+*__NOTE__ that at present multicore evaluation does not work on Windows operating systems.*
 
-*__NOTE__ also that for smaller problems fitness evaluations may not*
-*necessarily present a bottleneck in terms of computational run-time. It is*
-*advised to use a python profiler to ascertain whether or not fitness*
-*evaluations present such a bottleneck. If this is the case, multicore*
-*evaluation  may improve the run-time of a single evolutionary run.*
+*__NOTE__ that multicore evaluations may not necessarily improve computational runtime for small problems as a certain overhead is necessary to run the multicore evaluation process.*
 
-*__NOTE__ also that when running batches of multiple experiments, it will*
-*__always__ be faster to run multiple single-core experiments in parallel,*
-*rather than multiple multi-core experiments in series.*
+*__NOTE__ that for smaller problems fitness evaluations may not necessarily present a bottleneck in terms of computational run-time. It is advised to use a python profiler to ascertain whether or not fitness evaluations present such a bottleneck. If this is the case, multicore evaluation  may improve the run-time of a single evolutionary run.*
+
+*__NOTE__ that when running batches of multiple experiments, it will __always__ be faster to run multiple single-core experiments in parallel, rather than multiple multi-core experiments in series.*
 
 ##Caching
 
-Caching is provided in PonyGE2 to save on fitness evaluations and to track the
-number of unique solutions encountered during an evolutionary run. Cached
-individuals have their fitness stored in a dictionary called
-`utilities.trackers.cache`. Dictionary keys are the string of the phenotype.
-Caching can be activated with the argument:
+Caching is provided in PonyGE2 to save on fitness evaluations and to track the number of unique solutions encountered during an evolutionary run. Cached individuals have their fitness stored in the `utilities.trackers.cache` dictionary. Dictionary keys are the string of the phenotype. Caching can be activated with the argument:
 
     --cache
 
-There are currently three options for use with the cache:
+or by setting the parameter `CACHE` to `True` in either a parameters file or in the params dictionary.
+
+There are currently three optional extras for use with the cache:
 
 ###1. Fitness Lookup
 
-This is the default case when caching is activated. Individuals which have
-already been evaluated have their previous fitness read directly from the
-cache, thus saving fitness evaluations. Fitness lookup can be
-de-activated with:
+This is the default case when caching is activated. Individuals which have already been evaluated have their previous fitness read directly from the cache, thus saving fitness evaluations. Fitness lookup can be de-activated with:
 
     --dont_lookup_fitness
 
+or by setting the parameter `LOOKUP_FITNESS` to `False` in either a parameters file or in the params dictionary.
+
 ###2. Fitness Penalty
 
-Individuals which have already been evaluated are given a default bad
-fitness. Activate with:
+Individuals which have already been evaluated (i.e. duplicate individuals) are given a default bad fitness. The fitness to be assigned is the default fitness value specified in the fitness function. This parameter can be activated with the argument:
 
     --lookup_bad_fitness
 
+or by setting the parameter `LOOKUP_BAD_FITNESS` to `True` in either a parameters file or in the params dictionary.
+
 ###3. Mutate Duplicates
 
-Individuals which have already been evaluated are mutated to produce new
-unique individuals which have not been encountered yet by the search process.
-Activate with:
+Individuals which have already been evaluated (i.e. duplicate individuals) are mutated to produce new unique individuals which have not been encountered yet by the search process. This parameter can be activated with the argument:
 
     --mutate_duplicates
 
-*__NOTE__ that the various caching options are __mutually exclusive__.*
-*For example, you cannot specify* `--mutate_duplicates` *with* `--lookup_bad_fitness`.
+or by setting the parameter `MUTATE_DUPLICATES` to `True` in either a parameters file or in the params dictionary.
+
+*__NOTE__ that the various caching options are __mutually exclusive__. For example, you cannot specify* `--mutate_duplicates` *with* `--lookup_bad_fitness`.
 
 #Replacement
 -----------
