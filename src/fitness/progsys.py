@@ -71,7 +71,7 @@ class progsys:
             # remove indentation if bracket is at the beginning of the line
             while line.startswith(":}"):
                 indent -= 1
-                line = line[2:len(line) - 2].strip()
+                line = line[2:len(line)].strip()
 
             # add indent
             if not first:
