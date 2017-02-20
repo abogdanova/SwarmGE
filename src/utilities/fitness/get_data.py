@@ -63,7 +63,7 @@ def get_data(experiment, file_type="txt"):
     """ Return the training and test data for the current experiment.
     """
 
-    datasets = listdir(getcwd() + "/../datasets/")
+    datasets = listdir(path.join(getcwd(), "..", "datasets"))
     for dataset in datasets:
         exp = dataset.split('.')[0].split('-')[0]
         if exp == experiment:
