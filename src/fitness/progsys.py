@@ -24,7 +24,8 @@ class progsys:
     default_fitness = np.NaN
 
     def __init__(self):
-        self.training, self.test, self.embed_header, self.embed_footer = self.get_data(params['DATASET'])
+        self.training, self.test, self.embed_header, self.embed_footer = \
+            self.get_data(params['DATASET_TRAIN'])
         self.create_eval_process()
         if params['MULTICORE']:
             print("Warming: Multicore is not supported with progsys as fitness function.\n"

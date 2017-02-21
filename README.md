@@ -493,7 +493,7 @@ Given a parent population of individuals picked using the given selection proces
 
 Given these two parents, the crossover probability defines the probability that a given crossover operator will perform crossover on their genetic material. The probability of crossover occurring is set with the argument:
 
-    "--crossover_probability [NUM]
+    --crossover_probability [NUM]
 
 or by setting the parameter `CROSSOVER_PROBABILITY` to `[NUM]` in either a parameters file or in the params dictionary, where `[NUM]` is a float between 0 and 1. The default value for crossover is 0.75 (i.e. two selected parent individuals have a 75% chance of having genetic material crossed over between them).
 
@@ -694,21 +694,46 @@ or by setting the parameter `ERROR_METRIC` to `[ERROR_METRIC_NAME]` in either a 
 
 ###Datasets
 
-Some fitness functions may require a dataset across which to be evaluated. Datasets for PonyGE2 are saved in the `datasets` folder. For supervised learning problems, datasets are split in twain, with the filename of the training dataset ending in `-Train` and the filename of the testing dataset ending in `-Test`. Datasets in PonyGE2 require a `.txt` file extension.
+Some fitness functions may require a dataset across which to be evaluated. Datasets for PonyGE2 are saved in the `datasets` folder. Most supervised learning problems require two datasets: training and test data. These are specified independently.
 
-Datasets can be specified with the argument:
+Training datasets can be specified with the argument:
 
-    --dataset [DATASET_NAME]
+    --dataset_train [DATASET_NAME]
 
-or by setting the parameter `DATASET` to `[DATASET_NAME]` in either a parameters file or in the params dictionary, where `[DATASET_NAME]` is a string specifying the name of the desired dataset.
+or by setting the parameter `DATASET_TRAIN` to `[DATASET_NAME]` in either a parameters file or in the params dictionary, where `[DATASET_NAME]` is a string specifying the full file name of the desired training dataset. For example, the argument:
 
-*__NOTE__ that you do __not__ need to specify either* `-Train` *or* `-Test` *in the name of the dataset when specifying the dataset name. For example, specifying the argument:*
+    --dataset_train Dow/Train.txt
 
-    --dataset Dow
+will load in the `Train.txt` dataset saved in the `Dow` folder within `datasets`.
 
-*will automatically load in both the training and testing datasets for the* `Dow` *problem.*
+Testing datasets can be specified with the argument:
 
-*__NOTE__ that you do __not__ need to specify the file extension when specifying the dataset name.*
+    --dataset_test [DATASET_NAME]
+
+or by setting the parameter `DATASET_TEST` to `[DATASET_NAME]` in either a parameters file or in the params dictionary, where `[DATASET_NAME]` is a string specifying the full file name of the desired testing dataset.
+
+*__NOTE__ that you __must__ specify the file extension when specifying the dataset names.*
+
+While it is recommended that supervised learning problems implement training *and* unseen testing data, it is not necessary to use testing data with these problems. If you wish to run PonyGE2 with no test dataset, you can simply use the argument:
+ 
+    --dataset_test None
+
+####Dataset Delimiters
+
+By default, PonyGE2 will try to automatically parse specified datasets using the following set of data delimiters in the following order:
+
+1. "\t" [tab]
+2. ","  [comma]
+3. ";"  [semi-colon]
+4. ":"  [colon]
+
+If the data cannot be parsed using the above separators, then PonyGE2 will default to using whitespace as the delimiter for separating data. However, it is possible to directly specify the desired dataset delimiter with the argument:
+
+    --dataset_delimiter [DELIMITER]
+
+or by setting the parameter `DATASET_DELIMITER` to `[DELIMITER]` in either a parameters file or in the params dictionary, where `[DELIMITER]` is a string specifying the desired dataset delimiter.
+
+*__NOTE__ that you __do not__ need to escape special characters such as "\\t" with "\\\\t" when passing in the* `--dataset_delimiter` *argument from the command line. Simply specify the raw desired string.*
 
 ###Targets
 
@@ -732,7 +757,7 @@ Additionally, the number of processor cores used for multicore evaluation can be
 
     --cores [INT]
 
-or by setting the parameter `CORES` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of cores used for fitness evaluations. The default value is one core less than all available cores (i.e. [available cores] - 1).
+or by setting the parameter `CORES` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of cores used for fitness evaluations. The default value is to use all available cores.
 
 *__NOTE__ that at present multicore evaluation does not work on Windows operating systems.*
 
@@ -780,6 +805,10 @@ or by setting the parameter `MUTATE_DUPLICATES` to `True` in either a parameters
 
 #Replacement
 -----------
+
+The replacement strategy for an Evolutionary Algorithm defines which parents
+ and children survive into the next generation. 
+ 
 
 ##Generational
 

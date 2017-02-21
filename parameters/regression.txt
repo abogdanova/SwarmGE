@@ -2,7 +2,8 @@ CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              variable_onepoint
 CROSSOVER_PROBABILITY:  0.75
-DATASET:                Vladislavleva4
+DATASET_TRAIN:          Vladislavleva4/Train.txt
+DATASET_TEST:           Vladislavleva4/Test.txt
 DEBUG:                  False
 ERROR_METRIC:           mse
 GENERATIONS:            50

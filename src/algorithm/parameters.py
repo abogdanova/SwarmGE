@@ -31,10 +31,9 @@ params = {
         # "supervised_learning"
 
         # Select problem dataset
-        'DATASET': "Vladislavleva4",
-        # "Dow"
-        # "Keijzer6"
-        # "Vladislavleva4"
+        'DATASET_TRAIN': "Vladislavleva4/Train.txt",
+        'DATASET_TEST': "Vladislavleva4/Test.txt",
+        'DATASET_DELIMITER': None,
 
         # Set grammar file
         'GRAMMAR_FILE': "Vladislavleva4.bnf",
@@ -228,7 +227,7 @@ def set_params(command_line_args, create_files=True):
 
     from utilities.algorithm.initialise_run import initialise_run_params
     from utilities.algorithm.initialise_run import set_param_imports
-    from utilities.fitness.math_functions import return_percent
+    from utilities.fitness.math_functions import return_one_percent
     from representation import grammar
     import utilities.algorithm.command_line_parser as parser
     from utilities.stats import trackers, clean_stats
@@ -277,7 +276,7 @@ def set_params(command_line_args, create_files=True):
             # Elite size is set to either 1 or 1% of the population size,
             # whichever is bigger if no elite size is previously set.
             if params['ELITE_SIZE'] is None:
-                params['ELITE_SIZE'] = return_percent(1, params[
+                params['ELITE_SIZE'] = return_one_percent(1, params[
                     'POPULATION_SIZE'])
     
             # Set the size of a generation

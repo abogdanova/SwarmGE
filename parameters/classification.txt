@@ -2,7 +2,8 @@ CACHE:                  True
 CODON_SIZE:             100000
 CROSSOVER:              variable_onepoint
 CROSSOVER_PROBABILITY:  0.75
-DATASET:                Banknote
+DATASET_TRAIN:          Banknote/Train.csv
+DATASET_TEST:           Banknote/Test.csv
 DEBUG:                  False
 ERROR_METRIC:           f1_score
 GENERATIONS:            50

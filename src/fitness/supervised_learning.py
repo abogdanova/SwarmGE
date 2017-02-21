@@ -30,13 +30,14 @@ class supervised_learning:
     def __init__(self):
         # Get training and test data
         self.training_in, self.training_exp, self.test_in, self.test_exp = \
-            get_data(params['DATASET'])
+            get_data(params['DATASET_TRAIN'], params['DATASET_TEST'])
 
         # Find number of variables.
-        self.n_vars = np.shape(self.test_in)[0]
+        self.n_vars = np.shape(self.training_in)[0]
 
         # Regression/classification-style problems use training and test data.
-        self.training_test = True
+        if params['DATASET_TEST']:
+            self.training_test = True
 
     def __call__(self, ind, dist="training"):
         """
