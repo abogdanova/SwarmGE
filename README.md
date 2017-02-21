@@ -690,7 +690,7 @@ Some supervised learning fitness functions require an error metric (e.g. mean-sq
 
 or by setting the parameter `ERROR_METRIC` to `[ERROR_METRIC_NAME]` in either a parameters file or in the params dictionary, where `[ERROR_METRIC_NAME]` is a string specifying the name of the desired error metric. A list of currently implemented error metrics is available in `utilities.fitness.error_metric`.
 
-*__NOTE__ that for some supervised learning problems that use specified error metrics (e.g. mean-squared error), these error metrics have their own *`maximise`* attributes. This* `maximise` *attribute is automatically used by the specified supervised learning fitness function.*
+*__NOTE__ that for some supervised learning problems that use specified error metrics (e.g. mean-squared error), these error metrics have their own* `maximise` *attributes. This* `maximise` *attribute is automatically used by the specified supervised learning fitness function.*
 
 ###Datasets
 
