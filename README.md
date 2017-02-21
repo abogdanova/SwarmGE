@@ -811,9 +811,7 @@ The replacement strategy for an Evolutionary Algorithm defines which parents and
 
 ##Generational
 
-Generational replacement replaces the entire parent population with the 
-newly generated child population at every generation. Generational 
-replacement can be activated with the argument:
+Generational replacement replaces the entire parent population with the newly generated child population at every generation. Generational replacement can be activated with the argument:
 
     --replacement generational
 
@@ -833,10 +831,15 @@ or by setting the parameter `ELITE_SIZE` to `[INT]` in either a parameters file 
 
 ##Steady State
 
-Activate with:
+With steady state replacement, only 2 children are created by the evolutionary process at each evolutionary step (i.e. the `GENERATION_SIZE` is automatically set to 2). Steady state replacement first selects two parents, performs crossover on them to produce two children, mutates and evaluates these children, and then replaces the two worst individuals in the original population with the new children, regardless of whether or not these children are fitter than the individuals they replace. As such, steady state replacement implements its own specialised `step` loop.
+
+At each generation, steady state replacement continues until `POPULATION_SIZE` children have been created and inserted into the original population. Adopting a steady state replacement strategy ensures that successive populations overlap to a significant degree (i.e. parents and their children can co-exist). This requires less memory as only one population of individuals needs to be maintained at any given point in time. This strategy also allows the evolutionary process to exploit good solutions as soon as they appear.
+
+Steady state replacement can be activated with the argument:
 
     --replacement steady_state
 
+or by setting the parameter `REPLACEMENT` to `steady_state` in either a parameters file or in the params dictionary. 
 
 #Example Problems
 ----------------
