@@ -907,92 +907,23 @@ To try this problem, specify the following command-line argument:
 
     --parameters sequence_match.txt
 
+
 #Adding New Problems
 --------------------
 
-It has been made as simple as possible to add problems to PonyGE. Everything
-is automated, and there is only one place where code __may__ need to be
-edited in order to enable a new problem (apart from adding in the problem
-itself, obviously). The flipside of this is that it is possible to easily
-mis-configure PonyGE if you fail to specify everything correctly.
+It has been made as simple as possible to add new problems to PonyGE. To add in a new problem, you will need:
 
-_**NOTE** that this can be remedied somewhat with proper use of the new parameter_
-_config files._
+1. a new grammar file specific to your problem,
+2. a new fitness function (if you don't want to use a previously existing one), and
+3. if you are doing supervised learning then you may also need to add some new datasets.
 
-**To add in a new problem:**
-You simply need to write a **new fitness function** (if you don't want to use
-one already there) and add a **new grammar file**. You may also need to add a
-**new dataset** if you're using datasets.
-
-_**NOTE** that it may be beneficial to create a **new paremeters file**_
-_for any new problem._
-
-##Fitness Functions
-
-Fitness functions can be specified from the command line with the argument:
-
-    --fitness_function [FIT_FUNC_NAME]
-
-where `[FIT_FUNC_NAME]` is the name of the fitness function class.
-
-*__NOTE__ that fitness functions __must__ be a class with the same name as the*
-*file containing the class, e.g.* `fitness.regression.regression`.
-
-*__NOTE__ that any regression-style problems that include training and test*
-*data __require__ a* `self.training_test = True` *attribute in the init*
-*function for your fitness function class in order for PonyGE to generate*
-*training and test fitnesses for your solutions.*
-
-##Grammar Files
-
-Grammar files can be specified from the command line with the argument:
-
-    --grammar_file [GRAMMAR_FILE]
-
-where `[GRAMMAR_FILE]` is the name of the grammar file.
-
-*__NOTE__ that when specifying the grammar file you __must__ specify the full*
-*file extension, e.g. "Keijzer6.bnf".*
-
-*__NOTE__ that you __do not need__ to specify the file path, e.g.*
-*"grammars/Keijzer6.bnf."*
-
-##Datasets
-
-Datasets can be specified from the command line with the argument:
-
-    --dataset [DATASET]
-
-where `[DATASET]` is the name of the dataset.
-
-*__NOTE__ that when specifying the dataset you __do not__ need to specify the*
-*file path or the file extension.*
-
-##Parameters files
-
-Instead of passing in requirements from the command line, all three
-requirements specified above can be set in a unique parameters file. Then,
-only one argument needs to be passed in:
-
-    --parameters [PARAMETERS_FILE]
-
-where `[PARAMETERS_FILE]` is the name of the desired parameters file.
-
-*__NOTE__ that when specifying the parameters file you __must__ specify the*
-*full file extension, e.g. "classification.txt".*
-
-*__NOTE__ that you __do not__ need to specify the full file path to the*
-*parameters file.*
+*__NOTE__ that it may be beneficial to create a __new paremeters file__ for any new problem.*
 
 ##Editing Code to enable new problems
 
-Finally, depending on the problem itself you may need to edit
-`representation.individual.Individual.evaluate` to fully integrate the new
-problem to PonyGE. `individual.evaluate` is where PonyGE specifies the inputs
-needed for fitness evaluation.
+Finally, depending on the problem itself you may need to edit `representation.individual.Individual.evaluate` to fully integrate the new problem to PonyGE. `individual.evaluate` is where PonyGE specifies the inputs needed for fitness evaluation. 
 
-*__NOTE__ that it may not be necessary to edit `individual.evaluate` if you*
-*only pass in the phenotype to be evaluated.*
+*__NOTE__ that it may not be necessary to edit `individual.evaluate` if you only pass in the individual to be evaluated, as the call argument for each fitness function only has one input by default.*
 
 
 #Post-run Analysis
