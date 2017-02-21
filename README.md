@@ -803,27 +803,33 @@ or by setting the parameter `MUTATE_DUPLICATES` to `True` in either a parameters
 
 *__NOTE__ that the various caching options are __mutually exclusive__. For example, you cannot specify* `--mutate_duplicates` *with* `--lookup_bad_fitness`.
 
+
 #Replacement
 -----------
 
-The replacement strategy for an Evolutionary Algorithm defines which parents
- and children survive into the next generation. 
- 
+The replacement strategy for an Evolutionary Algorithm defines which parents and children survive into the next generation. 
 
 ##Generational
 
-Activate with:
+Generational replacement replaces the entire parent population with the 
+newly generated child population at every generation. Generational 
+replacement can be activated with the argument:
 
     --replacement generational
 
-Elites can be saved between generations. The default number of elites is 1
-percent of the population size. This value can be changed with the argument:
+or by setting the parameter `REPLACEMENT` to `generational` in either a parameters file or in the params dictionary. 
+
+###Elitism
+
+Generational replacement is most commonly used in conjunction with elitism. With elitism, the best `[ELITE_SIZE]` individuals in the parent population are copied over unchanged to the next generation. Elitism ensures continuity of the best ever solution at all stages through the evolutionary process, and allows for the best solution to be updated at each generation.
+
+The number of children created at each generation is known as the `GENERATION_SIZE`, and is equal to `[POPULATION_SIZE]` - `[ELITE_SIZE]`. This parameter is set automatically by PonyGE2.
+
+The default number of elites is 1 percent of the population size. This value can be changed with the argument:
 
     --elite_size [INT]
 
-where `[INT]` is an integer which specifies the number of elites to be saved
-between generations. Elites are saved between generations regardless of
-whether or not they are better or worse than the new population.
+or by setting the parameter `ELITE_SIZE` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of elites to be saved between generations. 
 
 ##Steady State
 
