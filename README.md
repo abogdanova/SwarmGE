@@ -844,102 +844,68 @@ or by setting the parameter `REPLACEMENT` to `steady_state` in either a paramete
 #Example Problems
 ----------------
 
-######FIXME Need to finalise a suite of problems for PonyGE2
-
-Four example problems are currently provided:
+Five example problems are currently provided:
 
 1. String-match
 2. Regression
 3. Classification
-4. Integer sequence match
+4. Pymax
+5. Integer sequence match
 
-A brief description is given below of each problem, along with the
-command-line arguments necessary to call each problem.
-
-*__NOTE__ that it is necessary to specify the desired grammar for each*
-*problem. This can either be done with a unique parameters config file*
-*or by passing the command-line argument in.*
-
+A brief description is given below of each problem, along with the command-line arguments necessary to call each problem. The developers of PonyGE2 encourage users to test out the various different operators and options available within PonyGE2 using these example problems in order to gain an appreciation of how they work.
 
 ##String-match
-------------
+--------------
 
-The grammar specifies words as lists of vowels and consonants. The aim
-is to match a target word.
+The grammar specifies words as lists of vowels and consonants along with special characters. The aim is to match a target string.
 
-To use it, specify the following command-line arguments:
-
-    --fitness_function string_match
-    --target [TYPE_TARGET_STRING]
-
-e.g. `--target golden, --target ponyge_rocks`
-
-Alternatively, you can specify a direct parameters file with:
+To use it, specify the following command-line argument:
 
     --parameters string_match.txt
 
+The default string match target is `Hello world!`, but this can be changed with the `--target` argument.
+
 ##Regression
-----------
+------------
 
-The grammar generates a symbolic function composed of standard mathematical
-operations and a set of variables. This function is then evaluated using a
-pre-defined set of inputs, given in the datasets folder. Each problem suite has
-a unique set of inputs. The aim is to minimise some error between the expected
-output of the function and the desired output specified in the datasets.
-This is the default problem for PonyGE.
+The grammar generates a symbolic function composed of standard mathematical operations and a set of variables. This function is then evaluated using a pre-defined set of inputs, given in the datasets folder. Each problem suite has a unique set of inputs. The aim is to minimise some error between the expected output of the function and the desired output specified in the datasets. This is the default problem for PonyGE.
 
-To use it, specify the following command-line arguments:
-
-    --fitness_function regression
-    --dataset [PROBLEM_SUITE]
-
-e.g. `--dataset Keijzer6, --dataset Vladislavleva4`
-
-Alternatively, you can specify a direct parameters file with:
+To try this problem, specify the following command-line argument:
 
     --parameters regression.txt
 
+The default regression problem is `Vladislavleva4`, but this can be changed with the `--grammar_file`, `--dataset_train` and `--dataset_test` arguments.
+
 ##Classification
---------------
+----------------
 
-Classification can be considered a special case of symbolic regression but
-with a different error metric. Like with regression, the grammar generates a
-symbolic function composed of standard mathematical operations and a set of
-variables. This function is then evaluated using a pre-defined set of inputs,
-given in the datasets folder. Each problem suite has a unique set of inputs.
-The aim is to minimise some classification error between the expected
-output of the function and the desired output specified in the datasets.
+Classification can be considered a special case of symbolic regression but with a different error metric. Like with regression, the grammar generates a symbolic function composed of standard mathematical operations and a set of variables. This function is then evaluated using a pre-defined set of inputs, given in the datasets folder. Each problem suite has a unique set of inputs. The aim is to minimise some classification error between the expected output of the function and the desired output specified in the datasets.
 
-To use it, specify the following command-line arguments:
-
-    --fitness_function classification
-    --dataset [PROBLEM_SUITE]
-
-e.g. `--dataset Banknote`
-
-Alternatively, you can specify a direct parameters file with:
+To try this problem, specify the following command-line argument:
 
     --parameters classification.txt
 
+The default classification problem is `Banknote`, but this can be changed with the `--grammar_file`, `--dataset_train` and `--dataset_test` arguments.
+
+##Pymax
+-------
+
+One of the strongest aspects of a grammatical mapping approach such as PonyGE2 is the ability to generate executable computer programs in an arbitrary language [O'Neill & Ryan, 2003]. In order to demonstrate this in the simplest way possible, we have included an example problem.
+ 
+The `Pymax` problem is a traditional maximisation problem, where the goal is to produce as large a number as possible. However, instead of encoding the grammar in a symbolic manner and evaluating the result, we have encoded the grammar for the `Pymax` problem as a basic Python programming example. The phenotypes generated by this grammar are executable python functions, whose outputs represent the fitness value of the individual. Users are encouraged to examine the `pymax.bnf` grammar and the resultant individual phenotypes to gain an understanding of how grammars can be used to generate such arbitrary programs.
+
+To try this problem, specify the following command-line argument:
+
+    --parameters pymax.txt
 
 ##Integer sequence match
 ------------------------
 
-In the sequence-match problem, we're given an integer sequence target,
-say [0, 5, 0, 5, 0, 5], and we try to synthesize a program (loops,
-if-statements, etc) which will *yield* that sequence, one item at a
-time. There are several components to the provided fitness function,
-which are weighted by numerical parameters. We can specify the target
-sequence and weights using parameters on the command line or in a
-parameters file.
+In the sequence-match problem, we're given an integer sequence target, say [0, 5, 0, 5, 0, 5], and we try to synthesize a program (loops, if-statements, etc) which will *yield* that sequence, one item at a time. There are several components to the provided fitness function, which are weighted by numerical parameters. We can specify the target sequence and weights using parameters on the command line or in a parameters file.
 
-To try this problem, use command-line arguments similar to the following:
+To try this problem, specify the following command-line argument:
 
-    --fitness_function sequence_match
-	--grammar_file sequence_match.pybnf
-	--target "[0, 5, 0, 5, 0, 5]"
-	--extra_fitness_parameters "alpha=0.5, beta=0.5, gamma=0.5"
-
+    --parameters sequence_match.txt
 
 #Adding New Problems
 --------------------
