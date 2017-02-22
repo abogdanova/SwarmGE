@@ -967,6 +967,8 @@ To run the experiment manager, type:
 
 where `[EXPERIMENT_NAME]` is a string which specifies the desired name of the experiment and where `[INT]` is an integer which specifies the number of evolutionary runs to be completed.
 
+*__NOTE__ that since the* `[MULTICORE]` *parameter in PonyGE2 does not work with Windows operating systems, at present the experiment manager will not work with Windows operating systems.*
+
 ##Post-run Analysis
 -------------------
 
