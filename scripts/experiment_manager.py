@@ -13,7 +13,7 @@ from subprocess import call
 import sys
 
 from algorithm.parameters import params, set_params
-from scripts.parse_stats import parse_stats_from_runs
+from scripts.stats_parser import parse_stats_from_runs
 
 
 def execute_run(seed):
@@ -35,6 +35,10 @@ def execute_runs():
     
     :return: Nothing.
     """
+
+    # Ensure `multicore` parameter is set to False as we use multicore to
+    # execute runs.
+    params['MULTICORE'] = False
 
     # Initialise empty list of results.
     results = []
@@ -76,12 +80,22 @@ def check_params():
               "line parameter `--runs`.")
 
 
-if __name__ == "__main__":
+def main():
+    """
+    The main function for running the experiment manager. Calls all functions.
+    
+    :return: Nothing.
+    """
+
     # Setup run parameters.
     set_params(sys.argv[1:], create_files=False)
-    
+
     # Check the correct parameters are set for this set of runs.
     check_params()
-    
+
     # Execute multiple runs.
     execute_runs()
+
+
+if __name__ == "__main__":
+    main()
