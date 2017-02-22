@@ -35,7 +35,8 @@ def parse_cmd_args(arguments):
     """
 
     # Initialise parser
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
         description="""Welcome to PonyGE - Help
         -------------------
         The following are the available command line args
@@ -183,6 +184,7 @@ def parse_cmd_args(arguments):
     parser.add_argument('--invalid_selection',
                         dest='INVALID_SELECTION',
                         action='store_true',
+                        default=None,
                         help='Allow for the selection of invalid individuals '
                              'during selection.')
     parser.add_argument('--tournament_size',
@@ -286,13 +288,16 @@ def parse_cmd_args(arguments):
                              '"mse" or "rmse".')
     parser.add_argument('--optimize_constants',
                         dest='OPTIMIZE_CONSTANTS',
-                        type=bool,
+                        action='store_true',
+                        default=None,
                         help='Whether to optimize numerical constants by '
-                             'gradient descent in supervised learning problems.'
-                             ' Requires True or False, default False.')
+                             'gradient descent in supervised learning '
+                             'problems. Requires True or False, default '
+                             'False.')
     parser.add_argument('--multicore',
                         dest='MULTICORE',
                         action='store_true',
+                        default=None,
                         help='Turns on multicore evaluation.')
     parser.add_argument('--cores',
                         dest='CORES',
@@ -347,30 +352,42 @@ def parse_cmd_args(arguments):
     parser.add_argument('--debug',
                         dest='DEBUG',
                         action='store_true',
+                        default=None,
                         help='Disables saving of all ancillary files.')
     parser.add_argument('--verbose',
                         dest='VERBOSE',
                         action='store_true',
+                        default=None,
                         help='Turns on the verbose output of the program in '
                              'terms of command line and extra files.')
     parser.add_argument('--silent',
                         dest='SILENT',
                         action='store_true',
+                        default=None,
                         help='Prevents any output from being printed to the '
                              'command line.')
     parser.add_argument('--save_all',
                         dest='SAVE_ALL',
                         action='store_true',
+                        default=None,
                         help='Saves the best phenotypes at each generation.')
     parser.add_argument('--save_plots',
                         dest='SAVE_PLOTS',
                         action='store_true',
+                        default=None,
                         help='Saves plots for best fitness.')
+
+    # REVERSE-MAPPING
+    parser.add_argument('--reverse_mapping_target',
+                        dest='REVERSE_MAPPING_TARGET',
+                        type=str,
+                        help='Target string to parse into a GE individual.')
 
     # STATE SAVING/LOADING
     parser.add_argument('--save_state',
                         dest='SAVE_STATE',
                         action='store_true',
+                        default=None,
                         help='Saves the state of the evolutionary run every '
                              'generation. You can specify how often you want '
                              'to save the state with the command '
@@ -407,11 +424,14 @@ def parse_cmd_args(arguments):
 
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, 'CACHE', self.CACHE)
-            if 'LOOKUP_FITNESS' not in namespace or getattr(namespace, 'LOOKUP_FITNESS') is not False:
+            if 'LOOKUP_FITNESS' not in namespace or \
+                            getattr(namespace, 'LOOKUP_FITNESS') is not False:
                 # able to overwrite if True or None
                 setattr(namespace, 'LOOKUP_FITNESS', self.LOOKUP_FITNESS)
-            if self.LOOKUP_BAD_FITNESS and 'LOOKUP_BAD_FITNESS' not in namespace:
-                setattr(namespace, 'LOOKUP_BAD_FITNESS', self.LOOKUP_BAD_FITNESS)
+            if self.LOOKUP_BAD_FITNESS and \
+                            'LOOKUP_BAD_FITNESS' not in namespace:
+                setattr(namespace, 'LOOKUP_BAD_FITNESS',
+                        self.LOOKUP_BAD_FITNESS)
             if self.MUTATE_DUPLICATES and 'MUTATE_DUPLICATES' not in namespace:
                 setattr(namespace, 'MUTATE_DUPLICATES', self.MUTATE_DUPLICATES)
 
