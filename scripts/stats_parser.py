@@ -24,15 +24,13 @@ def help_message():
     
     lines_1 = ["Welcome to PonyGE's post-run stats parser.",
                "-------------------",
-               "The following are the available command line args. You must "
-               "specify an experiment name and at least one stat to be parsed."
-               ""]
+               "The following are the available command line args.",
+               "You must specify an experiment name."]
     
     lines_2 = [["\t--help:", "Shows this help message."],
                ["\t--experiment_name:", "The name of the containing folder in "
                                         "which target runs are saved, e.g. "
-                                        "in /results/[EXPERIMENT_NAME]."],
-               ["\t--graph:", "Saves a .pdf figure of each stat."]]
+                                        "in results/[EXPERIMENT_NAME]."]]
 
     # This simply justifies the print statement such that it is visually
     # pleasing to look at.
@@ -58,7 +56,7 @@ def parse_opts(command_line_args):
     
     try:
         opts, args = getopt.getopt(command_line_args[1:], "",
-                                   ["help", "experiment_name=", "graph"])
+                                   ["help", "experiment_name="])
     except getopt.GetoptError as err:
         s = "scripts.parse_stats.parse_opts\n" \
             "Error: in order to parse stats you need to specify the location" \
@@ -74,7 +72,7 @@ def parse_opts(command_line_args):
             "       Run python stats_parser.py --help for more info."
         raise Exception(s)
 
-    experiment_name, graph = None, False
+    experiment_name = None
     
     # iterate over all arguments in the option parser.
     for opt, arg in opts:
@@ -86,15 +84,11 @@ def parse_opts(command_line_args):
         elif opt == "--experiment_name":
             # Set experiment name (i.e. containing folder for multiple runs).
             experiment_name = arg
-                
-        elif opt == "--graph":
-            # Set boolean flag for graphing stats.
-            graph = True
-    
-    return experiment_name, graph
+                    
+    return experiment_name
 
 
-def parse_stats_from_runs(experiment_name, graph):
+def parse_stats_from_runs(experiment_name):
     """
     Analyses a list of given stats from a group of runs saved under an
     "experiment_name" folder. Creates a summary .csv file which can be used by
@@ -185,13 +179,13 @@ def parse_stats_from_runs(experiment_name, graph):
         summary_stats = np.array(summary_stats)
         
         # Append Stat to header.
-        header = header + stat + "_mean" + ","
+        header = header + stat + "_mean,"
         
         summary_stats_mean = np.nanmean(summary_stats, axis=0)
         full_stats.append(summary_stats_mean)
 
         # Append Stat to header.
-        header = header + stat + "_std" + ","
+        header = header + stat + "_std,"
         summary_stats_std = np.nanstd(summary_stats, axis=0)
         full_stats.append(summary_stats_std)
         summary_stats = np.transpose(summary_stats)
@@ -200,10 +194,9 @@ def parse_stats_from_runs(experiment_name, graph):
         np.savetxt(path.join(file_path, (stat + ".csv")), summary_stats,
                    delimiter=",")
 
-        if graph:
-            # Graph stat by calling graphing function.
-            save_average_plot_across_runs(path.join(file_path, (stat +
-                                                                ".csv")))
+        # Graph stat by calling graphing function.
+        save_average_plot_across_runs(path.join(file_path, (stat +
+                                                            ".csv")))
     # Convert and rotate full stats
     full_stats = np.array(full_stats)
     full_stats = np.transpose(full_stats)
@@ -287,10 +280,10 @@ def main():
     """
 
     # Get experiment name and graphing flag from command line parser.
-    experiment_name, graph = parse_opts(sys.argv)
+    experiment_name = parse_opts(sys.argv)
     
     # Call statistics parser for experiment name.
-    parse_stats_from_runs(experiment_name, graph)
+    parse_stats_from_runs(experiment_name)
 
 
 if __name__ == "__main__":
