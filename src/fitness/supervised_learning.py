@@ -5,7 +5,7 @@ np.seterr(all="raise")
 
 from algorithm.parameters import params
 from utilities.fitness.get_data import get_data
-from utilities.fitness.math_functions import plog, rlog, pdiv, psqrt, aq, ppow, psqrt2, ppow2
+from utilities.fitness.math_functions import *
 from utilities.fitness.optimize_constants import optimize_constants
 
 class supervised_learning:
