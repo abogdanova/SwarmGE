@@ -1,4 +1,4 @@
-from os import listdir, getcwd, path
+from os import path
 
 import numpy as np
 
@@ -89,9 +89,6 @@ def get_data(train, test):
     :param test: The desired testing dataset.
     :return: The parsed data contained in the dataset files.
     """
-
-    # Get the path to the datasets folder and list all datasets.
-    datasets = listdir(path.join(getcwd(), "..", "datasets"))
     
     # Get the path to the training dataset.
     train_set = path.join("..", "datasets", train)
