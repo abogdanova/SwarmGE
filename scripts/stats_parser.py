@@ -63,7 +63,7 @@ def parse_opts(command_line_args):
         s = "scripts.parse_stats.parse_opts\n" \
             "Error: in order to parse stats you need to specify the location" \
             " of the target stats files.\n" \
-            "       Run python parse_stats.py --help for more info."
+            "       Run python stats_parser.py --help for more info."
         print(str(err))
         raise Exception(s)
 
@@ -71,7 +71,7 @@ def parse_opts(command_line_args):
         s = "scripts.parse_stats.parse_opts\n" \
             "Error: in order to parse stats you need to specify the location" \
             " of the target stats files.\n" \
-            "       Run python parse_stats.py --help for more info."
+            "       Run python stats_parser.py --help for more info."
         raise Exception(s)
 
     experiment_name, graph = None, False
@@ -279,7 +279,19 @@ def save_average_plot_across_runs(filename):
     plt.close()
 
 
-if __name__ == "__main__":
+def main():
+    """
+    The main function for running the statistics parser.
     
+    :return: Nothing.
+    """
+
+    # Get experiment name and graphing flag from command line parser.
     experiment_name, graph = parse_opts(sys.argv)
+    
+    # Call statistics parser for experiment name.
     parse_stats_from_runs(experiment_name, graph)
+
+
+if __name__ == "__main__":
+    main()
