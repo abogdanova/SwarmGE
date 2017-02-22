@@ -36,7 +36,7 @@ def execute_runs():
     :return: Nothing.
     """
 
-    # Ensure `multicore` parameter is set to False as we use multicore to
+    # Ensure `multicore` parameter is set to False as we use multiprocessing to
     # execute runs.
     params['MULTICORE'] = False
 
@@ -56,9 +56,6 @@ def execute_runs():
     # Close pool once runs are finished.
     pool.close()
     
-    # Save spreadsheets and all plots for runs so far.
-    parse_stats_from_runs(params['EXPERIMENT_NAME'], True)
-
 
 def check_params():
     """
@@ -96,6 +93,9 @@ def main():
     # Execute multiple runs.
     execute_runs()
 
+    # Save spreadsheets and all plots for all runs in the 'EXPERIMENT_NAME'
+    # folder.
+    parse_stats_from_runs(params['EXPERIMENT_NAME'], True)
 
 if __name__ == "__main__":
     main()
