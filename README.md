@@ -59,6 +59,39 @@ Grammatical Evolution (GE) [O'Neill & Ryan, 2003] is a grammar-based form of Gen
 PonyGE2 is primarily a Python implementation of canonical Grammatical Evolution, but it also includes a number of other popular techniques and EC aspects.
 
 
+#Evolutionary Parameters
+------------------------
+
+One of the central components of PonyGE is the `algorithm.parameters.params` dictionary. This dictionary is referenced throughout the entire program and is used to streamline the whole process by keeping all optional parameters in the one place. This also means that there is little to no need for arguments to the various functions in PonyGE, as these arguments can often be read directly from the parameters dictionary. Furthermore, the parameters dictionary is used to specify and store optional functions such as `initialisation`, `crossover`, `mutation`, and `replacement`.
+
+There are three different ways to specify operational parameters with PonyGE.
+
+1. The first and most basic method is to modify the `algorithm.parameters.params` dictionary directly in the code. This is not encouraged, as the `algorithm.parameters.params` dictionary contains the default values for many parameters.
+2. The second method is to list your desired parameters in a specialised parameters text file. Example parameters files are located in the `parameters` folder. When using parameters files, it is necessary to specify the desired parameter file from the command line. This is done by calling
+
+        --parameters [FULL FILE NAME INCLUDING EXTENSION]
+
+3. The third and final method is to list desired parameters from the command line. To see a list of all currently available command-line arguments implemented in the parser, type
+
+        $ python ponyge.py --help
+
+*__NOTE__ that each of the above three options successively supersedes the previous ones, i.e. parameters specified in a parameters file will over-write those set in the original* `algorithm.parameters.params` *dictionary, and parameters set from the command line will over-write those set in the parameters file.*
+
+PonyGE2 automatically parses the correct path for all operators, meaning you don't have to specify the full direct path but only the name of the desired operator, e.g.
+
+    --crossover subtree
+
+instead of
+
+    --crossover operators.crossover.subtree
+
+However, it is still possible to specify the full correct path if you so desire. Specifying the full direct path allows you to create new operators and place them wherever you like.
+
+It is possible to add new parameters to the `algorithm.parameters.params` dictionary either by editing the dictionary directly, or simply by specifying any desired parameters in a parameters file. However, it is not currently possible to specify new parameters directly from the command line. This is because any existing parameters that were merely mis-spelled from the command line would then create new parameters, and the evolutionary system would not perform as expected. Thus, any parameters entered from the command line that do not exist in the command line parser in `utilities.algorithm.command_line_parser.parse_cmd_args` will produce an error. Of course, it is entirely possible to modify the command line parser to accept new arguments.
+
+*__NOTE__ that parameter names should follow the naming convention demonstrated with the existing parameters. All names should contain only uppercase letters and underscores. Avoid the use of spaces where possible and do not use a colon (`:`) in the name of a parameter.*
+
+
 #Grammars
 ---------
 
@@ -117,11 +150,11 @@ Along with the fitness function, grammars are one of the most problem-specific c
 
 All grammars are stored in the grammars folder. Grammars can be set with the argument:
 
-    --grammar_file [FILE_NAME.bnf]
+    --grammar_file [FILE_NAME]
 
-*__NOTE__ that the full file extension (e.g. ".bnf") __must__ be specified.*
+or by setting the parameter `GRAMMAR_FILE` to `[FILE_NAME]` in either a parameters file or in the params dictionary, where `[FILE_NAME]` is a the full file name of the desired grammar file including the file extension.
 
-*__NOTE__ that the full file path (e.g.* `grammars/example_grammar.bnf`) *__does not__ need to be specified.*
+*__NOTE__ that the full file extension (e.g. ".bnf") __must__ be specified, but the full file path (e.g.* `grammars/example_grammar.bnf`) *__does not__ need to be specified.*
 
 ##A note on unit productions.
 
@@ -245,7 +278,7 @@ Any combination of these three methods can be used with PonyGE2. Furthermore, th
 
 ##Max Tree Depth
 
-By default there are no limits to the maximum depth a derivation tree can take. This can lead to genetic bloat, dramaticaly slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum tree depth with the argument:
+By default there are no limits to the maximum depth a derivation tree can take. This can lead to genetic bloat, dramatically slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum tree depth with the argument:
 
     --max_tree_depth [INT]
 
@@ -257,7 +290,7 @@ or by setting the parameter `MAX_TREE_DEPTH` to `[INT]` in either a parameters f
 
 ##Max Tree Nodes
 
-By default there are no limits to the maximum number of nodes a derivation tree can have. This can lead to genetic bloat, dramaticaly slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum number of derivation tree nodes with the argument:
+By default there are no limits to the maximum number of nodes a derivation tree can have. This can lead to genetic bloat, dramatically slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum number of derivation tree nodes with the argument:
 
     --max_tree_nodes [INT]
 
@@ -267,7 +300,7 @@ or by setting the parameter `MAX_TREE_NODES` to `[INT]` in either a parameters f
 
 ##Max Genome Length
 
-By default there are no limits to the maximum length a genome can take. This can lead to genetic bloat, dramaticaly slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum genome length with the argument:
+By default there are no limits to the maximum length a genome can take. This can lead to genetic bloat, dramatically slowing down the overall evolutionary process. One way to prevent this is to specify a global maximum genome length with the argument:
 
     --max_genome_length [INT]
 
@@ -279,37 +312,6 @@ or by setting the parameter `MAX_GENOME_LENGTH` to `[INT]` in either a parameter
 
 A full breakdown of the currently implemented elements in PonyGE2 is provided below. This includes a brief description of each individual component and how to activate them.
 
-#Evolutionary Parameters
-------------------------
-
-One of the central components of PonyGE is the `algorithm.parameters.params` dictionary. This dictionary is referenced throughout the entire program and is used to streamline the whole process by keeping all optional parameters in the one place. This also means that there is little to no need for arguments to the various functions in PonyGE, as these arguments can often be read directly from the parameters dictionary. Furthermore, the parameters dictionary is used to specify and store optional functions such as `initialisation`, `crossover`, `mutation`, and `replacement`.
-
-There are three different ways to specify operational parameters with PonyGE.
-
-1. The first and most basic method is to modify the `algorithm.parameters.params` dictionary directly in the code. This is not encouraged, as the `algorithm.parameters.params` dictionary contains the default values for many parameters.
-2. The second method is to list your desired parameters in a specialised parameters text file. Example parameters files are located in the `parameters` folder. When using parameters files, it is necessary to specify the desired parameter file from the command line. This is done by calling
-
-        --parameters [FULL FILE NAME INCLUDING EXTENSION]
-
-3. The third and final method is to list desired parameters from the command line. To see a list of all currently available command-line arguments implemented in the parser, type
-
-        $ python ponyge.py --help
-
-*__NOTE__ that each of the above three options successively supersedes the previous ones, i.e. parameters specified in a parameters file will over-write those set in the original* `algorithm.parameters.params` *dictionary, and parameters set from the command line will over-write those set in the parameters file.*
-
-PonyGE2 automatically parses the correct path for all operators, meaning you don't have to specify the full direct path but only the name of the desired operator, e.g.
-
-    --crossover subtree
-
-instead of
-
-    --crossover operators.crossover.subtree
-
-However, it is still possible to specify the full correct path if you so desire. Specifying the full direct path allows you to create new operators and place them wherever you like.
-
-It is possible to add new parameters to the `algorithm.parameters.params` dictionary either by editing the dictionary directly, or simply by specifying any desired parameters in a parameters file. However, it is not currently possible to specify new parameters directly from the command line. This is because any existing parameters that were merely mis-spelled from the command line would then create new parameters, and the evolutionary system would not perform as expected. Thus, any parameters entered from the command line that do not exist in the command line parser in `utilities.algorithm.command_line_parser.parse_cmd_args` will produce an error. Of course, it is entirely possible to modify the command line parser to accept new arguments.
-
-*__NOTE__ that parameter names should follow the naming convention demonstrated with the existing parameters. All names should contain only uppercase letters and underscores. Avoid the use of spaces where possible and do not use a colon (`:`) in the name of a parameter.*
 
 #Population Options
 -------------------
@@ -565,7 +567,7 @@ As with all linear genome crossovers, crossover points are selected within the u
 
 ###Variable Twopoint
 
-Given two individuals, variable twopoint crossover creates two children by selecting two different points on each genome for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid_section of genome 2. This allows genomes to grow or shrink in length. Variable twopoint crossover can be activated with the argument:
+Given two individuals, variable twopoint crossover creates two children by selecting two different points on each genome for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid-section of genome 2. This allows genomes to grow or shrink in length. Variable twopoint crossover can be activated with the argument:
 
     --crossover variable_twopoint
 
@@ -577,8 +579,7 @@ As with all linear genome crossovers, crossover points are selected within the u
 
 ###Subtree
 
-Given two individuals, subtree crossover creates two children by selecting candidate subtrees from both parents based on matching non-terminal
-nodes. The chosen subtrees are then swapped between parents, creating new children. Subtree crossover can be activated with the argument:
+Given two individuals, subtree crossover creates two children by selecting candidate subtrees from both parents based on matching non-terminal nodes. The chosen subtrees are then swapped between parents, creating new children. Subtree crossover can be activated with the argument:
 
     --crossover subtree
 
@@ -920,7 +921,7 @@ It has been made as simple as possible to add new problems to PonyGE. To add in 
 2. a new fitness function (if you don't want to use a previously existing one), and
 3. if you are doing supervised learning then you may also need to add some new datasets.
 
-*__NOTE__ that it may be beneficial to create a __new paremeters file__ for any new problem.*
+*__NOTE__ that it may be beneficial to create a __new parameters file__ for any new problem.*
 
 ##Editing Code to enable new problems
 
