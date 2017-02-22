@@ -8,6 +8,7 @@ from utilities.fitness.get_data import get_data
 from utilities.fitness.math_functions import *
 from utilities.fitness.optimize_constants import optimize_constants
 
+
 class supervised_learning:
     """
     Fitness function for supervised learning, ie regression and
