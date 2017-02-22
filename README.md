@@ -119,9 +119,9 @@ All grammars are stored in the grammars folder. Grammars can be set with the arg
 
     --grammar_file [FILE_NAME.bnf]
 
-*__NOTE__ that the full file extension (e.g. ".bnf") must be specified.*
+*__NOTE__ that the full file extension (e.g. ".bnf") __must__ be specified.*
 
-*__NOTE__ that the full file path __does not__ need to be specified.*
+*__NOTE__ that the full file path (e.g.* `grammars/example_grammar.bnf`) *__does not__ need to be specified.*
 
 ##A note on unit productions.
 
@@ -961,6 +961,12 @@ Since python uses the central `algorithm.parameters.params` and `stats.stats.sta
 
 *__NOTE__ that all functionality available to the main PonyGE file is available to the experiment manager, i.e. all command line arguments can be used including the specification of parameters files.*
 
+To run the experiment manager, type:
+
+    $ python scripts/experiment_manager.py --experiment_name [EXPERIMENT_NAME] --runs [INT]
+
+where `[EXPERIMENT_NAME]` is a string which specifies the desired name of the experiment and where `[INT]` is an integer which specifies the number of evolutionary runs to be completed.
+
 ##Post-run Analysis
 -------------------
 
@@ -970,10 +976,33 @@ The statistics parser extracts the `stats.tsv` files from all runs contained in 
 
 While the experiment manager calls the statistics parser after all experiments have been completed, it is possible to call the statistics parser as a standalone program to generate these files for any given `[EXPERIMENT_NAME]` folder. This can be done from the command line by typing:
  
-    $ python stats/parse_stats.py --experiment_name [EXPERIMENT_NAME]
+    $ python scripts/parse_stats.py --experiment_name [EXPERIMENT_NAME]
     
 where `[EXPERIMENT_NAME]` is a string which specifies the desired name of the experiment contained in the `results` folder.
 
+##GE LR Parser
+--------------
+
+A powerful script that has been included with PonyGE2 is the deterministic GE LR Parser. This script will parse a given target string using a specified `.bnf` grammar and will return a PonyGE2 individual that can be used in PonyGE2. Provided the target string can be fully and correctly represented by the specified grammar, the LR parser uncovers a derivation tree which matches the target string by building the overall tree from the terminals used in the solution. A repository of phenotypically correct sub-trees whose outputs match portions of the target string (termed 'snippets') is compiled. Deterministic concatenation operators are employed to build the desired solution. Provided the grammar remains unchanged, these reverse-engineered solutions can be saved and used in an evolutionary setting.
+
+Since the GE LR Parser is fully deterministic, the same GE individual will 
+be returned every time it is executed.
+
+To run the GE LR Parser, only two parameters need to be specified:
+
+    --grammar_file [FILE_NAME.bnf]
+
+    --reverse_mapping_target [TARGET_STRING]
+
+where `[TARGET_STRING]` is a string specifying the target string to be parsed by the GE LR Parser. 
+
+*__NOTE__ that the full file extension for the grammar file (e.g. ".bnf") __must__ be specified.*
+
+*__NOTE__ that the full file path for the grammar file (e.g.* `grammars/example_grammar.bnf`) *__does not__ need to be specified.*
+
+Alternatively, both the `GRAMMAR_FILE` and `REVERSE_MAPPING_TARGET` can be specified in either the `algorithm.parameters.params` dictionary or in a separate parameters file. An example parameters file can be seen in the parameters folder. To run this example, type:
+
+    $ python scripts/GE_LR_parse.py --parameters GE_parse.txt
 
 #References
 ----------
