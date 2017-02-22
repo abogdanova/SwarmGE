@@ -279,8 +279,8 @@ or by setting the parameter `MAX_GENOME_LENGTH` to `[INT]` in either a parameter
 
 A full breakdown of the currently implemented elements in PonyGE2 is provided below. This includes a brief description of each individual component and how to activate them.
 
-#Evolutionary Parameters:
--------------------------
+#Evolutionary Parameters
+------------------------
 
 One of the central components of PonyGE is the `algorithm.parameters.params` dictionary. This dictionary is referenced throughout the entire program and is used to streamline the whole process by keeping all optional parameters in the one place. This also means that there is little to no need for arguments to the various functions in PonyGE, as these arguments can often be read directly from the parameters dictionary. Furthermore, the parameters dictionary is used to specify and store optional functions such as `initialisation`, `crossover`, `mutation`, and `replacement`.
 
@@ -545,7 +545,7 @@ or by setting the parameter `WITHIN_USED` to either `True` or `False` in either 
 
 Given two individuals, fixed twopoint crossover creates two children by selecting the same points on both genomes for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid_section of genome 2. This means that genomes will always remain the same length after crossover. Fixed twopoint crossover can be activated with the argument:
 
-    --crossover fixed_onepoint
+    --crossover fixed_twopoint
 
 or by setting the parameter `CROSSOVER` to `fixed_twopoint` in either a parameters file or in the params dictionary.
 
