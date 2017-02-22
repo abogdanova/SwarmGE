@@ -1,7 +1,10 @@
+from utilities.algorithm.initialise_run import check_python_version
+
+check_python_version()
+
 import getopt
 import sys
 from os import getcwd, listdir, path, sep
-
 import matplotlib
 import numpy as np
 np.seterr(all="raise")

@@ -74,6 +74,14 @@ class Grammar(object):
             # have unique solutions (no duplicates).
             self.get_min_ramp_depth()
 
+        if params['REVERSE_MAPPING_TARGET']:
+            # Initialise dicts for reverse-mapping GE individuals.
+            self.concat_NTs, self.climb_NTs = {}, {}
+
+            # Find production choices which can be used to concatenate
+            # subtrees.
+            self.find_concatination_NTs()
+
     def read_bnf_file(self, file_name):
         """
         Read a grammar file in BNF format. Parses the grammar and saves a
@@ -567,6 +575,53 @@ class Grammar(object):
                 ramp = i
                 break
         self.min_ramp = ramp
+
+    def find_concatination_NTs(self):
+        """
+        Scour the grammar class to find non-terminals which can be used to
+        combine/reduce_trees derivation trees. Build up a list of such
+        non-terminals. A concatenation non-terminal is one in which at least
+        one production choice contains multiple non-terminals. For example:
+
+            <e> ::= (<e><o><e>)|<v>
+
+        is a concatenation NT, since the production choice (<e><o><e>) can
+        reduce_trees multiple NTs together. Note that this choice also includes
+        a combination of terminals and non-terminals.
+
+        :return: Nothing.
+        """
+
+        # Iterate over all non-terminals/production rules.
+        for rule in sorted(self.rules.keys()):
+
+            # Find rules which have production choices leading to NTs.
+            concat = [choice for choice in self.rules[rule]['choices'] if
+                      choice['NT_kids']]
+
+            if concat:
+                # We can reduce_trees NTs.
+                for choice in concat:
+
+                    symbols = [[sym['symbol'], sym['type']] for sym in
+                               choice['choice']]
+
+                    NTs = [sym['symbol'] for sym in choice['choice'] if
+                           sym['type'] == "NT"]
+
+                    for NT in NTs:
+                        # We add to our self.concat_NTs dictionary. The key is
+                        # the root node we want to reduce_trees with another
+                        # node. This way when we have a node and wish to see
+                        # if we can reduce_trees it with anything else, we
+                        # simply look up this dictionary.
+                        conc = [choice['choice'], rule, symbols]
+
+                        if NT not in self.concat_NTs:
+                            self.concat_NTs[NT] = [conc]
+                        else:
+                            if conc not in self.concat_NTs[NT]:
+                                self.concat_NTs[NT].append(conc)
 
     def __str__(self):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,

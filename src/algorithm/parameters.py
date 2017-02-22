@@ -174,7 +174,10 @@ params = {
         'MACHINE': machine_name,
 
         # Set Random Seed
-        'RANDOM_SEED': None
+        'RANDOM_SEED': None,
+
+        # Reverse Mapping to GE individual:
+        'REVERSE_MAPPING_TARGET': None
 }
 
 
@@ -199,12 +202,19 @@ def load_params(file_name):
         content = parameters.readlines()
 
         for line in content:
-            components = line.split(":")
-            key, value = components[0], components[1].strip()
-
+            
+            # Parameters files are parsed by finding the first instance of a
+            # colon.
+            split = line.find(":")
+            
+            # Everything to the left of the colon is the parameter key,
+            # everything to the right is the parameter value.
+            key, value = line[:split], line[split+1:].strip()
+            
             # Evaluate parameters.
             try:
                 value = eval(value)
+            
             except:
                 # We can't evaluate, leave value as a string.
                 pass
@@ -241,7 +251,6 @@ def set_params(command_line_args, create_files=True):
             "add code to recognise this parameter, or use " \
             "--extra_parameters" % str(unknown)
         raise Exception(s)
-
 
     # LOAD PARAMETERS FILE
     # NOTE that the parameters file overwrites all previously set parameters.

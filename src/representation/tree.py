@@ -17,6 +17,7 @@ class Tree:
         self.depth = 1
         self.root = expr
         self.children = []
+        self.snippet = None
 
     def __str__(self):
         """
@@ -58,6 +59,8 @@ class Tree:
         
         # Set node parameters.
         tree_copy.codon, tree_copy.depth = self.codon, self.depth
+
+        tree_copy.snippet = self.snippet
 
         for child in self.children:
             # Recurse through all children.

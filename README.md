@@ -307,6 +307,9 @@ instead of
 
 However, it is still possible to specify the full correct path if you so desire. Specifying the full direct path allows you to create new operators and place them wherever you like.
 
+It is possible to add new parameters to the `algorithm.parameters.params` dictionary either by editing the dictionary directly, or simply by specifying any desired parameters in a parameters file. However, it is not currently possible to specify new parameters directly from the command line. This is because any existing parameters that were merely mis-spelled from the command line would then create new parameters, and the evolutionary system would not perform as expected. Thus, any parameters entered from the command line that do not exist in the command line parser in `utilities.algorithm.command_line_parser.parse_cmd_args` will produce an error. Of course, it is entirely possible to modify the command line parser to accept new arguments.
+
+*__NOTE__ that parameter names should follow the naming convention demonstrated with the existing parameters. All names should contain only uppercase letters and underscores. Avoid the use of spaces where possible and do not use a colon (`:`) in the name of a parameter.*
 
 #Population Options
 -------------------
@@ -926,19 +929,20 @@ Finally, depending on the problem itself you may need to edit `representation.in
 *__NOTE__ that it may not be necessary to edit `individual.evaluate` if you only pass in the individual to be evaluated, as the call argument for each fitness function only has one input by default.*
 
 
-#Post-run Analysis
------------------
+#Basic Experiment Manager and Post-run Analysis
+-----------------------------------------------
 
-We don't provide any experiment managers other than the ability to save runs
-to specific folders using the `--experiment_name` handle. However, there are a
-number of functions available in `utilities.save_plots` which allow for
-plotting of run statistics.
+A basic experiment manager is provided in the `scripts` folder, along with some basic post-run analysis. 
+
+Evolutionary runs can be saved in specific folders within the overall `results` directory by using the `--experiment_name` argument. 
+
+There are a number of functions available in `utilities.save_plots` which allow for plotting of run statistics.
 
 
 ##Post-run Analysis - Single Runs
 -------------------------------
 
-By default, runs save a plot of best fitness (unless `--debug` is specified).
+By default, all runs save a plot of best fitness (unless `--debug` is specified).
 Additionally, users can save plots from pre-existing stats.tsv files (i.e.
 stats files generated upon completion of a run) using:
 
