@@ -335,19 +335,30 @@ or by setting the parameter `GENERATIONS` to `[INT]` in either a parameters file
 
 Higher numbers of generations can improve performance, but will lead to longer run-times.
 
-*__NOTE__ that in PonyGE2 the total number of generations refers to the number of generations over which evolution occurs, __NOT__ including initialisation. Thus, specifying 50 generations will mean 50 generations will be evolved. Since the initialised generation will be Generation 0, the total number of individuals evaluated across an entire evolutionary run will by __population x (generations + 1)__.*
-
 
 #Search Options
 ---------------
 
-The main search loop functions of PonyGE2 are stored in `algorithm.search_loop` and `algorithm.step`. While PonyGE2 is currently set up to only use the main search loop and step functions (save for special cases such as re-loading an evolutionary run from state), it is possible for users to write their own search loop or step functions. As long as these new functions are saved in their respective files, it is possible to specify the desired search loop or step function directly through the parameters dictionary. The search loop can be specified with the argument:
+The `algorithm.search_loop.search_loop()` function in PonyGE2 controls the overall duration of the search process. The search loop controls the initialisation of the initial population, along with the main generations loop. In canonical GE, the search process loops over the total number of specified generations.
+  
+*__NOTE__ that in PonyGE2 the total number of generations refers to the number of generations over which the search process loops (i.e. over which evolution occurs), __NOT__ including initialisation. Thus, specifying 50 generations will mean an initial population will be generated and evaluated, and then the evolutionary process will loop for 50 generations. Since the initialised generation will be Generation 0, the total number of individuals evaluated across an entire evolutionary run will by __population x (generations + 1)__.*
+
+At each generation in the main search loop, the main `algorithm.step.step()` function is called. The step function executes a full step of the evolutionary process:
+ 
+1. Selection
+2. Variation
+  - Crossover
+  - Mutation
+3. Evaluation
+4. Replacement
+
+The main search loop functions of PonyGE2 are stored in `algorithm.search_loop` and `algorithm.step`. While PonyGE2 is currently set up to only use the main search loop and step functions (save for special cases such as re-loading an evolutionary run from state), it is possible for users to write their own search loop or step functions. As long as these new functions are saved in their respective files, it is possible to specify the desired search loop or step function directly through the parameters dictionary. The desired search loop can be specified with the argument:
  
     --search_loop [SEARCH_LOOP]
 
 or by or by setting the parameter `SEARCH_LOOP` to `[SEARCH_LOOP]` in either a parameters file or in the params dictionary, where `[SEARCH_LOOP]` is the name of the desired search loop function contained in the `algorithm.search_loop.py` file.
 
-The search loop step can be specified with the argument:
+The desired search loop step function can be specified with the argument:
 
     --step [STEP]
 
