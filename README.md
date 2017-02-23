@@ -341,8 +341,17 @@ Higher numbers of generations can improve performance, but will lead to longer r
 #Search Options
 ---------------
 
-The main search loop functions of PonyGE2 are stored in `algorithm
-.search_loop` and `algorithm.step`. 
+The main search loop functions of PonyGE2 are stored in `algorithm.search_loop` and `algorithm.step`. While PonyGE2 is currently set up to only use the main search loop and step functions (save for special cases such as re-loading an evolutionary run from state), it is possible for users to write their own search loop or step functions. As long as these new functions are saved in their respective files, it is possible to specify the desired search loop or step function directly through the parameters dictionary. The search loop can be specified with the argument:
+ 
+    --search_loop [SEARCH_LOOP]
+
+or by or by setting the parameter `SEARCH_LOOP` to `[SEARCH_LOOP]` in either a parameters file or in the params dictionary, where `[SEARCH_LOOP]` is the name of the desired search loop function contained in the `algorithm.search_loop.py` file.
+
+The search loop step can be specified with the argument:
+
+    --step [STEP]
+
+or by or by setting the parameter `STEP` to `[STEP]` in either a parameters file or in the params dictionary, where `[STEP]` is the name of the desired step function contained in the `algorithm.step.py` file.
 
 
 #Initialisation
