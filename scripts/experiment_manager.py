@@ -19,20 +19,20 @@ from scripts.stats_parser import parse_stats_from_runs
 def execute_run(seed):
     """
     Initialise all aspects of a run.
-    
+
     :return: Nothing.
     """
 
     exec_str = "source activate py35;python ponyge.py " \
                "--random_seed " + str(seed) + " " + " ".join(sys.argv[1:])
-    
+
     call(exec_str, shell=True)
 
 
 def execute_runs():
     """
     Execute multiple runs in series using multiple cores.
-    
+
     :return: Nothing.
     """
 
@@ -55,13 +55,13 @@ def execute_runs():
 
     # Close pool once runs are finished.
     pool.close()
-    
+
 
 def check_params():
     """
     Checks the params to ensure an experiment name has been specified and
     that the number of runs has been specified.
-    
+
     :return: Nothing.
     """
 
@@ -70,7 +70,7 @@ def check_params():
             "Error: Experiment Name not specified.\n" \
             "       Please specify a name for this set of runs."
         raise Exception(s)
-    
+
     if params['RUNS'] == 1:
         print("Warning: Only 1 run has been specified for this set of runs.")
         print("         The number of runs can be specified with the command-"
@@ -80,7 +80,7 @@ def check_params():
 def main():
     """
     The main function for running the experiment manager. Calls all functions.
-    
+
     :return: Nothing.
     """
 
