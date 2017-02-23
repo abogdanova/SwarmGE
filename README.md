@@ -338,8 +338,15 @@ Higher numbers of generations can improve performance, but will lead to longer r
 *__NOTE__ that in PonyGE2 the total number of generations refers to the number of generations over which evolution occurs, __NOT__ including initialisation. Thus, specifying 50 generations will mean 50 generations will be evolved. Since the initialised generation will be Generation 0, the total number of individuals evaluated across an entire evolutionary run will by __population x (generations + 1)__.*
 
 
+#Search Options
+---------------
+
+The main search loop functions of PonyGE2 are stored in `algorithm
+.search_loop` and `algorithm.step`. 
+
+
 #Initialisation
---------------
+---------------
 
 As detailed previously, there are two main ways to initialise a GE individual: by generating a genome, or by generating a derivation tree. Generation of a genome can only be done by creating a random genome string, and as such the use of genome initialisation cannot guarantee control over any aspects of the initial population. Population initialisation via derivation tree generation on the other hand allows for fine control over many aspects of the initial population, e.g. depth limits or derivation tree shape. Unlike with genome initialisation, there are a number of different ways to initialise a population using derivation trees. Currently implemented methods are detailed below.
 
