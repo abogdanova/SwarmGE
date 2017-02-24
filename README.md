@@ -340,11 +340,11 @@ Higher numbers of generations can improve performance, but will lead to longer r
 ---------------
 
 The `algorithm.search_loop.search_loop()` function in PonyGE2 controls the overall duration of the search process. The search loop controls the initialisation of the initial population, along with the main generations loop. In canonical GE, the search process loops over the total number of specified generations.
-  
+
 *__NOTE__ that in PonyGE2 the total number of generations refers to the number of generations over which the search process loops (i.e. over which evolution occurs), __NOT__ including initialisation. Thus, specifying 50 generations will mean an initial population will be generated and evaluated, and then the evolutionary process will loop for 50 generations. Since the initialised generation will be Generation 0, the total number of individuals evaluated across an entire evolutionary run will by __population x (generations + 1)__.*
 
 At each generation in the main search loop, the main `algorithm.step.step()` function is called. The step function executes a full step of the evolutionary process:
- 
+
 1. Selection
 2. Variation
   - Crossover
@@ -353,7 +353,7 @@ At each generation in the main search loop, the main `algorithm.step.step()` fun
 4. Replacement
 
 The main search loop functions of PonyGE2 are stored in `algorithm.search_loop` and `algorithm.step`. While PonyGE2 is currently set up to only use the main search loop and step functions (save for special cases such as re-loading an evolutionary run from state), it is possible for users to write their own search loop or step functions. As long as these new functions are saved in their respective files, it is possible to specify the desired search loop or step function directly through the parameters dictionary. The desired search loop can be specified with the argument:
- 
+
     --search_loop [SEARCH_LOOP]
 
 or by or by setting the parameter `SEARCH_LOOP` to `[SEARCH_LOOP]` in either a parameters file or in the params dictionary, where `[SEARCH_LOOP]` is the name of the desired search loop function contained in the `algorithm.search_loop.py` file.
@@ -693,18 +693,18 @@ For linear genome mutation operators, the `MUTATION_EVENTS` parameter operates s
 
 ##Fitness Functions
 
-Evaluation of individuals in PonyGE2 is carried out by the specified fitness function. All fitness functions are located in `src/fitness`. Fitness functions in PonyGE2 must be a class instance contained in its own separate file. 
+Evaluation of individuals in PonyGE2 is carried out by the specified fitness function. All fitness functions are located in `src/fitness`. Fitness functions in PonyGE2 must be a class instance contained in its own separate file.
 
 *__NOTE__ that fitness function classes in PonyGE2 must have the same name as their containing file.*
 
-All newly implemented fitness functions in PonyGE2 *must* have a `maximise` attribute which indicates whether or not the fitness function seeks to maximise or minimise fitness. 
- 
+All newly implemented fitness functions in PonyGE2 *must* have a `maximise` attribute which indicates whether or not the fitness function seeks to maximise or minimise fitness.
+
 All newly implemented fitness functions in PonyGE2 *must* have a `default_fitness` attribute which is used to set the fitness value of those individuals who cannot be evaluated, e.g. invalid individuals.
 
 All newly implemented fitness functions in PonyGE2 should require only one input to the `__call__` method: the individual itself. Fitness functions are called from `representation.individual.Individual.evaluate`.
 
-For supervised learning fitness functions which evaluate solutions on either training or test data, PonyGE2 requires the fitness function to have a `training_test` attribute. This allows PonyGE2 to evaluate individuals on training data by default, and on test data by specifying the correct optional input argument to the fitness function call itself. There are a number of example supervised learning problems implemented in PonyGE2 which demonstrate these attributes. 
- 
+For supervised learning fitness functions which evaluate solutions on either training or test data, PonyGE2 requires the fitness function to have a `training_test` attribute. This allows PonyGE2 to evaluate individuals on training data by default, and on test data by specifying the correct optional input argument to the fitness function call itself. There are a number of example supervised learning problems implemented in PonyGE2 which demonstrate these attributes.
+
 *__NOTE__ that the call to evaluate individuals on optional test data for supervised learning problems is made in* `stats.stats.get_stats`.
 
 Fitness functions can be specified with the argument:
@@ -716,7 +716,7 @@ or by setting the parameter `FITNESS_FUNCTION` to `[FITNESS_FUNCTION_NAME]` in e
 ###Error Metrics
 
 Some supervised learning fitness functions require an error metric (e.g. mean-squared error, or `mse`) to be specified. While the default `regression` and `classification` fitness functions provided in PonyGE2 have their error metrics set to `rnse` and `f1_score` respectively by default, it is possible to specify new error metrics with the argument:
- 
+
     --error_metric [ERROR_METRIC_NAME]
 
 or by setting the parameter `ERROR_METRIC` to `[ERROR_METRIC_NAME]` in either a parameters file or in the params dictionary, where `[ERROR_METRIC_NAME]` is a string specifying the name of the desired error metric. A list of currently implemented error metrics is available in `utilities.fitness.error_metric`.
@@ -746,7 +746,7 @@ or by setting the parameter `DATASET_TEST` to `[DATASET_NAME]` in either a param
 *__NOTE__ that you __must__ specify the file extension when specifying the dataset names.*
 
 While it is recommended that supervised learning problems implement training *and* unseen testing data, it is not necessary to use testing data with these problems. If you wish to run PonyGE2 with no test dataset, you can simply use the argument:
- 
+
     --dataset_test None
 
 ####Dataset Delimiters
@@ -769,7 +769,7 @@ or by setting the parameter `DATASET_DELIMITER` to `[DELIMITER]` in either a par
 ###Targets
 
 Some fitness functions may require a target. For example, a string match fitness function will require a target value to match. All target values will be stored in PonyGE2 as a string by default. If a fitness function requires any data structure other than a string, the target string itself must be parsed to the desired data structure within the fitness function itself (*__NOTE__ that if this parsing is done in the* `__init__()` *call of the fitness function, it only needs to be done once rather than at every fitness evaluation.*)
- 
+
 Target strings can be specified with the argument:
 
     --target [TARGET_STRING]
@@ -838,7 +838,7 @@ or by setting the parameter `MUTATE_DUPLICATES` to `True` in either a parameters
 #Replacement
 -----------
 
-The replacement strategy for an Evolutionary Algorithm defines which parents and children survive into the next generation. 
+The replacement strategy for an Evolutionary Algorithm defines which parents and children survive into the next generation.
 
 ##Generational
 
@@ -846,7 +846,7 @@ Generational replacement replaces the entire parent population with the newly ge
 
     --replacement generational
 
-or by setting the parameter `REPLACEMENT` to `generational` in either a parameters file or in the params dictionary. 
+or by setting the parameter `REPLACEMENT` to `generational` in either a parameters file or in the params dictionary.
 
 ###Elitism
 
@@ -858,7 +858,7 @@ The default number of elites is 1 percent of the population size. This value can
 
     --elite_size [INT]
 
-or by setting the parameter `ELITE_SIZE` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of elites to be saved between generations. 
+or by setting the parameter `ELITE_SIZE` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of elites to be saved between generations.
 
 ##Steady State
 
@@ -870,7 +870,7 @@ Steady state replacement can be activated with the argument:
 
     --replacement steady_state
 
-or by setting the parameter `REPLACEMENT` to `steady_state` in either a parameters file or in the params dictionary. 
+or by setting the parameter `REPLACEMENT` to `steady_state` in either a parameters file or in the params dictionary.
 
 
 #Example Problems
@@ -883,6 +883,7 @@ Five example problems are currently provided:
 3. Classification
 4. Pymax
 5. Integer sequence match
+6. Program synthesis
 
 A brief description is given below of each problem, along with the command-line arguments necessary to call each problem. The developers of PonyGE2 encourage users to test out the various different operators and options available within PonyGE2 using these example problems in order to gain an appreciation of how they work.
 
@@ -923,7 +924,7 @@ The default classification problem is `Banknote`, but this can be changed with t
 -------
 
 One of the strongest aspects of a grammatical mapping approach such as PonyGE2 is the ability to generate executable computer programs in an arbitrary language [O'Neill & Ryan, 2003]. In order to demonstrate this in the simplest way possible, we have included an example Python programming problem.
- 
+
 The `Pymax` problem is a traditional maximisation problem, where the goal is to produce as large a number as possible. However, instead of encoding the grammar in a symbolic manner and evaluating the result, we have encoded the grammar for the `Pymax` problem as a basic Python programming example. The phenotypes generated by this grammar are executable python functions, whose outputs represent the fitness value of the individual. Users are encouraged to examine the `pymax.bnf` grammar and the resultant individual phenotypes to gain an understanding of how grammars can be used to generate such arbitrary programs.
 
 To try this problem, specify the following command-line argument:
@@ -939,6 +940,14 @@ To try this problem, specify the following command-line argument:
 
     --parameters sequence_match.txt
 
+##Program synthesis
+------------------------
+
+The [General Program Synthesis Benchmark Suite](http://doi.org/10.1145/2739480.2754769) is available in PonyGE2. Grammars and datasets have been provided by [HeuristicLab.CFGGP](https://github.com/t-h-e/HeuristicLab.CFGGP). The individuals produce executable Python code. **Note:** `multicore` is currently not supported for this type of problem.
+
+To try this problem, specify the following command-line argument:
+
+    --parameters progsys.txt
 
 #Adding New Problems
 --------------------
@@ -953,7 +962,7 @@ It has been made as simple as possible to add new problems to PonyGE. To add in 
 
 ##Editing Code to enable new problems
 
-Finally, depending on the problem itself you may need to edit `representation.individual.Individual.evaluate` to fully integrate the new problem to PonyGE. `individual.evaluate` is where PonyGE specifies the inputs needed for fitness evaluation. 
+Finally, depending on the problem itself you may need to edit `representation.individual.Individual.evaluate` to fully integrate the new problem to PonyGE. `individual.evaluate` is where PonyGE specifies the inputs needed for fitness evaluation.
 
 *__NOTE__ that it may not be necessary to edit `individual.evaluate` if you only pass in the individual to be evaluated, as the call argument for each fitness function only has one input by default.*
 
@@ -967,10 +976,10 @@ Besides the main `PonyGE.py` file that can be found in the source directory, a n
 --------------------------
 
 A basic experiment manager is provided in the `scripts` folder. This experiment manager allows users to execute multiple evolutionary runs across multiple cores using python's `multiprocessing` library. Experiments are saved in `results/[EXPERIMENT_NAME]` where `[EXPERIMENT_NAME]` is a parameter which specifies the name of the experiment. This can be set with the argument:
- 
+
     --experiment_name [EXPERIMENT_NAME]
-    
-or by setting the parameter `EXPERIMENT_NAME` to `[EXPERIMENT_NAME]` in either a parameters file or in the params dictionary, where `[EXPERIMENT_NAME]` is a string which specifies the desired name of the experiment. 
+
+or by setting the parameter `EXPERIMENT_NAME` to `[EXPERIMENT_NAME]` in either a parameters file or in the params dictionary, where `[EXPERIMENT_NAME]` is a string which specifies the desired name of the experiment.
 
 *__NOTE__ that the* `EXPERIMENT_NAME` *parameter __must__ be set when using the experiment manager.*
 
@@ -978,7 +987,7 @@ The number of evolutionary runs to be executed can be set with the arguemt:
 
     --runs [INT]
 
-or by setting the parameter `RUNS` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of evolutionary runs to be completed. The experiment manager initialises each evolutionary run with a different unique random seed. The random seeds for a batch of evolutionary experiments are the indexes of the individual experiments (i.e. the first run will have seed 0, the second will have seed 1, and so on up to seed `[INT] - 1`.) 
+or by setting the parameter `RUNS` to `[INT]` in either a parameters file or in the params dictionary, where `[INT]` is an integer which specifies the number of evolutionary runs to be completed. The experiment manager initialises each evolutionary run with a different unique random seed. The random seeds for a batch of evolutionary experiments are the indexes of the individual experiments (i.e. the first run will have seed 0, the second will have seed 1, and so on up to seed `[INT] - 1`.)
 
 *__NOTE__ that the experiment manager uses pythons* `multiprocessing` *library to launch multiple runs simultaneously. As such, it is not possible to use the experiment manager with the* `MULTICORE` *parameter set to* `True`. *If the* `MULTICORE` *parameter is already set to* `True`, *it will be turned off automatically.*
 
@@ -1002,9 +1011,9 @@ A basic statistics parser is included in the `scripts` folder. This statistics p
 The statistics parser extracts the `stats.tsv` files from all runs contained in the specified `[EXPERIMENT_NAME]` folder. For each stat, a unique `.csv` file is generated containing that statistic across all stats files. Average and standard deviations for each stat are calculated, and graphs displaying the average values (with standard deviations) across all generations are generated. Finally, the statistics parser saves a main `full_stats.csv` file containing all statistics across all runs in a single file. All `.csv` summary files can be used with any numerical statistics package, such as R.
 
 While the experiment manager calls the statistics parser after all experiments have been completed, it is possible to call the statistics parser as a standalone program to generate these files for any given `[EXPERIMENT_NAME]` folder. This can be done from the command line by typing:
- 
+
     $ python scripts/parse_stats.py --experiment_name [EXPERIMENT_NAME]
-    
+
 where `[EXPERIMENT_NAME]` is a string which specifies the desired name of the experiment contained in the `results` folder.
 
 ##GE LR Parser
@@ -1020,7 +1029,7 @@ To run the GE LR Parser, only two parameters need to be specified:
 
     --reverse_mapping_target [TARGET_STRING]
 
-where `[TARGET_STRING]` is a string specifying the target string to be parsed by the GE LR Parser. 
+where `[TARGET_STRING]` is a string specifying the target string to be parsed by the GE LR Parser.
 
 *__NOTE__ that the full file extension for the grammar file (e.g. ".bnf") __must__ be specified, but the full file path for the grammar file (e.g.* `grammars/example_grammar.bnf`) *__does not__ need to be specified.*
 
