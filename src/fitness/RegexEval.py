@@ -304,7 +304,7 @@ class RegexEval:
         # test strategies - length, values
         
         # collect strings which identify the different regex
-        # cache and reuse these
+        # cache and reuse these (read/write to a file before/after GP)
         known_test_strings=["5C0A5B634A82",
                             "Jan 12 06:26:20: ACCEPT service dns from 140.105.48.16 to firewall(pub-nic-dns), prefix: \"none\" (in: eth0 140.105.48.16(00:21:dd:bc:95:44):4263 -> 140.105.63.158(00:14:31:83:c6:8d):53 UDP len:76",
                             "Jan 12 06:27:09: DROP service 68->67(udp) from 216.34.211.83 to 216.34.253.94, prefix: \"spoof iana-0/8\" (in: eth0 213.92.153.78(00:1f:d6:19:0a:80):68 -> 69.43.177.110(00:30:fe:fd:d6:51):67 UDP le"
@@ -364,6 +364,10 @@ class RegexEval:
                             "a46b  ",
                             "0.045e-10",
                             "aXXXXas",
+                            "<s_char>        ::= !|\"#\"|$|%|&|\(|\)|*|+|,|-|.|\/|:|;|\"<\"|=|\">\"|?|@|\[|\\|\]|^|_|\"`\"|{|}|~|\"|\"|'\"'|\"'\"|\" \""
+                            "!|\"#\"|$|%|&|\(|\)|*|+|,|-|.|\/|:|;|\"<\"|=|\">\"|?|@|\[|\\|\]|^|_|\"`\"|{|}|~|\"|\"|'\"'|\"'\"|\" \"",
+                            "<A_Z>           ::= A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z",
+                            "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z",
         ]
         
         compiled_regex = re.compile(regex_string)

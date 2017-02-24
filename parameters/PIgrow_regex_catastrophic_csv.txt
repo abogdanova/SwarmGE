@@ -21,7 +21,7 @@ MUTATE_DUPLICATES:      False
 MUTATION:               subtree
 MUTATION_EVENTS:        1
 MUTATION_PROBABILITY:   None
-POPULATION_SIZE:        100
+POPULATION_SIZE:        1000
 ELITE_SIZE:  		100
 FITNESS_FUNCTION:       RegexEval
 FITNESS_TEST_SUITE:     generate_catastrophic_csv

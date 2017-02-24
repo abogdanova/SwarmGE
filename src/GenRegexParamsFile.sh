@@ -32,6 +32,7 @@ then
         grep -A1 Genome |
         tr -d '\n' |
         sed 's/Genome:/SEED_GENOME:\ \ \ \ \ /g' >> "$cur_dir"/../parameters/"$parameters_file"
+    echo "# ""$regex_string" >> "$cur_dir"/../parameters/"$parameters_file"
     
     echo "$regex_string" >> "$regex_genome_file"
     cat ../grammars/"$grammar_file" >> "$regex_genome_file"
