@@ -691,7 +691,7 @@ For linear genome mutation operators, the `MUTATION_EVENTS` parameter operates s
 #Evaluation
 ----------
 
-##Fitness Functions
+##Fitness Functionz
 
 Evaluation of individuals in PonyGE2 is carried out by the specified fitness function. All fitness functions are located in `src/fitness`. Fitness functions in PonyGE2 must be a class instance contained in its own separate file.
 
