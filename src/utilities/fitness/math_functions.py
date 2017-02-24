@@ -78,6 +78,7 @@ def pdiv(x, y):
     with np.errstate(divide='ignore'):
         return np.where(y == 0, np.ones_like(x), x / y)
 
+
 def rlog(x):
     """
     Koza's protected log:
