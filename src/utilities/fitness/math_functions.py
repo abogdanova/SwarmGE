@@ -70,13 +70,21 @@ def pdiv(x, y):
     this always evaluates x / y before running np.where, so that
     will raise a 'divide' error (in Numpy's terminology), which we
     ignore using a context manager.
+    
+    In some instances, Numpy can raise a FloatingPointError. These are
+    ignored with 'invalid = ignore'.
 
     :param x: numerator np.array
     :param y: denominator np.array
     :return: np.array of x / y, or 1 where y is 0.
     """
-    with np.errstate(divide='ignore'):
-        return np.where(y == 0, np.ones_like(x), x / y)
+    try:
+        with np.errstate(divide='ignore', invalid='ignore'):
+            return np.where(y == 0, np.ones_like(x), x / y)
+    except ZeroDivisionError:
+        # In this case we are trying to divide two constants, one of which is 0
+        # Return a constant.
+        return 1.0
 
 
 def rlog(x):
