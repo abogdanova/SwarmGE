@@ -28,7 +28,8 @@ class progsys:
 
     def __init__(self):
         self.training, self.test, self.embed_header, self.embed_footer = \
-            self.get_data(params['DATASET_TRAIN'])
+            self.get_data(params['DATASET_TRAIN'], params['DATASET_TEST'],
+                          params['GRAMMAR_FILE'])
         self.eval = self.create_eval_process()
         if params['MULTICORE']:
             print("Warming: Multicore is not supported with progsys "
@@ -128,17 +129,15 @@ class progsys:
 
         return string_builder
 
-    def get_data(self, experiment):
+    def get_data(self, train, test, grammar):
         """ Return the training and test data for the current experiment.
         A new get_data method is required to load from a sub folder and to
         read the embed file"""
-        train_set = path.join("..", "datasets", "progsys",
-                              (experiment + "-Train.txt"))
-        test_set = path.join("..", "datasets", "progsys",
-                             (experiment + "-Test.txt"))
+        train_set = path.join("..", "datasets", "progsys", train)
+        test_set = path.join("..", "datasets", "progsys", test)
 
         embed_file = path.join("..", "grammars", "progsys",
-                               (experiment + "-Embed.txt"))
+                               (grammar[8:-4] + "-Embed.txt"))
         with open(embed_file, 'r') as embed:
             embed_code = embed.read()
         insert = embed_code.index(self.INSERTCODE)
