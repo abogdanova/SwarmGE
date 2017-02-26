@@ -1,4 +1,5 @@
 from multiprocessing import Pool
+import numpy as np
 
 from algorithm.parameters import params
 from stats.stats import stats
@@ -111,7 +112,7 @@ def eval_or_append(ind, results, pool):
         # Evaluate the individual.
         ind.evaluate()
 
-        if params['CACHE']:
+        if params['CACHE'] and not np.isnan(ind.fitness):
             # The phenotype string of the individual does not appear
             # in the cache, it must be evaluated and added to the
             # cache.
