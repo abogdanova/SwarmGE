@@ -1,5 +1,5 @@
 from sys import path
-path.append("../src")../
+path.append("../src")
 
 from utilities.algorithm.initialise_run import check_python_version
 
