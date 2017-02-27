@@ -66,6 +66,7 @@ def get_stats(individuals, end=False):
 
         # Population Stats
         stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
+        stats['invalids'] = len(trackers.invalid_cache)
         if params['CACHE']:
             stats['unique_inds'] = len(trackers.cache)
             stats['unused_search'] = 100 - stats['unique_inds'] / \

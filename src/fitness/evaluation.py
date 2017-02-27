@@ -3,7 +3,7 @@ import numpy as np
 
 from algorithm.parameters import params
 from stats.stats import stats
-from utilities.stats.trackers import cache
+from utilities.stats.trackers import cache, invalid_cache
 
 
 def evaluate_fitness(individuals):
@@ -41,7 +41,7 @@ def evaluate_fitness(individuals):
             # Invalid individuals cannot be evaluated and are given a bad
             # default fitness.
             ind.fitness = params['FITNESS_FUNCTION'].default_fitness
-            stats['invalids'] += 1
+            invalid_cache.append(ind.phenotype)
 
         else:
             eval_ind = True
