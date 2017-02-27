@@ -3,6 +3,8 @@
 
     Copyright (c) 2014 Michael Fenton
     Hereby licensed under the GNU GPL v3."""
+from sys import path
+path.append("../src")
 
 from utilities.algorithm.initialise_run import check_python_version
 
