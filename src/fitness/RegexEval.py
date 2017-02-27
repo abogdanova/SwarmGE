@@ -79,7 +79,7 @@ class RegexEval:
             #     self.time=True
             #     return fitness
             
-            q.put(fitness) # We are running this code in a thread so put the fitness on the queue so it can be read back by the first
+            q.put(fitness + (len(individual.phenotype)/100)) # We are running this code in a thread so put the fitness on the queue so it can be read back by the first
 
         except:
             q.put(100000) # if the regex is broken, or the thread is timedout, return a really bad fitness
