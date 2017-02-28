@@ -268,11 +268,6 @@ def set_params(command_line_args, create_files=True):
     # NOTE that command line arguments overwrite all previously set parameters.
     params.update(cmd_args)
 
-    if params['SEMANTIC_LOCK']:
-        params['STEP'] = 'semantic_step'
-        params['MUTATE_DUPLICATES'] = False
-        setattr(trackers, "snippets", {})
-
     if params['LOAD_STATE']:
         # Load run from state.
         from utilities.algorithm.state import load_state

@@ -58,6 +58,7 @@ def uniform_tree(size):
     return [generate_ind_tree(params['MAX_TREE_DEPTH'],
                               "random") for _ in range(size)]
     
+
 def seed_initialisation(size):
     """
     Create a population of size where all individuals are the same seeded
@@ -100,6 +101,7 @@ def seed_initialisation(size):
         s = "operators.initialisation.seed_initialisation\n" \
             "Error: No seed individual specified for seed initialisation."
         raise Exception(s)
+    
 
 def rhh(size):
     """

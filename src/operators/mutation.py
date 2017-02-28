@@ -150,105 +150,16 @@ def subtree(ind):
     
         return ind_tree
 
-    def subtree_mutate_delete(ind_tree):
-        """
-        Picks a node at random to delete from the tree
-
-        :param ind_tree: The full tree of an individual.
-        :return: The full mutated tree and the associated genome.
-        """
-        # Find the list of nodes we can mutate from.
-        targets = ind_tree.get_target_nodes([], target=params[
-                                          'BNF_GRAMMAR'].non_terminals)
-
-        # Pick a node.
-        tree_for_deletion = choice(targets)
-
-        if tree_for_deletion.parent:
-            # do we need to rebuild the tree/genome?
-            tree_for_deletion.parent.children.remove(tree_for_deletion)
-            return ind_tree
-        else:
-            return subtree_mutate(ind_tree)
-
     # Save the tail of the genome.
     tail = ind.genome[ind.used_codons:]
     
     # Allows for multiple mutation events should that be desired.
     for i in range(params['MUTATION_EVENTS']):
-        if params['SEMANTIC_LOCK']:
-            ind.tree = semantic_mutate(ind.tree)
-        else:
-            ind.tree = subtree_mutate(ind.tree)
-#        elif choice([True, False]): # too much?
-#            ind.tree = subtree_mutate(ind.tree)
-#        else:
-#            ind.tree = subtree_mutate_delete(ind.tree)
-            
-    # Re-build a new individual with the newly mutated genetic information.
-    try:
-        ind = individual.Individual(None, ind.tree)
-    except RuntimeError as re:
-        print("Tree generate error on recursion")
+        ind.tree = subtree_mutate(ind.tree)
     
-    # Add in the previous tail.
-    ind.genome = ind.genome + tail
-
-    return ind
-
-
-def leaf_mutate(ind_tree):
-    """
-    Creates a list of all nodes and picks one node at random to mutate.
-    Because we have a list of all nodes, we can (but currently don't)
-    choose what kind of nodes to mutate on. Handy.
-
-    :param ind_tree: The full tree of an individual.
-    :return: The full mutated tree and the associated genome.
-    """
-    
-    target = params['BNF_GRAMMAR'].non_terminals
-    l_target = [i for i in target if target[i]['min_steps'] == 1]
-    
-    # Find the list of nodes we can mutate from.
-    targets = ind_tree.get_target_nodes([], target=l_target)
-    
-    # Pick a node.
-    new_tree = choice(targets)
-    
-    # Set the depth limits for the new subtree.
-    new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
-    
-    # Mutate a new subtree.
-    generate_tree(new_tree, [], [], "random", 0, 0, 0, new_tree.max_depth)
-    
-    return ind_tree
-
-
-def hillclimb(ind):
-    """
-    Mutate the individual by selecting a random subtree to mutate, then by
-    mutating the CODON of that subtree up or down a number of steps (based
-    on a probability distribution), and then mapping a new subtree from that
-    new codon. Allows for hillclimbing local mutations
-    
-    :param ind: An individual to be mutated.
-    :return: A mutated individual.
-    """
-
-    # Save the tail of the genome.
-    tail = ind.genome[ind.used_codons:]
-
-    # Allows for multiple mutation events should that be desired.
-    for i in range(params['MUTATION_EVENTS']):
-        if params['SEMANTIC_LOCK']:
-            ind.tree = semantic_hillclimb_mutate(ind.tree)
-        else:
-            ind.tree = hillclimb_mutate(ind.tree)
-
     # Re-build a new individual with the newly mutated genetic information.
     ind = individual.Individual(None, ind.tree)
-
+    
     # Add in the previous tail.
     ind.genome = ind.genome + tail
 

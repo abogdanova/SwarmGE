@@ -4,6 +4,7 @@ from operators.mutation import mutation
 from operators.replacement import replacement, steady_state
 from operators.selection import selection
 
+
 def step(individuals):
     """
     Runs a single generation of the evolutionary algorithm process:
