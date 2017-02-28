@@ -2,9 +2,7 @@ from algorithm.parameters import params
 from fitness.evaluation import evaluate_fitness
 from stats.stats import stats, get_stats
 
-import random
 import numpy as np
-import math
 
 """Hill-climbing is just about the simplest metaheuristic there
 is. It's of interest in GP/GE because of the lingering suspicion among
@@ -57,28 +55,29 @@ count only accepted, or only improving moves.
 """
 
 
-
-"""
-This is the LAHC pseudo-code from Bykov and Burke.
-
-Produce an initial solution s
-Calculate initial cost function C(s)
-Specify Lfa
-For all k in {0...Lfa-1} f_k := C(s)
-First iteration I=0;
-Do until a chosen stopping condition
-    Construct a candidate solution s*
-    Calculate its cost function C(s*)
-    v := I mod Lfa
-    If C(s*)<=fv or C(s*)<=C(s)
-    Then accept the candidate (s:=s*)
-    Else reject the candidate (s:=s)
-    Insert the current cost into the fitness array fv:=C(s)
-    Increment the iteration number I:=I+1
-
-"""
-
 def LAHC_search_loop():
+    """
+    Search loop for Late Acceptance Hill Climbing.
+    
+    This is the LAHC pseudo-code from Bykov and Burke.
+
+        Produce an initial solution s
+        Calculate initial cost function C(s)
+        Specify Lfa
+        For all k in {0...Lfa-1} f_k := C(s)
+        First iteration I=0;
+        Do until a chosen stopping condition
+            Construct a candidate solution s*
+            Calculate its cost function C(s*)
+            v := I mod Lfa
+            If C(s*)<=fv or C(s*)<=C(s)
+            Then accept the candidate (s:=s*)
+            Else reject the candidate (s:=s)
+            Insert the current cost into the fitness array fv:=C(s)
+            Increment the iteration number I:=I+1
+    
+    :return: The final population.
+    """
 
     maximise = params['FITNESS_FUNCTION'].maximise
     max_its = params['POPULATION_SIZE'] * params['GENERATIONS']
@@ -95,7 +94,7 @@ def LAHC_search_loop():
     Lfa = params['HILL_CLIMBING_HISTORY']
     s = stats['best_ever']
     Cs = s.fitness
-    f = Cs * np.ones(Lfa) # history
+    f = Cs * np.ones(Lfa)  # history
 
     I = len(individuals)
     for generation in range(1, (params['GENERATIONS']+1)):
@@ -107,9 +106,9 @@ def LAHC_search_loop():
         # "generation"
         for j in range(params['POPULATION_SIZE']):
 
-            this_gen.append(s) # collect this "generation"
+            this_gen.append(s)  # collect this "generation"
 
-            s_ = params['MUTATION'](s) # mutate s to get candidate s*
+            s_ = params['MUTATION'](s)  # mutate s to get candidate s*
             if not s_.invalid:
                 s_.evaluate()
             Cs_ = s.fitness
@@ -117,76 +116,82 @@ def LAHC_search_loop():
             v = I % Lfa
             # ugly
             if ((maximise and (Cs_ >= f[v] or Cs_ >= Cs)) or
-                (not maximise and (Cs_ <= f[v] or Cs_ <= Cs))):
+                    (not maximise and (Cs_ <= f[v] or Cs_ <= Cs))):
                 # accept the candidate
                 s = s_
                 Cs = Cs_
             else:
-                pass # reject the candidate
+                pass  # reject the candidate
 
             f[v] = Cs
             I += 1
 
             # break from inner and outer if needed
-            if I >= max_its: break
+            if I >= max_its:
+                break
 
         # but get this get stats first
         stats['gen'] = generation
         get_stats(this_gen)
 
-        if I >= max_its: break
+        if I >= max_its:
+            break
 
     return individuals
 
-"""
-This is the SCHC pseudo-code from Bykov and Petrovic.
-
-Produce an initial solution s
-Calculate an initial cost function C(s)
-Initial cost bound Bc := C(s)
-Initial counter nc := 0
-Specify Lc
-Do until a chosen stopping condition
-    Construct a candidate solution s*
-    Calculate the candidate cost function C(s*)
-    If C(s*) < Bc or C(s*) <= C(s)
-        Then accept the candidate s := s*
-        Else reject the candidate s := s
-    Increment the counter nc := nc + 1
-    If nc >= Lc
-        Then update the bound Bc := C(s)
-        reset the counter nc := 0
-
-Two alternative counting methods (start at the first If):
-
-SCHC-acp counts only accepted moves:
-
-    If C(s*) < Bc or C(s*) <= C(s)
-        Then accept the candidate s := s*
-             increment the counter nc := nc + 1
-        Else reject the candidate s := s
-    If nc >= Lc
-        Then update the bound Bc := C(s)
-             reset the counter nc := 0
-
-SCHC-imp counts only improving moves:
-
-    If C(s*) < C(s)
-        Then increment the counter nc := nc + 1
-    If C(s*) < Bc or C(s*) <= C(s)
-        Then accept the candidate s := s*
-        Else reject the candidate s := s
-    If nc >= Lc
-        Then update the bound Bc := C(s)
-             reset the counter nc := 0
-"""
 
 def SCHC_search_loop():
+    """
+    Search Loop for Step-Counting Hill-Climbing.
+    
+    This is the SCHC pseudo-code from Bykov and Petrovic.
 
+        Produce an initial solution s
+        Calculate an initial cost function C(s)
+        Initial cost bound Bc := C(s)
+        Initial counter nc := 0
+        Specify Lc
+        Do until a chosen stopping condition
+            Construct a candidate solution s*
+            Calculate the candidate cost function C(s*)
+            If C(s*) < Bc or C(s*) <= C(s)
+                Then accept the candidate s := s*
+                Else reject the candidate s := s
+            Increment the counter nc := nc + 1
+            If nc >= Lc
+                Then update the bound Bc := C(s)
+                reset the counter nc := 0
+        
+        Two alternative counting methods (start at the first If):
+        
+        SCHC-acp counts only accepted moves:
+        
+            If C(s*) < Bc or C(s*) <= C(s)
+                Then accept the candidate s := s*
+                     increment the counter nc := nc + 1
+                Else reject the candidate s := s
+            If nc >= Lc
+                Then update the bound Bc := C(s)
+                     reset the counter nc := 0
+        
+        SCHC-imp counts only improving moves:
+        
+            If C(s*) < C(s)
+                Then increment the counter nc := nc + 1
+            If C(s*) < Bc or C(s*) <= C(s)
+                Then accept the candidate s := s*
+                Else reject the candidate s := s
+            If nc >= Lc
+                Then update the bound Bc := C(s)
+                     reset the counter nc := 0
+    
+    :return: The final population.
+    """
+    
     maximise = params['FITNESS_FUNCTION'].maximise
     max_its = params['POPULATION_SIZE'] * params['GENERATIONS']
-    count_method = "all" # TODO
-    accept_method = "bykov" # TODO
+    count_method = "all"  # TODO
+    accept_method = "bykov"  # TODO
 
     # Initialise population
     individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
@@ -200,7 +205,7 @@ def SCHC_search_loop():
     Lc = params['HILL_CLIMBING_HISTORY']
     s = stats['best_ever']
     Cs = s.fitness
-    Bc = Cs # initial cost bound
+    Bc = Cs  # initial cost bound
     nc = 0
 
     I = len(individuals)
@@ -213,24 +218,27 @@ def SCHC_search_loop():
         # "generation"
         for j in range(params['POPULATION_SIZE']):
 
-            this_gen.append(s) # collect this "generation"
+            this_gen.append(s)  # collect this "generation"
 
-            s_ = params['MUTATION'](s) # mutate s to get candidate s*
+            s_ = params['MUTATION'](s)  # mutate s to get candidate s*
             if not s_.invalid:
                 s_.evaluate()
             Cs_ = s.fitness
 
             # count
-            if count_method == "all": # we count all iterations (moves)
-                nc += 1 # increment the counter
-            elif count_method == "acp": # we count accepted moves only
+            if count_method == "all":  # we count all iterations (moves)
+                nc += 1  # increment the counter
+            
+            elif count_method == "acp":  # we count accepted moves only
                 if ((maximise and (Cs_ > Bc or Cs_ >= Cs)) or
-                    ((not maximise) and (Cs_ < Bc or Cs_ <= Cs))):
-                    nc += 1 # increment the counter
-            elif count_method == "imp": # we count improving moves only
+                        ((not maximise) and (Cs_ < Bc or Cs_ <= Cs))):
+                    nc += 1  # increment the counter
+            
+            elif count_method == "imp":  # we count improving moves only
                 if ((maximise and Cs_ > Cs) or
-                    ((not maximise) and Cs_ < Cs)):
-                    nc += 1 # increment the counter
+                        ((not maximise) and Cs_ < Cs)):
+                    nc += 1  # increment the counter
+            
             else:
                 raise ValueError("Unknown count method " + count_method)
 
@@ -238,36 +246,40 @@ def SCHC_search_loop():
             if accept_method == "bykov":
                 # standard accept method
                 if ((maximise and (Cs_ > Bc or Cs_ >= Cs)) or
-                    ((not maximise) and (Cs_ < Bc or Cs_ <= Cs))):
-                    s = s_ # accept the candidate
+                        ((not maximise) and (Cs_ < Bc or Cs_ <= Cs))):
+                    s = s_  # accept the candidate
                     Cs = Cs_
+                
                 else:
-                    pass # reject the candidate
+                    pass  # reject the candidate
 
             elif accept_method == "nicolau":
                 # simpler alternative suggested by Nicolau, unpublished
                 if ((maximise and Cs_ >= Bc) or
-                    ((not maximise) and (Cs_ <= Bc))):
-                    s = s_ # accept the candidate
+                        ((not maximise) and (Cs_ <= Bc))):
+                    s = s_  # accept the candidate
                     Cs = Cs_
+                
                 else:
-                    pass # reject the candidate
+                    pass  # reject the candidate
 
             else:
                 raise ValueError("Unknown accept method " + accept_method)
 
             if nc >= Lc:
-                Bc = Cs # update the bound
-                nc = 0 # reset the counter
+                Bc = Cs  # update the bound
+                nc = 0  # reset the counter
             I += 1
 
             # break from inner and outer if needed
-            if I >= max_its: break
+            if I >= max_its:
+                break
 
         # but get this gen stats first
         stats['gen'] = generation
         get_stats(this_gen)
 
-        if I >= max_its: break
+        if I >= max_its:
+            break
 
     return individuals
