@@ -1,8 +1,8 @@
 from algorithm.parameters import params
 
-import editdistance # https://pypi.python.org/pypi/editdistance
-import lzstring # https://pypi.python.org/pypi/lzstring/
-import dtw # https://pypi.python.org/pypi/dtw
+import editdistance  # https://pypi.python.org/pypi/editdistance
+import lzstring  # https://pypi.python.org/pypi/lzstring/
+import dtw  # https://pypi.python.org/pypi/dtw
 
 """
 
