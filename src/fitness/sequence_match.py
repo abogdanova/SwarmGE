@@ -7,70 +7,155 @@ import dtw # https://pypi.python.org/pypi/dtw
 """
 
 This fitness function is for a sequence-match problem: we're given
-an integer sequence target, say [0, 5, 0, 5, 0, 5], and we try to synthesize a program
-(loops, if-statements, etc) which will *yield* that sequence, one item at a time.
+an integer sequence target, say [0, 5, 0, 5, 0, 5], and we try to synthesize a
+program (loops, if-statements, etc) which will *yield* that sequence,
+one item at a time.
 
 There are several components of the fitness:
 
-* concerning the program:
-** length of the program (shorter is better)
-** compressability of the program (non-compressible, ie DRY, is better)
+1. concerning the program:
+    i. length of the program (shorter is better)
+    ii. compressibility of the program (non-compressible, ie DRY, is better)
 
-* concerning distance from the target:
-** dynamic time warping distance from the program's output to the target (lower is better)
-** Levenshtein distance from the program's output to the target (lower is better).
+2. concerning distance from the target:
+    i. dynamic time warping distance from the program's output to the target
+    (lower is better).
+    ii. Levenshtein distance from the program's output to the target
+    (lower is better).
 
 """
 
-# available for use in synthesized programs
-def succ(n, maxv=6): return min(n+1, maxv)
-def pred(n, minv=0): return max(n-1, minv)
 
-# the program will yield one item at a time, potentially forever.
-# we only up to n items.
+# available for use in synthesized programs
+def succ(n, maxv=6):
+    """
+    Available for use in synthesized programs.
+    
+    :param n:
+    :param maxv:
+    :return:
+    """
+    
+    return min(n+1, maxv)
+
+
+def pred(n, minv=0):
+    """
+    Available for use in synthesized programs.
+    
+    :param n:
+    :param minv:
+    :return:
+    """
+    
+    return max(n-1, minv)
+
+
 def truncate(n, g):
+    """
+    the program will yield one item at a time, potentially forever. We only
+    up to n items.
+    
+    :param n:
+    :param g:
+    :return:
+    """
+    
     for i in range(n):
         yield next(g)
 
-# numerical difference, used as a component in DTW
+
 def dist(t0, x0):
+    """
+    numerical difference, used as a component in DTW.
+    
+    :param t0:
+    :param x0:
+    :return:
+    """
+    
     return abs(t0 - x0)
 
-# Dynamic time warping distance between two sequences
+
 def dtw_dist(s, t):
+    """
+    Dynamic time warping distance between two sequences.
+    
+    :param s:
+    :param t:
+    :return:
+    """
+    
     s = list(map(int, s))
     t = list(map(int, t))
     d, M, C, path = dtw.dtw(s, t, dist)
+    
     return d
 
-# Levenshtein distance between two sequences, normalised by length
-# of the target -- hence this is *asymmetric*, not really a distance.
-# don't normalise by length of the longer, because it would encourage
-# evolution to create longer and longer sequences.
+
 def lev_dist(s, t):
+    """
+    Levenshtein distance between two sequences, normalised by length of the
+    target -- hence this is *asymmetric*, not really a distance. Don't
+    normalise by length of the longer, because it would encourage evolution
+    to create longer and longer sequences.
+    
+    :param s:
+    :param t:
+    :return:
+    """
+    
     return editdistance.eval(s, t) / len(s)
 
-# convert to a string and compress. lzstring is a special-purpose compressor,
-# more suitable for short strings than typical compressors.
+
 def compress(s):
+    """
+    Convert to a string and compress. lzstring is a special-purpose compressor,
+    more suitable for short strings than typical compressors.
+    
+    :param s:
+    :return:
+    """
+    
     s = ''.join(map(str, s))
     return lzstring.LZString().compress(s)
 
-# compressability is in [0, 1]. It's high when the compressed string
-# is much shorter than the original.
-def compressability(s):
+
+def compressibility(s):
+    """
+    Compressability is in [0, 1]. It's high when the compressed string
+    is much shorter than the original.
+    
+    :param s:
+    :return:
+    """
+    
     return 1 - len(compress(s)) / len(s)
 
-# program length is measured in characters, but in order to keep the values
-# in a similar range to that of compressability, DTW and Levenshtein, we
-# divide by 100. This is a bit arbitrary.
+
 def proglen(s):
+    """
+    Program length is measured in characters, but in order to keep the values
+    in a similar range to that of compressibility, DTW and Levenshtein, we
+    divide by 100. This is a bit arbitrary.
+    
+    :param s: A string of a program phenotype.
+    :return: The length of the program divided by 100.
+    """
+    
     return len(s) / 100.0
 
+
 class sequence_match:
+    
     def __init__(self):
+        """
+        Initilise class instance
+        """
+        
         # --target will be a sequence such as (0, 5, 0, 5)
         self.target = eval(params['TARGET'])
+        
         # we assume --extra_parameters is a comma-separated kv sequence, eg:
         # "alpha=0.5, beta=0.5, gamma=0.5"
         # which we can pass to the dict() constructor
@@ -81,23 +166,33 @@ class sequence_match:
         self.maximise = False
 
     def __call__(self, ind):
-        # ind.phenotype will be a string incl fn defns etc. when we
-        # exec it will create a value XXX_output_XXX, but we exec
-        # inside an empty dict for safety.  but we put a couple of
-        # useful primitives in the dict too.
-        p = ind.phenotype
-        d = {'pred': pred, 'succ': succ}
+        """
+        ind.phenotype will be a string incl fn defns etc. when we exec it
+        will create a value XXX_output_XXX, but we exec inside an empty dict
+        for safety. But we put a couple of useful primitives in the dict too.
+        
+        :param ind:
+        :return:
+        """
+        
+        p, d = ind.phenotype, {'pred': pred, 'succ': succ}
         exec(p, d)
-        s = d['XXX_output_XXX'] # this is the program's output: a generator
-        s = list(truncate(len(self.target), s)) # truncate the generator and convert to list
-        t = self.target # our target
 
+        # this is the program's output: a generator
+        s = d['XXX_output_XXX']
+
+        # Truncate the generator and convert to list
+        s = list(truncate(len(self.target), s))
+        
+        # Set target
+        t = self.target
 
         # various weightings of four aspects of our fitness. the formula is:
         # fitness = gamma * dist + (1 - gamma) * length
         # where dist = alpha * lev_dist(t, s) + (1 - alpha) * dtw_dist(t, s)
-        # and length = beta * proglen(t) + (1 - beta) * compressability(t)
-        # but when any of alpha, beta and gamma is 0 or 1, we can save some calculation:
+        # and length = beta * proglen(t) + (1 - beta) * compressibility(t)
+        # but when any of alpha, beta and gamma is 0 or 1, we can save some
+        # calculation:
 
         if self.gamma > 0.0:
             if self.alpha > 0.0:
@@ -118,10 +213,11 @@ class sequence_match:
             else:
                 proglen_v = 0.0
             if self.beta < 1.0:
-                compressability_v = compressability(p)
+                compressibility_v = compressibility(p)
             else:
-                compressability_v = 0.0
-            length_v = self.beta * proglen_v + (1 - self.beta) * compressability_v
+                compressibility_v = 0.0
+            length_v = self.beta * proglen_v + (1 - self.beta) * \
+                                               compressibility_v
         else:
             length_v = 0.0
 
