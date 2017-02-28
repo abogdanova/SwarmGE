@@ -50,6 +50,25 @@ def parse_cmd_args(arguments):
 
         PonyGE Team""")
 
+    
+    class ListAction(argparse.Action):
+        """
+        Class for parsing a given string into a list.
+        """
+
+        def __init__(self, option_strings, **kwargs):
+            super(ListAction, self).__init__(option_strings, **kwargs)
+    
+        def __call__(self, parser, namespace, value, option_string=None):
+            if type(eval(value)) != list or any([type(i) != int for i in
+                                                 eval(value)]):
+                s = "utilities.algorithm.command_line_parser.ListAction\n" \
+                    "Error: parameter %s is not a valid genome.\n" \
+                    "       Value given: %s" % (option_string, value)
+                raise Exception(s)
+            else:
+                setattr(namespace, self.dest, eval(value))
+
     # Set up class for checking float arguments.
     class FloatAction(argparse.Action):
         """
@@ -173,6 +192,14 @@ def parse_cmd_args(arguments):
                         help='Sets the initialisation strategy, requires a '
                              'string such as "rhh" or a direct path string '
                              'such as "operators.initialisation.rhh".')
+    parser.add_argument('--seed_genome',
+                        dest='SEED_GENOME',
+                        action=ListAction,
+                        help='Sets a genome for a seed individual for '
+                             'seeding evolutionary runs. Must be used in '
+                             'conjunction with compatible initialisation '
+                             'technique such as "--initialisation '
+                             'seed_initialisation".')
 
     # SELECTION
     parser.add_argument('--selection',

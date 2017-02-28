@@ -9,7 +9,11 @@ from utilities.representation.python_filter import python_filter
 
 
 def sample_genome():
-    # Generate a random genome, uniformly
+    """
+    Generate a random genome, uniformly.
+    
+    :return: A randomly generated genome.
+    """
     genome = [randint(0, params['CODON_SIZE']) for _ in
               range(params['INIT_GENOME_LENGTH'])]
     return genome
@@ -36,6 +40,50 @@ def uniform_tree(size):
     
     return [generate_ind_tree(params['MAX_TREE_DEPTH'],
                               "random") for _ in range(size)]
+    
+
+def seed_initialisation(size):
+    """
+    Create a population of size where all individuals are the same seeded
+    individual.
+    
+    :param size: The size of the required population.
+    :return: A full population composed of the seeded individual.
+    """
+    
+    # Include seed genome if defined
+    if params['SEED_GENOME']:
+        
+        # A genome has been specified as the seed. Check if ind is valid.
+        test_ind = individual.Individual(params['SEED_GENOME'], None)
+        
+        if test_ind.invalid:
+            s = "operators.initialisation.seed_initialisation\n" \
+                "Error: SEED_GENOME maps to an invalid PonyGE individual."
+            raise Exception(s)
+
+        # Map to individual.
+        return [individual.Individual(params['SEED_GENOME'],
+                                      None) for _ in range(size)]
+
+    elif params['SEED_INDIVIDUAL']:
+        # A full individual has been specified as the seed.
+        
+        if not isinstance(params['SEED_INDIVIDUAL'], individual.Individual):
+            # The seed object is not a PonyGE individual.
+            s = "operators.initialisation.seed_initialisation\n" \
+                "Error: SEED_INDIVIDUAL is not a PonyGE individual."
+            raise Exception(s)
+        
+        else:
+            # Return population of seed individuals.
+            return [params['SEED_INDIVIDUAL'].deep_copy() for _ in range(size)]
+    
+    else:
+        # No seed individual specified.
+        s = "operators.initialisation.seed_initialisation\n" \
+            "Error: No seed individual specified for seed initialisation."
+        raise Exception(s)
     
 
 def rhh(size):
@@ -105,7 +153,7 @@ def rhh(size):
 
         if remainder:
             # The full "size" individuals were not generated. The population
-            #  will be completed with individuals of random depths.
+            # will be completed with individuals of random depths.
             depths = list(depths)
             shuffle(depths)
 

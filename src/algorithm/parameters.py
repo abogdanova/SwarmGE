@@ -153,6 +153,13 @@ params = {
         # full file path to the desired state file. Note that state files have
         # no file type.
 
+        # SEEDING
+        'SEED_GENOME': None,
+        # Specify a genome for an individual with which to seed the initial
+        # population.
+        'SEED_INDIVIDUAL': None,
+        # Specify an individual with which to seed the initial population.
+    
         # CACHING
         'CACHE': False,
         # The cache tracks unique individuals across evolution by saving a

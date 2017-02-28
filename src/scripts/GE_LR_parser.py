@@ -329,6 +329,12 @@ def main():
     :return: A GE individual.
     """
     
+    # Ensure there is a target to parse.
+    if not params['REVERSE_MAPPING_TARGET']:
+        s = "scripts.GE_LR_Parser.main\n" \
+            "Error: No target string specified for parsing."
+        raise Exception(s)
+    
     # Parse the terminals in the target string.
     parse_terminals(params['REVERSE_MAPPING_TARGET'])
 
