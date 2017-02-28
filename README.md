@@ -1037,6 +1037,29 @@ Alternatively, both the `GRAMMAR_FILE` and `REVERSE_MAPPING_TARGET` can be speci
 
     $ python scripts/GE_LR_parse.py --parameters GE_parse.txt
 
+##Seeding GE Runs with target solutions
+---------------------------------------
+
+Combining the GE LR Parser with the full PonyGE2 library, it is possible to parse a target string into a GE individual and then to seed an evolutionary run of PonyGE2 with that individual. Seeded individuals can be specified directly in PonyGE2 by specifying a desired genome with the argument:
+
+    --seed_genome [SEED_GENOME]
+
+or by setting the parameter `SEED_GENOME` to `[SEED_GENOME]` in either a parameters file or in the params dictionary, where `[SEED_GENOME]` is the genome of the desired target seed individual.
+
+Runs can be seeded in PonyGE2 with the `seed_individuals` initialisation method. This initialisation technique generates a population of identical individuals from the specified seed individual. Population seeding can be specified with the argument:
+
+    --initialisation seed_individuals
+
+or by setting the parameter `INITIALISATION` to `seed_individuals` in either a parameters file or in the params dictionary.
+
+An example parameters file with the required parameters is given in the parameters folder. To run GE directly with a known seed genome, simply type:
+
+    $ python ponyge.py --parameters seed_run_solution.txt
+
+Finally, rather than having to run the GE LR Parser and PonyGE2 individually, an example script for parsing a target string and seeding a subsequent evolutionary run directly with the parsed individual has been included in the `scripts` folder. An example parameters file to achieve this has been included in the parameters folder. To run this script, simply type:
+
+    $ python scripts/seed_PonyGE2.py --parameters seed_run_target.txt
+
 #References
 ----------
 
