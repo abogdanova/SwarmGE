@@ -1,8 +1,13 @@
+from sys import path
+path.append("../src")
+
+from utilities.algorithm.initialise_run import check_python_version
+
+check_python_version()
+
 import getopt
 import sys
-from datetime import datetime
-from os import getcwd, listdir, path, pathsep
-
+from os import getcwd, listdir, path, sep
 import matplotlib
 import numpy as np
 np.seterr(all="raise")
@@ -22,19 +27,13 @@ def help_message():
     
     lines_1 = ["Welcome to PonyGE's post-run stats parser.",
                "-------------------",
-               "The following are the available command line args. You must "
-               "specify an experiment name and at least one stat to be parsed."
-               ""]
+               "The following are the available command line args.",
+               "You must specify an experiment name."]
     
     lines_2 = [["\t--help:", "Shows this help message."],
                ["\t--experiment_name:", "The name of the containing folder in "
                                         "which target runs are saved, e.g. "
-                                        "in /results/[EXPERIMENT_NAME]."],
-               ["\t--stats:", "A comma-separated list of stats to be parsed. "
-                              "Specified stats must be valid keys from the "
-                              "stats.stats.stats dictionary. "
-                              "IMPORTANT: MUST NOT CONTAIN ANY SPACES."],
-               ["\t--graph:", "Saves a .pdf figure of each stat specified."]]
+                                        "in results/[EXPERIMENT_NAME]."]]
 
     # This simply justifies the print statement such that it is visually
     # pleasing to look at.
@@ -60,22 +59,23 @@ def parse_opts(command_line_args):
     
     try:
         opts, args = getopt.getopt(command_line_args[1:], "",
-                                   ["help", "experiment_name=", "stats=",
-                                    "graph"])
+                                   ["help", "experiment_name="])
     except getopt.GetoptError as err:
-        print("In order to parse stats you need to specify the location of the"
-              " target stats files and a list of desired stats to parse. \n",
-              "Run python parse_stats.py --help for more info")
+        s = "scripts.parse_stats.parse_opts\n" \
+            "Error: in order to parse stats you need to specify the location" \
+            " of the target stats files.\n" \
+            "       Run python stats_parser.py --help for more info."
         print(str(err))
-        exit(2)
+        raise Exception(s)
 
     if not opts:
-        print("In order to parse stats you need to specify the location of the"
-              " target stats files and a list of desired stats to parse. \n",
-              "Run python parse_stats.py --help for more info")
-        exit(2)
+        s = "scripts.parse_stats.parse_opts\n" \
+            "Error: in order to parse stats you need to specify the location" \
+            " of the target stats files.\n" \
+            "       Run python stats_parser.py --help for more info."
+        raise Exception(s)
 
-    experiment_name, stats, graph = None, None, False
+    experiment_name = None
     
     # iterate over all arguments in the option parser.
     for opt, arg in opts:
@@ -87,24 +87,11 @@ def parse_opts(command_line_args):
         elif opt == "--experiment_name":
             # Set experiment name (i.e. containing folder for multiple runs).
             experiment_name = arg
-        
-        elif opt == "--stats":
-            # List stats. Stats must be parsed correctly.
-            # TODO: There must be a better way to pass in a list of options.
-            if arg[0] == "[" and arg[-1] == "]":
-                stats = arg[1:-1].split(",")
-            
-            else:
-                stats = arg.split(",")
-        
-        elif opt == "--graph":
-            # Set boolean flag for graphing stats.
-            graph = True
-    
-    return experiment_name, stats, graph
+                    
+    return experiment_name
 
 
-def parse_stat_from_runs(experiment_name, stats, graph):
+def parse_stats_from_runs(experiment_name):
     """
     Analyses a list of given stats from a group of runs saved under an
     "experiment_name" folder. Creates a summary .csv file which can be used by
@@ -125,7 +112,6 @@ def parse_stat_from_runs(experiment_name, stats, graph):
     
     :param experiment_name: The name of a collecting folder within the
     ./results folder which holds multiple runs.
-    :param stats: A list of the names of the stats to be parsed.
     :param graph: A boolean flag for whether or not to save figure.
     :return: Nothing.
     """
@@ -133,67 +119,94 @@ def parse_stat_from_runs(experiment_name, stats, graph):
     # Since results files are not kept in source directory, need to escape
     # one folder.
     file_path = path.join(getcwd(), "..", "results")
-
+    
     # Check for use of experiment manager.
     if experiment_name:
         file_path = path.join(file_path, experiment_name)
     
     else:
-        print("Error: experiment name not specified")
-        quit()
+        s = "scripts.parse_stats.parse_stats_from_runs\n" \
+            "Error: experiment name not specified."
+        raise Exception(s)
     
     # Find list of all runs contained in the specified folder.
-    runs = [run for run in listdir(file_path) if "." not in run]
+    runs = [run for run in listdir(file_path) if
+            path.isdir(path.join(file_path, run))]
     
-    for stat in stats:
-        # Iterate over all specified stats.
-        
-        if stat == "best_ever":
-            print("Error: Cannot graph instances of individual class. Do not"
-                  " specify 'best_ever' as stat to be parsed.")
-            quit()
-        
+    # Place to store the header for full stats file.
+    header = ""
+
+    # Array to store all stats
+    full_stats = []
+
+    # Get list of all stats to parse. Check stats file of first run from
+    # runs folder.
+    ping_file = path.join(file_path, str(runs[0]), "stats.tsv")
+
+    # Load in data and get the names of all stats.
+    stats = list(pd.read_csv(ping_file, sep="\t"))
+    
+    # Make list of stats we do not wish to parse.
+    no_parse_list = ["gen", "total_inds", "time_adjust"]
+    
+    for stat in [stat for stat in stats if stat not in no_parse_list and
+                 not stat.startswith("Unnamed")]:
+        # Iterate over all stats.
+        print("Parsing", stat)
         summary_stats = []
 
         # Iterate over all runs
         for run in runs:
             # Get file name
             file_name = path.join(file_path, str(run), "stats.tsv")
-            
+
             # Load in data
             data = pd.read_csv(file_name, sep="\t")
-            
+
             try:
                 # Try to extract specific stat from the data.
-                summary_stats.append(list(data[stat]))
-            
+                if list(data[stat]):
+                    summary_stats.append(list(data[stat]))
+                else:
+                    s = "scripts.parse_stats.parse_stats_from_runs\n" \
+                        "Error: stat %s is empty for run %s." % (stat, run)
+                    raise Exception(s)
+
             except KeyError:
                 # The requested stat doesn't exist.
-                print("Error: stat", stat, "does not exist")
-                quit()
+                s = "scripts.parse_stats.parse_stats_from_runs\nError: " \
+                    "stat %s does not exist in run %s." % (stat, run)
+                raise Exception(s)
 
-        if stat in ["total_time", "time_taken"]:
-            # Must parse time-related stats to the correct time format.
-            zero = datetime.strptime("1900-01-01 0:00:00.000000",
-                                     "%Y-%m-%d %H:%M:%S.%f")
-            for i, run in enumerate(summary_stats):
-                summary_stats[i] = [(datetime.strptime(time,
-                                                       "%H:%M:%S.%f") -
-                                     zero).total_seconds()
-                                    for time in run]
-        
         # Generate numpy array of all stats
-        summary_stats = np.asarray(summary_stats)
-        summary_stats = np.transpose(summary_stats)
+        summary_stats = np.array(summary_stats)
         
+        # Append Stat to header.
+        header = header + stat + "_mean,"
+        
+        summary_stats_mean = np.nanmean(summary_stats, axis=0)
+        full_stats.append(summary_stats_mean)
+
+        # Append Stat to header.
+        header = header + stat + "_std,"
+        summary_stats_std = np.nanstd(summary_stats, axis=0)
+        full_stats.append(summary_stats_std)
+        summary_stats = np.transpose(summary_stats)
+
         # Save stats as a .csv file.
         np.savetxt(path.join(file_path, (stat + ".csv")), summary_stats,
                    delimiter=",")
-        
-        if graph:
-            # Graph stat by calling graphing function.
-            save_average_plot_across_runs(path.join(file_path, (stat +
-                                                                ".csv")))
+
+        # Graph stat by calling graphing function.
+        save_average_plot_across_runs(path.join(file_path, (stat +
+                                                            ".csv")))
+    # Convert and rotate full stats
+    full_stats = np.array(full_stats)
+    full_stats = np.transpose(full_stats)
+
+    # Save full stats to csv file.
+    np.savetxt(path.join(file_path, "full_stats.csv"), full_stats,
+               delimiter=",", header=header[:-1])
 
 
 def save_average_plot_across_runs(filename):
@@ -212,7 +225,7 @@ def save_average_plot_across_runs(filename):
 
     The required file can be generated using
 
-        stats.parse_stats.parse_stat_from_runs()
+        stats.parse_stats.parse_stats_from_runs()
 
     Generates a .pdf graph of average value with standard deviation.
     :param filename: the full file name of a .csv file containing the fitnesses
@@ -221,7 +234,7 @@ def save_average_plot_across_runs(filename):
     """
     
     # Get stat name from the filename. Used later for saving graph.
-    stat_name = filename.split(pathsep)[-1].split(".")[0]
+    stat_name = filename.split(sep)[-1].split(".")[0]
     
     # Load in data.
     data = np.genfromtxt(filename, delimiter=',')[:, :-1]
@@ -262,6 +275,19 @@ def save_average_plot_across_runs(filename):
     plt.close()
 
 
+def main():
+    """
+    The main function for running the statistics parser.
+    
+    :return: Nothing.
+    """
+
+    # Get experiment name and graphing flag from command line parser.
+    experiment_name = parse_opts(sys.argv)
+    
+    # Call statistics parser for experiment name.
+    parse_stats_from_runs(experiment_name)
+
+
 if __name__ == "__main__":
-    experiment_name, stats, graph = parse_opts(sys.argv)
-    parse_stat_from_runs(experiment_name, stats, graph)
+    main()

@@ -4,25 +4,21 @@ from utilities.representation.check_methods import get_output
 
 class Tree:
 
-    def __init__(self, expr, parent, depth_limit=20):
+    def __init__(self, expr, parent):
         """
         Initialise an instance of the tree class.
         
         :param expr: A non-terminal from the params['BNF_GRAMMAR'].
         :param parent: The parent of the current node. None if node is tree
         root.
-        :param depth_limit: The maximum depth the tree can expand to.
         """
         
         self.parent = parent
         self.codon = None
-        self.depth_limit = depth_limit
         self.depth = 1
         self.root = expr
         self.children = []
-        self.semantic_lock = False
-        self.pheno_index_rl = None
-        self.pheno_index_lr = None
+        self.snippet = None
 
     def __str__(self):
         """
@@ -60,13 +56,15 @@ class Tree:
         """
 
         # Copy current tree by initialising a new instance of the tree class.
-        tree_copy = Tree(self.root, self.parent, self.depth_limit)
+        tree_copy = Tree(self.root, self.parent)
         
         # Set node parameters.
         tree_copy.codon, tree_copy.depth = self.codon, self.depth
         tree_copy.semantic_lock = self.semantic_lock
         tree_copy.pheno_index_rl = self.pheno_index_rl
         tree_copy.pheno_index_lr = self.pheno_index_lr
+
+        tree_copy.snippet = self.snippet
 
         for child in self.children:
             # Recurse through all children.
@@ -232,6 +230,12 @@ class Tree:
             # The current node has only terminal children, increment number
             # of tree nodes.
             nodes += 1
+
+            # Terminal children increase the current node depth by one.
+            # Check the recorded max_depth.
+            if self.depth + 1 > max_depth:
+                # Set new max tree depth.
+                max_depth = self.depth + 1
 
         for child in self.children:
             # Recurse on all children.

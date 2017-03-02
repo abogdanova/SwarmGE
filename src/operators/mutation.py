@@ -3,6 +3,7 @@ from random import randint, random, choice
 from algorithm.parameters import params
 from representation import individual
 from representation.derivation import generate_tree
+from utilities.representation.check_methods import check_ind
 
 def mutation(pop):
     """
@@ -13,10 +14,32 @@ def mutation(pop):
     :return: A fully mutated population.
     """
 
-    return list(map(params['MUTATION'], pop))
+    # Initialise empty pop for mutated individuals.
+    new_pop = []
+    
+    # Iterate over entire population.
+    for ind in pop:
+        
+        # Perform mutation.
+        new_ind = params['MUTATION'](ind)
+        
+        # Check ind does not violate specified limits.
+        check = check_ind(new_ind, "mutation")
+        
+        while check:
+            # Perform mutation until the individual passess all tests.
+            new_ind = params['MUTATION'](ind)
+    
+            # Check ind does not violate specified limits.
+            check = check_ind(new_ind, "mutation")
+        
+        # Append mutated individual to population.
+        new_pop.append(new_ind)
+    
+    return new_pop
 
 
-def int_flip(ind, within_used=True):
+def int_flip_per_codon(ind):
     """
     Mutate the genome of an individual by randomly choosing a new int with
     probability p_mut. Works per-codon. Mutation is performed over the
@@ -24,20 +47,25 @@ def int_flip(ind, within_used=True):
     within_used=False switches this off.
     
     :param ind: An individual to be mutated.
-    :param within_used: Boolean flag for selecting whether or not mutation
-    is confined to within the used portion of the genome. Default set to True.
     :return: A mutated individual.
     """
 
     # Set effective genome length over which mutation will be performed.
-    if within_used:
+    if params['WITHIN_USED']:
         eff_length = min(len(ind.genome), ind.used_codons)
     else:
         eff_length = len(ind.genome)
 
     # Set mutation probability. Default is 1 over the length of the genome.
-    if params['MUTATION_PROBABILITY']:
+    if params['MUTATION_PROBABILITY'] and params['MUTATION_EVENTS'] == 1:
         p_mut = params['MUTATION_PROBABILITY']
+    elif params['MUTATION_PROBABILITY'] and params['MUTATION_EVENTS'] > 1:
+        s = "operators.mutation.int_flip_per_codon\n" \
+            "Error: mutually exclusive parameters for 'MUTATION_PROBABILITY'" \
+            "and 'MUTATION_EVENTS' have been explicitly set.\n" \
+            "       Only one of these parameters can be used at a time with" \
+            "int_flip_per_codon mutation."
+        raise Exception(s)
     else:
         # Default mutation events per individual is 1. Raising this number
         # will influence the mutation probability for each codon.
@@ -55,7 +83,7 @@ def int_flip(ind, within_used=True):
     return new_ind
 
 
-def int_flip_per_ind(ind, within_used=True):
+def int_flip_per_ind(ind):
     """
     Mutate the genome of an individual by randomly choosing a new int with
     probability p_mut. Works per-individual. Mutation is performed over the
@@ -63,16 +91,15 @@ def int_flip_per_ind(ind, within_used=True):
     provided to limit mutation to only the effective length of the genome.
     
     :param ind: An individual to be mutated.
-    :param within_used: Boolean flag for selecting whether or not mutation
-    is confined to within the used portion of the genome. Default set to True.
     :return: A mutated individual.
     """
     
     # Set effective genome length over which mutation will be performed.
-    if within_used:
+    if params['WITHIN_USED']:
         eff_length = min(len(ind.genome), ind.used_codons)
     else:
         eff_length = len(ind.genome)
+    
     for _ in params['MUTATION_EVENTS']:
         idx = randint(0, eff_length-1)
         ind.genome[idx] = randint(0, params['CODON_SIZE'])
@@ -110,11 +137,17 @@ def subtree(ind):
         new_tree = choice(targets)
 
         # Set the depth limits for the new subtree.
-        new_tree.max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
-
+        if params['MAX_TREE_DEPTH']:
+            # Set the limit to the tree depth.
+            max_depth = params['MAX_TREE_DEPTH'] - new_tree.depth
+        
+        else:
+            # There is no limit to tree depth.
+            max_depth = None
+    
         # Mutate a new subtree.
-        generate_tree(new_tree, [], [], "random", 0, 0, 0, new_tree.max_depth)
-
+        generate_tree(new_tree, [], [], "random", 0, 0, 0, max_depth)
+    
         return ind_tree
 
     def subtree_mutate_delete(ind_tree):
@@ -220,3 +253,9 @@ def hillclimb(ind):
     ind.genome = ind.genome + tail
 
     return ind
+
+
+# Set attributes for all operators to define linear or subtree representations.
+int_flip_per_codon.representation = "linear"
+int_flip_per_ind.representation = "linear"
+subtree.representation = "subtree"

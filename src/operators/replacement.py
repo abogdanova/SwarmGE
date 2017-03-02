@@ -1,4 +1,8 @@
+from fitness.evaluation import evaluate_fitness
 from algorithm.parameters import params
+from operators.mutation import mutation
+from operators.crossover import crossover_inds
+from operators.selection import selection
 
 
 def replacement(new_pop, old_pop):
@@ -41,23 +45,58 @@ def generational(new_pop, old_pop):
     return new_pop[:params['POPULATION_SIZE']]
 
 
-def steady_state(new_pop, old_pop):
+def steady_state(individuals):
     """
-    Combines both old and new populations and returns the top
-    POPULATION_SIZE individuals. In theory this is not true steady state
-    replacement, but it is functionally equivalent.
-     
-    :param new_pop: The new population (e.g. after selection, variation, &
-    evaluation).
-    :param old_pop: The previous generation population.
-    :return: The 'POPULATION_SIZE' new population.
+    Runs a single generation of the evolutionary algorithm process,
+    using steady state replacement:
+        Selection
+        Variation
+        Evaluation
+        Replacement
+        
+    Steady state replacement uses the Genitor model (Whitley, 1989) whereby
+    new individuals directly replace the worst individuals in the population
+    regardless of whether or not the new individuals are fitter than those
+    they replace. Note that traditional GP crossover generates only 1 child,
+    whereas linear GE crossover (and thus all crossover functions used in
+    PonyGE) generates 2 children from 2 parents. Thus, we use a deletion
+    strategy of 2.
+
+    :param individuals: The current generation, upon which a single
+    evolutionary generation will be imposed.
+    :return: The next generation of the population.
     """
+
+    # Initialise counter for new individuals.
+    ind_counter = 0
+
+    while ind_counter < params['POPULATION_SIZE']:
+        
+        # Select parents from the original population.
+        parents = selection(individuals)
+
+        # Perform crossover on selected parents.
+        cross_pop = crossover_inds(parents[0], parents[1])
+        
+        if cross_pop is None:
+            # Crossover failed.
+            pass
+
+        else:
+            # Mutate the new population.
+            new_pop = mutation(cross_pop)
+        
+            # Evaluate the fitness of the new population.
+            new_pop = evaluate_fitness(new_pop)
     
-    # Combine both populations
-    total_pop = old_pop + new_pop
+            # Sort the original population
+            individuals.sort(reverse=True)
     
-    # Sort the combined population
-    total_pop.sort(reverse=True)
-    
-    # Return the top POPULATION_SIZE individuals of the combined population.
-    return total_pop[:params['POPULATION_SIZE']]
+            # Combine both populations
+            total_pop = individuals[:-len(new_pop)] + new_pop
+        
+            # Increment the ind counter
+            ind_counter += params['GENERATION_SIZE']
+
+    # Return the combined population.
+    return total_pop

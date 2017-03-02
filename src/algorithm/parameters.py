@@ -19,18 +19,21 @@ params = {
 
         # Set optional experiment name
         'EXPERIMENT_NAME': None,
+        # Set default number of runs to be done.
+        # ONLY USED WITH EXPERIMENT MANAGER.
+        'RUNS': 1,
 
         # Class of problem
         'FITNESS_FUNCTION': "regression",
         # "regression"
         # "string_match"
         # "classification"
+        # "supervised_learning"
 
         # Select problem dataset
-        'DATASET': "Vladislavleva4",
-        # "Dow"
-        # "Keijzer6"
-        # "Vladislavleva4"
+        'DATASET_TRAIN': "Vladislavleva4/Train.txt",
+        'DATASET_TEST': "Vladislavleva4/Test.txt",
+        'DATASET_DELIMITER': None,
 
         # Set grammar file
         'GRAMMAR_FILE': "Vladislavleva4.bnf",
@@ -39,6 +42,7 @@ params = {
         # "Dow.bnf"
         # "Banknote.bnf"
         # "letter.bnf"
+        # "supervised_learning.bnf"
 
         # Select error metric
         'ERROR_METRIC': None,
@@ -48,23 +52,29 @@ params = {
         # "hinge"
         # "f1_score"
 
+        'OPTIMIZE_CONSTANTS': False,
+
         # Specify target for target problems
         'TARGET': "ponyge_rocks",
 
         # Set max sizes of individuals
-        'MAX_TREE_DEPTH': 17,
+        'MAX_TREE_DEPTH': None,
         'MAX_TREE_NODES': None,
         'CODON_SIZE': 100000,
-        'MAX_INIT_GENOME_LENGTH': 200,
-        'MAX_GENOME_LENGTH': 500,
+        'MAX_GENOME_LENGTH': None,
         'MAX_WRAPS': 0,
 
         # INITIALISATION
-        'INITIALISATION': "operators.initialisation.rhh",
+        'INITIALISATION': "operators.initialisation.PI_grow",
         # "operators.initialisation.uniform_genome"
         # "operators.initialisation.rhh"
+        # "operators.initialisation.PI_grow"
+        'INIT_GENOME_LENGTH': 200,
+        # Set the maximum geneome length for initialisation.
         'MAX_INIT_TREE_DEPTH': 10,
         # Set the maximum tree depth for initialisation.
+        'MIN_INIT_TREE_DEPTH': None,
+        # Set the minimum tree depth for initialisation.
 
         # SELECTION
         'SELECTION': "operators.selection.tournament",
@@ -77,18 +87,28 @@ params = {
         'INVALID_SELECTION': False,
         # Allow for selection of invalid individuals during selection process.
 
+        # OPERATOR OPTIONS
+        'WITHIN_USED': True,
+        # Boolean flag for selecting whether or not mutation is confined to
+        # within the used portion of the genome. Default set to True.
+
         # CROSSOVER
         'CROSSOVER': "operators.crossover.variable_onepoint",
         # "operators.crossover.fixed_onepoint",
         # "operators.crossover.subtree",
         'CROSSOVER_PROBABILITY': 0.75,
+        'NO_CROSSOVER_INVALIDS': False,
+        # Prevents crossover from generating invalids.
 
         # MUTATION
-        'MUTATION': "operators.mutation.int_flip",
+        'MUTATION': "operators.mutation.int_flip_per_codon",
         # "operators.mutation.subtree",
-        # "operators.mutation.int_flip",
+        # "operators.mutation.int_flip_per_codon",
+        # "operators.mutation.int_flip_per_ind",
         'MUTATION_PROBABILITY': None,
         'MUTATION_EVENTS': 1,
+        'NO_MUTATION_INVALIDS': False,
+        # Prevents mutation from generating invalids.
 
         # REPLACEMENT
         'REPLACEMENT': "operators.replacement.generational",
@@ -133,6 +153,13 @@ params = {
         # full file path to the desired state file. Note that state files have
         # no file type.
 
+        # SEEDING
+        'SEED_GENOME': None,
+        # Specify a genome for an individual with which to seed the initial
+        # population.
+        'SEED_INDIVIDUAL': None,
+        # Specify an individual with which to seed the initial population.
+    
         # CACHING
         'CACHE': False,
         # The cache tracks unique individuals across evolution by saving a
@@ -154,7 +181,10 @@ params = {
         'MACHINE': machine_name,
 
         # Set Random Seed
-        'RANDOM_SEED': None
+        'RANDOM_SEED': None,
+
+        # Reverse Mapping to GE individual:
+        'REVERSE_MAPPING_TARGET': None
 }
 
 
@@ -169,22 +199,29 @@ def load_params(file_name):
     try:
         open(file_name, "r")
     except FileNotFoundError:
-        print("Error: Parameters file not found. Ensure file\n"
-              "       extension is specified, e.g. "
-              "'regression.txt'.")
-        quit()
+        s = "algorithm.paremeters.load_params\n" \
+            "Error: Parameters file not found.\n" \
+            "       Ensure file extension is specified, e.g. 'regression.txt'."
+        raise Exception(s)
 
     with open(file_name, 'r') as parameters:
         # Read the whole parameters file.
         content = parameters.readlines()
 
         for line in content:
-            components = line.split(":")
-            key, value = components[0], components[1].strip()
-
+            
+            # Parameters files are parsed by finding the first instance of a
+            # colon.
+            split = line.find(":")
+            
+            # Everything to the left of the colon is the parameter key,
+            # everything to the right is the parameter value.
+            key, value = line[:split], line[split+1:].strip()
+            
             # Evaluate parameters.
             try:
                 value = eval(value)
+            
             except:
                 # We can't evaluate, leave value as a string.
                 pass
@@ -193,7 +230,7 @@ def load_params(file_name):
             params[key] = value
 
 
-def set_params(command_line_args):
+def set_params(command_line_args, create_files=True):
     """
     This function parses all command line arguments specified by the user.
     If certain parameters are not set then defaults are used (e.g. random
@@ -207,13 +244,20 @@ def set_params(command_line_args):
 
     from utilities.algorithm.initialise_run import initialise_run_params
     from utilities.algorithm.initialise_run import set_param_imports
-    from utilities.fitness.math_functions import return_percent
+    from utilities.fitness.math_functions import return_one_percent
     from representation import grammar
     import utilities.algorithm.command_line_parser as parser
     from utilities.stats import trackers, clean_stats
 
     cmd_args, unknown = parser.parse_cmd_args(command_line_args)
-    # TODO: how should we handle unknown parameters? Should we just add them indiscriminately to the params dictionary?
+    
+    if unknown:
+        # We currently do not parse unknown parameters. Raise error.
+        s = "algorithm.parameters.set_params\nError: " \
+            "unknown parameters: %s\nYou may wish to check the spelling, " \
+            "add code to recognise this parameter, or use " \
+            "--extra_parameters" % str(unknown)
+        raise Exception(s)
 
     # LOAD PARAMETERS FILE
     # NOTE that the parameters file overwrites all previously set parameters.
@@ -232,50 +276,50 @@ def set_params(command_line_args):
     if params['LOAD_STATE']:
         # Load run from state.
         from utilities.algorithm.state import load_state
-        
+
         # Load in state information.
         individuals = load_state(params['LOAD_STATE'])
 
         # Set correct search loop.
         from algorithm.search_loop import search_loop_from_state
         params['SEARCH_LOOP'] = search_loop_from_state
-        
+
         # Set population.
         setattr(trackers, "state_individuals", individuals)
-        
+
     else:
-        # Elite size is set to either 1 or 1% of the population size, whichever is
-        # bigger if no elite size is previously set.
-        if params['ELITE_SIZE'] is None:
-            params['ELITE_SIZE'] = return_percent(1, params['POPULATION_SIZE'])
-    
-        # Set the size of a generation
-        params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - params[
-            'ELITE_SIZE']
-    
-        # Set GENOME_OPERATIONS automatically for faster linear operations.
-        # TODO: there must be a cleaner way of doing this.
-        if params['MUTATION'] in ['operators.mutation.int_flip', 'int_flip'] \
-                and params['CROSSOVER'] in [
-                    'operators.crossover.fixed_onepoint',
-                    'operators.crossover.variable_onepoint',
-                    'operators.crossover.fixed_twopoint',
-                    'operators.crossover.variable_twopoint',
-                    'fixed_onepoint', 'variable_onepoint',
-                    'fixed_twopoint', 'variable_twopoint']:
-            params['GENOME_OPERATIONS'] = True
+        if params['REPLACEMENT'].split(".")[-1] == "steady_state":
+            # Set steady state step and replacement.
+            params['STEP'] = "steady_state_step"
+            params['GENERATION_SIZE'] = 2
+        
         else:
-            params['GENOME_OPERATIONS'] = False
-            
+            # Elite size is set to either 1 or 1% of the population size,
+            # whichever is bigger if no elite size is previously set.
+            if params['ELITE_SIZE'] is None:
+                params['ELITE_SIZE'] = return_one_percent(1, params[
+                    'POPULATION_SIZE'])
+    
+            # Set the size of a generation
+            params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - \
+                                        params['ELITE_SIZE']
+
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
         set_param_imports()
-    
+
         # Clean the stats dict to remove unused stats.
         clean_stats.clean_stats()
-        
+
         # Initialise run lists and folders
-        initialise_run_params()
+        initialise_run_params(create_files)
+
+        # Set GENOME_OPERATIONS automatically for faster linear operations.
+        if params['CROSSOVER'].representation == "linear" and \
+                params['MUTATION'].representation == "linear":
+            params['GENOME_OPERATIONS'] = True
+        else:
+            params['GENOME_OPERATIONS'] = False
 
         # Parse grammar file and set grammar class.
         params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",

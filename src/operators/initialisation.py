@@ -9,9 +9,13 @@ from utilities.representation.python_filter import python_filter
 
 
 def sample_genome():
-    # Generate a random genome, uniformly
+    """
+    Generate a random genome, uniformly.
+    
+    :return: A randomly generated genome.
+    """
     genome = [randint(0, params['CODON_SIZE']) for _ in
-              range(params['MAX_INIT_GENOME_LENGTH'])]
+              range(params['INIT_GENOME_LENGTH'])]
     return genome
 
 
@@ -25,7 +29,7 @@ def uniform_genome(size):
 
     return [individual.Individual(sample_genome(), None) for _ in range(size)]
 
-
+# this is here only for compatibility with existing experiments. Should be replaced by use of seed_initialisation
 def seed_only(size):
     population = []
     # Include seed genome if defined
@@ -42,6 +46,60 @@ def seed_only(size):
         print("Using seed_only initialisation without SEED_INDIVIDUAL")
         exit()
     return population
+
+def uniform_tree(size):
+    """
+    Create a population of individuals by generating random derivation trees.
+     
+    :param size: The size of the required population.
+    :return: A full population composed of randomly generated individuals.
+    """
+    
+    return [generate_ind_tree(params['MAX_TREE_DEPTH'],
+                              "random") for _ in range(size)]
+    
+def seed_initialisation(size):
+    """
+    Create a population of size where all individuals are the same seeded
+    individual.
+    
+    :param size: The size of the required population.
+    :return: A full population composed of the seeded individual.
+    """
+    
+    # Include seed genome if defined
+    if params['SEED_GENOME']:
+        
+        # A genome has been specified as the seed. Check if ind is valid.
+        test_ind = individual.Individual(params['SEED_GENOME'], None)
+        
+        if test_ind.invalid:
+            s = "operators.initialisation.seed_initialisation\n" \
+                "Error: SEED_GENOME maps to an invalid PonyGE individual."
+            raise Exception(s)
+
+        # Map to individual.
+        return [individual.Individual(params['SEED_GENOME'],
+                                      None) for _ in range(size)]
+
+    elif params['SEED_INDIVIDUAL']:
+        # A full individual has been specified as the seed.
+        
+        if not isinstance(params['SEED_INDIVIDUAL'], individual.Individual):
+            # The seed object is not a PonyGE individual.
+            s = "operators.initialisation.seed_initialisation\n" \
+                "Error: SEED_INDIVIDUAL is not a PonyGE individual."
+            raise Exception(s)
+        
+        else:
+            # Return population of seed individuals.
+            return [params['SEED_INDIVIDUAL'].deep_copy() for _ in range(size)]
+    
+    else:
+        # No seed individual specified.
+        s = "operators.initialisation.seed_initialisation\n" \
+            "Error: No seed individual specified for seed initialisation."
+        raise Exception(s)
 
 def rhh(size):
     """
@@ -67,9 +125,10 @@ def rhh(size):
     elif not depths:
         # If we have no depths to ramp from, then params['MAX_INIT_DEPTH'] is
         # set too low for the specified grammar.
-        print("Error: Maximum initialisation depth too low for specified "
-              "grammar.")
-        quit()
+        s = "operators.initialisation.rhh\n" \
+            "Error: Maximum initialisation depth too low for specified " \
+            "grammar."
+        raise Exception(s)
 
     else:
         if size % 2:
@@ -109,7 +168,7 @@ def rhh(size):
 
         if remainder:
             # The full "size" individuals were not generated. The population
-            #  will be completed with individuals of random depths.
+            # will be completed with individuals of random depths.
             depths = list(depths)
             shuffle(depths)
 
@@ -163,9 +222,10 @@ def PI_grow(size):
     elif not depths:
         # If we have no depths to ramp from, then params['MAX_INIT_DEPTH'] is
         # set too low for the specified grammar.
-        print("Error: Maximum initialisation depth too low for specified "
-              "grammar.")
-        quit()
+        s = "operators.initialisation.PI_grow\n" \
+            "Error: Maximum initialisation depth too low for specified " \
+            "grammar."
+        raise Exception(s)
 
     else:
         if size < len(depths):
@@ -182,6 +242,7 @@ def PI_grow(size):
         for depth in depths:
             # Iterate over number of required individuals per depth.
             for i in range(times):
+
                 # Generate individual using "Grow"
                 ind = generate_PI_ind_tree(depth)
 
@@ -221,16 +282,15 @@ def generate_ind_tree(max_depth, method):
 
     :param max_depth: The maximum depth for the initialised subtree.
     :param method: The method of subtree initialisation required.
-    :return:
+    :return: A fully built individual.
     """
 
     # Initialise an instance of the tree class
-    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None,
-                    depth_limit=max_depth - 1)
+    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
     genome, output, nodes, _, depth = generate_tree(ind_tree, [], [], method,
-                                                    0, 0, 0, max_depth - 1)
+                                                    0, 0, 0, max_depth)
 
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
@@ -262,16 +322,15 @@ def generate_PI_ind_tree(max_depth):
     Generate an individual using a given Position Independent subtree
     initialisation method.
 
-    :param method: The method of subtree initialisation required.
-    :return:
+    :param max_depth: The maximum depth for the initialised subtree.
+    :return: A fully built individual.
     """
 
     # Initialise an instance of the tree class
-    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None,
-                    depth_limit=max_depth - 1)
+    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
-    genome, output, nodes, depth = pi_grow(ind_tree, max_depth - 1)
+    genome, output, nodes, depth = pi_grow(ind_tree, max_depth)
 
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
@@ -293,3 +352,8 @@ def generate_PI_ind_tree(max_depth):
                            _ in range(int(ind.used_codons / 2))]
 
     return ind
+
+
+# Set ramping attributes for ramped initialisers.
+PI_grow.ramping = True
+rhh.ramping = True

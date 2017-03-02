@@ -2,6 +2,8 @@ from datetime import datetime
 from time import time
 from random import seed
 from sys import version_info
+from socket import gethostname
+from os import getpid
 
 from algorithm.parameters import params
 from stats.stats import generate_folders_and_files
@@ -15,14 +17,14 @@ def check_python_version():
     :return: Nothing
     """
 
+    if version_info.major < 3 or (version_info.minor < 5 and
+                                  version_info.major == 3):
+        s = "\nError: Python version not supported.\n" \
+            "       Must use at least Python 3.5."
+        raise Exception(s)
 
-    if version_info.major < 3 and version_info.minor < 5:
-        print("\nError: Python version not supported. Must use Python >= 3.5")
 
-        quit()
-
-
-def initialise_run_params():
+def initialise_run_params(create_files):
     """
     Initialises all lists and trackers. Generates save folders and initial
     parameter files if debugging is not active.
@@ -40,16 +42,21 @@ def initialise_run_params():
 
     # Generate a time stamp for use with folder and file names.
     hms = "%02d%02d%02d" % (start.hour, start.minute, start.second)
-    params['TIME_STAMP'] = (str(start.year)[2:] + "_" + str(start.month) +
-                            "_" + str(start.day) + "_" + hms +
-                            "_" + str(start.microsecond))
+    params['TIME_STAMP'] = "_".join([gethostname(),
+                                     str(params['RANDOM_SEED']),
+                                     str(getpid()),
+                                     str(start.year)[2:],
+                                     str(start.month),
+                                     str(start.day),
+                                     hms,
+                                     str(start.microsecond)])
     if not params['SILENT']:
         print("\nStart:\t", start, "\n")
 
     # Generate save folders and files
     if params['DEBUG']:
         print("Seed:\t", params['RANDOM_SEED'], "\n")
-    else:
+    elif create_files:
         generate_folders_and_files()
 
 

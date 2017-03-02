@@ -1,3 +1,4 @@
+import numpy as np
 from algorithm.parameters import params
 
 
@@ -8,6 +9,7 @@ class string_match:
     value of target."""
 
     maximise = False
+    default_fitness = np.NaN
 
     def __init__(self):
         # Set target string.
