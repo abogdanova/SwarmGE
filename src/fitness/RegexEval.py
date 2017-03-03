@@ -41,7 +41,7 @@ Sum of wall-clock time taken to execute the test strings.
 
 class RegexEval:
     maximise = False # lower fitness value is better
-    
+    default_fitness = 100000
 #    def __init__(self):
         # The seed program is needed by the fitness function to generate test data
         # but individual needs the fitness function! :/
@@ -82,7 +82,7 @@ class RegexEval:
             q.put(fitness + (len(individual.phenotype)/100)) # We are running this code in a thread so put the fitness on the queue so it can be read back by the first
 
         except:
-            q.put(100000) # if the regex is broken, or the thread is timedout, return a really bad fitness
+            q.put(self.default_fitness) # if the regex is broken, or the thread is timedout, return a really bad fitness
 
     """
     Check how similar a mutated regex is to the seed regex. It is an alternative measure to Levenshtein distance (experimental) 

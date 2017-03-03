@@ -3,10 +3,6 @@ from operators.crossover import crossover
 from operators.mutation import mutation
 from operators.replacement import replacement, steady_state
 from operators.selection import selection
-from operators.semantic_swap import semantic_swap
-from fitness.default_fitness import default_fitness
-from algorithm.parameters import params
-
 
 def step(individuals):
     """
