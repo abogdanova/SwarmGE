@@ -553,7 +553,7 @@ If the `NO_CROSSOVER_INVALIDS` parameter is used, crossover will select two new 
 
 ###Fixed Onepoint
 
-Given two individuals, fixed onepoint crossover creates two children by selecting the same point on both genomes for crossover to occur. The head of genome 0 is then combined with the tail of genome 1, and the head of genome 1 is combined with the tail of genome 2. This means that genomes will always remain the same length after crossover. Fixed onepoint crossover can be activated with the argument:
+Given two individuals, fixed onepoint crossover creates two children by selecting the same point on both genomes for crossover to occur. The head of genome 0 is then combined with the tail of genome 1, and the head of genome 1 is combined with the tail of genome 0. This means that genomes will always remain the same length after crossover. Fixed onepoint crossover can be activated with the argument:
 
     --crossover fixed_onepoint
 
@@ -571,7 +571,7 @@ or by setting the parameter `WITHIN_USED` to either `True` or `False` in either 
 
 ###Fixed Twopoint
 
-Given two individuals, fixed twopoint crossover creates two children by selecting the same points on both genomes for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid-section of genome 2. This means that genomes will always remain the same length after crossover. Fixed twopoint crossover can be activated with the argument:
+Given two individuals, fixed twopoint crossover creates two children by selecting the same points on both genomes for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid-section of genome 0. This means that genomes will always remain the same length after crossover. Fixed twopoint crossover can be activated with the argument:
 
     --crossover fixed_twopoint
 
@@ -581,7 +581,8 @@ As with all linear genome crossovers, crossover points are selected within the u
 
 ###Variable Onepoint
 
-Given two individuals, variable onepoint crossover creates two children by selecting a different point on each genome for crossover to occur. The head of genome 0 is then combined with the tail of genome 1, and the head of genome 1 is combined with the tail of genome 2. This allows genomes to grow or shrink in length. Variable onepoint crossover can be activated with the argument:
+Given two individuals, variable onepoint crossover creates two children by selecting a different point on each genome for crossover to occur. The head of genome 0 is then combined with the tail of genome 1, and the head of genome 1 is combined with the tail of genome 
+0. This allows genomes to grow or shrink in length. Variable onepoint crossover can be activated with the argument:
 
     --crossover variable_onepoint
 
@@ -593,7 +594,7 @@ As with all linear genome crossovers, crossover points are selected within the u
 
 ###Variable Twopoint
 
-Given two individuals, variable twopoint crossover creates two children by selecting two different points on each genome for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid-section of genome 2. This allows genomes to grow or shrink in length. Variable twopoint crossover can be activated with the argument:
+Given two individuals, variable twopoint crossover creates two children by selecting two different points on each genome for crossover to occur. The head and tail of genome 0 are then combined with the mid-section of genome 1, and the head and tail of genome 1 are combined with the mid-section of genome 0. This allows genomes to grow or shrink in length. Variable twopoint crossover can be activated with the argument:
 
     --crossover variable_twopoint
 
