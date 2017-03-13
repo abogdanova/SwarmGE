@@ -30,9 +30,6 @@ def search_loop():
         # New generation
         individuals = params['STEP'](individuals)
 
-        # Generate statistics for run so far
-        get_stats(individuals)
-
         if params['SAVE_STATE'] and not params['DEBUG'] and \
                                 generation % params['SAVE_STATE_STEP'] == 0:
             # Save the state of the current evolutionary run.
@@ -58,8 +55,5 @@ def search_loop_from_state():
         
         # New generation
         individuals = params['STEP'](individuals)
-        
-        # Generate statistics for run so far
-        get_stats(individuals)
-    
+            
     return individuals
