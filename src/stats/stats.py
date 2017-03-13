@@ -8,6 +8,7 @@ import numpy as np
 from algorithm.parameters import params
 from utilities.stats import trackers
 from utilities.stats.save_plots import save_best_fitness_plot
+from utilities.algorithm.state import create_state
 
 """Algorithm statistics"""
 stats = {
@@ -142,6 +143,11 @@ def get_stats(individuals, end=False):
 
     if end and not params['SILENT']:
         print_final_stats()
+
+    if params['SAVE_STATE'] and not params['DEBUG'] and \
+                            stats['gen'] % params['SAVE_STATE_STEP'] == 0:
+        # Save the state of the current evolutionary run.
+        create_state(individuals)
 
 
 def print_generation_stats():
