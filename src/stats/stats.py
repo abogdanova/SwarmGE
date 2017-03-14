@@ -50,57 +50,16 @@ def get_stats(individuals, end=False):
     :return: Nothing.
     """
 
+    # Get best individual.
     best = max(individuals)
 
     if not trackers.best_ever or best > trackers.best_ever:
+        # Save best individual in trackers.best_ever.
         trackers.best_ever = best
 
     if end or params['VERBOSE'] or not params['DEBUG']:
-
-        if not end:
-            # Time Stats
-            trackers.time_list.append(time() - stats['time_adjust'])
-            stats['time_taken'] = trackers.time_list[-1] - \
-                                  trackers.time_list[-2]
-            stats['total_time'] = trackers.time_list[-1] - \
-                                  trackers.time_list[0]
-
-        # Population Stats
-        stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
-        stats['invalids'] = len(trackers.invalid_cache)
-        if params['CACHE']:
-            stats['unique_inds'] = len(trackers.cache)
-            stats['unused_search'] = 100 - stats['unique_inds'] / \
-                                           stats['total_inds']*100
-        
-        # Genome Stats
-        genome_lengths = [len(i.genome) for i in individuals]
-        stats['max_genome_length'] = np.nanmax(genome_lengths)
-        stats['ave_genome_length'] = np.nanmean(genome_lengths)
-        stats['min_genome_length'] = np.nanmin(genome_lengths)
-
-        # Used Codon Stats
-        codons = [i.used_codons for i in individuals]
-        stats['max_used_codons'] = np.nanmax(codons)
-        stats['ave_used_codons'] = np.nanmean(codons)
-        stats['min_used_codons'] = np.nanmin(codons)
-
-        # Tree Depth Stats
-        depths = [i.depth for i in individuals]
-        stats['max_tree_depth'] = np.nanmax(depths)
-        stats['ave_tree_depth'] = np.nanmean(depths)
-        stats['min_tree_depth'] = np.nanmin(depths)
-
-        # Tree Node Stats
-        nodes = [i.nodes for i in individuals]
-        stats['max_tree_nodes'] = np.nanmax(nodes)
-        stats['ave_tree_nodes'] = np.nanmean(nodes)
-        stats['min_tree_nodes'] = np.nanmin(nodes)
-
-        # Fitness Stats
-        fitnesses = [i.fitness for i in individuals]
-        stats['ave_fitness'] = np.nanmean(fitnesses)
-        stats['best_fitness'] = trackers.best_ever.fitness
+        # Update all stats.
+        update_stats(individuals, end)
 
     # Save fitness plot information
     if params['SAVE_PLOTS'] and not params['DEBUG']:
@@ -111,11 +70,11 @@ def get_stats(individuals, end=False):
             save_best_fitness_plot()
 
     # Print statistics
-    if params['VERBOSE']:
-        if not end:
-            print_generation_stats()
+    if params['VERBOSE'] and not end:
+        print_generation_stats()
 
     elif not params['SILENT']:
+        # Print simple display output.
         perc = stats['gen'] / (params['GENERATIONS']+1) * 100
         stdout.write("Evolution: %d%% complete\r" % perc)
         stdout.flush()
@@ -128,7 +87,7 @@ def get_stats(individuals, end=False):
         trackers.best_ever.fitness = trackers.best_ever.training_fitness
 
     # Save stats to list.
-    if params['VERBOSE'] or not params['DEBUG'] and not end:
+    if params['VERBOSE'] or (not params['DEBUG'] and not end):
         trackers.stats_list.append(copy(stats))
     
     # Save stats to file.
@@ -148,6 +107,61 @@ def get_stats(individuals, end=False):
                             stats['gen'] % params['SAVE_STATE_STEP'] == 0:
         # Save the state of the current evolutionary run.
         create_state(individuals)
+
+
+def update_stats(individuals, end):
+    """
+    Update all stats in the stats dictionary.
+    
+    :param individuals: A population of individuals.
+    :param end: Boolean flag for indicating the end of an evolutionary run.
+    :return: Nothing.
+    """
+
+    if not end:
+        # Time Stats
+        trackers.time_list.append(time() - stats['time_adjust'])
+        stats['time_taken'] = trackers.time_list[-1] - \
+                              trackers.time_list[-2]
+        stats['total_time'] = trackers.time_list[-1] - \
+                              trackers.time_list[0]
+
+    # Population Stats
+    stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
+    stats['invalids'] = len(trackers.invalid_cache)
+    if params['CACHE']:
+        stats['unique_inds'] = len(trackers.cache)
+        stats['unused_search'] = 100 - stats['unique_inds'] / \
+                                       stats['total_inds'] * 100
+
+    # Genome Stats
+    genome_lengths = [len(i.genome) for i in individuals]
+    stats['max_genome_length'] = np.nanmax(genome_lengths)
+    stats['ave_genome_length'] = np.nanmean(genome_lengths)
+    stats['min_genome_length'] = np.nanmin(genome_lengths)
+
+    # Used Codon Stats
+    codons = [i.used_codons for i in individuals]
+    stats['max_used_codons'] = np.nanmax(codons)
+    stats['ave_used_codons'] = np.nanmean(codons)
+    stats['min_used_codons'] = np.nanmin(codons)
+
+    # Tree Depth Stats
+    depths = [i.depth for i in individuals]
+    stats['max_tree_depth'] = np.nanmax(depths)
+    stats['ave_tree_depth'] = np.nanmean(depths)
+    stats['min_tree_depth'] = np.nanmin(depths)
+
+    # Tree Node Stats
+    nodes = [i.nodes for i in individuals]
+    stats['max_tree_nodes'] = np.nanmax(nodes)
+    stats['ave_tree_nodes'] = np.nanmean(nodes)
+    stats['min_tree_nodes'] = np.nanmin(nodes)
+
+    # Fitness Stats
+    fitnesses = [i.fitness for i in individuals]
+    stats['ave_fitness'] = np.nanmean(fitnesses)
+    stats['best_fitness'] = trackers.best_ever.fitness
 
 
 def print_generation_stats():
