@@ -28,11 +28,11 @@ then
     cd "$parser_dir"/src
     python3.5 LR_Parser.py --target "$regex_string" --grammar_file $grammar_file > "$regex_genome_file"
     
+    echo "# ""$regex_string" >> "$cur_dir"/../parameters/"$parameters_file"
     cat "$regex_genome_file" |
         grep -A1 Genome |
         tr -d '\n' |
         sed 's/Genome:/SEED_GENOME:\ \ \ \ \ /g' >> "$cur_dir"/../parameters/"$parameters_file"
-    echo "# ""$regex_string" >> "$cur_dir"/../parameters/"$parameters_file"
     
     echo "$regex_string" >> "$regex_genome_file"
     cat ../grammars/"$grammar_file" >> "$regex_genome_file"

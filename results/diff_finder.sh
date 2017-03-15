@@ -1,14 +1,24 @@
 
 #!/bin/bash
 
+# Goes through a file consisting of 
+
 cd ~/source/PonyGE2/results
 # for file in $(ls gecco_regex_improvement_analysis/) ; do echo $file >> best_ever.txt ; grep "best_ever" gecco_regex_improvement_analysis/$file | uniq >> best_ever.txt ; echo " " >> best_ever.txt ; done
 # grep -B1 Individual best_ever.txt | grep -v "\-\-"  > best_ever_cleaned.txt 
+
+diff_pairs_dir="regex_pairs"
+
+mkdir -p $diff_pairs_dir
 
 line_count=0
 
 while read line 
 do
+    last_line_txt=$( echo -e "$line" | grep -c .txt )
+    if [ $last_line_txt -eq 1 ] ; then
+        cur_text_file_name="$line"
+    fi
     ((line_count++))
     current="$line"
     ind_count=$(echo -e "$last""\n""$current" | grep -c Individual)
@@ -16,13 +26,16 @@ do
     then
         last_clean=$(echo "$last" | awk '{ print $4 }')
         current_clean=$(echo "$current" | awk '{ print $4 }')
+        regex_pair_string=$(echo -e "$cur_text_file_name""\n""$last""\n""$current")
+        regex_pair_filename=$(echo -e "regex_pair_string" | shasum -a 256 | awk '{ print $1 }' )
+        echo -e "$regex_pair_string" >> "$diff_pairs_dir""/""$regex_pair_filename"".txt"
         
         if [ "$last_clean" != "$current_clean" ]
         then            
             last_fit=$(echo "$last" | awk '{ print $NF }')
             current_fit=$(echo "$current" | awk '{ print $NF }')
             #            echo "-----  $last_clean     $current_clean"
-            calc_string=$(echo -n "((($last_fit)-($current_fit))/($last_fit))*100" | sed -e 's/[eE]/\*10\^/g')
+            calc_string=$(echo -n "(($last_fit)-($current_fit))" | sed -e 's/[eE]/\*10\^/g')
             echo "scale=10; $calc_string" | bc | tr -d "\n"  # or something
             echo -n "     "
             

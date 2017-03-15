@@ -79,7 +79,8 @@ class RegexEval:
             #     self.time=True
             #     return fitness
             
-            q.put(fitness + (len(individual.phenotype)/100)) # We are running this code in a thread so put the fitness on the queue so it can be read back by the first
+            #q.put(fitness + (len(individual.phenotype)/100)) # We are running this code in a thread so put the fitness on the queue so it can be read back by the first
+            q.put(fitness)
 
         except:
             q.put(self.default_fitness) # if the regex is broken, or the thread is timedout, return a really bad fitness
@@ -213,24 +214,24 @@ class RegexEval:
         self.test_cases.append(a_test_string)
         return a_test_string
             
-    """
-    Generate generic tests
-    """    
-    def generate_tests(self):
-
-        test_gen_method = getattr(self, params['FITNESS_TEST_SUITE'])
-        test_gen_method()
-        # can be any of these:
-        # self.generate_regex_mac_search_string_tests()
-        # self.generate_catastrophic_csv()
-        # self.generate_iso8601_datetime_tests()
-        # self.generate_macaddress_validation_tests()
-        # self.generate_email_validation_tests()
-        # self.generate_scientific_number_tests()
-        # self.generate_PonyGE2_Grammar_File_Rule_tests()
-        # self.generate_catastrophic_QT3TS_tests()
-        # self.generate_d3_interpolate_number()
-        print("Number of test cases: {}".format(len(self.test_cases)))
+#    """
+#    Generate generic tests
+#    """    
+#    def generate_tests(self):
+#
+#        test_gen_method = getattr(self, params['FITNESS_TEST_SUITE'])
+#        test_gen_method()
+#        # can be any of these:
+#        # self.generate_regex_mac_search_string_tests()
+#        # self.generate_catastrophic_csv()
+#        # self.generate_iso8601_datetime_tests()
+#        # self.generate_macaddress_validation_tests()
+#        # self.generate_email_validation_tests()
+#        # self.generate_scientific_number_tests()
+#        # self.generate_PonyGE2_Grammar_File_Rule_tests()
+#        # self.generate_catastrophic_QT3TS_tests()
+#        # self.generate_d3_interpolate_number()
+#        print("Number of test cases: {}".format(len(self.test_cases)))
 
     def initialise_test_cases(self):
 

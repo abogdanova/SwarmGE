@@ -1,3 +1,6 @@
 [submodule "ReverseGE"]
 	path = ReverseGE
 	url = https://github.com/mikefenton/ReverseGE.git
+[submodule "src/ReverseGE"]
+	path = src/ReverseGE
+	url = https://github.com/mikefenton/ReverseGE.git
