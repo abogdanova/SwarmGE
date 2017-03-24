@@ -8,6 +8,9 @@ from algorithm.parameters import params
 from utilities.algorithm.state import create_state
 from utilities.stats import trackers
 from utilities.stats.save_plots import save_best_fitness_plot
+from utilities.stats.file_io import save_stats_to_file, save_stats_headers, \
+    save_best_ind_to_file
+
 
 """Algorithm statistics"""
 stats = {
@@ -35,9 +38,6 @@ stats = {
         "total_time": 0,
         "time_adjust": 0
 }
-
-from utilities.stats.file_io import save_stats_to_file, save_stats_headers, \
-    save_best_ind_to_file
 
 
 def get_stats(individuals, end=False):
@@ -95,12 +95,12 @@ def get_stats(individuals, end=False):
     # Save stats to file.
     if not params['DEBUG']:
         if stats['gen'] == 0:
-            save_stats_headers()
-        save_stats_to_file(end)
+            save_stats_headers(stats)
+        save_stats_to_file(stats, end)
         if params['SAVE_ALL']:
-            save_best_ind_to_file(end, stats['gen'])
+            save_best_ind_to_file(stats, end, stats['gen'])
         elif params['VERBOSE'] or end:
-            save_best_ind_to_file(end, "best")
+            save_best_ind_to_file(stats, end, "best")
 
     if end and not params['SILENT']:
         print_final_stats()

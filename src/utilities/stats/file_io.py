@@ -2,48 +2,14 @@ import types
 from os import path, getcwd, makedirs
 
 from algorithm.parameters import params
-from stats.stats import stats
 from utilities.stats import trackers
 
 
-def save_params_to_file():
-    """
-    Save evolutionary parameters in a parameters.txt file. Automatically
-    parse function and class names.
-
-    :return: Nothing.
-    """
-
-    # Generate file path and name.
-    filename = path.join(params['FILE_PATH'], "parameters.txt")
-    savefile = open(filename, 'w')
-
-    # Justify whitespaces for pretty printing/saving.
-    col_width = max(len(param) for param in params.keys())
-
-    for param in sorted(params.keys()):
-        savefile.write(str(param) + ": ")
-        spaces = [" " for _ in range(col_width - len(param))]
-
-        if isinstance(params[param], types.FunctionType):
-            # Object is a function, save function name.
-            savefile.write("".join(spaces) + str(params[
-                                                     param].__name__) + "\n")
-        elif hasattr(params[param], '__call__'):
-            # Object is a class instance, save name of class instance.
-            savefile.write("".join(spaces) + str(params[
-                                                     param].__class__.__name__) + "\n")
-        else:
-            # Write object as normal.
-            savefile.write("".join(spaces) + str(params[param]) + "\n")
-
-    savefile.close()
-
-
-def save_stats_to_file(end=False):
+def save_stats_to_file(stats, end=False):
     """
     Write the results to a results file for later analysis
 
+    :param stats: The stats.stats.stats dictionary.
     :param end: A boolean flag indicating whether or not the evolutionary
     process has finished.
     :return: Nothing.
@@ -67,10 +33,11 @@ def save_stats_to_file(end=False):
         savefile.close()
 
 
-def save_stats_headers():
+def save_stats_headers(stats):
     """
     Saves the headers for all stats in the stats dictionary.
 
+    :param stats: The stats.stats.stats dictionary.
     :return: Nothing.
     """
 
@@ -82,10 +49,11 @@ def save_stats_headers():
     savefile.close()
 
 
-def save_best_ind_to_file(end=False, name="best"):
+def save_best_ind_to_file(stats, end=False, name="best"):
     """
     Saves the best individual to a file.
 
+    :param stats: The stats.stats.stats dictionary.
     :param end: A boolean flag indicating whether or not the evolutionary
     process has finished.
     :param name: The name of the individual. Default set to "best".
@@ -146,3 +114,37 @@ def generate_folders_and_files():
                                     str(params['TIME_STAMP']))
 
     save_params_to_file()
+
+
+def save_params_to_file():
+    """
+    Save evolutionary parameters in a parameters.txt file. Automatically
+    parse function and class names.
+
+    :return: Nothing.
+    """
+
+    # Generate file path and name.
+    filename = path.join(params['FILE_PATH'], "parameters.txt")
+    savefile = open(filename, 'w')
+
+    # Justify whitespaces for pretty printing/saving.
+    col_width = max(len(param) for param in params.keys())
+
+    for param in sorted(params.keys()):
+        savefile.write(str(param) + ": ")
+        spaces = [" " for _ in range(col_width - len(param))]
+
+        if isinstance(params[param], types.FunctionType):
+            # Object is a function, save function name.
+            savefile.write("".join(spaces) + str(params[
+                                                     param].__name__) + "\n")
+        elif hasattr(params[param], '__call__'):
+            # Object is a class instance, save name of class instance.
+            savefile.write("".join(spaces) + str(params[
+                                                     param].__class__.__name__) + "\n")
+        else:
+            # Write object as normal.
+            savefile.write("".join(spaces) + str(params[param]) + "\n")
+
+    savefile.close()
