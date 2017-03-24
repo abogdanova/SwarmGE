@@ -941,6 +941,8 @@ To try this problem, specify the following command-line argument:
 
     --parameters sequence_match.txt
 
+*__NOTE__ that the sequence match dependencies are currently outside of Anaconda.*
+
 ##Program synthesis
 ------------------------
 
