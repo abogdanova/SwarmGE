@@ -58,7 +58,7 @@ params = {
         'TARGET': "ponyge_rocks",
 
         # Set max sizes of individuals
-        'MAX_TREE_DEPTH': None,
+        'MAX_TREE_DEPTH': 90,  #SET TO 90 DUE TO PYTHON EVAL() STACK LIMIT - GO HIGHER AT YOUR OWN RISK
         'MAX_TREE_NODES': None,
         'CODON_SIZE': 100000,
         'MAX_GENOME_LENGTH': None,
