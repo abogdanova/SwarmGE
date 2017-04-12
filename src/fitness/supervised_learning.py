@@ -94,7 +94,8 @@ class supervised_learning:
                 # values first, the estimate second
                 fitness = params['ERROR_METRIC'](y, yhat)
 
-        except (FloatingPointError, ZeroDivisionError, OverflowError):
+        except (FloatingPointError, ZeroDivisionError, OverflowError,
+                MemoryError):
             # FP err can happen through eg overflow (lots of pow/exp calls)
             # ZeroDiv can happen when using unprotected operators
             fitness = self.default_fitness
