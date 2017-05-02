@@ -7,7 +7,7 @@ PonyGE2 is an implementation of GE in Python. It's intended as an advertisement 
 
 The original version of PonyGE (https://github.com/jmmcd/ponyge) was originally designed to be a small single-file implementation of GE. However, over time this has grown to a stage where a more formal structured approach was needed. This has led to the development of PonyGE2 (https://github.com/jmmcd/ponyge2), presented here.
 
-PonyGE2 has been published and been made freely available on arXiv at:
+A technical paper describing PonyGE2 has been published and been made freely available on arXiv at:
 
 https://arxiv.org/abs/1703.08535
 
