@@ -1,6 +1,7 @@
 import matplotlib
 import pandas as pd
 from os import path, pathsep
+import numpy as np
 
 from utilities.stats.trackers import best_fitness_list
 
@@ -35,6 +36,7 @@ def save_plot_from_data(data, name):
     :param name: the name of the data to be plotted.
     :return: Nothing.
     """
+    
     from algorithm.parameters import params
 
     # Plot the data
@@ -75,4 +77,46 @@ def save_plot_from_file(filename, stat_name):
 
     # Save plot
     plt.savefig(path.join(save_path, (stat_name + '.pdf')))
+    plt.close()
+
+
+def save_box_plot(data, names, title):
+    """
+    Given an array of some data, and a list of names of that data, generate
+    and save a box plot of that data.
+
+    :param data: An array of some data to be plotted.
+    :param names: A list of names of that data.
+    :param title: The title of the plot.
+    :return: Nothing
+    """
+
+    from algorithm.parameters import params
+    
+    import matplotlib.pyplot as plt
+    plt.rc('font', family='Times New Roman')
+    
+    # Set up the figure.
+    fig = plt.figure()
+    ax1 = fig.add_subplot(1, 1, 1)
+    
+    # Plot tight layout.
+    plt.tight_layout()
+    
+    # Plot the data.
+    ax1.boxplot(np.transpose(data), 1)
+    
+    # Plot title.
+    plt.title(title)
+    
+    # Generate list of numbers for plotting names.
+    nums = list(range(len(data))[1:]) + [len(data)]
+    
+    # Plot names for each data point.
+    plt.xticks(nums, names, rotation='vertical', fontsize=8)
+    
+    # Save plot.
+    plt.savefig(path.join(params['FILE_PATH'], (title + '.pdf')))
+    
+    # Close plot.
     plt.close()

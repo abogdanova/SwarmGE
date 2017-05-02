@@ -6,7 +6,7 @@
 from sys import path
 path.append("../src")
 
-from utilities.algorithm.initialise_run import check_python_version
+from utilities.algorithm.general import check_python_version
 
 check_python_version()
 
@@ -25,7 +25,7 @@ def execute_run(seed):
     :return: Nothing.
     """
 
-    exec_str = "source activate py35;python ponyge.py " \
+    exec_str = "python3 ponyge.py " \
                "--random_seed " + str(seed) + " " + " ".join(sys.argv[1:])
 
     call(exec_str, shell=True)

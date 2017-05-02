@@ -3,6 +3,7 @@ from operators.crossover import crossover
 from operators.mutation import mutation
 from operators.replacement import replacement, steady_state
 from operators.selection import selection
+from stats.stats import get_stats
 
 
 def step(individuals):
@@ -32,6 +33,9 @@ def step(individuals):
 
     # Replace the old population with the new population.
     individuals = replacement(new_pop, individuals)
+
+    # Generate statistics for run so far
+    get_stats(individuals)
     
     return individuals
 

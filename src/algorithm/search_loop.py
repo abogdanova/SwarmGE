@@ -1,7 +1,6 @@
 from algorithm.parameters import params
 from fitness.evaluation import evaluate_fitness
 from stats.stats import stats, get_stats
-from utilities.algorithm.state import create_state
 from utilities.stats import trackers
 
 
@@ -30,14 +29,6 @@ def search_loop():
         # New generation
         individuals = params['STEP'](individuals)
 
-        # Generate statistics for run so far
-        get_stats(individuals)
-
-        if params['SAVE_STATE'] and not params['DEBUG'] and \
-                                generation % params['SAVE_STATE_STEP'] == 0:
-            # Save the state of the current evolutionary run.
-            create_state(individuals)
-
     return individuals
 
 
@@ -58,8 +49,5 @@ def search_loop_from_state():
         
         # New generation
         individuals = params['STEP'](individuals)
-        
-        # Generate statistics for run so far
-        get_stats(individuals)
-    
+            
     return individuals

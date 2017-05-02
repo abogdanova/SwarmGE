@@ -42,7 +42,7 @@ def create_state(individuals):
              "random_state": random_state, "time": state_time}
     
     save_state(state)
-    
+
 
 def save_state(state):
     """

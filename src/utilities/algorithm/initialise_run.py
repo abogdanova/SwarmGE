@@ -1,27 +1,12 @@
 from datetime import datetime
-from time import time
-from random import seed
-from sys import version_info
-from socket import gethostname
 from os import getpid
+from random import seed
+from socket import gethostname
+from time import time
 
 from algorithm.parameters import params
-from stats.stats import generate_folders_and_files
 from utilities.stats import trackers
-
-
-def check_python_version():
-    """
-    Check the python version to ensure it is correct. PonyGE uses Python 3.5
-
-    :return: Nothing
-    """
-
-    if version_info.major < 3 or (version_info.minor < 5 and
-                                  version_info.major == 3):
-        s = "\nError: Python version not supported.\n" \
-            "       Must use at least Python 3.5."
-        raise Exception(s)
+from utilities.stats.file_io import generate_folders_and_files
 
 
 def initialise_run_params(create_files):
