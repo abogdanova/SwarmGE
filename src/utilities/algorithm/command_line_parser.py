@@ -51,18 +51,15 @@ def parse_cmd_args(arguments):
     # Initialise parser
     parser = argparse.ArgumentParser(
         formatter_class=SortingHelpFormatter,
-        description="""Welcome to PonyGE - Help
-        -------------------
-        The following are the available command line args
-        please see src /algorithm/parameters.py
-        for a more detailed explanation of each argument and possible
-        values:""",
-        epilog="""----------------------------
-        To try out ponyge simply run: python ponyge.py
+        usage=argparse.SUPPRESS,
+        description="""Welcome to PonyGE2 - Help.
+        The following are the available command line arguments. Please see
+        src/algorithm/parameters.py for a more detailed explanation of each
+        argument and its possible values.""",
+        epilog="""To try out PonyGE2 from the command line simply navigate to
+        the src directory and type: python ponyge.py.""")
 
-        Thanks for trying our product
-
-        PonyGE Team""")
+    parser._optionals.title = 'PonyGE2 command-line usage'
 
     
     class ListAction(argparse.Action):
