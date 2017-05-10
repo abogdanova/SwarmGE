@@ -1,4 +1,18 @@
 import argparse
+from operator import attrgetter
+
+
+class SortingHelpFormatter(argparse.HelpFormatter):
+    """
+    Custom class for sorting the arguments of the arg parser for printing. When
+    "--help" is called, arguments will be listed in alphabetical order. Without
+    this custom class, arguments will be printed in the order in which they are
+    defined.
+    """
+    
+    def add_arguments(self, actions):
+        actions = sorted(actions, key=attrgetter('option_strings'))
+        super(SortingHelpFormatter, self).add_arguments(actions)
 
 
 def parse_cmd_args(arguments):
@@ -36,7 +50,7 @@ def parse_cmd_args(arguments):
 
     # Initialise parser
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        formatter_class=SortingHelpFormatter,
         description="""Welcome to PonyGE - Help
         -------------------
         The following are the available command line args
