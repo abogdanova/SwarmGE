@@ -154,7 +154,7 @@ class RegexEval:
         """
         
         results = list()
-        testing_iterations = 1
+        testing_iterations = 2
         # do a quick test to time the longest test case (which is also the last in the list)
         # quick_test = self.time_regex_test_case(compiled_regex, self.test_cases[len(self.test_cases)-1], testing_iterations)
         #if quick_test[3].calc_match_errors(list(quick_test[1])) < 0 : # Ideally we only time a program if it is funtionally correct
@@ -174,7 +174,7 @@ class RegexEval:
         :return:
         """
         
-        repeats = 3
+        repeats = 10
         search_string = test_case.get_search_string()
         
         def wrap():
