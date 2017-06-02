@@ -6,12 +6,12 @@
 # Hereby licensed under the GNU GPL v3.
 """ Python GE implementation """
 
-from utilities.algorithm.initialise_run import check_python_version
+from utilities.algorithm.general import check_python_version
 
 check_python_version()
 
-from algorithm.parameters import params, set_params
 from stats.stats import get_stats
+from algorithm.parameters import params, set_params
 from utilities.stats import trackers
 import sys
 

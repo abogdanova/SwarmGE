@@ -1,16 +1,6 @@
 import sys
-# import ast
-# from antlr4 import InputStream, CommonTokenStream, ParseTreeWalker, tree
-# from antlr4_generated.PCRELexer import PCRELexer
-# from antlr4_generated.PCREParser import PCREParser
-# # from antlr4_generated.PCREListener import PCREListener
-from pprint import pprint
-# from random import randrange
-
 from algorithm.parameters import set_params
-from operators.semantic_swap import semantic_subtree_swap
 from representation.individual import Individual
-from algorithm.parameters import params
 import random
             
 """
@@ -173,3 +163,58 @@ def test():
 #     print(printer.generated_grammar[:-1])
 #     return "yea"
 #
+
+    
+
+def time_tester_printer():
+    """
+    Want to validate that these are in fact different runtimes.
+    
+    :return: Nothing
+    """
+    
+    for i in range(10000):
+
+        # .X(.+)+XX;  & 0.0003474690020084381 \\
+        individuals = list()
+        genomes = [
+            # .X(.+)XX;  & 0.00010399427264928818 \\
+            [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 11, 3, 15, 4, 44, 3, 12, 3, 5, 4, 49, 2, 5, 4, 49],
+            # .X([0-c{76,}]?)\wXX;  & 0.00009754206985235214 \\
+            [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 13, 3, 10, 2, 13, 5, 3, 10, 5, 28, 3, 18, 4, 3, 17, 2, 16, 3, 12, 3, 4, 54, 3, 5, 5, 48, 3, 5, 4, 49, 2, 5, 4, 49],
+            # .X([3-c{26,}]?)\wXX; 9.634345769882202e-05
+            [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 13, 3, 10, 2, 13, 5, 3, 13, 5, 28, 3, 18, 4, 3, 12, 2, 16, 3, 12, 3, 4, 54, 3, 5, 5, 48, 3, 5, 4, 49, 2, 5, 4, 49],
+            # .X([9-c{70,}]?)\wXX; 9.745266288518906e-05
+            [2, 12, 3, 4, 44, 2, 5, 4, 49, 2, 11, 3, 14, 13, 3, 10, 2, 13, 5, 3, 19, 5, 28, 3, 18, 4, 3, 17, 2, 10, 3, 12, 3, 4, 54, 3, 5, 5, 48, 3, 5, 4, 49, 2, 5, 4, 49],
+            # stefans new regex: (?P<rulename><\S+>)\s*::=\s*(?P<production>(?:\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)
+            [2, 11, 3, 12, 3, 4, 51, 3, 5, 4, 41, 3, 4, 48, 3, 5, 5, 43, 3, 5, 5, 46, 3, 5, 5, 37, 3, 5, 5, 30, 3, 5, 5, 39, 3, 5, 5, 26, 3, 5, 5, 38, 3, 5, 5, 30, 3, 4, 50, 3, 4, 48, 3, 4, 54, 3, 5, 4, 44, 3, 4, 41, 2, 4, 50, 2, 14, 10, 3, 12, 3, 4, 54, 3, 5, 5, 44, 3, 4, 40, 3, 4, 46, 3, 4, 46, 3, 4, 49, 3, 4, 54, 2, 5, 5, 44, 3, 11, 2, 12, 3, 4, 51, 3, 5, 4, 41, 3, 4, 48, 3, 5, 5, 41, 3, 5, 5, 43, 3, 5, 5, 40, 3, 5, 5, 29, 3, 5, 5, 46, 3, 5, 5, 28, 3, 5, 5, 45, 3, 5, 5, 34, 3, 5, 5, 40, 3, 5, 5, 39, 2, 4, 50, 3, 14, 11, 3, 11, 2, 12, 3, 4, 51, 3, 4, 46, 3, 4, 54, 2, 4, 34, 3, 14, 13, 3, 14, 11, 3, 14, 9, 3, 14, 15, 3, 14, 10, 3, 10, 3, 12, 3, 4, 56, 3, 4, 54, 3, 5, 5, 43, 3, 4, 54, 2, 5, 5, 39, 3, 11, 3, 12, 3, 4, 51, 3, 4, 33, 3, 4, 48, 3, 4, 54, 3, 5, 4, 44, 3, 4, 41, 3, 4, 50, 3, 4, 54, 3, 5, 5, 44, 3, 4, 40, 3, 4, 46, 3, 4, 46, 2, 4, 49],
+            # original PonyGE2 grammar rule extraction
+            [2, 11, 3, 12, 3, 4, 51, 3, 5, 4, 41, 3, 4, 48, 3, 5, 5, 43, 3, 5, 5, 46, 3, 5, 5, 37, 3, 5, 5, 30, 3, 5, 5, 39, 3, 5, 5, 26, 3, 5, 5, 38, 3, 5, 5, 30, 3, 4, 50, 3, 4, 48, 3, 4, 54, 3, 5, 4, 44, 3, 4, 41, 2, 4, 50, 2, 14, 10, 3, 12, 3, 4, 54, 3, 5, 5, 44, 3, 4, 40, 3, 4, 46, 3, 4, 46, 3, 4, 49, 3, 4, 54, 2, 5, 5, 44, 3, 11, 2, 12, 3, 4, 51, 3, 5, 4, 41, 3, 4, 48, 3, 5, 5, 41, 3, 5, 5, 43, 3, 5, 5, 40, 3, 5, 5, 29, 3, 5, 5, 46, 3, 5, 5, 28, 3, 5, 5, 45, 3, 5, 5, 34, 3, 5, 5, 40, 3, 5, 5, 39, 2, 4, 50, 3, 14, 11, 3, 19, 10, 2, 11, 3, 12, 3, 4, 51, 3, 4, 49, 3, 4, 54, 2, 4, 34, 2, 12, 3, 4, 54, 2, 4, 34, 3, 14, 13, 3, 14, 11, 3, 14, 9, 3, 14, 15, 3, 14, 10, 3, 10, 3, 12, 3, 4, 56, 3, 4, 54, 3, 5, 5, 43, 3, 4, 54, 2, 5, 5, 39, 3, 11, 3, 12, 3, 4, 51, 3, 4, 33, 3, 4, 48, 3, 4, 54, 3, 5, 4, 44, 3, 4, 41, 3, 4, 50, 3, 4, 54, 3, 5, 5, 44, 3, 4, 40, 3, 4, 46, 3, 4, 46, 2, 4, 49],
+        ]
+     
+        # individuals.append( Individual(genomes[0], None) )
+        # individuals.append(  Individual(genomes[1], None) )
+        # individuals.append(  Individual(genomes[2], None) )
+        # individuals.append( Individual(genomes[3], None) )
+
+        individuals.append( Individual(genomes[4], None) )
+        individuals.append( Individual(genomes[5], None) )
+        
+
+        order = list(range(0,len(individuals))) # can we get rid of lazy eval already? :/
+
+        random.shuffle(order)
+        for i in order:
+            individuals[i].evaluate()
+
+        for ind in individuals:
+            print("{0:.20f} ".format(ind.fitness), flush=True, end="") # print all so we can bootstrap them in R
+        print("")
+        # print("{0:.10f}".format(orig_ind.fitness - evo_ind.fitness))
+            
+            
+if __name__ == '__main__':
+    set_params(sys.argv)
+    # test()
+    time_tester()
+
