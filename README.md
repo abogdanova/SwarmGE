@@ -2,7 +2,8 @@
 # Note on Regex Performance Improvement
 ------------
 
-This is a fork of PonyGE2 with a fitness function which measures runtime and functionality of regexs.
+This is a fork of PonyGE2 for Genetic Improvement of Regular Expressions.
+Improves existing regexes by seeding them into the population. The fitness function measures runtime and functionality of regexes.
 
 E.g.
 
