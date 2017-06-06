@@ -40,7 +40,6 @@ def seed_only(size):
             population.append(seed_ind)
         params['MAX_TREE_DEPTH'] = len(seed_ind.genome) * 3
         print("Setting MAX_TREE_DEPTH to {}".format(params['MAX_TREE_DEPTH']))
-        print("S")
 
     else:
         print("Using seed_only initialisation without SEED_INDIVIDUAL")
