@@ -11,17 +11,6 @@ from multiprocessing import Process, Queue
 
 # Author: Brendan Cody-Kenny - codykenny at gmail
 
-# http://stackoverflow.com/questions/24812253/how-can-i-capture-return-value-with-python-timeit-module/
-timeit.template = """
-def inner(_it, _timer{init}):
-    {setup}
-    _t0 = _timer()
-    for _i in _it:
-        retval = {stmt}
-    _t1 = _timer()
-    return _t1 - _t0, retval
-"""
-
 """
 TODO
 Apache log file
@@ -69,7 +58,6 @@ class RegexEval:
         :param q:
         :return:
         """
-        
         regex_string = individual.phenotype
         try:
             compiled_regex = re.compile(regex_string)
@@ -98,7 +86,7 @@ class RegexEval:
             # We are running this code in a thread so put the fitness on the
             # queue so it can be read back by the first
             # length of the phenotype puts parsimony pressure toward shorter regex
-            q.put(fitness + (len(individual.phenotype)/100))
+            q.put(fitness) # + (len(individual.phenotype)/100))
 
         except:  # Error as e:
             # if the regex is broken, or the thread is timedout, return a
@@ -106,6 +94,7 @@ class RegexEval:
             # print(e)
             # traceback.print_exc()
             q.put(RegexEval.default_fitness)
+            
 
     def calculate_similarity_score(self, regex_string):
         """
@@ -147,7 +136,6 @@ class RegexEval:
         # if fitness == seed_fitness:
         #     fitness = 100 * len(a_result)  # identical result to seed
         # penalised
-        
         return result_error, time_sum
 
     def test_regex(self, compiled_regex):
@@ -184,21 +172,25 @@ class RegexEval:
         # session = Session()
         session = None
         
-        if not self.seed_regex:
+        if not RegexEval.seed_regex:
             # TODO - move test case generation to PonyGE2 initialisation
             # Need to have this like this until we figure out how to
             # generate an individual during initialisation of the fitness
             # function. Note that grammar class not initialised yet :(
-            self.seed_regex = Individual(params['SEED_GENOME'],
+            RegexEval.seed_regex = Individual(params['SEED_GENOME'],
                                          None).phenotype
-            # TestGen.generate_test_suite(self.seed_regex, session)
-            self.test_cases = TestGen.generate_test_suite(self.seed_regex,
+            # TestGen.generate_test_suite(RegexEval.seed_regex, session)
+            RegexEval.test_cases = TestGen.generate_test_suite(RegexEval.seed_regex,
                                                           session)
-
+        if(len(RegexEval.test_cases) is 0):
+            print("PonyGE2: No regex test cases found! Please add at least one passing regex test string. exiting. ")
+            exit(1)
+            
         if RegexEval.pstartup is None:
             RegexEval.pstartup = Process(target=self.call_fitness,
                                          name="self.call_fitness")
         RegexEval.pstartup._args = (individual, RegexEval.q)
+
         RegexEval.pstartup.start()
         RegexEval.prunner = RegexEval.pstartup
         RegexEval.pstartup = Process(target=self.call_fitness,
@@ -206,6 +198,7 @@ class RegexEval:
         
         # Set one second time limit for running thread.
         self.prunner.join(1)
+
         
         # If thread is active
         if self.prunner.is_alive():

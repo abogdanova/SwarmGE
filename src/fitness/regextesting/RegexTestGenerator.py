@@ -209,7 +209,8 @@ def generate_test_suite(regex_string, session):
     #                                          start=match['start'],
     #                                          end=match['end'])
     #                 session.add(new_test_case)
-            
+
+    return test_cases
             
 def add_re_match_to_test(vals, passing_test_string):
     """
