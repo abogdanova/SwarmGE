@@ -1,4 +1,5 @@
-import time, timeit
+import timeit
+
 
 def time_regex_test_case(compiled_regex, test_case, iterations):
     """

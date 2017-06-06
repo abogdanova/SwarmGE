@@ -41,8 +41,8 @@ class RegexEval:
     maximise = False  # lower fitness value is better
     default_fitness = 100000
 
-    # these need to be class variables, not object variables 
-    test_cases = [] 
+    # these need to be class variables, not object variables
+    test_cases = []
     seed_regex = None
     time = True
     q = Queue()
@@ -100,10 +100,10 @@ class RegexEval:
             # length of the phenotype puts parsimony pressure toward shorter regex
             q.put(fitness + (len(individual.phenotype)/100))
 
-        except: # Error as e:
+        except:  # Error as e:
             # if the regex is broken, or the thread is timedout, return a
             # really bad fitness
-            #print(e)
+            # print(e)
             # traceback.print_exc()
             q.put(RegexEval.default_fitness)
 
@@ -118,12 +118,12 @@ class RegexEval:
         
         char_same_count = 0
         if 'SEED_GENOME' in params and params['SEED_GENOME']:
-            seed_ind = individual.Individual(params['SEED_GENOME'], None)
+            seed_ind = Individual(params['SEED_GENOME'], None)
             seed_string = seed_ind.phenotype
             if regex_string == seed_string:
                 return len(seed_string)
             for i in range(len(regex_string)):
-                for j in range(i,len(seed_string)):
+                for j in range(i, len(seed_string)):
                     if regex_string[i] == seed_string[j]:
                         char_same_count += 1
                         break
@@ -159,14 +159,14 @@ class RegexEval:
         """
         
         results = list()
-        testing_iterations = 2
+        testing_iterations = 1
         # do a quick test to time the longest test case (which is also the last in the list)
         # quick_test = self.time_regex_test_case(compiled_regex, test_cases[len(test_cases)-1], testing_iterations)
         #if quick_test[3].calc_match_errors(list(quick_test[1])) < 0 : # Ideally we only time a program if it is funtionally correct
         #    testing_iterations = 10000000
         for test_case in RegexEval.test_cases:
-            results.append(self.time_regex_test_case(compiled_regex, test_case,
-                                                     testing_iterations))
+            results.append(time_regex_test_case(compiled_regex, test_case,
+                                                testing_iterations))
         return results
         
     def __call__(self, individual):
@@ -192,14 +192,17 @@ class RegexEval:
             self.seed_regex = Individual(params['SEED_GENOME'],
                                          None).phenotype
             # TestGen.generate_test_suite(self.seed_regex, session)
-            self.test_cases = TestGen.generate_test_suite(self.seed_regex)
+            self.test_cases = TestGen.generate_test_suite(self.seed_regex,
+                                                          session)
 
-        if(RegexEval.pstartup==None):
-            RegexEval.pstartup=Process(target=self.call_fitness, name="self.call_fitness")
-        RegexEval.pstartup._args=(individual,RegexEval.q) 
+        if RegexEval.pstartup is None:
+            RegexEval.pstartup = Process(target=self.call_fitness,
+                                         name="self.call_fitness")
+        RegexEval.pstartup._args = (individual, RegexEval.q)
         RegexEval.pstartup.start()
-        RegexEval.prunner=RegexEval.pstartup
-        RegexEval.pstartup=Process(target=self.call_fitness, name="self.call_fitness")
+        RegexEval.prunner = RegexEval.pstartup
+        RegexEval.pstartup = Process(target=self.call_fitness,
+                                     name="self.call_fitness")
         
         # Set one second time limit for running thread.
         self.prunner.join(1)
@@ -215,5 +218,3 @@ class RegexEval:
         
         else:
             return self.q.get()
-        
-  

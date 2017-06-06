@@ -1,36 +1,17 @@
 from fitness.regextesting.RegexTest import RegexTest
 from fitness.regextesting.RegexTimer import time_regex_test_case
+
 import re
 
 """ Generate regex tests
 
-Relies on regex evaluator. 
+Relies on regex evaluator.
 (Which relies on this class. TODO remove circular dependency by calling test generation during PonyGE2 initialisation instead of during RegexEval class instantiation.)
 
 """
-    
+  
 
-def generate_tests(self):
-    """
-    Generate generic tests
-    
-    :return:
-    """
-    test_gen_method = getattr( params['FITNESS_TEST_SUITE'])
-    test_gen_method()
-    # can be any of these:
-    # generate_regex_mac_search_string_tests()
-    # generate_catastrophic_csv()
-    # generate_iso8601_datetime_tests()
-    # generate_macaddress_validation_tests()
-    # generate_email_validation_tests()
-    # generate_scientific_number_tests()
-    # generate_PonyGE2_Grammar_File_Rule_tests()
-    # generate_catastrophic_QT3TS_tests()
-    # generate_d3_interpolate_number()
-    print("Number of test cases: {}".format(len(test_cases)))
-
-def generate_equivalence_test_suite_replacement( a_match, compiled_regex):
+def generate_equivalence_test_suite_replacement(a_match, compiled_regex):
     """
     This is a 'booster' for test suite generation. We know a single good
     match, and we can use that to find search strings which do not
@@ -45,7 +26,8 @@ def generate_equivalence_test_suite_replacement( a_match, compiled_regex):
     :return:
     """
     test_cases = []
-    # go through the whole known search string, changing letters until you find one which does not match.
+    # go through the whole known search string, changing letters until you
+    # find one which does not match.
     # compiled_regex = re.compile(a_regex)
     if len(a_match.matches) > 0:
         for i in range(0, len(a_match.search_string)):
@@ -71,7 +53,8 @@ def generate_equivalence_test_suite_length( a_match, compiled_regex):
     :return:
     """
     test_cases = []
-    # add and remove characters from the string until we find a regex which fails
+    # add and remove characters from the string until we find a regex which
+    # fails
     # compiled_regex = re.compile(a_regex)
     if len(a_match.matches) > 0:
 
@@ -79,19 +62,22 @@ def generate_equivalence_test_suite_length( a_match, compiled_regex):
         new_search_string = 'a' + a_match.search_string
         
         add_test_case_if_fails(new_search_string, compiled_regex, test_cases)
-         # check string with one character added at the end
+        # check string with one character added at the end
         new_search_string = a_match.search_string+'a'
         add_test_case_if_fails(new_search_string, compiled_regex, test_cases)
         for i in range(len(a_match.search_string)-1):
             new_search_string = a_match.search_string[i:]  # TODO: refactor this
-            add_test_case_if_fails(new_search_string, compiled_regex, test_cases)
+            add_test_case_if_fails(new_search_string, compiled_regex,
+                                   test_cases)
         
         for i in range(len(a_match.search_string)-1):
             new_search_string = a_match.search_string[:i]  # TODO: refactor this
-            add_test_case_if_fails(new_search_string, compiled_regex, test_cases)
+            add_test_case_if_fails(new_search_string, compiled_regex,
+                                   test_cases)
     return test_cases
 
-def add_test_case_if_fails( new_search_string, compiled_regex, test_cases):
+
+def add_test_case_if_fails(new_search_string, compiled_regex, test_cases):
     """
     run a test case, if it fails, add it to the suite of tests
     
@@ -103,6 +89,7 @@ def add_test_case_if_fails( new_search_string, compiled_regex, test_cases):
     vals = time_regex_test_case(compiled_regex, a_test_case_string, 1)
     if len(list(vals[1])) == 0:
         test_cases.append(a_test_case_string)
+
 
 def add_test(regex_string, match, test_cases):
     """
@@ -118,8 +105,8 @@ def add_test(regex_string, match, test_cases):
     test_cases.append(a_test_string)
     return a_test_string
         
-#def generate_test_suite( regex_string, session):
-def generate_test_suite(regex_string):
+
+def generate_test_suite(regex_string, session):
     # do some test generation
     # find a string which the regex is able to match against
     # find the minimal variant of this string which does not match
@@ -195,10 +182,11 @@ def generate_test_suite(regex_string):
     compiled_regex = re.compile(regex_string)
     test_cases = []
     for test_string in known_test_strings:
-        test_cases += generate_tests_if_string_match(compiled_regex, test_string)
-     # if we don't have any known test strings, see if the regex matches
-    # it
-    test_cases +=  generate_tests_if_string_match(compiled_regex, regex_string)
+        test_cases += generate_tests_if_string_match(compiled_regex,
+                                                     test_string)
+    
+    # if we don't have any known test strings, see if the regex matches it.
+    test_cases += generate_tests_if_string_match(compiled_regex, regex_string)
     
     print("Number of test cases in suite:", len(test_cases))
          
@@ -222,6 +210,7 @@ def generate_test_suite(regex_string):
     #                                          end=match['end'])
     #                 session.add(new_test_case)
             
+            
 def add_re_match_to_test(vals, passing_test_string):
     """
     take matching values as found by the regex library, and add them to our
@@ -234,6 +223,7 @@ def add_re_match_to_test(vals, passing_test_string):
     for a_match in vals[1]:  # this vals[1] business is not good
         passing_test_string.add_match(a_match.start(), a_match.end())
     return passing_test_string
+
 
 def generate_tests_if_string_match(compiled_regex, test_string):
     test_cases = []
