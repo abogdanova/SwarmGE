@@ -39,7 +39,7 @@ class RegexTest:
         
         return self.search_string
 
-    def find_missing_range( a_known_match, match_ranges):
+    def find_missing_range(self, a_known_match, match_ranges):
         start = a_known_match.get("start")
         end = a_known_match.get("end")
         missing = end - start
@@ -57,7 +57,7 @@ class RegexTest:
         
         return missing
 
-    def find_undesired_range( match_candidate, known_matches):
+    def find_undesired_range(self, match_candidate, known_matches):
         undesired_matched = 0
         
         for i in range(match_candidate.start(), match_candidate.end()):
