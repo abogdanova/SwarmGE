@@ -1,7 +1,6 @@
 import re
 import time, timeit
-import traceback
-import sys
+import sys, traceback
 import fitness.regextesting.RegexTest
 import fitness.regextesting.RegexTestGenerator as TestGen
 from fitness.regextesting.RegexTimer import time_regex_test_case
@@ -42,6 +41,14 @@ class RegexEval:
     maximise = False  # lower fitness value is better
     default_fitness = 100000
 
+    # these need to be class variables, not object variables 
+    test_cases = [] 
+    seed_regex = None
+    time = True
+    q = Queue()
+    pstartup = None
+    prunner = None
+        
     def __init__(self):
         """
         The seed program is needed by the fitness function to generate test
@@ -52,15 +59,8 @@ class RegexEval:
         :param self:
         :return:
         """
-        self.test_cases = []
-        self.seed_regex = None
-        self.time = True
-        self.q = Queue()
-        self.pstartup = Process(target=self.call_fitness,
-                                name="self.call_fitness")
-        self.prunner = None
         
-    def call_fitness(self, individual):
+    def call_fitness(self, individual, q):
         """
         This method is called when this class is instantiated with an
         individual (a regex)
@@ -98,12 +98,14 @@ class RegexEval:
             # We are running this code in a thread so put the fitness on the
             # queue so it can be read back by the first
             # length of the phenotype puts parsimony pressure toward shorter regex
-            self.q.put(fitness + (len(individual.phenotype)/100))
+            q.put(fitness + (len(individual.phenotype)/100))
 
-        except:
+        except: # Error as e:
             # if the regex is broken, or the thread is timedout, return a
             # really bad fitness
-            self.q.put(self.default_fitness)
+            #print(e)
+            # traceback.print_exc()
+            q.put(RegexEval.default_fitness)
 
     def calculate_similarity_score(self, regex_string):
         """
@@ -159,10 +161,10 @@ class RegexEval:
         results = list()
         testing_iterations = 2
         # do a quick test to time the longest test case (which is also the last in the list)
-        # quick_test = self.time_regex_test_case(compiled_regex, self.test_cases[len(self.test_cases)-1], testing_iterations)
+        # quick_test = self.time_regex_test_case(compiled_regex, test_cases[len(test_cases)-1], testing_iterations)
         #if quick_test[3].calc_match_errors(list(quick_test[1])) < 0 : # Ideally we only time a program if it is funtionally correct
         #    testing_iterations = 10000000
-        for test_case in self.test_cases:
+        for test_case in RegexEval.test_cases:
             results.append(self.time_regex_test_case(compiled_regex, test_case,
                                                      testing_iterations))
         return results
@@ -173,7 +175,7 @@ class RegexEval:
         process, timeout and kill process if it runs for 5 seconds.
         Generating new processes is expensive, rework the code to reuse a
         process.
-            
+
         :param individual:
         :return:
         """
@@ -183,6 +185,7 @@ class RegexEval:
         session = None
         
         if not self.seed_regex:
+            # TODO - move test case generation to PonyGE2 initialisation
             # Need to have this like this until we figure out how to
             # generate an individual during initialisation of the fitness
             # function. Note that grammar class not initialised yet :(
@@ -190,12 +193,13 @@ class RegexEval:
                                          None).phenotype
             # TestGen.generate_test_suite(self.seed_regex, session)
             self.test_cases = TestGen.generate_test_suite(self.seed_regex)
-        
-        self.pstartup._args = (individual,)
-        self.pstartup.start()
-        self.prunner = self.pstartup
-        self.pstartup = Process(target=self.call_fitness,
-                                name="self.call_fitness")
+
+        if(RegexEval.pstartup==None):
+            RegexEval.pstartup=Process(target=self.call_fitness, name="self.call_fitness")
+        RegexEval.pstartup._args=(individual,RegexEval.q) 
+        RegexEval.pstartup.start()
+        RegexEval.prunner=RegexEval.pstartup
+        RegexEval.pstartup=Process(target=self.call_fitness, name="self.call_fitness")
         
         # Set one second time limit for running thread.
         self.prunner.join(1)

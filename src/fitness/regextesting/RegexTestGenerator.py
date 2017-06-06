@@ -4,7 +4,9 @@ import re
 
 """ Generate regex tests
 
-Relies on regex evaluator.
+Relies on regex evaluator. 
+(Which relies on this class. TODO remove circular dependency by calling test generation during PonyGE2 initialisation instead of during RegexEval class instantiation.)
+
 """
     
 
