@@ -7,41 +7,6 @@ import re
 Relies on regex evaluator.
 """
     
-def find_missing_range( a_known_match, match_ranges):
-    start = a_known_match.get("start")
-    end = a_known_match.get("end")
-    missing = end - start
-    
-    for i in range(start, end):
-        found = False
-        
-        for m_range in match_ranges:
-            
-            if m_range.start() <= i < m_range.end():
-                found = True
-        
-        if found:
-            missing -= 1
-    
-    return missing
-
-def find_undesired_range( match_candidate, known_matches):
-    undesired_matched = 0
-    
-    for i in range(match_candidate.start(), match_candidate.end()):
-        in_range = False
-    
-        for a_known_match in known_matches:
-            start = a_known_match.get("start")
-            end = a_known_match.get("end")
-    
-            if start <= i <= end:
-                in_range = True
-        
-        if not in_range:
-            undesired_matched += 1
-    
-    return undesired_matched
 
 def generate_tests(self):
     """
