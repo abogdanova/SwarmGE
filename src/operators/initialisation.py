@@ -8,6 +8,30 @@ from representation.tree import Tree
 from utilities.representation.python_filter import python_filter
 
 
+def initialisation(size):
+    """
+    Perform selection on a population in order to select a population of
+    individuals for variation.
+    
+    :param size: The size of the required population.
+    :return: A full population generated using the specified initialisation
+    technique.
+    """
+
+    # Decrease initialised population size by the number of seed individuals
+    # (if any) to ensure that the total initial population size does not exceed
+    # the limit.
+    size -= len(params['SEED_INDIVIDUALS'])
+
+    # Initialise empty population.
+    individuals = params['INITIALISATION'](size)
+
+    # Add seed individuals (if any) to current population.
+    individuals.extend(params['SEED_INDIVIDUALS'])
+
+    return individuals
+    
+
 def sample_genome():
     """
     Generate a random genome, uniformly.
@@ -42,46 +66,46 @@ def uniform_tree(size):
                               "random") for _ in range(size)]
     
 
-def seed_initialisation(size):
+def seed_individuals(size):
     """
-    Create a population of size where all individuals are the same seeded
-    individual.
+    Create a population of size where all individuals are copies of the same
+    seeded individuals.
     
     :param size: The size of the required population.
-    :return: A full population composed of the seeded individual.
+    :return: A full population composed of the seeded individuals.
     """
     
-    # Include seed genome if defined
-    if params['SEED_GENOME']:
+    # Get total number of seed inds.
+    no_seeds = len(params['SEED_INDIVIDUALS'])
+    
+    # Initialise empty population.
+    individuals = []
+    
+    if no_seeds > 0:
+        # A list of individuals has been specified as the seed.
         
-        # A genome has been specified as the seed. Check if ind is valid.
-        test_ind = individual.Individual(params['SEED_GENOME'], None)
+        # Divide requested population size by the number of seeds.
+        num_per_seed = floor(size/no_seeds)
         
-        if test_ind.invalid:
-            s = "operators.initialisation.seed_initialisation\n" \
-                "Error: SEED_GENOME maps to an invalid PonyGE individual."
-            raise Exception(s)
-
-        # Map to individual.
-        return [individual.Individual(params['SEED_GENOME'],
-                                      None) for _ in range(size)]
-
-    elif params['SEED_INDIVIDUAL']:
-        # A full individual has been specified as the seed.
+        for ind in params['SEED_INDIVIDUALS']:
         
-        if not isinstance(params['SEED_INDIVIDUAL'], individual.Individual):
-            # The seed object is not a PonyGE individual.
-            s = "operators.initialisation.seed_initialisation\n" \
-                "Error: SEED_INDIVIDUAL is not a PonyGE individual."
-            raise Exception(s)
-        
-        else:
-            # Return population of seed individuals.
-            return [params['SEED_INDIVIDUAL'].deep_copy() for _ in range(size)]
+            if not isinstance(ind, individual.Individual):
+                # The seed object is not a PonyGE individual.
+                s = "operators.initialisation.seed_individuals\n" \
+                    "Error: SEED_INDIVIDUALS instance is not a PonyGE " \
+                    "individual."
+                raise Exception(s)
+            
+            else:
+                # Generate num_per_seed identical seed individuals.
+                individuals.extend([ind.deep_copy() for _ in
+                                    range(num_per_seed)])
+    
+        return individuals
     
     else:
         # No seed individual specified.
-        s = "operators.initialisation.seed_initialisation\n" \
+        s = "operators.initialisation.seed_individuals\n" \
             "Error: No seed individual specified for seed initialisation."
         raise Exception(s)
     

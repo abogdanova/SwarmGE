@@ -203,14 +203,6 @@ def parse_cmd_args(arguments):
                         help='Sets the initialisation strategy, requires a '
                              'string such as "rhh" or a direct path string '
                              'such as "operators.initialisation.rhh".')
-    parser.add_argument('--seed_genome',
-                        dest='SEED_GENOME',
-                        action=ListAction,
-                        help='Sets a genome for a seed individual for '
-                             'seeding evolutionary runs. Must be used in '
-                             'conjunction with compatible initialisation '
-                             'technique such as "--initialisation '
-                             'seed_initialisation".')
 
     # SELECTION
     parser.add_argument('--selection',
@@ -386,7 +378,9 @@ def parse_cmd_args(arguments):
     parser.add_argument('--random_seed',
                         dest='RANDOM_SEED',
                         type=int,
-                        help='Sets the seed to be used, requires int value.')
+                        help='Sets the random seed to be used with both the '
+                             'standard Python RNG and the NumPy RNG. '
+                             'requires int value.')
     parser.add_argument('--debug',
                         dest='DEBUG',
                         action='store_true',
@@ -420,6 +414,12 @@ def parse_cmd_args(arguments):
                         dest='REVERSE_MAPPING_TARGET',
                         type=str,
                         help='Target string to parse into a GE individual.')
+    parser.add_argument('--target_seed_folder',
+                        dest='TARGET_SEED_FOLDER',
+                        type=str,
+                        help='Specify a target seed folder in the "seeds" '
+                             'directory that contains a population of '
+                             'individuals with which to seed a run.')
 
     # STATE SAVING/LOADING
     parser.add_argument('--save_state',
