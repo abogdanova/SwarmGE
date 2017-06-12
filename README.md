@@ -1051,7 +1051,7 @@ Alternatively, both the `GRAMMAR_FILE` and `REVERSE_MAPPING_TARGET` can be speci
 ## Seeding GE Runs with target solutions
 ----------------------------------------
 
-Combining the GE LR Parser with the full PonyGE2 library, it is possible to parse a target string into a GE individual and then to seed an evolutionary run of PonyGE2 with that individual. Provision is made in PonyGE2 to allow for entire populations of target individuals to be seeded into an evolutionary run.
+Combining the GE LR Parser with the full PonyGE2 library, it is possible to parse a target string into a GE individual and then to seed an evolutionary run of PonyGE2 with that individual. Provision is made in PonyGE2 to allow for the seeding of as many target individuals as desired into an evolutionary run.
    
 In order to run PonyGE2 with seeded individuals, a specialised script is provided in the `scripts` folder, titled `seed_PonyGE2.py`. To run this script from the command line, simply type:
 
@@ -1061,34 +1061,36 @@ All command line parameters from standard PonyGE2 are compatible with `seed_Pony
 
 There are two ways to seed individuals into a PonyGE2 run using this script:
 
-### Seeding runs with a single target solution
+### 1. Seeding runs with a single target solution
 
 If a single target phenotype string is to be included into the initial population, users can specify the argument:
 
-    `--reverse_mapping_target [TARGET_STRING]`   
+    --reverse_mapping_target [TARGET_STRING]  
 
-or by setting the parameter `REVERSE_MAPPING_TARGET` to `[TARGET_STRING]` in either a parameters file or in the params dictionary, where `[TARGET_STRING]` is a string specifying the target string to be parsed by the GE LR Parser into a GE individual. A
+or set the parameter `REVERSE_MAPPING_TARGET` to `[TARGET_STRING]` in either a parameters file or in the params dictionary, where `[TARGET_STRING]` is a phenoytpe string specifying the target string to be parsed by the GE LR Parser into a GE individual.
 
 *__NOTE__ that as with the GE LR Parser described above, a compatible grammar file needs to be specified along with the target string. If the target string cannot be parsed using the specified grammar, an error will occur.* 
 
-### Seeding runs with one or more target solutions
+### 2. Seeding runs with one or more target solutions
 
-Alternatively, if one or more target individuals are to be seeded into a GE population, a folder has been made available for saving populations of desired individuals for seeding. The source directory contains a `seeds` folder. Any number of desired target individuals for seeding can be saved in *__separate text files__* within a unique folder in the scripts directory. 
+Alternatively, if one or more target individuals are to be seeded into a GE population, a folder has been made available for saving populations of desired individuals for seeding. The root directory contains a `seeds` folder. Any number of desired target individuals for seeding can be saved in *__separate text files__* within a unique folder in the scripts directory. 
 
 PonyGE2 currently supports four formats for saving and re-loading of such 
-individuals (examples of each are given in the `seeds/test_pop` folder):
+individuals (examples of each are given in the `seeds/example_pop` folder):
 
-1. (`example_1.txt` in `seeds/test_pop`) PonyGE2 can re-load "best.txt" outputs from previous PonyGE2 runs. These files contain the saved genotypes and phenotypes of the best solution evolved over the course of an evolutionary run. Re-using these output files greatly improves the seeding process, as the genotypes can be quickly used to re-map the exact identical individual. This is the preferred option for seeding populations as the use of genomes to re-build previous individuals guarantees the same genetic information will be retained.
-2. (`example_2.txt` in `seeds/test_pop`) Target phenotypes can be saved as a simple text file with a single header of `Phenotype:`, followed by the phenotype string itself on the following line. The phenotype will then be parsed into a PonyGE2 individual using the GE LR Parser.
-3. (`example_3.txt` in `seeds/test_pop`) Target genotypes can be saved as a simple text file with a single header of `Genotype:`, followed by the genotype itself on the following line. The genotype will then be mapped into a PonyGE2 individual using the normal GE mapping process.
-4. (`example_4.txt` in `seeds/test_pop`) Target phenotypes can be saved as a simple text file where the *__only__* content of the file is the phenotype string itself (i.e. no descriptive text, headers, comments, etc). The content of these files will then be parsed into PonyGE2 individuals using the GE LR Parser.
+1. (`example_1.txt` in `seeds/example_pop`) PonyGE2 can re-load "best.txt" outputs from previous PonyGE2 runs. These files contain the saved genotypes and phenotypes of the best solution evolved over the course of an evolutionary run. Re-using these output files greatly improves the seeding process, as the genotypes can be quickly used to re-map the exact identical individual evolved by PonyGE2. If possible, this is the preferred option for seeding populations as the use of genomes to re-build previous individuals guarantees the same genetic information will be retained.
+2. (`example_2.txt` in `seeds/example_pop`) Target phenotypes can be saved as a simple text file with a single header of "`Phenotype:`", followed by the phenotype string itself on the following line. The phenotype will then be parsed into a PonyGE2 individual using the GE LR Parser.
+3. (`example_3.txt` in `seeds/example_pop`) Target genotypes can be saved as a simple text file with a single header of "`Genotype:`", followed by the genotype itself on the following line. The genotype will then be mapped into a PonyGE2 individual using the normal GE mapping process. As with option 1 above, this will result in an identical PonyGE2 individual being re-created from the specified genome.
+4. (`example_4.txt` in `seeds/example_pop`) Target phenotypes can be saved as a simple text file where the *__only__* content of the file is the phenotype string itself (i.e. no descriptive text, headers, comments, etc). The content of these files will then be parsed into PonyGE2 individuals using the GE LR Parser.
 
+
+*__NOTE__ that the names of individual files contained in a specified target population folder in the* `seeds` *directory do not matter. These files can be named however so desired.* 
 
 *__NOTE__ that as with the GE LR Parser described above, a compatible grammar file needs to be specified along with the target* `seeds` *folder. If the target string cannot be parsed using the specified grammar, an error will occur. If the target genotype results in a different phenotype to that specified, an error will occur.* 
 
 ### Initialisation
 
-All existing initialisation techniques are compatible for seeding evolutionary runs with target individuals. However, an additional initialisation option is included which may be of some use in the case of Genetic Improvement. An option is available to initialise the entire population with only identical copies of the specified seed individual (or individuals). This option can be specified with the argument:
+All initialisation techniques existing in PonyGE2 are compatible for seeding evolutionary runs with target individuals. However, an additional initialisation option is included which may be of some use in the case of Genetic Improvement. An option is available to initialise the entire population with only identical copies of the specified seed individual (or individuals). If only one target seed is specified, the initial population will consist of `POPULATION_SIZE` copies of that individual. If multiple target seeds are specified, the initial population will consist of equal amounts of copies of each specified seed. This option can be specified with the argument:
 
     --initialisation seed_individuals
 
@@ -1107,11 +1109,11 @@ At present, the main branch of PonyGE2 only uses two RNGs:
 1. The core Python `random` module, and
 2. The numpy `np.random` module.
 
-Both of these RNGs are set using the same seed. When the `RANDOM_SEED` parameter is set, and providing the grammar and fitness functions remain unchanged, then PonyGE2 will produce identical results to any previous run executed using this random seed.
+Both of these RNGs are set using the same seed. When the `RANDOM_SEED` parameter is set, and provided the grammar, fitness function, and all parameters remain unchanged, then PonyGE2 will produce identical results to any previous run executed using this random seed.
 
 ### Examples
 
-An example parameters file for seeding runs with a number of individuals has been included in the parameters folder under `seed_run_target.txt`. An example folder with a range of compatible formatting types for seeding target solutions is included in the `seeds` directory.
+An example parameters file for seeding runs with a number of individuals has been included in the parameters folder under `seed_run_target.txt`. An example folder named `example_pop` with a range of compatible formatting types for seeding target solutions is included in the `seeds` directory.
 
 # References
 ------------

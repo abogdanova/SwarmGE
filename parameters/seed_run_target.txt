@@ -20,4 +20,4 @@ REPLACEMENT:            generational
 SELECTION:              tournament
 TOURNAMENT_SIZE:        2
 VERBOSE:                False
-TARGET_SEED_FOLDER:     test_pop
+TARGET_SEED_FOLDER:     example_pop
