@@ -1088,6 +1088,8 @@ individuals (examples of each are given in the `seeds/example_pop` folder):
 
 *__NOTE__ that as with the GE LR Parser described above, a compatible grammar file needs to be specified along with the target* `seeds` *folder. If the target string cannot be parsed using the specified grammar, an error will occur. If the target genotype results in a different phenotype to that specified, an error will occur.* 
 
+*__NOTE__ that at present, phenotypes spanning multiple lines can only be parsed correctly using file format 4 above, i.e. the phenotype string constitutes the sole information in the file. If a genotype exists for such phenotypes, best practice is to use the genotype to seed the solution using file format 3 above, i.e. discard the phenotype string and allow the genotype to re-produce it.* 
+
 ### Initialisation
 
 All initialisation techniques existing in PonyGE2 are compatible for seeding evolutionary runs with target individuals. However, an additional initialisation option is included which may be of some use in the case of Genetic Improvement. An option is available to initialise the entire population with only identical copies of the specified seed individual (or individuals). If only one target seed is specified, the initial population will consist of `POPULATION_SIZE` copies of that individual. If multiple target seeds are specified, the initial population will consist of equal amounts of copies of each specified seed. This option can be specified with the argument:
