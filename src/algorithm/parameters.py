@@ -155,11 +155,12 @@ params = {
         # no file type.
 
         # SEEDING
-        'SEED_GENOME': None,
-        # Specify a genome for an individual with which to seed the initial
+        'SEED_INDIVIDUALS': [],
+        # Specify a list of PonyGE2 individuals with which to seed the initial
         # population.
-        'SEED_INDIVIDUAL': None,
-        # Specify an individual with which to seed the initial population.
+        'TARGET_SEED_FOLDER': None,
+        # Specify a target seed folder in the 'seeds' directory that contains a
+        # population of individuals with which to seed a run.
     
         # CACHING
         'CACHE': False,
@@ -181,7 +182,8 @@ params = {
         # Set machine name (useful for doing multiple runs)
         'MACHINE': machine_name,
 
-        # Set Random Seed
+        # Set Random Seed for all Random Number Generators to be used by
+        # PonyGE2, including the standard Python RNG and the NumPy RNG.
         'RANDOM_SEED': None,
 
         # Reverse Mapping to GE individual:

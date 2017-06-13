@@ -74,7 +74,7 @@ class Grammar(object):
             # have unique solutions (no duplicates).
             self.get_min_ramp_depth()
 
-        if params['REVERSE_MAPPING_TARGET']:
+        if params['REVERSE_MAPPING_TARGET'] or params['TARGET_SEED_FOLDER']:
             # Initialise dicts for reverse-mapping GE individuals.
             self.concat_NTs, self.climb_NTs = {}, {}
 

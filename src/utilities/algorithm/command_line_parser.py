@@ -1,4 +1,18 @@
 import argparse
+from operator import attrgetter
+
+
+class SortingHelpFormatter(argparse.HelpFormatter):
+    """
+    Custom class for sorting the arguments of the arg parser for printing. When
+    "--help" is called, arguments will be listed in alphabetical order. Without
+    this custom class, arguments will be printed in the order in which they are
+    defined.
+    """
+    
+    def add_arguments(self, actions):
+        actions = sorted(actions, key=attrgetter('option_strings'))
+        super(SortingHelpFormatter, self).add_arguments(actions)
 
 
 def parse_cmd_args(arguments):
@@ -36,19 +50,16 @@ def parse_cmd_args(arguments):
 
     # Initialise parser
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description="""Welcome to PonyGE - Help
-        -------------------
-        The following are the available command line args
-        please see src /algorithm/parameters.py
-        for a more detailed explanation of each argument and possible
-        values:""",
-        epilog="""----------------------------
-        To try out ponyge simply run: python ponyge.py
+        formatter_class=SortingHelpFormatter,
+        usage=argparse.SUPPRESS,
+        description="""Welcome to PonyGE2 - Help.
+        The following are the available command line arguments. Please see
+        src/algorithm/parameters.py for a more detailed explanation of each
+        argument and its possible values.""",
+        epilog="""To try out PonyGE2 from the command line simply navigate to
+        the src directory and type: python ponyge.py.""")
 
-        Thanks for trying our product
-
-        PonyGE Team""")
+    parser._optionals.title = 'PonyGE2 command-line usage'
 
     
     class ListAction(argparse.Action):
@@ -192,14 +203,6 @@ def parse_cmd_args(arguments):
                         help='Sets the initialisation strategy, requires a '
                              'string such as "rhh" or a direct path string '
                              'such as "operators.initialisation.rhh".')
-    parser.add_argument('--seed_genome',
-                        dest='SEED_GENOME',
-                        action=ListAction,
-                        help='Sets a genome for a seed individual for '
-                             'seeding evolutionary runs. Must be used in '
-                             'conjunction with compatible initialisation '
-                             'technique such as "--initialisation '
-                             'seed_initialisation".')
 
     # SELECTION
     parser.add_argument('--selection',
@@ -375,7 +378,9 @@ def parse_cmd_args(arguments):
     parser.add_argument('--random_seed',
                         dest='RANDOM_SEED',
                         type=int,
-                        help='Sets the seed to be used, requires int value.')
+                        help='Sets the random seed to be used with both the '
+                             'standard Python RNG and the NumPy RNG. '
+                             'requires int value.')
     parser.add_argument('--debug',
                         dest='DEBUG',
                         action='store_true',
@@ -409,6 +414,12 @@ def parse_cmd_args(arguments):
                         dest='REVERSE_MAPPING_TARGET',
                         type=str,
                         help='Target string to parse into a GE individual.')
+    parser.add_argument('--target_seed_folder',
+                        dest='TARGET_SEED_FOLDER',
+                        type=str,
+                        help='Specify a target seed folder in the "seeds" '
+                             'directory that contains a population of '
+                             'individuals with which to seed a run.')
 
     # STATE SAVING/LOADING
     parser.add_argument('--save_state',

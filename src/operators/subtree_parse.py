@@ -33,10 +33,6 @@ def combine_snippets():
     # Initialise counter for reduction interations.
     no_passes = 1
 
-    if not params['SILENT']:
-        print("1 pass  \tOriginal:", len(original_snippets),
-              "\tNew:", len(updated_snippets), "\tDeleted:", len(trackers.deleted_snippets))
-
     while updated_snippets != original_snippets:
         # Keep reducing snippets until no more reductions can be made.
 
@@ -57,11 +53,6 @@ def combine_snippets():
 
         # Increment counter
         no_passes += 1
-
-        if not params['SILENT']:
-            print(no_passes, "passes\tOriginal:",
-                  len(original_snippets), "\tNew:", len(updated_snippets),
-                  "\tDeleted:", len(trackers.deleted_snippets))
 
 
 def reduce_trees():
@@ -647,8 +638,7 @@ def check_snippets_for_solution():
     # Get the phenotype of the largest snippet
     largest_snippet = get_output(trackers.snippets[biggest_snippet[1]])
     
-    if largest_snippet != params['REVERSE_MAPPING_TARGET'] and \
-            params['VERBOSE']:
+    if largest_snippet != params['REVERSE_MAPPING_TARGET']:
         # The solution doesn't match the target string.
         
         # Get the location of the phenotype of the largest snippet on the
@@ -662,9 +652,10 @@ def check_snippets_for_solution():
             "Error: Solution doesn't match the target string.\n" \
             "       Target:   \t %s\n" \
             "       Solution: \t %s %s\n" \
-            "       Check grammar file to ensure the grammar is capable of " \
-            "producing the exact target string." % \
-            (params['REVERSE_MAPPING_TARGET'], spaces, largest_snippet)
+            "       Check grammar file `%s` to ensure the grammar is capable" \
+            " of producing the exact target string." % \
+            (params['REVERSE_MAPPING_TARGET'], spaces, largest_snippet,
+             params['GRAMMAR_FILE'])
         raise Exception(s)
 
     if largest_snippet == params['REVERSE_MAPPING_TARGET']:

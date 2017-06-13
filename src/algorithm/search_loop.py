@@ -2,6 +2,7 @@ from algorithm.parameters import params
 from fitness.evaluation import evaluate_fitness
 from stats.stats import stats, get_stats
 from utilities.stats import trackers
+from operators.initialisation import initialisation
 
 
 def search_loop():
@@ -14,7 +15,7 @@ def search_loop():
     """
 
     # Initialise population
-    individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
+    individuals = initialisation(params['POPULATION_SIZE'])
 
     # Evaluate initial population
     individuals = evaluate_fitness(individuals)
