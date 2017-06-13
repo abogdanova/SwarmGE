@@ -99,6 +99,8 @@ class supervised_learning:
             # FP err can happen through eg overflow (lots of pow/exp calls)
             # ZeroDiv can happen when using unprotected operators
             fitness = self.default_fitness
+            # TODO: Should these individuals be classed as invalid?
+        
         except Exception as err:
             # other errors should not usually happen (unless we have
             # an unprotected operator) so user would prefer to see them

@@ -1,3 +1,4 @@
+from math import ceil
 import numpy as np
 np.seterr(all="raise")
 
@@ -168,3 +169,16 @@ def ave(x):
     """
 
     return np.mean(x)
+
+
+def percentile(sorted_list, p):
+    """
+    Returns the element corresponding to the p-th percentile
+    in a sorted list
+
+    :param sorted_list: The sorted list
+    :param p: The percetile
+    :return: The element corresponding to the percentile
+    """
+    
+    return sorted_list[ceil(len(sorted_list) * p / 100) - 1]

@@ -5,6 +5,7 @@ from time import time
 import numpy as np
 
 from algorithm.parameters import params
+from utilities.algorithm.NSGA2 import first_pareto_front, ParetoFront, TestFitness
 from utilities.algorithm.state import create_state
 from utilities.stats import trackers
 from utilities.stats.save_plots import save_best_fitness_plot
@@ -52,6 +53,49 @@ def get_stats(individuals, end=False):
     :return: Nothing.
     """
 
+    if hasattr(params['FITNESS_FUNCTION'], 'num_objectives'):
+        # Multiple objective optimisation is being used.
+        get_moo_stats(individuals, end)
+        
+    else:
+        # Single objective optimisation is being used.
+        get_single_objective_stats(individuals, end)
+
+    # Save stats to list.
+    if params['VERBOSE'] or (not params['DEBUG'] and not end):
+        trackers.stats_list.append(copy(stats))
+
+    # Save stats to file.
+    if not params['DEBUG']:
+        if stats['gen'] == 0:
+            save_stats_headers(stats)
+        save_stats_to_file(stats, end)
+        if params['SAVE_ALL']:
+            save_best_ind_to_file(stats, end, stats['gen'])
+        elif params['VERBOSE'] or end:
+            save_best_ind_to_file(stats, end, "best")
+
+    if end and not params['SILENT']:
+        print_final_stats()
+    
+    if params['SAVE_STATE'] and not params['DEBUG'] and \
+                            stats['gen'] % params['SAVE_STATE_STEP'] == 0:
+        # Save the state of the current evolutionary run.
+        create_state(individuals)
+        
+
+def get_single_objective_stats(individuals, end):
+    """
+    Generate the statistics for an evolutionary run with a single objective.
+    Save statistics to utilities.trackers.stats_list. Print statistics. Save
+    fitness plot information.
+
+    :param individuals: A population of individuals for which to generate
+    statistics.
+    :param end: Boolean flag for indicating the end of an evolutionary run.
+    :return: Nothing.
+    """
+
     # Get best individual.
     best = max(individuals)
 
@@ -83,32 +127,66 @@ def get_stats(individuals, end=False):
 
     # Generate test fitness on regression problems
     if hasattr(params['FITNESS_FUNCTION'], "training_test") and end:
+        
+        # Save training fitness.
         trackers.best_ever.training_fitness = copy(trackers.best_ever.fitness)
+        
+        # Evaluate test fitness.
         trackers.best_ever.test_fitness = params['FITNESS_FUNCTION'](
             trackers.best_ever, dist='test')
+        
+        # Set main fitness as training fitness.
         trackers.best_ever.fitness = trackers.best_ever.training_fitness
 
-    # Save stats to list.
-    if params['VERBOSE'] or (not params['DEBUG'] and not end):
-        trackers.stats_list.append(copy(stats))
-    
-    # Save stats to file.
-    if not params['DEBUG']:
-        if stats['gen'] == 0:
-            save_stats_headers(stats)
-        save_stats_to_file(stats, end)
-        if params['SAVE_ALL']:
-            save_best_ind_to_file(stats, end, stats['gen'])
-        elif params['VERBOSE'] or end:
-            save_best_ind_to_file(stats, end, "best")
 
-    if end and not params['SILENT']:
-        print_final_stats()
+def get_moo_stats(individuals, end):
+    """
+    Generate the statistics for an evolutionary run with multiple objectives.
+    Save statistics to utilities.trackers.stats_list. Print statistics. Save
+    fitness plot information.
 
-    if params['SAVE_STATE'] and not params['DEBUG'] and \
-                            stats['gen'] % params['SAVE_STATE_STEP'] == 0:
-        # Save the state of the current evolutionary run.
-        create_state(individuals)
+    :param individuals: A population of individuals for which to generate
+    statistics.
+    :param end: Boolean flag for indicating the end of an evolutionary run.
+    :return: Nothing.
+    """
+
+    # Find the Pareto front from the population and convert in a
+    # *pareto_front* object
+    non_dominated, dominated = first_pareto_front(individuals)
+    pf_pop = ParetoFront(non_dominated)
+
+    # Save first pareto front in trackers.best_ever.
+    trackers.best_ever = pf_pop
+
+    if end or params['VERBOSE'] or not params['DEBUG']:
+        # Update all stats.
+        update_stats(individuals, end)
+
+    # Print statistics
+    if params['VERBOSE'] and not end:
+        print_generation_stats()
+
+    elif not params['SILENT']:
+        # Print simple display output.
+        perc = stats['gen'] / (params['GENERATIONS'] + 1) * 100
+        stdout.write("Evolution: %d%% complete\r" % perc)
+        stdout.flush()
+
+    # Generate test fitness on regression problems
+    if hasattr(params['FITNESS_FUNCTION'], "training_test") and end:
+        
+        # Save training fitness.
+        trackers.best_ever.training_fitness = copy(trackers.best_ever.fitness)
+        
+        # Evaluate test fitness for all individuals in the first pareto front.
+        test_pf = []
+        for ind in trackers.best_ever.pf_solutions:
+            test_pf.append(params['FITNESS_FUNCTION'](ind, dist='test'))
+        trackers.best_ever.test_fitness = TestFitness(test_pf)
+
+        # Set main fitness as training fitness.
+        trackers.best_ever.fitness = trackers.best_ever.training_fitness
 
 
 def update_stats(individuals, end):
@@ -162,7 +240,7 @@ def update_stats(individuals, end):
 
     # Fitness Stats
     fitnesses = [i.fitness for i in individuals]
-    stats['ave_fitness'] = np.nanmean(fitnesses)
+    stats['ave_fitness'] = np.nanmean(fitnesses, axis=0)
     stats['best_fitness'] = trackers.best_ever.fitness
 
 
@@ -192,8 +270,7 @@ def print_final_stats():
         print("  Test fitness:\t\t", trackers.best_ever.test_fitness)
     else:
         print("\n\nBest:\n  Fitness:\t", trackers.best_ever.fitness)
+    
     print("  Phenotype:", trackers.best_ever.phenotype)
     print("  Genome:", trackers.best_ever.genome)
     print_generation_stats()
-
-
