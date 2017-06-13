@@ -1,17 +1,3 @@
-
-# Note on Regex Performance Improvement
-------------
-
-This is a fork of PonyGE2 for Genetic Improvement of Regular Expressions.
-Improves existing regexes by seeding them into the population. The fitness function measures runtime and functionality of regexes.
-
-E.g.
-
-    $ python3.5 --parameters seedonly_regex_catastrophic_QT3TS_1.txt
-
- - If you're reading this, mail me - codykenny@gmail.com
-
-
 # Introduction
 --------------
 
@@ -899,7 +885,7 @@ or by setting the parameter `REPLACEMENT` to `steady_state` in either a paramete
 # Example Problems
 ------------------
 
-Five example problems are currently provided:
+Seven example problems are currently provided:
 
 1. String-match
 2. Regression
@@ -907,6 +893,7 @@ Five example problems are currently provided:
 4. Pymax
 5. Integer sequence match
 6. Program synthesis
+7. Genetic Improvement of Regex Runtime Performance
 
 A brief description is given below of each problem, along with the command-line arguments necessary to call each problem. The developers of PonyGE2 encourage users to test out the various different operators and options available within PonyGE2 using these example problems in order to gain an appreciation of how they work.
 
@@ -973,6 +960,16 @@ The [General Program Synthesis Benchmark Suite](http://doi.org/10.1145/2739480.2
 To try this problem, specify the following command-line argument:
 
     --parameters progsys.txt
+
+
+## Genetic Improvement of Regex Runtime Performance
+------------
+
+Improves existing regexes by seeding them into the population. The fitness function measures runtime and functionality of regexes.
+
+To try this problem, specify the following command-line argument:
+
+    --parameters seedonly_regex_catastrophic_QT3TS_1.txt
 
 # Adding New Problems
 ---------------------

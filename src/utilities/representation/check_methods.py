@@ -358,7 +358,7 @@ def ret_true(obj):
     else:
         return False
 
-    
+
 def generate_codon(NT, choice):
     """
     Given a list of choices and a choice from that list, generate and return a

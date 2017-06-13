@@ -5,6 +5,7 @@ from representation import individual
 from representation.derivation import generate_tree
 from utilities.representation.check_methods import check_ind
 
+
 def mutation(pop):
     """
     Perform mutation on a population of individuals. Calls mutation operator as

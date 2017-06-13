@@ -219,7 +219,6 @@ def rhh(size):
             population[0] = seed_ind
             params['MAX_TREE_DEPTH'] = len(seed_ind.genome) * 3
             print("Setting MAX_TREE_DEPTH to {}".format(params['MAX_TREE_DEPTH']))
-            print("S")
             
         return population
 

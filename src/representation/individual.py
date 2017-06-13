@@ -115,8 +115,6 @@ class Individual(object):
         case, returns self.
         """
 
-        # print("Evaluating " + self.phenotype[:80], end='\r')
-
         # Evaluate fitness using specified fitness function.
         self.fitness = params['FITNESS_FUNCTION'](self)
 
