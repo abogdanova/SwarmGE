@@ -53,7 +53,7 @@ def get_stats(individuals, end=False):
     :return: Nothing.
     """
 
-    if hasattr(params['FITNESS_FUNCTION'], 'num_objectives'):
+    if hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
         # Multiple objective optimisation is being used.
         get_moo_stats(individuals, end)
         

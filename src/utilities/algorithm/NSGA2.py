@@ -229,7 +229,19 @@ class ParetoInfo:
         self.domination_count = dict()
         self.crowding_distance = dict()
         self.dominated_solutions = defaultdict(list)
-        self.n_objectives = params['FITNESS_FUNCTION'].num_objectives()
+        
+        try:
+            self.n_objectives = len(params['FITNESS_FUNCTION'].fitness_functions)
+        
+        except AttributeError:
+            s = "utilities.algorithm.NSGA2\n" \
+                "Error: Specified fitness function does not have " \
+                "'fitness_functions' attribute.\n" \
+                "       If using multiple objective optimisation, ensure " \
+                "fitness.base_ff_classes.base_moo_ff is implemented.\n" \
+                "       See README documentation for more information."
+            raise Exception(s)
+        
         self.fitness_iqr = [0] * self.n_objectives
     
     def compute_iqr(self, population):

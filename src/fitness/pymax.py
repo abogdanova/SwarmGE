@@ -1,7 +1,7 @@
-import numpy as np
+from fitness.base_ff_classes.base_ff import base_ff
 
 
-class pymax:
+class pymax(base_ff):
     """
     Py-max is a max-style problem where the goal is to generate a function
     which outputs a large number. In the standard GP Max [Gathercole and
@@ -16,9 +16,12 @@ class pymax:
     """
 
     maximise = True  # True as it ever was.
-    default_fitness = np.NaN
-
-    def __call__(self, ind):
+    
+    def __init__(self):
+        # Initialise base fitness function class.
+        super().__init__()
+    
+    def evaluate(self, ind, **kwargs):
         # ind.phenotype will be a string, including function definitions etc.
         # When we exec it, it will create a value XXX_output_XXX, but we exec
         # inside an empty dict for safety.

@@ -9,6 +9,7 @@ class classification(supervised_learning):
     function for supervised_learning."""
 
     def __init__(self):
+        # Initialise base fitness function class.
         super().__init__()
 
         # Set error metric if it's not set already.

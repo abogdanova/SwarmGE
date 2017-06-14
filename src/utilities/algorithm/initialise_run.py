@@ -95,56 +95,108 @@ def set_param_imports():
         else:
             
             for op in ops[special_ops]:
-                
-                # Split import name based on "." to find nested modules.
-                split_name = params[op].split(".")
-                
-                if split_name[0] == special_ops:
-                    # Full path already specified.
-                    
-                    # Get module and attribute names.
-                    module_name = ".".join(split_name[:-1])
-                    attr_name = split_name[-1]
 
-                    # Import module and attribute.
-                    import_attr_from_module(module_name, attr_name, op)
+                if special_ops == "fitness":
+                    # Fitness functions represent a special case.
                     
-                elif special_ops == 'fitness':
-                    # Fitness functions must be classes where the class has
-                    # the same name as its containing file.
-            
-                    # Get module and attribute names.
-                    module_name = ".".join([special_ops, params[op]])
-                    attr_name = split_name[-1]
+                    get_fit_func_imports()
 
-                    # Import module and attribute.
-                    import_attr_from_module(module_name, attr_name, op)
+                elif params[op] is not None:
+                    # Split import name based on "." to find nested modules.
+                    split_name = params[op].split(".")
                     
-                    # Initialise fitness function.
-                    params[op] = params[op]()
-
-                else:
-                    # Full path not specified
+                    if split_name[0] == special_ops:
+                        # Full path already specified.
+                        
+                        # Get module and attribute names.
+                        module_name = ".".join(split_name[:-1])
+                        attr_name = split_name[-1]
     
-                    # Get module and attribute names.
-                    module_name = ".".join([special_ops, op.lower()])
-                    attr_name = split_name[-1]
+                        # Import module and attribute and save.
+                        params[op] = return_attr_from_module(module_name,
+                                                             attr_name)
+                        
+                    else:
+                        # Full path not specified
+        
+                        # Get module and attribute names.
+                        module_name = ".".join([special_ops, op.lower()])
+                        attr_name = split_name[-1]
     
-                    # Import module and attribute.
-                    import_attr_from_module(module_name, attr_name, op)
+                        # Import module and attribute and save.
+                        params[op] = return_attr_from_module(module_name,
+                                                             attr_name)
             
 
-def import_attr_from_module(module_name, attr_name, op):
+def get_fit_func_imports():
+    """
+    Special handling needs to be done for fitness function imports,
+    as fitness functions can be specified a number of different ways. Notably,
+    a list of fitness functions can be specified, indicating multiple
+    objective optimisation.
+    
+    Note that fitness functions must be classes where the class has the same
+    name as its containing file.
+    
+    :return: Nothing.
+    """
+    
+    op = 'FITNESS_FUNCTION'
+
+    if "," in params[op]:
+        # List of fitness functions given in parameters file.
+        
+        # Convert specified fitness functions into a list of strings.
+        params[op] = params[op].strip("[()]").split(",")
+    
+    if isinstance(params[op], list):
+        # List of fitness functions given.
+        
+        for i, name in enumerate(params[op]):
+
+            # Split import name based on "." to find nested modules.
+            split_name = name.strip().split(".")
+
+            # Get module and attribute names.
+            module_path = ".".join(['fitness', name.strip()])
+            attr = split_name[-1]
+
+            # Import this fitness function.
+            params[op][i] = return_attr_from_module(module_path, attr)
+            
+        # Import base multi-objective fitness function class.
+        from fitness.base_ff_classes.moo_ff import moo_ff
+        
+        # Set main fitness function as base multi-objective fitness
+        # function class.
+        params[op] = moo_ff(params[op])
+    
+    else:
+        # A single fitness function has been specified.
+
+        # Split import name based on "." to find nested modules.
+        split_name = params[op].strip().split(".")
+
+        # Get module and attribute names.
+        module_name = ".".join(["fitness", params[op]])
+        attr_name = split_name[-1]
+
+        # Import module and attribute and save.
+        params[op] = return_attr_from_module(module_name, attr_name)
+        
+        # Initialise fitness function.
+        params[op] = params[op]()
+
+
+def return_attr_from_module(module_name, attr_name):
     """
     Given a module path and the name of an attribute that exists in that
     module, import the attribute from the module using the importlib package
-    and store it in the params dictionary.
-    
+    and return it.
+
     :param module_name: The name/location of the desired module.
     :param attr_name: The name of the attribute.
-    :param op: The relevant key from the parameters.parameters.params
-               dictionary.
-    :return: Nothing.
+    :return: The imported attribute from the module.
     """
     
     try:
@@ -157,9 +209,9 @@ def import_attr_from_module(module_name, attr_name, op):
         raise Exception(s)
     
     try:
-        # Import specified attribute.
-        params[op] = getattr(module, attr_name)
-        
+        # Import specified attribute and return.
+        return getattr(module, attr_name)
+    
     except AttributeError:
         s = "utilities.initialise_run.import_attr_from_module\n" \
             "Error: Specified attribute '%s' not found in module '%s'." \

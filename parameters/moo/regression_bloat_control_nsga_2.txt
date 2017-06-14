@@ -1,23 +1,26 @@
-SEED_GENOME:            [75338, 82028, 75321, 70627, 69687, 60908, 2544, 59872, 18585, 19220, 87239]
-CACHE:                  True
 CODON_SIZE:             100000
-CROSSOVER:              variable_onepoint
+CROSSOVER:              subtree
 CROSSOVER_PROBABILITY:  0.75
 DATASET_TRAIN:          Vladislavleva4/Train.txt
 DATASET_TEST:           Vladislavleva4/Test.txt
-DEBUG:                  False
+DEBUG:                  True
 ERROR_METRIC:           mse
 GENERATIONS:            50
-MAX_GENOME_LENGTH:      500
 GRAMMAR_FILE:           Vladislavleva4.bnf
-INITIALISATION:         seed_initialisation
+INITIALISATION:         PI_grow
 INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    10
 MAX_TREE_DEPTH:         17
-MUTATION:               int_flip_per_codon
+MUTATION:               subtree
 POPULATION_SIZE:        500
-FITNESS_FUNCTION:       supervised_learning
 REPLACEMENT:            generational
-SELECTION:              tournament
 TOURNAMENT_SIZE:        2
 VERBOSE:                False
+SAVE_ALL:               False
+ELITE_SIZE:             0
+FITNESS_FUNCTION:       supervised_learning.regression, minimise_nodes
+SELECTION:              nsga2_selection
+REPLACEMENT:            nsga2_replacement
+CACHE:                  True
+MUTATE_DUPLICATES:      True
+VERBOSE:                True

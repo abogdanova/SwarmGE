@@ -1,6 +1,6 @@
 from algorithm.parameters import params
+from fitness.base_ff_classes.base_ff import base_ff
 
-import numpy as np
 import editdistance  # https://pypi.python.org/pypi/editdistance
 import lzstring  # https://pypi.python.org/pypi/lzstring/
 import dtw  # https://pypi.python.org/pypi/dtw
@@ -147,14 +147,14 @@ def proglen(s):
     return len(s) / 100.0
 
 
-class sequence_match:
-    
-    default_fitness = np.NaN
-    
+class sequence_match(base_ff):
+        
     def __init__(self):
         """
         Initilise class instance
         """
+        # Initialise base fitness function class.
+        super().__init__()
         
         # --target will be a sequence such as (0, 5, 0, 5)
         self.target = eval(params['TARGET'])
@@ -166,9 +166,8 @@ class sequence_match:
         self.alpha = extra_fit_params['alpha']
         self.beta = extra_fit_params['beta']
         self.gamma = extra_fit_params['gamma']
-        self.maximise = False
 
-    def __call__(self, ind):
+    def evaluate(self, ind, **kwargs):
         """
         ind.phenotype will be a string incl fn defns etc. when we exec it
         will create a value XXX_output_XXX, but we exec inside an empty dict
