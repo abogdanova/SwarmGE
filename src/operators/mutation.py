@@ -120,6 +120,7 @@ def subtree(ind):
     :param ind: An individual to be mutated.
     :return: A mutated individual.
     """
+
     def subtree_mutate(ind_tree):
         """
         Creates a list of all nodes and picks one node at random to mutate.
@@ -129,11 +130,11 @@ def subtree(ind):
         :param ind_tree: The full tree of an individual.
         :return: The full mutated tree and the associated genome.
         """
-
+    
         # Find the list of nodes we can mutate from.
         targets = ind_tree.get_target_nodes([], target=params[
                                           'BNF_GRAMMAR'].non_terminals)
-
+        
         # Pick a node.
         new_tree = choice(targets)
 

@@ -1,4 +1,5 @@
 from random import choice, randrange, randint
+
 from algorithm.parameters import params
 from utilities.representation.check_methods import ret_true, get_nodes_and_depth
 from representation.tree import Tree
