@@ -1,10 +1,10 @@
-from . import supervised_learning
+from fitness.supervised_learning.supervised_learning import supervised_learning
 
 from algorithm.parameters import params
 from utilities.fitness.error_metric import rmse
 
 
-class regression(supervised_learning.supervised_learning):
+class regression(supervised_learning):
     """Fitness function for regression. We just slightly specialise the
     function for supervised_learning."""
 

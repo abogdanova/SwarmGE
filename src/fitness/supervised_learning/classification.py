@@ -1,10 +1,10 @@
-from . import supervised_learning
+from fitness.supervised_learning.supervised_learning import supervised_learning
 
 from algorithm.parameters import params
 from utilities.fitness.error_metric import f1_score
 
 
-class classification(supervised_learning.supervised_learning):
+class classification(supervised_learning):
     """Fitness function for classification. We just slightly specialise the
     function for supervised_learning."""
 
