@@ -969,7 +969,7 @@ Improves existing regexes by seeding them into the population. The fitness funct
 
 To try this problem, specify the following command-line argument:
 
-    --parameters seedonly_regex_catastrophic_QT3TS_1.txt
+    python3.5 scripts/seed_PonyGE2.py --parameters seedonly_regex_catastrophic_QT3TS_1.txt
 
 # Adding New Problems
 ---------------------
