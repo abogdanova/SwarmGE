@@ -1,9 +1,9 @@
 from math import sqrt
 
-from fitness import moo_fitness
+from fitness.base_ff_classes import base_moo_ff
 
 
-class moo_zdt1(moo_fitness.moo_fitness):
+class moo_zdt1(base_moo_ff.moo_fitness):
 
     """
     Fitness function for the first problem (T_1) presented in

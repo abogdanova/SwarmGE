@@ -20,5 +20,3 @@ REPLACEMENT:            generational
 SELECTION:              tournament
 TOURNAMENT_SIZE:        2
 VERBOSE:                False
-SEARCH_LOOP:            search_loop
-STEP:                   algorithm.step.step

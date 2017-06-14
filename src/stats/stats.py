@@ -67,7 +67,7 @@ def get_stats(individuals, end=False):
 
     # Save stats to file.
     if not params['DEBUG']:
-        # TODO: MOO stats need to be saved differently.
+        # TODO: moo stats need to be saved differently.
         if stats['gen'] == 0:
             save_stats_headers(stats)
         save_stats_to_file(stats, end)

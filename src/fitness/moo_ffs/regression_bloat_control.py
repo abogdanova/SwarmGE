@@ -1,4 +1,4 @@
-from fitness.regression import regression
+from fitness.supervised_learning.regression import regression
 
 
 class regression_bloat_control(regression):

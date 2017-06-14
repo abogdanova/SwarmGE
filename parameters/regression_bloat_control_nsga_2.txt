@@ -18,7 +18,7 @@ TOURNAMENT_SIZE:        2
 VERBOSE:                False
 SAVE_ALL:               False
 ELITE_SIZE:             0
-FITNESS_FUNCTION:       regression_bloat_control
+FITNESS_FUNCTION:       moo_ffs.regression_bloat_control
 SELECTION:              nsga2_selection
 REPLACEMENT:            nsga2_replacement
 CACHE:                  True

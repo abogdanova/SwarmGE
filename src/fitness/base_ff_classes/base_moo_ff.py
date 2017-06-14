@@ -16,8 +16,17 @@ class moo_fitness:
     This is an abstract class which exists just to be subclassed:
     should not be instantiated.
     """
-    
-    default_fitness = np.NaN
+
+    def __init__(self, fitness_functions):
+
+        # Set list of individual fitness functions.
+        self.fitness_functions = fitness_functions
+        
+        # Set up list of default fitness values (as per individual fitness
+        # functions).
+        moo_fitness.default_fitness = []
+        for f in fitness_functions:
+            moo_fitness.default_fitness.append(f.default_fitness)
     
     def __call__(self, ind):
         """
