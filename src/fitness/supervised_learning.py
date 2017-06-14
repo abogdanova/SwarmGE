@@ -98,7 +98,7 @@ class supervised_learning:
                 MemoryError):
             # FP err can happen through eg overflow (lots of pow/exp calls)
             # ZeroDiv can happen when using unprotected operators
-            fitness = self.default_fitness
+            fitness = supervised_learning.default_fitness
             # TODO: Should these individuals be classed as invalid?
         
         except Exception as err:
@@ -109,6 +109,6 @@ class supervised_learning:
 
         # don't use "not fitness" here, because what if fitness = 0.0?!
         if isnan(fitness):
-            fitness = self.default_fitness
+            fitness = supervised_learning.default_fitness
 
         return fitness

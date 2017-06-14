@@ -1,5 +1,6 @@
 from algorithm.parameters import params
 
+import numpy as np
 import editdistance  # https://pypi.python.org/pypi/editdistance
 import lzstring  # https://pypi.python.org/pypi/lzstring/
 import dtw  # https://pypi.python.org/pypi/dtw
@@ -147,6 +148,8 @@ def proglen(s):
 
 
 class sequence_match:
+    
+    default_fitness = np.NaN
     
     def __init__(self):
         """

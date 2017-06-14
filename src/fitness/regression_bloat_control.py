@@ -11,12 +11,10 @@ class regression_bloat_control(regression):
 
     def __init__(self):
         super().__init__()
-        
-        # TODO: default fitness for multi objective problems is the default fitness of the super() class, which is a single objective. Can we over-write the default fitness for this class (as below) without over-writing the default fitness of the super() class?
-        
-        # # Over-write default fitness to account for multiple objectives.
-        # self.default_fitness = [super().default_fitness,
-        #                         super().default_fitness]
+                
+        # Over-write default fitness to account for multiple objectives.
+        regression_bloat_control.default_fitness = [super().default_fitness,
+                                                    super().default_fitness]
 
     def __call__(self, ind, dist="training"):
         objective_1 = super().__call__(ind, dist)
