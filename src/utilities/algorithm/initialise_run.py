@@ -3,6 +3,7 @@ from os import getpid
 from random import seed
 from socket import gethostname
 from time import time
+import importlib
 
 from algorithm.parameters import params
 from utilities.stats import trackers
@@ -45,47 +46,6 @@ def initialise_run_params(create_files):
         generate_folders_and_files()
 
 
-def make_import_str(fns, location):
-    """
-    Takes in a paired list of operators and the specified function from the
-    option parser. Strings either represent the full dotted path to the
-    function which we wish to access, eg operators.selection.tournament, or
-    just the function name directly (in which case we default to the specified
-    functions in the default location for each operators).
-
-    :param fns: a paired list of operators and the specified function from the
-    option parser. Strings either represent the full dotted path to the
-    function which we wish to access, eg operators.selection.tournament, or
-    just the function name directly (in which case we default to the specified
-    functions in the default location for each operators).
-    :param location: A string specifying the containing folder of the
-    functions listed in fns, e.g. "operators", "fitness", "utilities", etc.
-    :return: a string of imports of correct modules,
-    eg import operators.selection
-    """
-
-    imports = []
-    for fn in [func for func in fns if func[1]]:
-        # Extract pairs of operators and functions, but only if functions
-        # are not 'None' (some default parameters e.g. error_metric may be
-        # set to 'None').
-        operator, function = fn[0], fn[1]
-        parts = function.split(".")
-        # Split the function into its component parts
-
-        if len(parts) == 1:
-            # If the specified location is a single name, default to
-            # operators.operator location
-            imports.append("import " + location + "." + operator.lower())
-            params[operator] = ".".join([location, operator.lower(), parts[0]])
-
-        else:
-            # "operators.selection.tournament" -> "import operators.selection"
-            imports.append("import " + ".".join(parts[:-1]))
-
-    return "\n".join(imports)
-
-
 def set_param_imports():
     """
     This function makes the command line experience easier for users. When
@@ -125,32 +85,83 @@ def set_param_imports():
     # 'fitness' because ERROR_METRIC has to be set in order to call
     # the fitness function constructor.
 
-    for special_ops in ['algorithm', 'utilities.fitness', 'operators',
-                        'fitness']:
+    for special_ops in ['algorithm', 'utilities.fitness',
+                        'operators', 'fitness']:
 
         if all([callable(params[op]) for op in ops[special_ops]]):
             # params are already functions
             pass
 
         else:
-            if special_ops == "fitness":
-                import_func = "from fitness." + params[
-                    'FITNESS_FUNCTION'] + " import " + params[
-                                  'FITNESS_FUNCTION']
+            
+            for op in ops[special_ops]:
+                
+                # Split import name based on "." to find nested modules.
+                split_name = params[op].split(".")
+                
+                if split_name[0] == special_ops:
+                    # Full path already specified.
+                    
+                    # Get module and attribute names.
+                    module_name = ".".join(split_name[:-1])
+                    attr_name = split_name[-1]
 
-                # Import the required fitness function.
-                exec(import_func)
+                    # Import module and attribute.
+                    import_attr_from_module(module_name, attr_name, op)
+                    
+                elif special_ops == 'fitness':
+                    # Fitness functions must be classes where the class has
+                    # the same name as its containing file.
+            
+                    # Get module and attribute names.
+                    module_name = ".".join([special_ops, params[op]])
+                    attr_name = split_name[-1]
 
-                # Set the fitness function in the params dictionary.
-                params['FITNESS_FUNCTION'] = eval(params['FITNESS_FUNCTION'] +
-                                                  "()")
-            else:
-                # We need to do an appropriate import...
-                import_str = make_import_str([[op, params[op]] for op in
-                                              ops[special_ops]], special_ops)
+                    # Import module and attribute.
+                    import_attr_from_module(module_name, attr_name, op)
+                    
+                    # Initialise fitness function.
+                    params[op] = params[op]()
 
-                exec(import_str)
-                # ... and then eval the param.
-                for op in ops[special_ops]:
-                    if params[op]:
-                        params[op] = eval(params[op])
+                else:
+                    # Full path not specified
+    
+                    # Get module and attribute names.
+                    module_name = ".".join([special_ops, op.lower()])
+                    attr_name = split_name[-1]
+    
+                    # Import module and attribute.
+                    import_attr_from_module(module_name, attr_name, op)
+            
+
+def import_attr_from_module(module_name, attr_name, op):
+    """
+    Given a module path and the name of an attribute that exists in that
+    module, import the attribute from the module using the importlib package
+    and store it in the params dictionary.
+    
+    :param module_name: The name/location of the desired module.
+    :param attr_name: The name of the attribute.
+    :param op: The relevant key from the parameters.parameters.params
+               dictionary.
+    :return: Nothing.
+    """
+    
+    try:
+        # Import module.
+        module = importlib.import_module(module_name)
+    
+    except ModuleNotFoundError:
+        s = "utilities.initialise_run.import_attr_from_module\n" \
+            "Error: Specified module not found: %s" % (module_name)
+        raise Exception(s)
+    
+    try:
+        # Import specified attribute.
+        params[op] = getattr(module, attr_name)
+        
+    except AttributeError:
+        s = "utilities.initialise_run.import_attr_from_module\n" \
+            "Error: Specified attribute '%s' not found in module '%s'." \
+            % (attr_name, module_name)
+        raise Exception(s)
