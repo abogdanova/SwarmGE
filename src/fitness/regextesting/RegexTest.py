@@ -1,10 +1,7 @@
-import re
-
 
 class RegexTest:
     """
     Class which contains a test string and matches
-    (We should probably just use the types which re library uses)
     """
 
     def __init__(self, search_string):
