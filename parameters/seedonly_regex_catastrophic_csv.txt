@@ -8,7 +8,7 @@ GENOME_INIT:            False
 MAX_GENOME_LENGTH:      1000
 GENOME_OPERATIONS:      False
 GRAMMAR_FILE:           PCRE.bnf
-INITIALISATION:         seed_only
+INITIALISATION:         seed_individuals
 INVALID_SELECTION:      False
 LOOKUP_BAD_FITNESS:     False
 LOOKUP_FITNESS:         True
@@ -35,5 +35,6 @@ TOURNAMENT_SIZE:        2
 VERBOSE:                True
 TAILS:                  False
 SEMANTIC_LOCK:          False
-SEED_GENOME:            [2, 15, 4, 56, 2, 11, 3, 12, 3, 4, 44, 3, 4, 40, 3, 4, 51, 2, 4, 42, 3, 12, 3, 4, 59, 3, 5, 3, 11, 3, 5, 3, 11, 3, 4, 60, 2, 5, 4, 41]
 DEBUG:             False
+TARGET_SEED_FOLDER:      regex_catastrophic_csv
+SEED_GENOME:            [2, 15, 4, 56, 2, 11, 3, 12, 3, 4, 44, 3, 4, 40, 3, 4, 51, 2, 4, 42, 3, 12, 3, 4, 59, 3, 5, 3, 11, 3, 5, 3, 11, 3, 4, 60, 2, 5, 4, 41]

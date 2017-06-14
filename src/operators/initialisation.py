@@ -53,22 +53,6 @@ def uniform_genome(size):
 
     return [individual.Individual(sample_genome(), None) for _ in range(size)]
 
-# this is here only for compatibility with existing experiments. Should be replaced by use of seed_initialisation
-def seed_only(size):
-    population = []
-    # Include seed genome if defined
-    if 'SEED_GENOME' in params and params['SEED_GENOME']:
-        seed_ind = individual.Individual(params['SEED_GENOME'], None)
-        print("Seed Individual: " + seed_ind.phenotype)
-        while len(population)<size:
-            population.append(seed_ind)
-        params['MAX_TREE_DEPTH'] = len(seed_ind.genome) * 3
-        print("Setting MAX_TREE_DEPTH to {}".format(params['MAX_TREE_DEPTH']))
-
-    else:
-        print("Using seed_only initialisation without SEED_INDIVIDUAL")
-        exit()
-    return population
 
 def uniform_tree(size):
     """
@@ -211,16 +195,9 @@ def rhh(size):
 
             # Append individual to population
             population.append(ind)
-            
-        # Include seed genome if defined
-        if 'SEED_GENOME' in params and params['SEED_GENOME']:
-            seed_ind = individual.Individual(params['SEED_GENOME'], None)
-            print("Seed Individual: " + seed_ind.phenotype)
-            population[0] = seed_ind
-            params['MAX_TREE_DEPTH'] = len(seed_ind.genome) * 3
-            print("Setting MAX_TREE_DEPTH to {}".format(params['MAX_TREE_DEPTH']))
-            
+
         return population
+
 
 def PI_grow(size):
     """
@@ -288,15 +265,6 @@ def PI_grow(size):
             # Append individual to population
             population.append(ind)
 
-        # Include seed genome if defined # TODO refactor this duplicate code!
-        if 'SEED_GENOME' in params and params['SEED_GENOME']:
-            seed_ind = individual.Individual(params['SEED_GENOME'], None)
-            print("Seed Individual: " + seed_ind.phenotype)
-            population[0] = seed_ind
-            params['MAX_TREE_DEPTH'] = len(seed_ind.genome) * 3
-            print("Setting MAX_TREE_DEPTH to {}".format(params['MAX_TREE_DEPTH']))
-            print("S")
-
         return population
 
 
@@ -332,11 +300,8 @@ def generate_ind_tree(max_depth, method):
     ind.depth, ind.used_codons, ind.invalid = depth, used_cod, invalid
 
     # Generate random tail for genome.
-    if params['TAILS']:
-        ind.genome = genome + [randint(0, params['CODON_SIZE']) for _ in
-                               range(int(ind.used_codons / 2))]
-    else:
-        ind.genome = genome
+    ind.genome = genome + [randint(0, params['CODON_SIZE']) for
+                           _ in range(int(ind.used_codons / 2))]
 
     return ind
 
