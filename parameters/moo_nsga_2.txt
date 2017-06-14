@@ -15,3 +15,4 @@ MUTATION:               int_flip_per_codon
 ELITE_SIZE:             0
 SELECTION:              nsga2_selection
 REPLACEMENT:            nsga2_replacement
+VERBOSE:                True

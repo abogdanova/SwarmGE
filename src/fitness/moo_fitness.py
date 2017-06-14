@@ -17,7 +17,6 @@ class moo_fitness:
     should not be instantiated.
     """
     
-    # TODO: finalise default fitness format for MOO fitness functions.
     default_fitness = np.NaN
     
     def __call__(self, ind):
@@ -43,7 +42,7 @@ class moo_fitness:
                 MemoryError):
             # FP err can happen through eg overflow (lots of pow/exp calls)
             # ZeroDiv can happen when using unprotected operators
-            fitness = self.default_fitness
+            fitness = [moo_fitness.default_fitness] * self.num_objectives()
             
         except Exception as err:
             # other errors should not usually happen (unless we have
@@ -54,7 +53,7 @@ class moo_fitness:
         if any([isnan(i) for i in fitness]):
             # Check if any objective fitness value is NaN, if so set default
             # fitness.
-            fitness = self.default_fitness
+            fitness = [moo_fitness.default_fitness] * self.num_objectives()
 
         return fitness
     

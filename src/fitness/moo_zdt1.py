@@ -14,6 +14,13 @@ class moo_zdt1(moo_fitness.moo_fitness):
     Evolutionary computation 8.2 (2000): 173-195.
     """
 
+    def __init__(self):
+        super().__init__()
+    
+        # Over-write default fitness to account for multiple objectives.
+        moo_zdt1.default_fitness = [super().default_fitness,
+                                    super().default_fitness]
+
     def moo_eval(self, phen):
         min_value = [0 for _ in range(30)]
         max_value = [1 for _ in range(30)]
