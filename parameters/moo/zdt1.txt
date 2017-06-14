@@ -1,5 +1,5 @@
-GRAMMAR_FILE:           MOO/moo_zdt123.bnf
-FITNESS_FUNCTION:       moo_zdt1
+GRAMMAR_FILE:           moo/moo_zdt123.bnf
+FITNESS_FUNCTION:       multi_objective.binary_phenotype_to_float, multi_objective.zdt1
 CODON_SIZE:             1000
 POPULATION_SIZE:        50
 GENERATIONS:            50

@@ -1,12 +1,13 @@
 from algorithm.parameters import params
+from fitness.base_ff_classes.base_ff import base_ff
+
 from os import path
 import subprocess
 import json
 import sys
-import numpy as np
 
 
-class progsys:
+class progsys(base_ff):
     """Fitness function for program synthesis problems. Grammars and datasets
     for 29 benchmark problems from doi.org/10.1145/2739480.2754769 are
     provided. Evaluation is done in a separate python process."""
@@ -23,10 +24,10 @@ class progsys:
     FORCOUNTER = "forCounter"
     FORCOUNTERUNNUMBERED = "forCounter%"
 
-    maximise = False
-    default_fitness = np.NaN
-
     def __init__(self):
+        # Initialise base fitness function class.
+        super().__init__()
+        
         self.training, self.test, self.embed_header, self.embed_footer = \
             self.get_data(params['DATASET_TRAIN'], params['DATASET_TEST'],
                           params['GRAMMAR_FILE'])
@@ -36,8 +37,11 @@ class progsys:
                   "as fitness function.\n"
                   "Fitness function only allows sequential evaluation.")
 
-    def __call__(self, individual, dist="training"):
-        program = self.format_program(individual.phenotype,
+    def evaluate(self, ind, **kwargs):
+    
+        dist = kwargs.get('dist', 'training')
+        
+        program = self.format_program(ind.phenotype,
                                       self.embed_header, self.embed_footer)
         data = self.training if dist == "training" else self.test
         program = "{}\n{}\n".format(data, program)

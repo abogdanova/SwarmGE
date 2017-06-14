@@ -182,3 +182,38 @@ def percentile(sorted_list, p):
     """
     
     return sorted_list[ceil(len(sorted_list) * p / 100) - 1]
+
+
+def binary_phen_to_float(phen, n_codon, min_value, max_value):
+    """
+    This method converts a phenotype, defined by a
+    string of bits in a list of float values
+
+    :param phen: Phenotype defined by a bit string
+    :param n_codon: Number of codons per gene, defined in the grammar
+    :param min_value: Minimum value for a gene
+    :param max_value: Maximum value for a gene
+    :return: A list os float values, representing the chromosome
+    """
+    
+    i, count, chromosome = 0, 0, []
+    
+    while i < len(phen):
+        # Get the current gene from the phenotype string.
+        gene = phen[i:(i + n_codon)]
+        
+        # Convert the bit string in gene to an float/int
+        gene_i = int(gene, 2)
+        gene_f = float(gene_i) / (2 ** n_codon - 1)
+        
+        # Define the variation for the gene
+        delta = max_value[count] - min_value[count]
+        
+        # Append the float value to the chromosome list
+        chromosome.append(gene_f * delta + min_value[count])
+        
+        # Increment the index and count.
+        i = i + n_codon
+        count += 1
+    
+    return chromosome
