@@ -125,7 +125,8 @@ def set_param_imports():
     # 'fitness' because ERROR_METRIC has to be set in order to call
     # the fitness function constructor.
 
-    for special_ops in ['algorithm', 'utilities.fitness', 'operators', 'fitness']:
+    for special_ops in ['algorithm', 'utilities.fitness', 'operators',
+                        'fitness']:
 
         if all([callable(params[op]) for op in ops[special_ops]]):
             # params are already functions
