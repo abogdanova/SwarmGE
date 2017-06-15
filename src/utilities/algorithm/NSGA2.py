@@ -17,7 +17,7 @@ def compute_pareto_metrics(population):
     pareto = sort_non_dominated(population)
     
     # Calculate the crowding distance
-    calculate_crowding_distance(pareto)
+    pareto = calculate_crowding_distance(pareto)
     
     return pareto
 
@@ -124,7 +124,8 @@ def calculate_crowding_distance(pareto):
     the *pareto_fronts*.
 
     :param pareto:
-    :return: Nothing
+    :return: A list of Pareto fronts (lists), the first list includes
+             non-dominated individuals.
     """
     
     for front in pareto.fronts:
@@ -147,6 +148,8 @@ def calculate_crowding_distance(pareto):
                          params['FITNESS_FUNCTION'].value(
                              front[index - 1].fitness, m)) / \
                         pareto.fitness_iqr[m]
+    
+    return pareto
 
 
 def crowded_comparison_operator(individual, other_individual, pareto):
@@ -313,61 +316,3 @@ class ParetoInfo:
             return self.crowding_distance[individual]
         
         return 0
-
-
-class ParetoFront:
-    """
-    This class makes a set of solutions in the Pareto front emulate
-    an individual, such that the writing of the statistics in file
-    can read the information from the Pareto front as an individual.
-    """
-    
-    def __init__(self, pf_solutions):
-        self.phenotype = PhenotypeParser(pf_solutions)
-        self.genome = GenomeParser(pf_solutions)
-        self.tree = TreeParser(pf_solutions)
-        self.fitness = ObjectiveParser(pf_solutions)
-        self.pf_solutions = pf_solutions
-    
-    def __lt__(self, other):
-        
-        if self.fitness is None:
-            # Self.fitness is None, return False as it doesn't
-            # matter what the other fitness is.
-            return False
-        else:
-            if other.fitness is None:
-                return False
-            else:
-                return len(other.fitness) > len(self.fitness)
-
-
-class TestFitness:
-    def __init__(self, fitness_list):
-        self.fitness_list = fitness_list
-    
-    def __str__(self):
-        return ''.join([str(fitness) + "\n" for fitness in self.fitness_list])
-
-
-class PhenotypeParser:
-    def __init__(self, pf_solutions):
-        self.solutions = pf_solutions
-    
-    def __str__(self):
-        return ''.join([str(ind.phenotype) + "\n" for ind in self.solutions])
-
-
-class GenomeParser(PhenotypeParser):
-    def __str__(self):
-        return ''.join([str(ind.genome) + "\n" for ind in self.solutions])
-
-
-class TreeParser(PhenotypeParser):
-    def __str__(self):
-        return ''.join([str(ind.tree) + "\n" for ind in self.solutions])
-
-
-class ObjectiveParser(PhenotypeParser):
-    def __str__(self):
-        return ''.join([str(ind.fitness) + "\n" for ind in self.solutions])

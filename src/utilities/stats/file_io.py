@@ -1,5 +1,6 @@
 import types
 from os import path, getcwd, makedirs
+from copy import copy
 
 from algorithm.parameters import params
 from utilities.stats import trackers
@@ -49,11 +50,12 @@ def save_stats_headers(stats):
     savefile.close()
 
 
-def save_best_ind_to_file(stats, end=False, name="best"):
+def save_best_ind_to_file(stats, ind, end=False, name="best"):
     """
     Saves the best individual to a file.
 
     :param stats: The stats.stats.stats dictionary.
+    :param ind: The individual to be saved to file.
     :param end: A boolean flag indicating whether or not the evolutionary
     process has finished.
     :param name: The name of the individual. Default set to "best".
@@ -63,21 +65,50 @@ def save_best_ind_to_file(stats, end=False, name="best"):
     filename = path.join(params['FILE_PATH'], (str(name) + ".txt"))
     savefile = open(filename, 'w')
     savefile.write("Generation:\n" + str(stats['gen']) + "\n\n")
-    savefile.write("Phenotype:\n" + str(trackers.best_ever.phenotype) + "\n\n")
-    savefile.write("Genotype:\n" + str(trackers.best_ever.genome) + "\n")
-    savefile.write("Tree:\n" + str(trackers.best_ever.tree) + "\n")
+    savefile.write("Phenotype:\n" + str(ind.phenotype) + "\n\n")
+    savefile.write("Genotype:\n" + str(ind.genome) + "\n")
+    savefile.write("Tree:\n" + str(ind.tree) + "\n")
     if hasattr(params['FITNESS_FUNCTION'], "training_test"):
         if end:
-            savefile.write("\nTraining fitness:\n" +
-                           str(trackers.best_ever.training_fitness))
-            savefile.write("\nTest fitness:\n" +
-                           str(trackers.best_ever.test_fitness))
+            savefile.write("\nTraining fitness:\n" + str(ind.training_fitness))
+            savefile.write("\nTest fitness:\n" + str(ind.test_fitness))
         else:
-            savefile.write("\nFitness:\n" + str(trackers.best_ever.fitness))
+            savefile.write("\nFitness:\n" + str(ind.fitness))
     else:
-        savefile.write("\nFitness:\n" + str(trackers.best_ever.fitness))
+        savefile.write("\nFitness:\n" + str(ind.fitness))
     savefile.close()
 
+
+def save_first_front_to_file(stats, end=False, name="first_front"):
+    """
+    Saves all individuals in the first front to individual files in a folder.
+    
+    :param stats: The stats.stats.stats dictionary.
+    :param end: A boolean flag indicating whether or not the evolutionary
+                process has finished.
+    :param name: The name of the front folder. Default set to "first_front".
+    :return: Nothing.
+    """
+
+    # Save the file path (we will be over-writing it).
+    orig_file_path = copy(params['FILE_PATH'])
+
+    # Define the new file path.
+    params['FILE_PATH'] = path.join(orig_file_path, name)
+    
+    # Check if the front folder exists already
+    if not path.isdir(params['FILE_PATH']):
+        
+        # Create front folder.
+        makedirs(params['FILE_PATH'])
+    
+    for i, ind in enumerate(trackers.best_ever):
+        # Save each individual in the first front to file.
+        save_best_ind_to_file(stats, ind, end, name=str(i))
+    
+    # Re-set the file path.
+    params['FILE_PATH'] = copy(orig_file_path)
+    
 
 def generate_folders_and_files():
     """
