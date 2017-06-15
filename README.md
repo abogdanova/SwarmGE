@@ -963,13 +963,16 @@ To try this problem, specify the following command-line argument:
 
 
 ## Genetic Improvement of Regex Runtime Performance
-------------
+---------------------------------------------------
 
-Improves existing regexes by seeding them into the population. The fitness function measures runtime and functionality of regexes.
+An example of Genetic Improvement for software engineering is given for program improvement of Regular Expressions (regexs). The given examples improve existing regexes by seeding them into the population. The fitness function measures runtime and functionality of regexs.
+
+The fitness function for the regex performance improvement problem has a number of sub-modules and programs which are used for generating test cases and for timing the execution of candidate programs. This is an exmaple of how a fitness function can be extended in PonyGE2 with customised modules and classes to perform complex tasks.
 
 To try this problem, specify the following command-line argument:
 
-    python3.5 scripts/seed_PonyGE2.py --parameters seedonly_regex_catastrophic_QT3TS_1.txt
+    python scripts/seed_PonyGE2.py --parameters regex_improvement.txt
+
 
 # Adding New Problems
 ---------------------
@@ -979,6 +982,8 @@ It has been made as simple as possible to add new problems to PonyGE. To add in 
 1. a new grammar file specific to your problem,
 2. a new fitness function (if you don't want to use a previously existing one), and
 3. if you are doing supervised learning then you may also need to add some new datasets.
+
+A template for new fitness functions is provided in `fitness.base_ff_classes.ff_template`. This template allows for new fitness functions to be easily and quickly created in an easily compatible and extensible manner.
 
 *__NOTE__ that it may be beneficial to create a __new parameters file__ for any new problem.*
 

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from numpy import isnan
 
 from algorithm.parameters import params
 from utilities.fitness.math_functions import percentile
@@ -95,11 +96,11 @@ def dominates(individual1, individual2):
     # Initialise dominating value.
     not_equal = False
     
-    if not isinstance(individual1.fitness, list):
+    if any([isnan(fit) for fit in individual1.fitness]):
         # Individual 1 is invalid.
         return False
     
-    if not isinstance(individual2.fitness, list):
+    elif any([isnan(fit) for fit in individual2.fitness]):
         # Individual 2 is invalid.
         return True
     

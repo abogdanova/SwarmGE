@@ -61,5 +61,8 @@ class base_ff:
         :param kwargs: Optional extra arguments.
         :return: The fitness of the evaluated individual.
         """
-        
-        return eval(ind.phenotype)
+
+        # Evaluate the fitness of the phenotype
+        fitness = eval(ind.phenotype)
+
+        return fitness

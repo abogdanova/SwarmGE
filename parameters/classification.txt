@@ -8,7 +8,7 @@ DEBUG:                  False
 ERROR_METRIC:           f1_score
 GENERATIONS:            50
 MAX_GENOME_LENGTH:      500
-GRAMMAR_FILE:           Banknote.bnf
+GRAMMAR_FILE:           supervised_learning/Banknote.bnf
 INITIALISATION:         PI_grow
 INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    10

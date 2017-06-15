@@ -24,11 +24,7 @@ params = {
         'RUNS': 1,
 
         # Class of problem
-        'FITNESS_FUNCTION': "regression",
-        # "regression"
-        # "string_match"
-        # "classification"
-        # "supervised_learning"
+        'FITNESS_FUNCTION': "supervised_learning.regression",
 
         # Select problem dataset
         'DATASET_TRAIN': "Vladislavleva4/Train.txt",
@@ -36,13 +32,7 @@ params = {
         'DATASET_DELIMITER': None,
 
         # Set grammar file
-        'GRAMMAR_FILE': "Vladislavleva4.bnf",
-        # "Vladislavleva4.bnf"
-        # "Keijzer6.bnf"
-        # "Dow.bnf"
-        # "Banknote.bnf"
-        # "letter.bnf"
-        # "supervised_learning.bnf"
+        'GRAMMAR_FILE': "supervised_learning/Vladislavleva4.bnf",
 
         # Select error metric
         'ERROR_METRIC': None,
