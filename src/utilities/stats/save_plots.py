@@ -16,17 +16,77 @@ def save_best_fitness_plot():
     
     :return: Nothing
     """
+    
     from algorithm.parameters import params
 
+    # Initialise figure instance.
     fig = plt.figure()
     ax1 = fig.add_subplot(1, 1, 1)
+
+    # Plot data.
     ax1.plot(best_fitness_list)
+
+    # Set labels.
     ax1.set_ylabel('fitness', fontsize=14)
     ax1.set_xlabel('Generation', fontsize=14)
+
+    # Plot title.
     plt.title("Best fitness")
+
+    # Save plot and close.
     plt.savefig(path.join(params['FILE_PATH'], "fitness.pdf"))
     plt.close()
 
+
+def save_pareto_fitness_plot():
+    """
+    Saves a plot of the current fitness for a pareto front.
+
+    :return: Nothing
+    """
+    
+    from algorithm.parameters import params
+
+    # Initialise up figure instance.
+    fig = plt.figure()
+    ax1 = fig.add_subplot(1, 1, 1)
+
+    # Set up iterator for color plotting.
+    color = iter(plt.cm.rainbow(np.linspace(0, 1, len(best_fitness_list))))
+
+    # Plot data.
+    for i, gen in enumerate(best_fitness_list):
+        c = next(color)
+        ax1.plot(gen[0], gen[1], color=c)
+
+    # Get labels for individual fitnesses.
+    ffs = params['FITNESS_FUNCTION'].fitness_functions
+    
+    # Set labels with class names.
+    ax1.set_ylabel(ffs[0].__class__.__name__, fontsize=14)
+    ax1.set_xlabel(ffs[1].__class__.__name__, fontsize=14)
+    
+    # Plot title and legend.
+    plt.title("Best fitness")
+
+    # Set up colorbar instead of legend. Normalise axis to scale of data.
+    sm = plt.cm.ScalarMappable(cmap="rainbow",
+                   norm=plt.Normalize(vmin=0, vmax=len(best_fitness_list) - 1))
+
+    # Fake up the array of the scalar mappable.
+    sm._A = []
+
+    # Plot the colorbar.
+    cbar = plt.colorbar(sm, ticks=[0, len(best_fitness_list) - 1])
+
+    # Set label of colorbar.
+    # cbar.ax.get_yaxis().labelpad = 15
+    cbar.ax.set_ylabel('Generation', rotation=90)
+
+    # Save plot and close.
+    plt.savefig(path.join(params['FILE_PATH'], "fitness.pdf"))
+    plt.close()
+    
 
 def save_plot_from_data(data, name):
     """
@@ -39,11 +99,17 @@ def save_plot_from_data(data, name):
     
     from algorithm.parameters import params
 
-    # Plot the data
+    # Initialise up figure instance.
     fig = plt.figure()
     ax1 = fig.add_subplot(1, 1, 1)
+
+    # Plot data.
     ax1.plot(data)
+
+    # Plot title.
     plt.title(name)
+    
+    # Save plot and close.
     plt.savefig(path.join(params['FILE_PATH'], (name + '.pdf')))
     plt.close()
 
@@ -66,16 +132,20 @@ def save_plot_from_file(filename, stat_name):
             "Error: stat %s does not exist" % stat_name
         raise Exception(s)
 
-    # Plot the data
+        # Set up the figure.
     fig = plt.figure()
     ax1 = fig.add_subplot(1, 1, 1)
+
+    # Plot the data.
     ax1.plot(stat)
+
+    # Plot title.
     plt.title(stat_name)
 
     # Get save path
     save_path = pathsep.join(filename.split(pathsep)[:-1])
 
-    # Save plot
+    # Save plot and close.
     plt.savefig(path.join(save_path, (stat_name + '.pdf')))
     plt.close()
 

@@ -7,7 +7,8 @@ from algorithm.parameters import params
 from utilities.algorithm.NSGA2 import compute_pareto_metrics
 from utilities.algorithm.state import create_state
 from utilities.stats import trackers
-from utilities.stats.save_plots import save_best_fitness_plot
+from utilities.stats.save_plots import save_best_fitness_plot, \
+    save_pareto_fitness_plot
 from utilities.stats.file_io import save_stats_to_file, save_stats_headers, \
     save_best_ind_to_file, save_first_front_to_file
 
@@ -164,7 +165,7 @@ def get_moo_stats(individuals, end):
     pareto = compute_pareto_metrics(individuals)
 
     # Save first front in trackers.
-    trackers.best_ever = pareto.fronts[0]
+    trackers.best_ever = sorted(pareto.fronts[0], key=lambda x: x.fitness[0])
 
     # Store stats about pareto fronts.
     stats['pareto_fronts'] = len(pareto.fronts)
@@ -173,6 +174,36 @@ def get_moo_stats(individuals, end):
     if end or params['VERBOSE'] or not params['DEBUG']:
         # Update all stats.
         update_stats(individuals, end)
+
+    # Save fitness plot information
+    if params['SAVE_PLOTS'] and not params['DEBUG']:
+                
+        # Get array of fitnesses for all inds on first pareto front.
+        all_arr = [[] for _ in range(params['FITNESS_FUNCTION'].num_obj)]
+        
+        # Sort fitnesses.
+        fitness_array = [ind.fitness for ind in trackers.best_ever]
+        
+        # Add paired fitnesses to array for graphing.
+        for ind in fitness_array:
+            for ff in range(params['FITNESS_FUNCTION'].num_obj):
+                all_arr[ff].append(ind[ff])
+        
+        if not end:
+            trackers.best_fitness_list.append(all_arr)
+
+        if params['VERBOSE'] or end:
+    
+            # TODO: PonyGE2 can currently only plot moo problems with 2 objectives.
+            # Check that the number of fitness objectives is not greater than 2
+            if params['FITNESS_FUNCTION'].num_obj > 2:
+                s = "stats.stats.get_moo_stats\n" \
+                    "Warning: Plotting of more than 2 simultaneous " \
+                    "objectives is not yet enabled in PonyGE2."
+                print(s)
+            
+            else:
+                save_pareto_fitness_plot()
 
     # Print statistics
     if params['VERBOSE'] and not end:

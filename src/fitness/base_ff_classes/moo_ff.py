@@ -24,6 +24,7 @@ class moo_ff:
 
         # Set list of individual fitness functions.
         self.fitness_functions = fitness_functions
+        self.num_obj = len(fitness_functions)
         
         # Initialise individual fitness functions.
         for i, ff in enumerate(self.fitness_functions):
