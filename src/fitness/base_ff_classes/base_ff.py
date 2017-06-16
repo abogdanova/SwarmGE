@@ -28,11 +28,9 @@ class base_ff:
         """
         
         try:
-            # the multi-objective fitness is defined as a list of
-            # values, each one representing the output of one
-            # objective function. The computation is made by the
-            # function multi_objc_eval, implemented by a subclass,
-            # according to the problem.
+            # Evaluate the fitness using the evaluate() function. This function
+            # can be over-written by classes which inherit from this base
+            # class.
             fitness = self.evaluate(ind, **kwargs)
         
         except (FloatingPointError, ZeroDivisionError, OverflowError,
@@ -43,8 +41,8 @@ class base_ff:
             # TODO: Should these individuals be classed as invalid?
         
         except Exception as err:
-            # other errors should not usually happen (unless we have
-            # an unprotected operator) so user would prefer to see them
+            # Other errors should not usually happen (unless we have
+            # an unprotected operator) so user would prefer to see them.
             print(err)
             raise
                 
