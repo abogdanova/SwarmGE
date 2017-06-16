@@ -188,20 +188,19 @@ def calculate_crowding_distance(pareto):
     return pareto
 
 
-def crowded_comparison_operator(individual, other_individual, pareto):
+def crowded_comparison_operator(self, other, pareto):
     """
     TODO
     
-    :param individual:
-    :param other_individual:
+    :param self: Individual 1
+    :param other: Individual 2
     :param pareto:
     :return: True if ___, else False.
     """
     
-    if (pareto.rank[individual] < pareto.rank[other_individual]) or \
-            (pareto.rank[individual] == pareto.rank[other_individual] and
-             pareto.crowding_distance[individual] >
-             pareto.crowding_distance[other_individual]):
+    if (pareto.rank[self] < pareto.rank[other]) or \
+            (pareto.rank[self] == pareto.rank[other] and
+             pareto.crowding_distance[self] > pareto.crowding_distance[other]):
         return True
     
     else:
@@ -246,12 +245,12 @@ class ParetoInfo:
         self.dominated_solutions = defaultdict(list)
         
         try:
-            self.n_objectives = len(params['FITNESS_FUNCTION'].fitness_functions)
+            self.n_objectives = params['FITNESS_FUNCTION'].num_obj
         
         except AttributeError:
             s = "utilities.algorithm.NSGA2\n" \
                 "Error: Specified fitness function does not have " \
-                "'fitness_functions' attribute.\n" \
+                "'num_obj' attribute.\n" \
                 "       If using multiple objective optimisation, ensure " \
                 "fitness.base_ff_classes.base_moo_ff is implemented.\n" \
                 "       See README documentation for more information."
