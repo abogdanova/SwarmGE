@@ -1,5 +1,6 @@
-from math import isnan
+from stats.stats import stats
 
+from math import isnan
 import numpy as np
 
 np.seterr(all="raise")
@@ -55,6 +56,10 @@ class moo_ff:
             # Check if any objective fitness value is NaN, if so set default
             # fitness.
             fitness = moo_ff.default_fitness
+
+            # These individuals are valid (i.e. not invalids), but they are
+            # not feasible. Count with stats["infeasible"] counter.
+            stats['infeasible'] += 1
 
         return fitness
 

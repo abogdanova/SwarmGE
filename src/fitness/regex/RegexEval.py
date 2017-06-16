@@ -5,6 +5,7 @@ import fitness.regex.testing.RegexTestGenerator as TestGen
 from fitness.regex.testing.RegexTimer import time_regex_test_case
 from algorithm.parameters import params
 from fitness.base_ff_classes.base_ff import base_ff
+from stats.stats import stats
 
 # Author: Brendan Cody-Kenny - codykenny at gmail
 
@@ -136,6 +137,9 @@ class RegexEval(base_ff):
             self.prunner.terminate()
             self.prunner.join()
 
+            # Count individual as infeasible.
+            stats['infeasible'] += 1
+        
             return self.default_fitness
         
         else:

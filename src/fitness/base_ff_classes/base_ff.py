@@ -1,3 +1,6 @@
+from stats.stats import stats
+from algorithm.parameters import params
+
 import numpy as np
 
 np.seterr(all="raise")
@@ -38,7 +41,11 @@ class base_ff:
             # FP err can happen through eg overflow (lots of pow/exp calls)
             # ZeroDiv can happen when using unprotected operators
             fitness = base_ff.default_fitness
-            # TODO: Should these individuals be classed as invalid?
+            
+            # These individuals are valid (i.e. not invalids), but they are
+            # not feasible. Count with stats["infeasible"] counter.
+            if not hasattr(params['FITNESS_FUNCTION'], "multi_objective"):
+                stats['infeasible'] += 1
         
         except Exception as err:
             # Other errors should not usually happen (unless we have
