@@ -1,8 +1,9 @@
 #! /usr/bin/env python
 
-# PonyGE
-# Copyright (c) 2009 Erik Hemberg, James McDermott,
-#                   Michael Fenton and David Fagan
+# PonyGE2
+# Copyright (c) 2017 Michael Fenton, James McDermott,
+#                    David Fagan, Stefan Forstenlechner,
+#                    and Erik Hemberg
 # Hereby licensed under the GNU GPL v3.
 """ Python GE implementation """
 
