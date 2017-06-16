@@ -4,16 +4,24 @@ from fitness.base_ff_classes.base_ff import base_ff
 class ff_template(base_ff):
     """
     Basic fitness function template for writing new fitness functions. This
-    basic template inherits from the base fitness function class,
-    which contains various checks and balances.
+    basic template inherits from the base fitness function class, which
+    contains various checks and balances.
     
-    Important points to note about base fitness function class:
+    Note that all fitness functions must be implemented as a class.
+    
+    Note that the class name must be the same as the file name.
+    
+    Important points to note about base fitness function class from which
+    this template inherits:
+    
       - Default Fitness values (can be referenced as "self.default_fitness")
         are set to NaN in the base class. While this can be over-written,
         PonyGE2 works best when it can filter solutions by NaN values.
+    
       - The standard fitness objective of the base fitness function class is
         to minimise fitness. If the objective is to maximise fitness,
         this can be over-written by setting the flag "maximise = True".
+    
     """
 
     def __init__(self):
