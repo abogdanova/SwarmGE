@@ -4,7 +4,6 @@ from multiprocessing import Process, Queue
 import fitness.regex.testing.RegexTestGenerator as TestGen
 from fitness.regex.testing.RegexTimer import time_regex_test_case
 from algorithm.parameters import params
-from representation.individual import Individual
 from fitness.base_ff_classes.base_ff import base_ff
 
 # Author: Brendan Cody-Kenny - codykenny at gmail
@@ -57,29 +56,7 @@ class RegexEval(base_ff):
             # print(e)
             # traceback.print_exc()
             q.put(RegexEval.default_fitness)
-            
-    def calculate_similarity_score(self, regex_string):
-        """
-        Check how similar a mutated regex is to the seed regex. It is an
-        alternative measure to Levenshtein distance (experimental)
-        
-        :param regex_string:
-        :return:
-        """
-        
-        char_same_count = 0
-        if 'SEED_GENOME' in params and params['SEED_GENOME']:
-            seed_ind = Individual(params['SEED_GENOME'], None)
-            seed_string = seed_ind.phenotype
-            if regex_string == seed_string:
-                return len(seed_string)
-            for i in range(len(regex_string)):
-                for j in range(i, len(seed_string)):
-                    if regex_string[i] == seed_string[j]:
-                        char_same_count += 1
-                        break
-        return char_same_count
-    
+                
     def calculate_fitness(self, eval_results):
         """
         Sum the functionality error with time (and any other fitness penalties
@@ -116,12 +93,10 @@ class RegexEval(base_ff):
     def evaluate(self, ind, **kwargs):
         """
         When this class is instantiated with individual, evaluate in a new
-        process, timeout and kill process if it runs for 5 seconds.
-        Generating new processes is expensive, rework the code to reuse a
-        process.
+        process, timeout and kill process if it runs for 1 second.
 
-        :param individual:
-        :return:
+        :param ind: An individual to be evaluated.
+        :return: The fitness of the evaluated individual.
         """
 
         if RegexEval.seed_regex is None:
