@@ -54,17 +54,22 @@ def save_pareto_fitness_plot():
     # Set up iterator for color plotting.
     color = iter(plt.cm.rainbow(np.linspace(0, 1, len(best_fitness_list))))
 
-    # Plot data.
-    for i, gen in enumerate(best_fitness_list):
-        c = next(color)
-        ax1.plot(gen[0], gen[1], color=c)
-
     # Get labels for individual fitnesses.
     ffs = params['FITNESS_FUNCTION'].fitness_functions
     
+    # Find the direction for step lines to "bend"
+    step_dir = 'pre' if ffs[0].maximise else 'post'
+    
+    # Plot data.
+    for i, gen in enumerate(best_fitness_list):
+        c = next(color)
+        ax1.step(gen[0], gen[1], linestyle='--',
+                 where=step_dir, color=c, lw=0.35, alpha=0.25)
+        ax1.plot(gen[0], gen[1], 'o', color=c, ms=1)
+    
     # Set labels with class names.
-    ax1.set_ylabel(ffs[0].__class__.__name__, fontsize=14)
-    ax1.set_xlabel(ffs[1].__class__.__name__, fontsize=14)
+    ax1.set_xlabel(ffs[0].__class__.__name__, fontsize=14)
+    ax1.set_ylabel(ffs[1].__class__.__name__, fontsize=14)
     
     # Plot title and legend.
     plt.title("First pareto fronts by generation")
