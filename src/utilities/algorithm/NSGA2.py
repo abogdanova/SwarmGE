@@ -92,10 +92,7 @@ def dominates(individual1, individual2):
     :returns: :obj:`True` if indvidual_1 dominates indvidual_2,
               :obj:`False` otherwise.
     """
-    
-    # Initialise dominating value.
-    not_equal = False
-    
+        
     if any([isnan(fit) for fit in individual1.fitness]):
         # Individual 1 is invalid.
         return False
@@ -103,18 +100,45 @@ def dominates(individual1, individual2):
     elif any([isnan(fit) for fit in individual2.fitness]):
         # Individual 2 is invalid.
         return True
+
+    # Get fitness functions.
+    ffs = params['FITNESS_FUNCTION'].fitness_functions
     
-    for ind1_value, ind2_value in zip(individual1.fitness,
-                                      individual2.fitness):
-        if ind1_value > ind2_value:
-            # Individual 1 dominates Individual 2 on this objective.
-            return False
+    # Iterate over all fitness values and fitness functions.
+    for ind1_value, ind2_value, ff in zip(individual1.fitness,
+                                          individual2.fitness,
+                                          ffs):
         
-        elif ind1_value < ind2_value:
-            # Individual 2 dominates Individual 1 on this objective.
-            not_equal = True
+        if not compare_fitnesses(ind1_value, ind2_value, ff):
+            # ind1 does not dominate over ind2.
+            return False
+            
+    return True
+
+
+def compare_fitnesses(ind1_value, ind2_value, ff):
+    """
+    Comparison function for checking whether ind1 dominates ind2 on a given
+    fitness value.
     
-    return not_equal
+    :param ind1_value: The fitness of ind1.
+    :param ind2_value: The fitness of ind2.
+    :param ff: The fitness function that generated the above values.
+    :return: Whether or not ind1_value is better than ind2_value.
+    """
+    
+    if ff.maximise:
+        # The fitness function is maximising.
+        
+        # Check whether ind1_value is better than ind2_value.
+        return ind1_value >= ind2_value
+        # TODO: Check canonical implementation for the case of equal fitness values. E.g. if i1_f1 is equal to i2_f1, but i1_f2 is greater than i2_f2, does this mean i1 dominates over i2? Or does it dominate only if all fitnesses are better?
+
+    else:
+        # The fitness function is minimising.
+    
+        # Check whether ind1_value is better than ind2_value.
+        return ind1_value <= ind2_value
 
 
 def calculate_crowding_distance(pareto):
