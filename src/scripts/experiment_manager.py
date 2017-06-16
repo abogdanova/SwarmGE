@@ -99,5 +99,6 @@ def main():
     # folder.
     parse_stats_from_runs(params['EXPERIMENT_NAME'])
 
+
 if __name__ == "__main__":
     main()
