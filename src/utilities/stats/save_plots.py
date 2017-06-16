@@ -52,7 +52,7 @@ def save_pareto_fitness_plot():
     ax1 = fig.add_subplot(1, 1, 1)
 
     # Set up iterator for color plotting.
-    color = iter(plt.cm.rainbow(np.linspace(0, 1, len(best_fitness_list))))
+    color = iter(plt.cm.jet(np.linspace(0, 1, len(best_fitness_list))))
 
     # Get labels for individual fitnesses.
     ffs = params['FITNESS_FUNCTION'].fitness_functions
@@ -75,7 +75,7 @@ def save_pareto_fitness_plot():
     plt.title("First pareto fronts by generation")
 
     # Set up colorbar instead of legend. Normalise axis to scale of data.
-    sm = plt.cm.ScalarMappable(cmap="rainbow",
+    sm = plt.cm.ScalarMappable(cmap="jet",
                    norm=plt.Normalize(vmin=0, vmax=len(best_fitness_list) - 1))
 
     # Fake up the array of the scalar mappable.
