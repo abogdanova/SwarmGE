@@ -67,7 +67,7 @@ def save_pareto_fitness_plot():
     ax1.set_xlabel(ffs[1].__class__.__name__, fontsize=14)
     
     # Plot title and legend.
-    plt.title("Best fitness")
+    plt.title("First pareto fronts by generation")
 
     # Set up colorbar instead of legend. Normalise axis to scale of data.
     sm = plt.cm.ScalarMappable(cmap="rainbow",
