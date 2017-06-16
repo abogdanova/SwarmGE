@@ -52,6 +52,7 @@ def sort_non_dominated(population):
         
         # Compute the domination counter of p
         for q in population:
+
             if dominates(p, q):
                 # Add *q* to the set of solutions dominated by *p*
                 pareto.dominated_solutions[p].append(q)
@@ -85,7 +86,9 @@ def sort_non_dominated(population):
 
 def dominates(individual1, individual2):
     """
-    Returns whether or not *indvidual1* dominates *indvidual2*.
+    Returns whether or not *indvidual1* dominates *indvidual2*. An individual
+    dominates another if all fitness values are at least as good on all
+    objectives, and strictly better than on at least one objective.
     
     :param individual1: The individual that would be dominated.
     :param individual2: The individual dominant.
@@ -104,15 +107,25 @@ def dominates(individual1, individual2):
     # Get fitness functions.
     ffs = params['FITNESS_FUNCTION'].fitness_functions
     
+    # Check how many fitness values are equal.
+    equal_fit = [False] * len(ffs)
+    
     # Iterate over all fitness values and fitness functions.
-    for ind1_value, ind2_value, ff in zip(individual1.fitness,
-                                          individual2.fitness,
-                                          ffs):
+    for ind1_value, ind2_value, ff, i in zip(individual1.fitness,
+                                             individual2.fitness,
+                                             ffs, range(len(ffs))):
+        # Check for fitness equality
+        if ind1_value == ind2_value:
+            equal_fit[i] = True
         
-        if not compare_fitnesses(ind1_value, ind2_value, ff):
+        elif not compare_fitnesses(ind1_value, ind2_value, ff):
             # ind1 does not dominate over ind2.
             return False
-            
+    
+    # If all fitness values are equal, no domination
+    if all(equal_fit):
+        return False
+    
     return True
 
 
@@ -131,14 +144,13 @@ def compare_fitnesses(ind1_value, ind2_value, ff):
         # The fitness function is maximising.
         
         # Check whether ind1_value is better than ind2_value.
-        return ind1_value >= ind2_value
-        # TODO: Check canonical implementation for the case of equal fitness values. E.g. if i1_f1 is equal to i2_f1, but i1_f2 is greater than i2_f2, does this mean i1 dominates over i2? Or does it dominate only if all fitnesses are better?
+        return ind1_value > ind2_value
 
     else:
         # The fitness function is minimising.
     
         # Check whether ind1_value is better than ind2_value.
-        return ind1_value <= ind2_value
+        return ind1_value < ind2_value
 
 
 def calculate_crowding_distance(pareto):
@@ -194,31 +206,6 @@ def crowded_comparison_operator(individual, other_individual, pareto):
     
     else:
         return False
-
-
-def first_pareto_front(population):
-    """
-    TODO
-    
-    :param population:
-    :return:
-    """
-    
-    non_dominated_pop = []
-    dominated_pop = []
-
-    for i in range(len(population)):
-        non_dominated = True
-        for j in range(len(population)):
-            if i != j and dominates(population[j], population[i]):
-                non_dominated = False
-                break
-        if non_dominated:
-            non_dominated_pop.append(population[i])
-        else:
-            dominated_pop.append(population[i])
-        i += 1
-    return non_dominated_pop, dominated_pop
 
 
 def get_population_iqr(population, n_objectives):
