@@ -89,7 +89,7 @@ class Tree:
         a_self, a_other = vars(self), vars(other)
         
         # Don't look at the children as they are class instances themselves.
-        taboo = ["parent", "children"]
+        taboo = ["parent", "children", "snippet", "id"]
         self_no_kids = {k: v for k, v in a_self.items() if k not in taboo}
         other_no_kids = {k: v for k, v in a_other.items() if k not in taboo}
                 
