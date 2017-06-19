@@ -135,6 +135,6 @@ if __name__ == '__main__':
         
         # Parse seed individual and store in params.
         params['SEED_INDIVIDUALS'] = [GE_LR_parser.main()]
-        
+            
     # Launch PonyGE2.
     mane()

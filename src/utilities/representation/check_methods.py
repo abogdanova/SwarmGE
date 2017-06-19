@@ -60,12 +60,9 @@ def check_genome_mapping(ind):
     
     else:
         if attributes_0['tree'] != attributes_1['tree']:
-            print("Error: utilities.check_methods.check_ind."
-                  "Individual trees do not match.")
-
-    # Must remove the tree variable as instances of classes cannot be
-    # directly compared at the moment.
-    attributes_0['tree'], attributes_1['tree'] = None, None
+            s = "utilities.representation.check_methods.check_ind.\n" \
+                "Error: Individual trees do not match."
+            raise Exception(s)
     
     # Check that all attributes match across both individuals.
     for a_0 in sorted(attributes_0.keys()):
@@ -137,7 +134,8 @@ def check_genome_from_tree(ind_tree):
         # This node has children and thus must have an associated codon.
         
         if not ind_tree.codon:
-            s = "utilities.check_methods.check_genome_from_tree\n" \
+            s = "utilities.representation.check_methods." \
+                "check_genome_from_tree\n" \
                 "Error: Node with children has no codon.\n" \
                 "       %s" % (str(ind_tree.children))
             raise Exception(s)
@@ -159,7 +157,8 @@ def check_genome_from_tree(ind_tree):
         
         # Match production roots with children roots.
         if roots != prods:
-            s = "utilities.check_methods.check_genome_from_tree\n" \
+            s = "utilities.representation.check_methods." \
+                "check_genome_from_tree\n" \
                 "Error: Codons are incorrect for given tree.\n" \
                 "       Codon productions:\t%s\n       " \
                 "       Actual children:\t%s" % (str(prods), str(roots))
