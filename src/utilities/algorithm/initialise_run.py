@@ -204,7 +204,7 @@ def return_attr_from_module(module_name, attr_name):
         module = importlib.import_module(module_name)
     
     except ModuleNotFoundError:
-        s = "utilities.initialise_run.import_attr_from_module\n" \
+        s = "utilities.algorithm.initialise_run.return_attr_from_module\n" \
             "Error: Specified module not found: %s" % (module_name)
         raise Exception(s)
     
@@ -213,7 +213,7 @@ def return_attr_from_module(module_name, attr_name):
         return getattr(module, attr_name)
     
     except AttributeError:
-        s = "utilities.initialise_run.import_attr_from_module\n" \
+        s = "utilities.algorithm.initialise_run.return_attr_from_module\n" \
             "Error: Specified attribute '%s' not found in module '%s'." \
             % (attr_name, module_name)
         raise Exception(s)
