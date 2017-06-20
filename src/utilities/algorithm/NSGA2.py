@@ -71,21 +71,27 @@ def sort_non_dominated(population):
     
     # Compute the fronts.
     while len(pareto.fronts[i]) > 0:
+        
         # Used to store the members of the next front
         big_q = []
+        
         # For each each solution in the current front
         for p in pareto.fronts[i]:
-            # Decrement the domination counter of each solution
-            # dominated by *p*
+            
+            # Decrement the domination counter of each solution dominated by
+            # *p*
             for q in pareto.dominated_solutions[p]:
                 pareto.update_domination_count(q, False)
-                # If the counter reaches 0, the solution is added
-                # to the next front
+                
+                # If the counter reaches 0, the solution is added to the next
+                # front.
                 if pareto.get_domination_count(q) == 0:
                     pareto.rank[q] = i + 1
                     big_q.append(q)
+        
         # Update the front counter
         i += 1
+        
         # Add the solutions selected in this iteration to the next front
         pareto.fronts.append(big_q)
     
@@ -169,13 +175,16 @@ def calculate_crowding_distance(pareto):
 
     :param pareto: A ParetoInfo object with the information regarding
                    the Pareto fronts defined by the current population
+    
     :return: A list of Pareto fronts (lists), the first list includes
              non-dominated individuals.
     """
 
     # The crowding distance is computed per front
     for front in pareto.fronts:
+        
         if len(front) > 0:
+            
             # Number of solutions in the front
             solutions_num = len(front)
             
@@ -187,16 +196,19 @@ def calculate_crowding_distance(pareto):
                 # Sort the solutions using each objective value
                 front = sorted(front, key=lambda item: params[
                     'FITNESS_FUNCTION'].value(item.fitness, m))
-                # The boundary solutions are assigned an infinite distance value
+                
+                # The boundary solutions are assigned an infinite distance
+                # value
                 pareto.crowding_distance[front[0]] = float("inf")
                 pareto.crowding_distance[front[solutions_num - 1]] = float(
                     "inf")
+                
                 # All other intermediate solutions have the distance computed
-
                 for index in range(1, solutions_num - 1):
-                    # The distance value equals to the absolute normalized difference
-                    # in the function values of two adjacent solutions
-                    # The normalization uses (IQR + 1) instead of (max-min)
+                    # The distance value equals to the absolute normalized
+                    # difference in the function values of two adjacent
+                    # solutions. The normalization uses (IQR + 1) instead of
+                    # (max-min)
                     pareto.crowding_distance[front[index]] += \
                         (params['FITNESS_FUNCTION'].value(
                             front[index + 1].fitness, m) -
@@ -221,10 +233,10 @@ def crowded_comparison_operator(self, other, pareto):
     :return: True if *self* is better than *other* and False otherwise.
     """
 
-    # Between two solutions with differing nondomination ranks, we prefer the solution
-    # with the lower (better) rank. Otherwise, if both solutions belong to the same front,
-    # then we prefer the solution that is located in a lesser crowded region, i.e., with
-    # the larger crowding distance
+    # Between two solutions with differing nondomination ranks, we prefer the
+    # solution with the lower (better) rank. Otherwise, if both solutions
+    # belong to the same front, then we prefer the solution that is located in
+    # a lesser crowded region, i.e., with the larger crowding distance.
     if (pareto.rank[self] < pareto.rank[other]) or \
             (pareto.rank[self] == pareto.rank[other] and
              pareto.crowding_distance[self] > pareto.crowding_distance[other]):
@@ -236,7 +248,7 @@ def crowded_comparison_operator(self, other, pareto):
 
 def get_population_iqr(population, n_objectives):
     """
-    Compute the interquartile range (IQR) of the population regarding
+    Compute the inter-quartile range (IQR) of the population regarding
     each objective.
     
     :param population: The input population
