@@ -29,13 +29,13 @@ def initialise_run_params(create_files):
     # Generate a time stamp for use with folder and file names.
     hms = "%02d%02d%02d" % (start.hour, start.minute, start.second)
     params['TIME_STAMP'] = "_".join([gethostname(),
-                                     str(params['RANDOM_SEED']),
-                                     str(getpid()),
                                      str(start.year)[2:],
                                      str(start.month),
                                      str(start.day),
                                      hms,
-                                     str(start.microsecond)])
+                                     str(start.microsecond),
+                                     str(getpid()),
+                                     str(params['RANDOM_SEED'])])
     if not params['SILENT']:
         print("\nStart:\t", start, "\n")
 
