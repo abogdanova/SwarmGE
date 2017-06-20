@@ -149,9 +149,14 @@ def get_fit_func_imports():
         # Convert specified fitness functions into a list of strings.
         params[op] = params[op].strip("[()]").split(",")
     
+    if isinstance(params[op], list) and len(params[op]) == 1:
+        # Single fitness function given in a list format. Don't use
+        # multi-objective optimisation.
+        params[op] = params[op][0]
+    
     if isinstance(params[op], list):
-        # List of fitness functions given.
-        
+        # List of multiple fitness functions given.
+
         for i, name in enumerate(params[op]):
 
             # Split import name based on "." to find nested modules.
