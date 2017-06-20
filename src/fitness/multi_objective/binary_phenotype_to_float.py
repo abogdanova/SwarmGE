@@ -19,8 +19,9 @@ class binary_phenotype_to_float(base_ff):
     
     def evaluate(self, ind, **kwargs):
         
-        min_value = [0 for _ in range(30)]
-        max_value = [1 for _ in range(30)]
+        min_value = [0] * 30
+        max_value = [1] * 30
+        
         real_chromosome = binary_phen_to_float(ind.phenotype, 30, min_value,
                                                max_value)
         

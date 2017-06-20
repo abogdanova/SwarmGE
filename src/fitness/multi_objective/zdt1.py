@@ -19,8 +19,10 @@ class zdt1(base_ff):
         super().__init__()
     
     def evaluate(self, ind, **kwargs):
-        min_value = [0 for _ in range(30)]
-        max_value = [1 for _ in range(30)]
+        
+        min_value = [0] * 30
+        max_value = [1] * 30
+        
         real_chromosome = binary_phen_to_float(ind.phenotype, 30, min_value,
                                                max_value)
         
