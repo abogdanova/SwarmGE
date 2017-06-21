@@ -291,14 +291,14 @@ def set_params(command_line_args, create_files=True):
             # Set the size of a generation
             params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - \
                                         params['ELITE_SIZE']
-
+        
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
         set_param_imports()
-
+        
         # Clean the stats dict to remove unused stats.
         clean_stats.clean_stats()
-
+        
         # Initialise run lists and folders
         initialise_run_params(create_files)
 
@@ -308,7 +308,29 @@ def set_params(command_line_args, create_files=True):
             params['GENOME_OPERATIONS'] = True
         else:
             params['GENOME_OPERATIONS'] = False
-
+        
+        # Ensure correct operators are used if multiple fitness functions used.
+        if hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
+            
+            # Check that multi-objective compatible selection is specified.
+            if not hasattr(params['SELECTION'], "multi_objective"):
+                s = "algorithm.parameters.set_params\n" \
+                    "Error: multi-objective compatible selection " \
+                    "operator not specified for use with multiple " \
+                    "fitness functions."
+                raise Exception(s)
+            
+            if not hasattr(params['REPLACEMENT'], "multi_objective"):
+    
+                # Check that multi-objective compatible replacement is
+                # specified.
+                if not hasattr(params['REPLACEMENT'], "multi_objective"):
+                    s = "algorithm.parameters.set_params\n" \
+                        "Error: multi-objective compatible replacement " \
+                        "operator not specified for use with multiple " \
+                        "fitness functions."
+                    raise Exception(s)
+        
         # Parse grammar file and set grammar class.
         params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
                                                 params['GRAMMAR_FILE']))

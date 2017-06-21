@@ -150,3 +150,7 @@ def nsga2_replacement(new_pop, old_pop):
         i += 1
     
     return temp_pop
+
+
+# Set attributes for all operators to define multi-objective operators.
+nsga2_replacement.multi_objective = True

@@ -126,3 +126,7 @@ def pareto_tournament(population, pareto, tournament_size):
             best = participant
     
     return best
+
+
+# Set attributes for all operators to define multi-objective operators.
+nsga2_selection.multi_objective = True
