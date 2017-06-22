@@ -32,7 +32,7 @@ PonyGE2 is copyright (C) 2009-2017
 PonyGE2 requires Python 3.5 or higher.
 Using matplotlib, numpy, scipy, scikit-learn (sklearn), pandas.
 
-All requirements can be satisfied with Anaconda.
+All requirements can be satisfied with [Anaconda](https://www.continuum.io/downloads).
 
 
 # Running PonyGE2
