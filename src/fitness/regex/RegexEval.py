@@ -137,8 +137,8 @@ class RegexEval(base_ff):
             self.prunner.terminate()
             self.prunner.join()
 
-            # Count individual as infeasible.
-            stats['infeasible'] += 1
+            # Count individual as a runtime error.
+            stats['runtime_error'] += 1
         
             return self.default_fitness
         

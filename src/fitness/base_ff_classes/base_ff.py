@@ -42,10 +42,14 @@ class base_ff:
             # ZeroDiv can happen when using unprotected operators
             fitness = base_ff.default_fitness
             
-            # These individuals are valid (i.e. not invalids), but they are
-            # not feasible. Count with stats["infeasible"] counter.
+            # These individuals are valid (i.e. not invalids), but they have
+            # produced a runtime error. Count with stats["runtime_error"]
+            # counter.
             if not hasattr(params['FITNESS_FUNCTION'], "multi_objective"):
-                stats['infeasible'] += 1
+                stats['runtime_error'] += 1
+            
+            else:
+                ind.runtime_error = True
         
         except Exception as err:
             # Other errors should not usually happen (unless we have

@@ -19,7 +19,7 @@ stats = {
         "total_inds": 0,
         "regens": 0,
         "invalids": 0,
-        "infeasible": 0,
+        "runtime_error": 0,
         "unique_inds": len(trackers.cache),
         "unused_search": 0,
         "ave_genome_length": 0,

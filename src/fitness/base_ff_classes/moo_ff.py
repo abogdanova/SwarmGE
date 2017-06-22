@@ -57,9 +57,13 @@ class moo_ff:
             # fitness.
             fitness = moo_ff.default_fitness
 
-            # These individuals are valid (i.e. not invalids), but they are
-            # not feasible. Count with stats["infeasible"] counter.
-            stats['infeasible'] += 1
+            if hasattr(ind, "runtime_error"):
+                # Individual is valid but has produced a runtime error.
+                # Count with stats["runtime_error"] counter.
+                stats['runtime_error'] += 1
+                
+                # Remove "runtime_error" attribute from individual.
+                del ind.runtime_error
 
         return fitness
 
