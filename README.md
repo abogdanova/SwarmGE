@@ -1067,15 +1067,9 @@ Alternatively, both the `GRAMMAR_FILE` and `REVERSE_MAPPING_TARGET` can be speci
 ## Seeding GE Runs with target solutions
 ----------------------------------------
 
-Combining the GE LR Parser with the full PonyGE2 library, it is possible to parse a target string into a GE individual and then to seed an evolutionary run of PonyGE2 with that individual. Provision is made in PonyGE2 to allow for the seeding of as many target individuals as desired into an evolutionary run.
-   
-In order to run PonyGE2 with seeded individuals, a specialised script is provided in the `scripts` folder, titled `seed_PonyGE2.py`. To run this script from the command line, simply type:
+Combining the GE LR Parser with the full PonyGE2 library, it is possible to parse a target string into a GE individual and then to seed an evolutionary run of PonyGE2 with that individual. Provision is made in PonyGE2 to allow for the seeding of as many target individuals as desired into an evolutionary run. 
 
-    $ python scripts/seed_PonyGE2.py
-
-All command line parameters from standard PonyGE2 are compatible with `seed_PonyGE2`.
-
-There are two ways to seed individuals into a PonyGE2 run using this script:
+There are two ways to seed individuals into a PonyGE2 run:
 
 ### 1. Seeding runs with a single target solution
 
@@ -1089,10 +1083,13 @@ or set the parameter `REVERSE_MAPPING_TARGET` to `[TARGET_STRING]` in either a p
 
 ### 2. Seeding runs with one or more target solutions
 
-Alternatively, if one or more target individuals are to be seeded into a GE population, a folder has been made available for saving populations of desired individuals for seeding. The root directory contains a `seeds` folder. Any number of desired target individuals for seeding can be saved in *__separate text files__* within a unique folder in the scripts directory. 
+Alternatively, if one or more target individuals are to be seeded into a GE population, a folder has been made available for saving populations of desired individuals for seeding. The root directory contains a `seeds` folder. Any number of desired target individuals for seeding can be saved in *__separate text files__* within a unique folder in the scripts directory. This target seed folder can be specified with the argument:
 
-PonyGE2 currently supports four formats for saving and re-loading of such 
-individuals (examples of each are given in the `seeds/example_pop` folder):
+    --target_seed_folder [TARGET_SEED_FOLDER]
+
+or by setting the parameter `TARGET_SEED_FOLDER` to `[TARGET_SEED_FOLDER]` in either a parameters file or in the params dictionary, where `[TARGET_SEED_FOLDER]` is the name of the target folder within the `scripts` directory which contains target seed individuals.
+
+PonyGE2 currently supports four formats for saving and re-loading of such individuals (examples of each are given in the `seeds/example_pop` folder):
 
 1. (`example_1.txt` in `seeds/example_pop`) PonyGE2 can re-load "best.txt" outputs from previous PonyGE2 runs. These files contain the saved genotypes and phenotypes of the best solution evolved over the course of an evolutionary run. Re-using these output files greatly improves the seeding process, as the genotypes can be quickly used to re-map the exact identical individual evolved by PonyGE2. If possible, this is the preferred option for seeding populations as the use of genomes to re-build previous individuals guarantees the same genetic information will be retained.
 2. (`example_2.txt` in `seeds/example_pop`) Target phenotypes can be saved as a simple text file with a single header of "`Phenotype:`", followed by the phenotype string itself on the following line. The phenotype will then be parsed into a PonyGE2 individual using the GE LR Parser.
