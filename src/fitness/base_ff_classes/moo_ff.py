@@ -70,7 +70,9 @@ class moo_ff:
     @staticmethod
     def value(fitness_vector, objective_index):
         """
-        This is a static method required by NSGA-II.
+        This is a static method required by NSGA-II for sorting populations
+        based on a given fitness function, or for returning a given index of a
+        population based on a given fitness function.
         
         :param fitness_vector: A vector/list of fitnesses.
         :param objective_index: The index of the desired fitness.
