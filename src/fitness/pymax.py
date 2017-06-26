@@ -28,8 +28,6 @@ class pymax(base_ff):
         
         p, d = ind.phenotype, {}
         
-        # TODO: Explain in the README how python grammars work.
-        
         # Exec the phenotype.
         exec(p, d)
         
