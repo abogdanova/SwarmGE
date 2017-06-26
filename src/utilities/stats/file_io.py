@@ -155,6 +155,8 @@ def save_params_to_file():
     :return: Nothing.
     """
 
+    # TODO: Write all fitness function names in the case of MOO (not moo_ff)
+
     # Generate file path and name.
     filename = path.join(params['FILE_PATH'], "parameters.txt")
     savefile = open(filename, 'w')
