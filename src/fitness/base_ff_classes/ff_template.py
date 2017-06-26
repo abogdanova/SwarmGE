@@ -24,6 +24,14 @@ class ff_template(base_ff):
     
     """
 
+    # The base fitness function class is set up to minimise fitness.
+    # However, if you wish to maximise fitness values, you only need to
+    # change the "maximise" attribute here to True rather than False.
+    # Note that if fitness is being minimised, it is not necessary to
+    # re-define/overwrite the maximise attribute here, as it already exists
+    # in the base fitness function class.
+    maximise = False
+
     def __init__(self):
         """
         All fitness functions which inherit from the bass fitness function
