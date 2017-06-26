@@ -28,7 +28,7 @@ params = {
 
         # Select problem dataset
         'DATASET_TRAIN': "Vladislavleva4/Train.txt",
-        'DATASET_TEST': "Vladislavleva4/Test.txt",
+        'DATASET_TEST': None,
         'DATASET_DELIMITER': None,
 
         # Set grammar file
