@@ -17,7 +17,7 @@ def main(command_line_args):
     distinct phenotypes that this grammar is capable of generating at a
     number of given depths.
     
-    :return: The grammar.permutations dictionary.
+    :return: Nothing.
     """
 
     # Parse command line args (we only want the grammar file)
