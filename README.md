@@ -5,7 +5,7 @@ Grammatical Evolution (GE) is a population-based evolutionary algorithm, where a
 
 PonyGE2 is an implementation of GE in Python. It's intended as an advertisement and a starting-point for those new to GE, a reference for students and researchers, a rapid-prototyping medium for our own experiments, and as a Python workout.
 
-The original version of PonyGE (https://github.com/jmmcd/ponyge) was originally designed to be a small single-file implementation of GE. However, over time this has grown to a stage where a more formal structured approach was needed. This has led to the development of PonyGE2 (https://github.com/jmmcd/ponyge2), presented here.
+The original version of PonyGE (https://github.com/jmmcd/ponyge) was originally designed to be a small single-file implementation of GE. However, over time this has grown to a stage where a more formal structured approach was needed. This has led to the development of PonyGE2 (https://github.com/PonyGE/PonyGE2), presented here.
 
 A technical paper describing PonyGE2 has been published and been made freely available on arXiv at:
 
@@ -15,13 +15,7 @@ PonyGE2 can be referenced using the following citation:
 
         Fenton, M., McDermott, J., Fagan, D., Forstenlechner, S., Hemberg, E., and O'Neill, M. PonyGE2: Grammatical Evolution in Python. arXiv preprint, arXiv:1703.08535, 2017.
 
-The PonyGE2 development team can be contacted at:
-
-    Michael Fenton <michaelfenton1@gmail.com>,
-    James McDermott <jamesmichaelmcdermott@gmail.com>,
-    Erik Hemberg <erik.hemberg@gmail.com>,
-    David Fagan <fagan.david@gmail.com>,
-    Stefan Forstenlechner <stefanforstenlechner@gmail.com>.
+The PonyGE2 development team can be contacted via [GitHub](https://github.com/jmmcd/PonyGE2/issues/new). 
 
 PonyGE2 is copyright (C) 2009-2017
 
@@ -62,10 +56,10 @@ Grammatical Evolution (GE) [O'Neill & Ryan, 2003] is a grammar-based form of Gen
 
 PonyGE2 is primarily a Python implementation of canonical Grammatical Evolution, but it also includes a number of other popular techniques and EC aspects.
 
-# For full documentation of PonyGE2, see the [wiki](https://github.com/jmmcd/PonyGE2/wiki).
+# For full documentation of PonyGE2, see the [wiki](https://github.com/PonyGE/PonyGE2/wiki).
 ---------------------------------------------------------------------------
 
-https://github.com/jmmcd/PonyGE2/wiki
+https://github.com/PonyGE/PonyGE2/wiki
 
 # References
 ------------
