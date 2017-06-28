@@ -94,7 +94,7 @@ def save_first_front_to_file(stats, end=False, name="first_front"):
     orig_file_path = copy(params['FILE_PATH'])
 
     # Define the new file path.
-    params['FILE_PATH'] = path.join(orig_file_path, name)
+    params['FILE_PATH'] = path.join(orig_file_path, str(name))
     
     # Check if the front folder exists already
     if not path.isdir(params['FILE_PATH']):
