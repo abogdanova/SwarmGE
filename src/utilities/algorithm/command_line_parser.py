@@ -290,7 +290,9 @@ def parse_cmd_args(arguments):
                              'Requires string such as "regression". '
                              'Multiple fitness functions can be specified'
                              'for multiple objective optimisation (using '
-                             'NSGA-II).')
+                             'NSGA-II). To specify multiple fitness '
+                             'functions simply enter in the desired names of'
+                             ' the functions separated by spaces.')
     parser.add_argument('--dataset_train',
                         dest='DATASET_TRAIN',
                         type=str,
@@ -373,10 +375,13 @@ def parse_cmd_args(arguments):
     parser.add_argument('--extra_parameters',
                         dest='EXTRA_PARAMETERS',
                         type=str,
+                        nargs='+',
                         help='Optional extra command line parameter for '
                              'inclusion of any extra information required '
                              'for user-specific runs. Can be whatever you '
-                             'want it to be.')
+                             'want it to be. Specified arguments are parsed '
+                             'as a list. Specify as many values as desired, '
+                             'separated by spaces.')
 
     # OPTIONS
     parser.add_argument('--random_seed',
