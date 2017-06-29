@@ -63,11 +63,8 @@ def set_param_imports():
     they like.
 
     Sets the fitness function for a problem automatically. Fitness functions
-    are stored in fitness. Fitness functions must be classes, where the
+    must be stored in fitness. Fitness functions must be classes, where the
     class name matches the file name.
-
-    Function is set up to automatically set imports for operators and error
-    metrics.
 
     :return: Nothing.
     """
@@ -93,40 +90,73 @@ def set_param_imports():
             pass
 
         else:
-            
+
             for op in ops[special_ops]:
 
                 if special_ops == "fitness":
                     # Fitness functions represent a special case.
-                    
+
                     get_fit_func_imports()
 
                 elif params[op] is not None:
                     # Split import name based on "." to find nested modules.
                     split_name = params[op].split(".")
-                    
-                    if split_name[0] == special_ops:
-                        # Full path already specified.
-                        
-                        # Get module and attribute names.
-                        module_name = ".".join(split_name[:-1])
+
+                    if len(split_name) > 1:
+                        # Check to see if a full path has been specified.
+
+                        # Get attribute name.
                         attr_name = split_name[-1]
-    
-                        # Import module and attribute and save.
-                        params[op] = return_attr_from_module(module_name,
-                                                             attr_name)
-                        
+
+                        try:
+                            # Try and use the exact specified path to load
+                            # the module.
+
+                            # Get module name.
+                            module_name = ".".join(split_name[:-1])
+
+                            # Import module and attribute and save.
+                            params[op] = return_attr_from_module(module_name,
+                                                                 attr_name)
+
+                        except Exception:
+                            # Either a full path has not actually been
+                            # specified, or the module doesn't exist. Try to
+                            # append specified module to default location.
+
+                            # Get module name.
+                            module_name = ".".join([special_ops,
+                                                    ".".join(split_name[:-1])])
+
+                            try:
+                                # Import module and attribute and save.
+                                params[op] = return_attr_from_module(module_name,
+                                                                     attr_name)
+
+                            except Exception:
+                                s = "utilities.algorithm.initialise_run." \
+                                    "set_param_imports\n" \
+                                    "Error: Specified module not found: " \
+                                    "%s\n" \
+                                    "       Checked locations: %s\n" \
+                                    "                          %s\n" \
+                                    "       Please ensure parameter is " \
+                                    "specified correctly." % \
+                                    (attr_name, params[op],
+                                     ".".join([module_name, attr_name]))
+                                raise Exception(s)
+
                     else:
-                        # Full path not specified
-        
+                        # Just module name specified. Use default location.
+
                         # Get module and attribute names.
                         module_name = ".".join([special_ops, op.lower()])
                         attr_name = split_name[-1]
-    
+
                         # Import module and attribute and save.
                         params[op] = return_attr_from_module(module_name,
                                                              attr_name)
-            
+
 
 def get_fit_func_imports():
     """
@@ -134,26 +164,27 @@ def get_fit_func_imports():
     as fitness functions can be specified a number of different ways. Notably,
     a list of fitness functions can be specified, indicating multiple
     objective optimisation.
-    
+
     Note that fitness functions must be classes where the class has the same
-    name as its containing file.
-    
+    name as its containing file. Fitness functions must be contained in the
+    `fitness` module.
+
     :return: Nothing.
     """
-    
+
     op = 'FITNESS_FUNCTION'
 
     if "," in params[op]:
         # List of fitness functions given in parameters file.
-        
+
         # Convert specified fitness functions into a list of strings.
         params[op] = params[op].strip("[()]").split(",")
-    
+
     if isinstance(params[op], list) and len(params[op]) == 1:
         # Single fitness function given in a list format. Don't use
         # multi-objective optimisation.
         params[op] = params[op][0]
-    
+
     if isinstance(params[op], list):
         # List of multiple fitness functions given.
 
@@ -168,27 +199,29 @@ def get_fit_func_imports():
 
             # Import this fitness function.
             params[op][i] = return_attr_from_module(module_path, attr)
-            
+
         # Import base multi-objective fitness function class.
         from fitness.base_ff_classes.moo_ff import moo_ff
-        
+
         # Set main fitness function as base multi-objective fitness
         # function class.
         params[op] = moo_ff(params[op])
-    
+
     else:
         # A single fitness function has been specified.
 
         # Split import name based on "." to find nested modules.
         split_name = params[op].strip().split(".")
 
-        # Get module and attribute names.
-        module_name = ".".join(["fitness", params[op]])
+        # Get attribute name.
         attr_name = split_name[-1]
+
+        # Get module name.
+        module_name = ".".join(["fitness", params[op]])
 
         # Import module and attribute and save.
         params[op] = return_attr_from_module(module_name, attr_name)
-        
+
         # Initialise fitness function.
         params[op] = params[op]()
 
@@ -203,20 +236,20 @@ def return_attr_from_module(module_name, attr_name):
     :param attr_name: The name of the attribute.
     :return: The imported attribute from the module.
     """
-    
+
     try:
         # Import module.
         module = importlib.import_module(module_name)
-    
+
     except ModuleNotFoundError:
         s = "utilities.algorithm.initialise_run.return_attr_from_module\n" \
             "Error: Specified module not found: %s" % (module_name)
         raise Exception(s)
-    
+
     try:
         # Import specified attribute and return.
         return getattr(module, attr_name)
-    
+
     except AttributeError:
         s = "utilities.algorithm.initialise_run.return_attr_from_module\n" \
             "Error: Specified attribute '%s' not found in module '%s'." \
