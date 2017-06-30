@@ -145,6 +145,12 @@ def parse_cmd_args(arguments):
                         type=int,
                         help='Sets the history-length for late-acceptance'
                         'and step-counting hill-climbing.')
+    parser.add_argument('--schc_count_method',
+                        dest='SCHC_COUNT_METHOD',
+                        type=str,
+                        help='Sets the counting method for step-counting '
+                             'hill-climbing. Optional values are "all", '
+                             '"acp", and "imp".')
 
     # INDIVIDUAL SIZE
     parser.add_argument('--max_tree_depth',

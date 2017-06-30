@@ -16,6 +16,7 @@ params = {
         'POPULATION_SIZE': 500,
         'GENERATIONS': 50,
         'HILL_CLIMBING_HISTORY': 1000,
+        'SCHC_COUNT_METHOD': "all",
 
         # Set optional experiment name
         'EXPERIMENT_NAME': None,
