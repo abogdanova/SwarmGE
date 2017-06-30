@@ -1,8 +1,8 @@
 from algorithm.parameters import params
 from fitness.evaluation import evaluate_fitness
 from stats.stats import stats, get_stats
+from utilities.stats import trackers
 
-import numpy as np
 
 """Hill-climbing is just about the simplest metaheuristic there
 is. It's of interest in GP/GE because of the lingering suspicion among
@@ -59,27 +59,26 @@ def LAHC_search_loop():
     """
     Search loop for Late Acceptance Hill Climbing.
     
-    This is the LAHC pseudo-code from Bykov and Burke.
+    This is the LAHC pseudo-code from Burke and Bykov:
 
-        Produce an initial solution s
-        Calculate initial cost function C(s)
+        Produce an initial solution best
+        Calculate initial cost function C(best)
         Specify Lfa
-        For all k in {0...Lfa-1} f_k := C(s)
+        For all k in {0...Lfa-1} f_k := C(best)
         First iteration I=0;
         Do until a chosen stopping condition
-            Construct a candidate solution s*
-            Calculate its cost function C(s*)
-            v := I mod Lfa
-            If C(s*)<=fv or C(s*)<=C(s)
-            Then accept the candidate (s:=s*)
-            Else reject the candidate (s:=s)
-            Insert the current cost into the fitness array fv:=C(s)
+            Construct a candidate solution best*
+            Calculate its cost function C(best*)
+            idx := I mod Lfa
+            If C(best*)<=f_idx or C(best*)<=C(best)
+            Then accept the candidate (best:=best*)
+            Else reject the candidate (best:=best)
+            Insert the current cost into the fitness array f_idx:=C(best)
             Increment the iteration number I:=I+1
     
     :return: The final population.
     """
 
-    maximise = params['FITNESS_FUNCTION'].maximise
     max_its = params['POPULATION_SIZE'] * params['GENERATIONS']
 
     # Initialise population
@@ -91,12 +90,16 @@ def LAHC_search_loop():
     # Generate statistics for run so far
     get_stats(individuals)
 
+    # Find the best individual so far.
+    best = trackers.best_ever
+    
+    # Set history.
     Lfa = params['HILL_CLIMBING_HISTORY']
-    s = stats['best_ever']
-    Cs = s.fitness
-    f = Cs * np.ones(Lfa)  # history
+    history = [best for _ in range(Lfa)]
 
+    # I is the number of individuals examined so far.
     I = len(individuals)
+    
     for generation in range(1, (params['GENERATIONS']+1)):
 
         this_gen = []
@@ -106,35 +109,37 @@ def LAHC_search_loop():
         # "generation"
         for j in range(params['POPULATION_SIZE']):
 
-            this_gen.append(s)  # collect this "generation"
+            this_gen.append(best)  # collect this "generation"
 
-            s_ = params['MUTATION'](s)  # mutate s to get candidate s*
-            if not s_.invalid:
-                s_.evaluate()
-            Cs_ = s.fitness
+            # Mutate the best to get the candidate best
+            candidate_best = params['MUTATION'](best)
+            if not candidate_best.invalid:
+                candidate_best.evaluate()
 
-            v = I % Lfa
-            # ugly
-            if ((maximise and (Cs_ >= f[v] or Cs_ >= Cs)) or
-                    (not maximise and (Cs_ <= f[v] or Cs_ <= Cs))):
-                # accept the candidate
-                s = s_
-                Cs = Cs_
+            # Find the index of the relevant individual from the late
+            # acceptance history.
+            idx = I % Lfa
+            
+            if candidate_best > history[idx]:
+                best = candidate_best  # Accept the candidate
+    
             else:
                 pass  # reject the candidate
 
-            f[v] = Cs
+            # Set the new best into the history.
+            history[idx] = best
             I += 1
 
-            # break from inner and outer if needed
             if I >= max_its:
+                # We have evaluated the total number of individuals.
                 break
 
-        # but get this get stats first
+        # Get stats for this "generation".
         stats['gen'] = generation
         get_stats(this_gen)
 
         if I >= max_its:
+            # We have evaluated the total number of individuals.
             break
 
     return individuals
