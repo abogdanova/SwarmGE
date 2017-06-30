@@ -136,13 +136,13 @@ def set_param_imports():
                             except Exception:
                                 s = "utilities.algorithm.initialise_run." \
                                     "set_param_imports\n" \
-                                    "Error: Specified module not found: " \
-                                    "%s\n" \
+                                    "Error: Specified %s function not found:" \
+                                    " %s\n" \
                                     "       Checked locations: %s\n" \
                                     "                          %s\n" \
                                     "       Please ensure parameter is " \
                                     "specified correctly." % \
-                                    (attr_name, params[op],
+                                    (op.lower(), attr_name, params[op],
                                      ".".join([module_name, attr_name]))
                                 raise Exception(s)
 
