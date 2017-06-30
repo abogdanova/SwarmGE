@@ -34,6 +34,11 @@ params = {
 
         # Set grammar file
         'GRAMMAR_FILE': "supervised_learning/Vladislavleva4.bnf",
+    
+        # Set the number of depths permutations are calculated for
+        # (starting from the minimum path of the grammar).
+        # Mainly for use with the grammar analyser script.
+        'PERMUTATION_RAMPS': 5,
 
         # Select error metric
         'ERROR_METRIC': None,

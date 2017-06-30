@@ -1,3 +1,6 @@
+from sys import path
+path.append("../src")
+
 from utilities.algorithm.general import check_python_version
 
 check_python_version()
@@ -28,8 +31,7 @@ def main(command_line_args):
     params.update(cmd_args)
 
     # Parse grammar file and set grammar class.
-    grammar = Grammar(os.path.join("..", "..", "grammars",
-                                   params['GRAMMAR_FILE']))
+    grammar = Grammar(os.path.join("..", "grammars", params['GRAMMAR_FILE']))
     
     print("\nUnique permutations and combinations of possible solutions"
           " for a range of depths for specified grammar:",

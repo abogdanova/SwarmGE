@@ -402,17 +402,20 @@ class Grammar(object):
                                                    choices if choice[
                                                        'recursive']]
 
-    def check_permutations(self, ramps=5):
+    def check_permutations(self):
         """
         Calculates how many possible derivation tree combinations can be
         created from the given grammar at a specified depth. Only returns
         possible combinations at the specific given depth (if there are no
         possible permutations for a given depth, will return 0).
 
-        :param ramps: The number of depths permutations are calculated for
-        (starting from the minimum path of the grammar)
+        :param ramps:
         :return: Nothing.
         """
+
+        # Set the number of depths permutations are calculated for
+        # (starting from the minimum path of the grammar)
+        ramps = params['PERMUTATION_RAMPS']
 
         perms_list = []
         if self.max_arity > self.min_path:
