@@ -1,4 +1,3 @@
-import types
 from os import path, getcwd, makedirs
 from shutil import rmtree
 from copy import copy
@@ -153,13 +152,10 @@ def generate_folders_and_files():
 
 def save_params_to_file():
     """
-    Save evolutionary parameters in a parameters.txt file. Automatically
-    parse function and class names.
+    Save evolutionary parameters in a parameters.txt file.
 
     :return: Nothing.
     """
-
-    # TODO: save fitness function module name (if any). E.g. supervised_learning.regression instead of just regression.
 
     # Generate file path and name.
     filename = path.join(params['FILE_PATH'], "parameters.txt")
@@ -169,31 +165,10 @@ def save_params_to_file():
     col_width = max(len(param) for param in params.keys())
 
     for param in sorted(params.keys()):
+        
+        # Create whitespace buffer for pretty printing/saving.
         spaces = [" " for _ in range(col_width - len(param))]
-        savefile.write(str(param) + ": " + "".join(spaces))
-
-        if param == "FITNESS_FUNCTION" and \
-            params[param].__class__.__name__ == "moo_ff":
-            # Multiple objective fitness functions used.
-            # Save the names of the individual fitness functions.
-        
-            # Get names of individual fitness functions.
-            funcs = [str(func.__class__.__name__) for func in
-                     params['FITNESS_FUNCTION'].fitness_functions]
-        
-            # Write names.
-            savefile.write(", ".join(funcs) + "\n")
-        
-        elif isinstance(params[param], types.FunctionType):
-            # Object is a function, save function name.
-            savefile.write(str(params[param].__name__) + "\n")
-        
-        elif hasattr(params[param], '__call__'):
-            # Object is a class instance, save name of class instance.
-            savefile.write(str(params[param].__class__.__name__) + "\n")
-            
-        else:
-            # Write object as normal.
-            savefile.write(str(params[param]) + "\n")
+        savefile.write(str(param) + ": " + "".join(spaces) +
+                       str(params[param]) + "\n")
 
     savefile.close()
