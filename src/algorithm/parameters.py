@@ -294,15 +294,15 @@ def set_params(command_line_args, create_files=True):
             params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - \
                                         params['ELITE_SIZE']
 
+        # Initialise run lists and folders before we set imports.r
+        initialise_run_params(create_files)
+        
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
         set_param_imports()
         
         # Clean the stats dict to remove unused stats.
         clean_stats.clean_stats()
-        
-        # Initialise run lists and folders
-        initialise_run_params(create_files)
 
         # Set GENOME_OPERATIONS automatically for faster linear operations.
         if params['CROSSOVER'].representation == "linear" and \
