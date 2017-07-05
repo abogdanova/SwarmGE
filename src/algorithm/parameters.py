@@ -16,7 +16,7 @@ params = {
         'POPULATION_SIZE': 500,
         'GENERATIONS': 50,
         'HILL_CLIMBING_HISTORY': 1000,
-        'SCHC_COUNT_METHOD': "all",
+        'SCHC_COUNT_METHOD': "count_all",
 
         # Set optional experiment name
         'EXPERIMENT_NAME': None,
@@ -293,7 +293,7 @@ def set_params(command_line_args, create_files=True):
             # Set the size of a generation
             params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - \
                                         params['ELITE_SIZE']
-        
+
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
         set_param_imports()

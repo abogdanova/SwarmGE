@@ -149,7 +149,7 @@ def parse_cmd_args(arguments):
                         dest='SCHC_COUNT_METHOD',
                         type=str,
                         help='Sets the counting method for step-counting '
-                             'hill-climbing. Optional values are "all", '
+                             'hill-climbing. Optional values are "count_all", '
                              '"acp", and "imp".')
 
     # INDIVIDUAL SIZE

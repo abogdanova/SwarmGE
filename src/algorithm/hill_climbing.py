@@ -236,7 +236,7 @@ def SCHC_search_loop():
                 candidate_best.evaluate()
 
             # count
-            if count_method == "all":  # we count all iterations (moves)
+            if count_method == "count_all":  # we count all iterations (moves)
                 counter += 1  # increment the counter
             
             elif count_method == "acp":  # we count accepted moves only
