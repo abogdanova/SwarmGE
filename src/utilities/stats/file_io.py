@@ -1,5 +1,6 @@
 import types
 from os import path, getcwd, makedirs
+from shutil import rmtree
 from copy import copy
 
 from algorithm.parameters import params
@@ -95,17 +96,20 @@ def save_first_front_to_file(stats, end=False, name="first_front"):
 
     # Define the new file path.
     params['FILE_PATH'] = path.join(orig_file_path, str(name))
-    
-    # Check if the front folder exists already
-    if not path.isdir(params['FILE_PATH']):
         
-        # Create front folder.
-        makedirs(params['FILE_PATH'])
+    # Check if the front folder exists already
+    if path.isdir(params['FILE_PATH']):
+        
+        # Remove previous files.
+        rmtree(params['FILE_PATH'])
+        
+    # Create front folder.
+    makedirs(params['FILE_PATH'])
     
     for i, ind in enumerate(trackers.best_ever):
         # Save each individual in the first front to file.
         save_best_ind_to_file(stats, ind, end, name=str(i))
-    
+        
     # Re-set the file path.
     params['FILE_PATH'] = copy(orig_file_path)
     
