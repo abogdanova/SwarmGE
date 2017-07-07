@@ -178,28 +178,35 @@ def parse_stats_from_runs(experiment_name):
                     "stat %s does not exist in run %s." % (stat, run)
                 raise Exception(s)
 
-        # Generate numpy array of all stats
-        summary_stats = np.array(summary_stats)
+        try:
+            # Generate numpy array of all stats
+            summary_stats = np.array(summary_stats)
+            
+            # Append Stat to header.
+            header = header + stat + "_mean,"
+            
+            summary_stats_mean = np.nanmean(summary_stats, axis=0)
+            full_stats.append(summary_stats_mean)
+    
+            # Append Stat to header.
+            header = header + stat + "_std,"
+            summary_stats_std = np.nanstd(summary_stats, axis=0)
+            full_stats.append(summary_stats_std)
+            summary_stats = np.transpose(summary_stats)
+    
+            # Save stats as a .csv file.
+            np.savetxt(path.join(file_path, (stat + ".csv")), summary_stats,
+                       delimiter=",")
+    
+            # Graph stat by calling graphing function.
+            save_average_plot_across_runs(path.join(file_path, (stat +
+                                                                ".csv")))
         
-        # Append Stat to header.
-        header = header + stat + "_mean,"
-        
-        summary_stats_mean = np.nanmean(summary_stats, axis=0)
-        full_stats.append(summary_stats_mean)
-
-        # Append Stat to header.
-        header = header + stat + "_std,"
-        summary_stats_std = np.nanstd(summary_stats, axis=0)
-        full_stats.append(summary_stats_std)
-        summary_stats = np.transpose(summary_stats)
-
-        # Save stats as a .csv file.
-        np.savetxt(path.join(file_path, (stat + ".csv")), summary_stats,
-                   delimiter=",")
-
-        # Graph stat by calling graphing function.
-        save_average_plot_across_runs(path.join(file_path, (stat +
-                                                            ".csv")))
+        except FloatingPointError:
+            print("scripts.stats_parser.parse_stats_from_runs\n"
+                  "Warning: FloatingPointError encountered while parsing %s "
+                  "stats." % (stat))
+            
     # Convert and rotate full stats
     full_stats = np.array(full_stats)
     full_stats = np.transpose(full_stats)
