@@ -384,3 +384,27 @@ def generate_codon(NT, choice):
 
     # Generate a valid codon.
     return codon
+
+
+def check_tree(tree):
+    """
+    Recursively traverse a tree and ensure that all parents and children are
+    correct.
+    
+    :param tree: A tree.
+    :return: Nothing.
+    """
+    
+    if tree.children:
+    
+        for child in tree.children:
+            
+            if child.parent != tree:
+                s = "utilities.representation.check_methods.check_tree\n" \
+                    "Error: Child doesn't belong to parent.\n" \
+                    "       Child parent:  %s\n" \
+                    "       Actual parent: %s" % (child.parent.root, tree.root)
+                raise Exception(s)
+
+            else:
+                check_tree(child)
