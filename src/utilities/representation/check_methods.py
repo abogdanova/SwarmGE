@@ -49,7 +49,7 @@ def check_genome_mapping(ind):
     
     # Re-map individual using fast genome mapper to check everything is ok
     new_ind = individual.Individual(ind.genome, None)
-
+    
     # Get attributes of both individuals.
     attributes_0 = vars(ind)
     attributes_1 = vars(new_ind)
@@ -73,11 +73,13 @@ def check_genome_mapping(ind):
                      np.isnan(attributes_0[a_0]) and
                      np.isnan(attributes_1[a_1])):
 
-                s = "utilities.representation.check_methods.check_ind\n" \
-                    "Error: Individual attributes do not match.\n" \
+                s = "utilities.representation.check_methods." \
+                    "check_genome_mapping\n" \
+                    "Error: Individual attributes do not match genome-" \
+                    "encoded attributes.\n" \
                     "       Original attribute:\n" \
                     "           %s :\t %s\n" \
-                    "       Correct attribute:\n" \
+                    "       Encoded attribute:\n" \
                     "           %s :\t %s" % \
                     (a_0, attributes_0[a_0], a_1, attributes_1[a_1])
                 raise Exception(s)
