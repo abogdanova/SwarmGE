@@ -69,7 +69,7 @@ def mapper(genome, tree):
 
     if invalid:
         # Set values for invalid individuals.
-        phenotype, nodes, depth, used_codons = None, np.NaN, np.NaN, np.NaN
+        phenotype, nodes, depth, used_codons = None, np.NaN, np.NaN, None
 
     return phenotype, genome, tree, nodes, invalid, depth, used_codons
 
