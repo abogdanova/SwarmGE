@@ -143,16 +143,16 @@ def check_genome_from_tree(ind_tree):
             raise Exception(s)
         
         # Check production choices for node root.
-        productions = params['BNF_GRAMMAR'].rules[ind_tree.root]
+        productions = params['BNF_GRAMMAR'].rules[ind_tree.root]['choices']
         
         # Select choice based on node codon.
         selection = ind_tree.codon % len(productions)
         chosen_prod = productions[selection]
-        
+
         # Build list of roots of the chosen production.
-        prods = [prod[0] for prod in chosen_prod]
+        prods = [prod['symbol'] for prod in chosen_prod['choice']]
         roots = []
-        
+
         # Build list of the roots of all node children.
         for kid in ind_tree.children:
             roots.append(kid.root)
