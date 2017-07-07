@@ -19,9 +19,9 @@ def check_ind(ind, check):
         return True
 
     elif params['CACHE'] and check == "mutation" and \
-                    ind.phenotype in invalid_cache and \
+                    ind.genome in invalid_cache and \
             params['NO_MUTATION_INVALIDS']:
-        # We have seen this phenotype before, it's invalid.
+        # We have seen this genome before, it's invalid.
         return True
 
     elif params['MAX_TREE_DEPTH'] and ind.depth > params['MAX_TREE_DEPTH']:

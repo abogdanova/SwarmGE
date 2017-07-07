@@ -42,7 +42,7 @@ def evaluate_fitness(individuals):
             # Invalid individuals cannot be evaluated and are given a bad
             # default fitness.
             ind.fitness = params['FITNESS_FUNCTION'].default_fitness
-            invalid_cache.append(ind.phenotype)
+            invalid_cache.append(ind.genome)
 
         else:
             eval_ind = True
