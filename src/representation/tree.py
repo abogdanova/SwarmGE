@@ -74,20 +74,18 @@ class Tree:
 
         return tree_copy
 
-    def __eq__(self, other):
+    def __eq__(self, other, same=True):
         """
         Set the definition for comparison of two instances of the tree
         class by their attributes. Returns True if self == other.
 
         :param other: Another instance of the tree class with which to compare.
-        :return: Zero if self == other.
+        :return: True if self == other.
         """
-
-        same = True
 
         # Get attributes of self and other.
         a_self, a_other = vars(self), vars(other)
-        
+                
         # Don't look at the children as they are class instances themselves.
         taboo = ["parent", "children", "snippet", "id"]
         self_no_kids = {k: v for k, v in a_self.items() if k not in taboo}
@@ -113,7 +111,7 @@ class Tree:
             elif self.children:
                 # Compare children recursively.
                 for i, child in enumerate(self.children):
-                    same = (child == other.children[i])
+                    same = child.__eq__(other.children[i], same)
 
         return same
 
@@ -233,3 +231,20 @@ class Tree:
                                         max_depth, nodes)
 
         return genome, output, invalid, max_depth, nodes
+
+    def print_tree(self):
+        """
+        Prints out all nodes in the tree, indented according to node depth.
+        
+        :return: Nothing.
+        """
+
+        print(self.depth, "".join([" " for _ in range(self.depth)]), self.root)
+
+        for child in self.children:
+            if not child.children:
+                print(self.depth + 1,
+                      "".join([" " for _ in range(self.depth + 1)]),
+                      child.root)
+            else:
+                child.print_tree()
