@@ -28,7 +28,7 @@ class supervised_learning(base_ff):
     def __init__(self):
         # Initialise base fitness function class.
         super().__init__()
-        
+
         # Get training and test data
         self.training_in, self.training_exp, self.test_in, self.test_exp = \
             get_data(params['DATASET_TRAIN'], params['DATASET_TEST'])
@@ -51,22 +51,22 @@ class supervised_learning(base_ff):
         evaluation is to be performed.
         :return: The fitness of the evaluated individual.
         """
-        
+
         dist = kwargs.get('dist', 'training')
-        
+
         if dist == "training":
             # Set training datasets.
             x = self.training_in
             y = self.training_exp
-        
+
         elif dist == "test":
             # Set test datasets.
             x = self.test_in
             y = self.test_exp
-        
+
         else:
             raise ValueError("Unknown dist: " + dist)
-        
+
         if params['OPTIMIZE_CONSTANTS']:
             # if we are training, then optimize the constants by
             # gradient descent and save the resulting phenotype
@@ -76,7 +76,7 @@ class supervised_learning(base_ff):
             # use the saved string and constants to evaluate.
             if dist == "training":
                 return optimize_constants(x, y, ind)
-            
+
             else:
                 # this string has been created during training
                 phen = ind.phenotype_consec_consts
@@ -84,16 +84,16 @@ class supervised_learning(base_ff):
                 # phen will refer to x (ie test_in), and possibly to c
                 yhat = eval(phen)
                 assert np.isrealobj(yhat)
-            
+
                 # let's always call the error function with the
                 # true values first, the estimate second
                 return params['ERROR_METRIC'](y, yhat)
-    
+
         else:
             # phenotype won't refer to C
             yhat = eval(ind.phenotype)
             assert np.isrealobj(yhat)
-        
+
             # let's always call the error function with the true
             # values first, the estimate second
             return params['ERROR_METRIC'](y, yhat)
