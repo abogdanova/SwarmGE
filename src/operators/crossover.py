@@ -92,12 +92,8 @@ def variable_onepoint(p_0, p_1):
     # Get the chromosomes.
     genome_0, genome_1 = p_0.genome, p_1.genome
 
-    # Uniformly generate crossover points. If within_used==True,
-    # points will be within the used section.
-    if params['WITHIN_USED']:
-        max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
-    else:
-        max_p_0, max_p_1 = len(genome_0), len(genome_1)
+    # Uniformly generate crossover points.
+    max_p_0, max_p_1 = get_max_genome_index(p_0, p_1)
         
     # Select unique points on each genome for crossover to occur.
     pt_0, pt_1 = randint(1, max_p_0), randint(1, max_p_1)
@@ -131,13 +127,9 @@ def fixed_onepoint(p_0, p_1):
     
     # Get the chromosomes.
     genome_0, genome_1 = p_0.genome, p_1.genome
-    
-    # Uniformly generate crossover points. If within_used==True,
-    # points will be within the used section.
-    if params['WITHIN_USED']:
-        max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
-    else:
-        max_p_0, max_p_1 = len(genome_0), len(genome_1)
+
+    # Uniformly generate crossover points.
+    max_p_0, max_p_1 = get_max_genome_index(p_0, p_1)
     
     # Select the same point on both genomes for crossover to occur.
     pt = randint(1, min(max_p_0, max_p_1))
@@ -171,12 +163,8 @@ def fixed_twopoint(p_0, p_1):
     
     genome_0, genome_1 = p_0.genome, p_1.genome
 
-    # Uniformly generate crossover points. If within_used==True, points will
-    # be within the used section.
-    if params['WITHIN_USED']:
-        max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
-    else:
-        max_p_0, max_p_1 = len(genome_0), len(genome_1)
+    # Uniformly generate crossover points.
+    max_p_0, max_p_1 = get_max_genome_index(p_0, p_1)
 
     # Select the same points on both genomes for crossover to occur.
     a, b = randint(1, max_p_0), randint(1, max_p_1)
@@ -211,12 +199,8 @@ def variable_twopoint(p_0, p_1):
     
     genome_0, genome_1 = p_0.genome, p_1.genome
     
-    # Uniformly generate crossover points. If within_used==True, points will
-    # be within the used section.
-    if params['WITHIN_USED']:
-        max_p_0, max_p_1 = p_0.used_codons, p_1.used_codons
-    else:
-        max_p_0, max_p_1 = len(genome_0), len(genome_1)
+    # Uniformly generate crossover points.
+    max_p_0, max_p_1 = get_max_genome_index(p_0, p_1)
     
     # Select the same points on both genomes for crossover to occur.
     a_0, b_0 = randint(1, max_p_0), randint(1, max_p_1)
@@ -359,9 +343,23 @@ def subtree(p_0, p_1):
         ind1 = p_0
     
     else:
-        # Crossover is to be performed. Save tail of each genome.
-        tail_0 = p_0.genome[p_0.used_codons:]
-        tail_1 = p_1.genome[p_1.used_codons:]
+        # Crossover is to be performed.
+    
+        if p_0.invalid:
+            # The individual is invalid.
+            tail_0 = []
+            
+        else:
+            # Save tail of each genome.
+            tail_0 = p_0.genome[p_0.used_codons:]
+
+        if p_1.invalid:
+            # The individual is invalid.
+            tail_1 = []
+
+        else:
+            # Save tail of each genome.
+            tail_1 = p_1.genome[p_1.used_codons:]
         
         # Get the set of labels of non terminals for each tree.
         labels1 = p_0.tree.get_node_labels(set())
@@ -377,36 +375,52 @@ def subtree(p_0, p_1):
         else:
             # There are no overlapping NTs, cross over entire trees.
             ret_tree0, ret_tree1 = p_1.tree, p_0.tree
-
-        # Generate list of all non-terminals.
-        nt_keys = params['BNF_GRAMMAR'].non_terminals.keys()
-
-        # Build new individuals.
-        input_0, output_0, invalid_0, depth_0, nodes_0 = \
-            ret_tree0.get_tree_info(nt_keys, [], [])
-        used_codons_0, phenotype_0 = len(input_0), "".join(output_0)
-        genome_0 = input_0 + tail_0
-
-        input_1, output_1, invalid_1, depth_1, nodes_1 = \
-            ret_tree1.get_tree_info(nt_keys, [], [])
-        used_codons_1, phenotype_1 = len(input_1), "".join(output_1)
-        genome_1 = input_1 + tail_1
         
-        # Initialise new individuals. No need to map as we have all info.
-        ind0 = individual.Individual(genome_0, ret_tree0, map_ind=False)
-        ind1 = individual.Individual(genome_1, ret_tree1, map_ind=False)
-
-        # Set individual parameters.
-        ind0.phenotype, ind0.nodes = phenotype_0, nodes_0
-        ind0.depth, ind0.used_codons = depth_0, used_codons_0
-        ind0.invalid = invalid_0
-
-        # Set individual parameters.
-        ind1.phenotype, ind1.nodes = phenotype_1, nodes_1
-        ind1.depth, ind1.used_codons = depth_1, used_codons_1
-        ind1.invalid = invalid_1
+        # Initialise new individuals using the new trees.
+        ind0 = individual.Individual(None, ret_tree0)
+        ind1 = individual.Individual(None, ret_tree1)
+        
+        # Preserve tails.
+        ind0.genome = ind0.genome + tail_0
+        ind1.genome = ind1.genome + tail_1
 
     return [ind0, ind1]
+
+
+def get_max_genome_index(ind_0, ind_1):
+    """
+    Given two individuals, return the maximum index on each genome across
+    which operations are to be performed. This can be either the used
+    portion of the genome or the entire length of the genome.
+    
+    :param ind_0: Individual 0.
+    :param ind_1: Individual 1.
+    :return: The maximum index on each genome across which operations are to be
+             performed.
+    """
+
+    if params['WITHIN_USED']:
+        # Get used codons range.
+        
+        if ind_0.invalid:
+            # ind_0 is invalid. Default to entire genome.
+            max_p_0 = len(ind_0.genome)
+        
+        else:
+            max_p_0 = ind_0.used_codons
+    
+        if ind_1.invalid:
+            # ind_1 is invalid. Default to entire genome.
+            max_p_1 = len(ind_1.genome)
+        
+        else:
+            max_p_1 = ind_1.used_codons
+    
+    else:
+        # Get length of entire genome.
+        max_p_0, max_p_1 = len(ind_0.genome), len(ind_1.genome)
+        
+    return max_p_0, max_p_1
 
 
 # Set attributes for all operators to define linear or subtree representations.

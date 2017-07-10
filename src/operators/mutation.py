@@ -21,15 +21,27 @@ def mutation(pop):
     # Iterate over entire population.
     for ind in pop:
         
-        # Perform mutation.
-        new_ind = params['MUTATION'](ind)
+        # If individual has no genome, default to subtree mutation.
+        if not ind.genome and params['NO_MUTATION_INVALIDS']:
+            new_ind = subtree(ind)
+        
+        else:
+            # Perform mutation.
+            new_ind = params['MUTATION'](ind)
         
         # Check ind does not violate specified limits.
         check = check_ind(new_ind, "mutation")
         
         while check:
-            # Perform mutation until the individual passess all tests.
-            new_ind = params['MUTATION'](ind)
+            # Perform mutation until the individual passes all tests.
+
+            # If individual has no genome, default to subtree mutation.
+            if not ind.genome and params['NO_MUTATION_INVALIDS']:
+                new_ind = subtree(ind)
+
+            else:
+                # Perform mutation.
+                new_ind = params['MUTATION'](ind)
     
             # Check ind does not violate specified limits.
             check = check_ind(new_ind, "mutation")
@@ -52,10 +64,11 @@ def int_flip_per_codon(ind):
     """
 
     # Set effective genome length over which mutation will be performed.
-    if params['WITHIN_USED']:
-        eff_length = min(len(ind.genome), ind.used_codons)
-    else:
-        eff_length = len(ind.genome)
+    eff_length = get_effective_length(ind)
+
+    if not eff_length:
+        # Linear mutation cannot be performed on this individual.
+        return ind
 
     # Set mutation probability. Default is 1 over the length of the genome.
     if params['MUTATION_PROBABILITY'] and params['MUTATION_EVENTS'] == 1:
@@ -94,13 +107,14 @@ def int_flip_per_ind(ind):
     :param ind: An individual to be mutated.
     :return: A mutated individual.
     """
-    
+
     # Set effective genome length over which mutation will be performed.
-    if params['WITHIN_USED']:
-        eff_length = min(len(ind.genome), ind.used_codons)
-    else:
-        eff_length = len(ind.genome)
+    eff_length = get_effective_length(ind)
     
+    if not eff_length:
+        # Linear mutation cannot be performed on this individual.
+        return ind
+        
     for _ in params['MUTATION_EVENTS']:
         idx = randint(0, eff_length-1)
         ind.genome[idx] = randint(0, params['CODON_SIZE'])
@@ -152,8 +166,13 @@ def subtree(ind):
     
         return ind_tree
 
-    # Save the tail of the genome.
-    tail = ind.genome[ind.used_codons:]
+    if ind.invalid:
+        # The individual is invalid.
+        tail = []
+
+    else:
+        # Save the tail of the genome.
+        tail = ind.genome[ind.used_codons:]
     
     # Allows for multiple mutation events should that be desired.
     for i in range(params['MUTATION_EVENTS']):
@@ -166,6 +185,32 @@ def subtree(ind):
     ind.genome = ind.genome + tail
 
     return ind
+
+
+def get_effective_length(ind):
+    """
+    Return the effective length of the genome for linear mutation.
+    
+    :param ind: An individual.
+    :return: The effective length of the genome.
+    """
+    
+    if not ind.genome:
+        # The individual does not have a genome; linear mutation cannot be
+        # performed.
+        return None
+    
+    elif ind.invalid:
+        # Individual is invalid.
+        eff_length = len(ind.genome)
+
+    elif params['WITHIN_USED']:
+        eff_length = min(len(ind.genome), ind.used_codons)
+
+    else:
+        eff_length = len(ind.genome)
+        
+    return eff_length
 
 
 # Set attributes for all operators to define linear or subtree representations.
