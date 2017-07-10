@@ -38,10 +38,6 @@ def execute_runs():
     :return: Nothing.
     """
 
-    # Ensure `multicore` parameter is set to False as we use multiprocessing to
-    # execute runs.
-    params['MULTICORE'] = False
-
     # Initialise empty list of results.
     results = []
 
