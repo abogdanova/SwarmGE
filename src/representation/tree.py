@@ -212,6 +212,10 @@ class Tree:
                 # Set new max tree depth.
                 max_depth = self.depth + 1
 
+        if self.root in nt_keys and not self.children:
+            # Current NT has no children. Invalid tree.
+            invalid = True
+
         for child in self.children:
             # Recurse on all children.
 
