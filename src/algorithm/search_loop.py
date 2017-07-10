@@ -54,12 +54,21 @@ def search_loop_from_state():
     """
     
     individuals = trackers.state_individuals
-        
+    
+    if params['MULTICORE']:
+        # initialize pool once, if mutlicore is enabled
+        params['POOL'] = Pool(processes=params['CORES'], initializer=pool_init,
+                              initargs=(params,))  # , maxtasksperchild=1)
+    
     # Traditional GE
     for generation in range(stats['gen'] + 1, (params['GENERATIONS'] + 1)):
         stats['gen'] = generation
         
         # New generation
         individuals = params['STEP'](individuals)
-            
+    
+    if params['MULTICORE']:
+        # Close the workers pool (otherwise they'll live on forever).
+        params['POOL'].close()
+    
     return individuals
