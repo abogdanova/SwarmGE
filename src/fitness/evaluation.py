@@ -2,7 +2,7 @@ import numpy as np
 
 from algorithm.parameters import params
 from stats.stats import stats
-from utilities.stats.trackers import cache, invalid_cache
+from utilities.stats.trackers import cache, invalid_cache, runtime_error_cache
 
 
 def evaluate_fitness(individuals):
@@ -87,6 +87,10 @@ def evaluate_fitness(individuals):
             # Add the evaluated individual to the cache.
             cache[ind.phenotype] = ind.fitness
         
+            # Check if individual had a runtime error.
+            if ind.runtime_error:
+                runtime_error_cache.append(ind.phenotype)
+                    
     return individuals
 
 
@@ -112,6 +116,10 @@ def eval_or_append(ind, results, pool):
     else:
         # Evaluate the individual.
         ind.evaluate()
+
+        # Check if individual had a runtime error.
+        if ind.runtime_error:
+            runtime_error_cache.append(ind.phenotype)
 
         if params['CACHE']:
             # The phenotype string of the individual does not appear

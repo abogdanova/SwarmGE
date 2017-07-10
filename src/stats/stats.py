@@ -274,6 +274,7 @@ def update_stats(individuals, end):
     # Population Stats
     stats['total_inds'] = params['POPULATION_SIZE'] * (stats['gen'] + 1)
     stats['invalids'] = len(trackers.invalid_cache)
+    stats['runtime_error'] = len(trackers.runtime_error_cache)
     if params['CACHE']:
         stats['unique_inds'] = len(trackers.cache)
         stats['unused_search'] = 100 - stats['unique_inds'] / \

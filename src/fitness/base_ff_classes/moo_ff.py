@@ -1,5 +1,3 @@
-from stats.stats import stats
-
 from math import isnan
 import numpy as np
 
@@ -56,14 +54,6 @@ class moo_ff:
             # Check if any objective fitness value is NaN, if so set default
             # fitness.
             fitness = self.default_fitness
-
-            if hasattr(ind, "runtime_error"):
-                # Individual is valid but has produced a runtime error.
-                # Count with stats["runtime_error"] counter.
-                stats['runtime_error'] += 1
-                
-                # Remove "runtime_error" attribute from individual.
-                del ind.runtime_error
 
         return fitness
 

@@ -1,6 +1,3 @@
-from stats.stats import stats
-from algorithm.parameters import params
-
 import numpy as np
 
 np.seterr(all="raise")
@@ -44,13 +41,8 @@ class base_ff:
             fitness = base_ff.default_fitness
             
             # These individuals are valid (i.e. not invalids), but they have
-            # produced a runtime error. Count with stats["runtime_error"]
-            # counter.
-            if not hasattr(params['FITNESS_FUNCTION'], "multi_objective"):
-                stats['runtime_error'] += 1
-            
-            else:
-                ind.runtime_error = True
+            # produced a runtime error.
+            ind.runtime_error = True
         
         except Exception as err:
             # Other errors should not usually happen (unless we have

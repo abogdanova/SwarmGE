@@ -32,6 +32,7 @@ class Individual(object):
             self.genome, self.tree = genome, ind_tree
 
         self.fitness = params['FITNESS_FUNCTION'].default_fitness
+        self.runtime_error = False
         self.name = None
 
     def __lt__(self, other):
@@ -136,6 +137,7 @@ class Individual(object):
         new_ind.phenotype, new_ind.invalid = self.phenotype, self.invalid
         new_ind.depth, new_ind.nodes = self.depth, self.nodes
         new_ind.used_codons = self.used_codons
+        new_ind.runtime_error = self.runtime_error
 
         return new_ind
 

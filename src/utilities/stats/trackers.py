@@ -10,6 +10,10 @@ invalid_cache = []
 # PonyGE uses this list to avoid re-generating previously seen invalid
 # solutions.
 
+runtime_error_cache = []
+# This list stores a list of phenotypes which produce runtime errors over an
+# evolutionary run.
+
 best_fitness_list = []
 # fitness_plot is simply a list of the best fitnesses at each generation.
 # Useful for plotting evolutionary progress.
