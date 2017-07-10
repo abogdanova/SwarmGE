@@ -70,6 +70,7 @@ def evaluate_fitness(individuals):
                     
                     # Need to overwrite the current individual in the pop.
                     individuals[name] = ind
+                    ind.name = name
 
             if eval_ind:
                 results = eval_or_append(ind, results, pool)
