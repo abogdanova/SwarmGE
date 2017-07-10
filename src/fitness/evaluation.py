@@ -1,4 +1,3 @@
-from multiprocessing import Pool
 import numpy as np
 
 from algorithm.parameters import params
@@ -86,7 +85,7 @@ def evaluate_fitness(individuals):
 
             # Add the evaluated individual to the cache.
             cache[ind.phenotype] = ind.fitness
-
+        
     return individuals
 
 
