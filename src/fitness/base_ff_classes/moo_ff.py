@@ -33,9 +33,9 @@ class moo_ff:
         
         # Set up list of default fitness values (as per individual fitness
         # functions).
-        moo_ff.default_fitness = []
+        self.default_fitness = []
         for f in fitness_functions:
-            moo_ff.default_fitness.append(f.default_fitness)
+            self.default_fitness.append(f.default_fitness)
         
     def __call__(self, ind):
         """
@@ -55,7 +55,7 @@ class moo_ff:
         if any([isnan(i) for i in fitness]):
             # Check if any objective fitness value is NaN, if so set default
             # fitness.
-            fitness = moo_ff.default_fitness
+            fitness = self.default_fitness
 
             if hasattr(ind, "runtime_error"):
                 # Individual is valid but has produced a runtime error.

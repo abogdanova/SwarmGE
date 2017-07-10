@@ -1,9 +1,9 @@
+import importlib
 from datetime import datetime
 from os import getpid
 from random import seed
 from socket import gethostname
 from time import time
-import importlib
 
 from algorithm.parameters import params
 from utilities.stats import trackers
@@ -255,3 +255,19 @@ def return_attr_from_module(module_name, attr_name):
             "Error: Specified attribute '%s' not found in module '%s'." \
             % (attr_name, module_name)
         raise Exception(s)
+
+
+def pool_init(params_):
+    """
+    When initialising the pool the original params dict (params_) is passed in
+    and used to update the newly created instance of params, as Windows does
+    not retain the system memory of the parent process.
+
+    :param params_: original params dict
+    :return: Nothing.
+    """
+
+    from platform import system
+
+    if system() == 'Windows':
+        params.update(params_)

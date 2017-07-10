@@ -13,14 +13,15 @@ class base_ff:
     This is an abstract class which exists just to be subclassed; it should not
     be instantiated.
     """
-        
-    def __init__(self):
-        
-        # Default default fitness function is NaN.
-        base_ff.default_fitness = np.NaN
 
-        # Default fitness objective is to minimise fitness.
-        base_ff.maximise = False
+    # Default default fitness function is NaN.
+    default_fitness = np.NaN
+
+    # Default fitness objective is to minimise fitness.
+    maximise = False
+
+    def __init__(self):
+        pass
     
     def __call__(self, ind, **kwargs):
         """

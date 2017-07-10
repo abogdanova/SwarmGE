@@ -1,8 +1,10 @@
+from multiprocessing import Pool
 from algorithm.parameters import params
 from fitness.evaluation import evaluate_fitness
 from stats.stats import stats, get_stats
 from utilities.stats import trackers
 from operators.initialisation import initialisation
+from utilities.algorithm.initialise_run import pool_init
 
 
 def search_loop():
@@ -13,6 +15,11 @@ def search_loop():
     :return: The final population after the evolutionary process has run for
     the specified number of generations.
     """
+
+    if params['MULTICORE']:
+        # initialize pool once, if mutlicore is enabled
+        params['POOL'] = Pool(processes=params['CORES'], initializer=pool_init,
+                              initargs=(params,))  # , maxtasksperchild=1)
 
     # Initialise population
     individuals = initialisation(params['POPULATION_SIZE'])
@@ -29,6 +36,10 @@ def search_loop():
 
         # New generation
         individuals = params['STEP'](individuals)
+
+    if params['MULTICORE']:
+        # Close the workers pool (otherwise they'll live on forever).
+        params['POOL'].close()
 
     return individuals
 

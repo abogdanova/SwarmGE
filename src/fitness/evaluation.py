@@ -31,8 +31,7 @@ def evaluate_fitness(individuals):
     results, pool = [], None
     
     if params['MULTICORE']:
-        # Initialise a pool of jobs for multicore process workers.
-        pool = Pool(processes=params['CORES'])  # , maxtasksperchild=1)
+        pool = params['POOL']
 
     for name, ind in enumerate(individuals):
         ind.name = name
@@ -87,9 +86,6 @@ def evaluate_fitness(individuals):
 
             # Add the evaluated individual to the cache.
             cache[ind.phenotype] = ind.fitness
-
-        # Close the workers pool (otherwise they'll live on forever).
-        pool.close()
 
     return individuals
 
