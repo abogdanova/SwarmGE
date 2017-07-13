@@ -282,19 +282,9 @@ def save_average_plot_across_runs(filename):
     plt.close()
 
 
-def main():
-    """
-    The main function for running the statistics parser.
-    
-    :return: Nothing.
-    """
-
+if __name__ == "__main__":
     # Get experiment name and graphing flag from command line parser.
     experiment_name = parse_opts(sys.argv)
     
     # Call statistics parser for experiment name.
     parse_stats_from_runs(experiment_name)
-
-
-if __name__ == "__main__":
-    main()
