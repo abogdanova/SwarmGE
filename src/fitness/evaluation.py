@@ -2,7 +2,7 @@ import numpy as np
 
 from algorithm.parameters import params
 from stats.stats import stats
-from utilities.stats import trackers
+from utilities.stats.trackers import cache, runtime_error_cache
 
 def evaluate_fitness(individuals):
     """
@@ -45,14 +45,14 @@ def evaluate_fitness(individuals):
             eval_ind = True
 
             # Valid individuals can be evaluated.
-            if params['CACHE'] and ind.phenotype in trackers.cache:
+            if params['CACHE'] and ind.phenotype in cache:
                 # The individual has been encountered before in
                 # the utilities.trackers.cache.
 
                 if params['LOOKUP_FITNESS']:
                     # Set the fitness as the previous fitness from the
                     # cache.
-                    ind.fitness = trackers.cache[ind.phenotype]
+                    ind.fitness = cache[ind.phenotype]
                     eval_ind = False
 
                 elif params['LOOKUP_BAD_FITNESS']:
@@ -63,8 +63,7 @@ def evaluate_fitness(individuals):
                 elif params['MUTATE_DUPLICATES']:
                     # Mutate the individual to produce a new phenotype
                     # which has not been encountered yet.
-                    while (not ind.phenotype) or ind.phenotype in \
-                            trackers.cache:
+                    while (not ind.phenotype) or ind.phenotype in cache:
                         ind = params['MUTATION'](ind)
                         stats['regens'] += 1
                     
@@ -85,11 +84,11 @@ def evaluate_fitness(individuals):
             individuals[ind.name] = ind
 
             # Add the evaluated individual to the cache.
-            trackers.cache[ind.phenotype] = ind.fitness
+            cache[ind.phenotype] = ind.fitness
         
             # Check if individual had a runtime error.
             if ind.runtime_error:
-                trackers.runtime_error_cache.append(ind.phenotype)
+                runtime_error_cache.append(ind.phenotype)
                     
     return individuals
 
@@ -119,7 +118,7 @@ def eval_or_append(ind, results, pool):
 
         # Check if individual had a runtime error.
         if ind.runtime_error:
-            trackers.runtime_error_cache.append(ind.phenotype)
+            runtime_error_cache.append(ind.phenotype)
 
         if params['CACHE']:
             # The phenotype string of the individual does not appear
@@ -132,4 +131,4 @@ def eval_or_append(ind, results, pool):
                      np.isnan(ind.fitness)):
                 
                 # All fitnesses are valid.
-                trackers.cache[ind.phenotype] = ind.fitness
+                cache[ind.phenotype] = ind.fitness
