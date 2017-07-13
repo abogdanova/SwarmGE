@@ -11,6 +11,10 @@ def check_ind(ind, check):
     :return: False if everything is ok, True if there is an issue.
     """
 
+    if ind.genome == []:
+        # Ensure all individuals at least have a genome.
+        return True
+
     if ind.invalid and \
             ((check == "crossover" and params['NO_CROSSOVER_INVALIDS']) or
              (check == "mutation" and params['NO_MUTATION_INVALIDS'])):
@@ -389,14 +393,23 @@ def check_tree(tree):
     """
     
     if tree.children:
-    
+        
+        if not tree.codon:
+            s = "utilities.representation.check_methods.check_tree\n" \
+                "Error: Node with children has no associated codon."
+            raise Exception(s)
+        
         for child in tree.children:
             
             if child.parent != tree:
                 s = "utilities.representation.check_methods.check_tree\n" \
                     "Error: Child doesn't belong to parent.\n" \
                     "       Child parent:  %s\n" \
-                    "       Actual parent: %s" % (child.parent.root, tree.root)
+                    "       Actual parent: %s\n" \
+                    "       Child P depth: %s\n" \
+                    "       Parent depth:  %s" % \
+                    (child.parent.root, tree.root,
+                     child.parent.depth, tree.depth)
                 raise Exception(s)
 
             else:
