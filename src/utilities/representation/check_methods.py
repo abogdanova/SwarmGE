@@ -1,6 +1,5 @@
 from algorithm.parameters import params
 from representation import individual
-from utilities.stats.trackers import invalid_cache
 import numpy as np
 
 
@@ -16,12 +15,6 @@ def check_ind(ind, check):
             ((check == "crossover" and params['NO_CROSSOVER_INVALIDS']) or
              (check == "mutation" and params['NO_MUTATION_INVALIDS'])):
         # We have an invalid.
-        return True
-
-    elif params['CACHE'] and check == "mutation" and \
-                    ind.genome in invalid_cache and \
-            params['NO_MUTATION_INVALIDS']:
-        # We have seen this genome before, it's invalid.
         return True
 
     elif params['MAX_TREE_DEPTH'] and ind.depth > params['MAX_TREE_DEPTH']:
