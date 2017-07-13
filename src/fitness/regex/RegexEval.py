@@ -29,6 +29,13 @@ class RegexEval(base_ff):
     def __init__(self):
         # Initialise base fitness function class.
         super().__init__()
+        
+        if params['MULTICORE']:
+            s = "fitness.regex.RegexEval.RegexEval\n" \
+                "Error: Multicore evaluation cannot be used with RegexEval " \
+                "fitness function, as this fitness function already manages " \
+                "processes using the multiprocessing library."
+            raise Exception(s)
     
     def call_fitness(self, individual, q):
         """
