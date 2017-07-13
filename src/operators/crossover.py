@@ -33,6 +33,11 @@ def crossover(parents):
             pass
         
         else:
+            
+            if any([i.genome == [] for i in inds_out]):
+                print("Problem here")
+                quit()
+            
             # Extend the new population.
             cross_pop.extend(inds_out)
 
