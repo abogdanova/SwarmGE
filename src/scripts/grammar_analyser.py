@@ -33,9 +33,8 @@ def main(command_line_args):
     # Parse grammar file and set grammar class.
     grammar = Grammar(os.path.join("..", "grammars", params['GRAMMAR_FILE']))
 
-    print("\nUnique permutations and combinations of possible solutions"
-          " for a range of depths for specified grammar:",
-          params['GRAMMAR_FILE'], "\n")
+    print("\nNumber of unique possible solutions for a range of depths for "
+          "specified grammar:", params['GRAMMAR_FILE'], "\n")
 
     for depth in grammar.permutations:
 
