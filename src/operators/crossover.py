@@ -33,11 +33,7 @@ def crossover(parents):
             pass
         
         else:
-            
-            if any([i.genome == [] for i in inds_out]):
-                print("Problem here")
-                quit()
-            
+                        
             # Extend the new population.
             cross_pop.extend(inds_out)
 
@@ -252,7 +248,7 @@ def subtree(p_0, p_1):
         :return: The new derivation trees after subtree crossover has been
         performed.
         """
-    
+        
         # Randomly choose a non-terminal from the set of permissible
         # intersecting non-terminals.
         crossover_choice = choice(shared_nodes)
@@ -317,7 +313,7 @@ def subtree(p_0, p_1):
             # parents.
             t1.parent = p0
             t0.parent = p1
-    
+        
         return tree0, tree1
 
     def intersect(l0, l1):
@@ -377,6 +373,7 @@ def subtree(p_0, p_1):
             # There are overlapping NTs, cross over parts of trees.
             ret_tree0, ret_tree1 = do_crossover(p_0.tree, p_1.tree,
                                                 shared_nodes)
+        
         else:
             # There are no overlapping NTs, cross over entire trees.
             ret_tree0, ret_tree1 = p_1.tree, p_0.tree
@@ -384,7 +381,7 @@ def subtree(p_0, p_1):
         # Initialise new individuals using the new trees.
         ind0 = individual.Individual(None, ret_tree0)
         ind1 = individual.Individual(None, ret_tree1)
-        
+
         # Preserve tails.
         ind0.genome = ind0.genome + tail_0
         ind1.genome = ind1.genome + tail_1
