@@ -124,22 +124,21 @@ class Tree:
         :param target: The target nodes to match.
         :return: The array of all nodes that match the target.
         """
-
-        if self.root in params['BNF_GRAMMAR'].non_terminals:
-            # Check if the current node is a non-terminal.
             
-            if self.root in target:
-                # Check if the current node matches the target.
-                array.append(self)
+        if self.root in target:
+            # Check if the current node matches the target.
             
-            # Find all non-terminal children of the current node.
-            NT_kids = [kid for kid in self.children if kid.root in
-                       params['BNF_GRAMMAR'].non_terminals]
-            
-            for child in NT_kids:
-                if NT_kids:
-                    # Recursively call function on any non-terminal children.
-                    array = child.get_target_nodes(array, target=target)
+            # Add the current node to the array.
+            array.append(self)
+        
+        # Find all non-terminal children of the current node.
+        NT_kids = [kid for kid in self.children if kid.root in
+                   params['BNF_GRAMMAR'].non_terminals]
+        
+        for child in NT_kids:
+            if NT_kids:
+                # Recursively call function on any non-terminal children.
+                array = child.get_target_nodes(array, target=target)
         
         return array
 
