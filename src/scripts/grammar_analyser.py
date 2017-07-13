@@ -19,7 +19,7 @@ def main(command_line_args):
     and print out the number of unique permutations and combinations of
     distinct phenotypes that this grammar is capable of generating at a
     number of given depths.
-    
+
     :return: Nothing.
     """
 
@@ -32,21 +32,21 @@ def main(command_line_args):
 
     # Parse grammar file and set grammar class.
     grammar = Grammar(os.path.join("..", "grammars", params['GRAMMAR_FILE']))
-    
+
     print("\nUnique permutations and combinations of possible solutions"
           " for a range of depths for specified grammar:",
           params['GRAMMAR_FILE'], "\n")
-    
+
     for depth in grammar.permutations:
-        
-        print(" Depth: %d \t Permutations: %d" %
+
+        print(" Depth: %d \t Number of unique solutions: %d" %
               (depth, grammar.permutations[depth]))
-        
+
 
 if __name__ == "__main__":
-    
+
     # Do not write or save any files.
     params['DEBUG'] = True
-    
+
     # Run main program.
     main(sys.argv[1:])  # exclude the ponyge.py arg itself
