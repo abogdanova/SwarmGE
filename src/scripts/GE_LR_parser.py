@@ -350,7 +350,7 @@ def main():
 if __name__ == '__main__':
     
     # Set parameters
-    set_params(sys.argv[1:])
+    set_params(sys.argv[1:], create_files=False)
     
     # Generate solution.
     solution = main()
