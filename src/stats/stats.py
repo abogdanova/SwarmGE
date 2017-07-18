@@ -7,7 +7,7 @@ from algorithm.parameters import params
 from utilities.algorithm.NSGA2 import compute_pareto_metrics
 from utilities.algorithm.state import create_state
 from utilities.stats import trackers
-from utilities.stats.save_plots import save_best_fitness_plot, \
+from utilities.stats.save_plots import save_plot_from_data, \
     save_pareto_fitness_plot
 from utilities.stats.file_io import save_stats_to_file, save_stats_headers, \
     save_best_ind_to_file, save_first_front_to_file
@@ -56,23 +56,23 @@ def get_stats(individuals, end=False):
 
     if hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
         # Multiple objective optimisation is being used.
-        
+
         # Remove fitness stats from the stats dictionary.
         stats.pop('best_fitness', None)
         stats.pop('ave_fitness', None)
-        
+
         # Update stats.
         get_moo_stats(individuals, end)
-        
+
     else:
         # Single objective optimisation is being used.
         get_soo_stats(individuals, end)
-    
+
     if params['SAVE_STATE'] and not params['DEBUG'] and \
                             stats['gen'] % params['SAVE_STATE_STEP'] == 0:
         # Save the state of the current evolutionary run.
         create_state(individuals)
-        
+
 
 def get_soo_stats(individuals, end):
     """
@@ -103,7 +103,7 @@ def get_soo_stats(individuals, end):
             trackers.best_fitness_list.append(trackers.best_ever.fitness)
 
         if params['VERBOSE'] or end:
-            save_best_fitness_plot()
+            save_plot_from_data(trackers.best_fitness_list, "best_fitness")
 
     # Print statistics
     if params['VERBOSE'] and not end:
@@ -117,14 +117,14 @@ def get_soo_stats(individuals, end):
 
     # Generate test fitness on regression problems
     if hasattr(params['FITNESS_FUNCTION'], "training_test") and end:
-        
+
         # Save training fitness.
         trackers.best_ever.training_fitness = copy(trackers.best_ever.fitness)
-        
+
         # Evaluate test fitness.
         trackers.best_ever.test_fitness = params['FITNESS_FUNCTION'](
             trackers.best_ever, dist='test')
-        
+
         # Set main fitness as training fitness.
         trackers.best_ever.fitness = trackers.best_ever.training_fitness
 
@@ -161,7 +161,7 @@ def get_moo_stats(individuals, end):
     :param end: Boolean flag for indicating the end of an evolutionary run.
     :return: Nothing.
     """
-    
+
     # Compute the pareto front metrics for the population.
     pareto = compute_pareto_metrics(individuals)
 
@@ -171,30 +171,30 @@ def get_moo_stats(individuals, end):
     # Store stats about pareto fronts.
     stats['pareto_fronts'] = len(pareto.fronts)
     stats['first_front'] = len(pareto.fronts[0])
-    
+
     if end or params['VERBOSE'] or not params['DEBUG']:
         # Update all stats.
         update_stats(individuals, end)
 
     # Save fitness plot information
     if params['SAVE_PLOTS'] and not params['DEBUG']:
-                
+
         # Get array of fitnesses for all inds on first pareto front.
         all_arr = [[] for _ in range(params['FITNESS_FUNCTION'].num_obj)]
-        
+
         # Sort fitnesses.
         fitness_array = [ind.fitness for ind in trackers.best_ever]
-        
+
         # Add paired fitnesses to array for graphing.
         for ind in fitness_array:
             for ff in range(params['FITNESS_FUNCTION'].num_obj):
                 all_arr[ff].append(ind[ff])
-        
+
         if not end:
             trackers.best_fitness_list.append(all_arr)
 
         if params['VERBOSE'] or end:
-    
+
             # TODO: PonyGE2 can currently only plot moo problems with 2 objectives.
             # Check that the number of fitness objectives is not greater than 2
             if params['FITNESS_FUNCTION'].num_obj > 2:
@@ -202,7 +202,7 @@ def get_moo_stats(individuals, end):
                     "Warning: Plotting of more than 2 simultaneous " \
                     "objectives is not yet enabled in PonyGE2."
                 print(s)
-            
+
             else:
                 save_pareto_fitness_plot()
 
@@ -219,13 +219,13 @@ def get_moo_stats(individuals, end):
 
     # Generate test fitness on regression problems
     if hasattr(params['FITNESS_FUNCTION'], "training_test") and end:
-        
+
         for ind in trackers.best_ever:
             # Iterate over all individuals in the first front.
-            
+
             # Save training fitness.
             ind.training_fitness = copy(ind.fitness)
-            
+
             # Evaluate test fitness.
             ind.test_fitness = params['FITNESS_FUNCTION'](ind, dist='test')
 
@@ -238,15 +238,15 @@ def get_moo_stats(individuals, end):
 
     # Save stats to file.
     if not params['DEBUG']:
-    
+
         if stats['gen'] == 0:
             save_stats_headers(stats)
-    
+
         save_stats_to_file(stats, end)
-    
+
         if params['SAVE_ALL']:
             save_first_front_to_file(stats, end, stats['gen'])
-    
+
         elif params['VERBOSE'] or end:
             save_first_front_to_file(stats, end)
 
@@ -257,7 +257,7 @@ def get_moo_stats(individuals, end):
 def update_stats(individuals, end):
     """
     Update all stats in the stats dictionary.
-    
+
     :param individuals: A population of individuals.
     :param end: Boolean flag for indicating the end of an evolutionary run.
     :return: Nothing.
@@ -326,7 +326,7 @@ def print_generation_stats():
 def print_first_front_stats():
     """
     Stats printing for the first pareto front for multi-objective optimisation.
-    
+
     :return: Nothing.
     """
 
@@ -348,7 +348,7 @@ def print_final_stats():
         print("  Test fitness:\t\t", trackers.best_ever.test_fitness)
     else:
         print("\n\nBest:\n  Fitness:\t", trackers.best_ever.fitness)
-    
+
     print("  Phenotype:", trackers.best_ever.phenotype)
     print("  Genome:", trackers.best_ever.genome)
     print_generation_stats()
@@ -361,7 +361,7 @@ def print_final_moo_stats():
 
     :return: Nothing.
     """
-    
+
     print("\n\nFirst Front:")
     for ind in trackers.best_ever:
         print(" ", ind)
