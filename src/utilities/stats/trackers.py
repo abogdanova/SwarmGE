@@ -13,6 +13,10 @@ best_fitness_list = []
 # fitness_plot is simply a list of the best fitnesses at each generation.
 # Useful for plotting evolutionary progress.
 
+first_pareto_list = []
+# first_pareto_list stores the list of all individuals stored on the first
+# pareto front during multi objective optimisation.
+
 time_list = []
 # time_list stores the system time after each generation has been completed.
 # Useful for keeping track of how long each generation takes.

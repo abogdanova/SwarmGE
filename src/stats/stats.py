@@ -191,7 +191,7 @@ def get_moo_stats(individuals, end):
                 all_arr[ff].append(ind[ff])
 
         if not end:
-            trackers.best_fitness_list.append(all_arr)
+            trackers.first_pareto_list.append(all_arr)
 
         if params['VERBOSE'] or end:
 
