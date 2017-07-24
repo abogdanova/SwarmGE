@@ -53,3 +53,9 @@ def steady_state_step(individuals):
     individuals = steady_state(individuals)
     
     return individuals
+
+def step_multiagent():
+    """
+    Runs a single generation of the evolutionary algorithm process
+    """
+    pass

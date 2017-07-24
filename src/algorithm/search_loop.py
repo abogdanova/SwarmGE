@@ -72,3 +72,9 @@ def search_loop_from_state():
         params['POOL'].close()
     
     return individuals
+
+def search_multiagent():
+    """
+    This loop is used when the multiagent parameter is passed
+    """
+    pass
