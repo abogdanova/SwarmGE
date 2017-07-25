@@ -8,7 +8,10 @@ from utilities.algorithm.initialise_run import pool_init
 from agent.agent import Agent
 
 def create_agents(n,p):
-    return [Agent(p) for a in range(n)]
+    """
+    Create a list of agent specified by n parameter
+    """
+    return [ Agent(p) for a in range(n) ]
 
 def search_loop():
     """
@@ -81,10 +84,13 @@ def search_multiagent():
     """
     This loop is used when the multiagent parameter is passed
     """
+    # Create a list of agents based on the paramater passed
     agents = create_agents(params['AGENT_SIZE'],params['INTERACTION_PROBABILITY'])
+
     ##Multi-Agent based GE
     for generation in range(1,(params['GENERATIONS']+1)):
         stats['gen'] = generation
+        
         #New generation
         agents = params['STEP'](agents)
     

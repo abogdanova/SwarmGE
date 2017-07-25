@@ -12,7 +12,6 @@ check_python_version()
 
 from stats.stats import get_stats
 from algorithm.parameters import params, set_params
-#from agent.agent import Agent
 
 import sys
 

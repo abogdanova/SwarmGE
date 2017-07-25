@@ -362,3 +362,12 @@ def set_params(command_line_args, create_files=True):
     
             # Parse seed individual and store in params.
             params['SEED_INDIVIDUALS'] = [GE_LR_parser.main()]
+
+        # If multiagent argument is set from commandline
+        # Set the search_loop and step parameters by default to
+        # search_multiagent and step_multiagent respectively
+        if params['MULTIAGENT']:
+            from  algorithm.search_loop import search_multiagent
+            from  algorithm.step import step_multiagent
+            params['SEARCH_LOOP'] = search_multiagent
+            params['STEP'] = step_multiagent

@@ -4,7 +4,6 @@ from operators.mutation import mutation
 from operators.replacement import replacement, steady_state
 from operators.selection import selection
 from stats.stats import get_stats
-from joblib import Parallel, delayed
 
 def step(individuals):
     """
@@ -58,9 +57,15 @@ def step_multiagent(agents):
     """
     Runs a single generation of the evolutionary algorithm process
     """
-    #agents = Parallel(n_jobs=4)(delayed(step_agents)(agent,agents) for agent in agents)
+    # Loop over all the agents and apply their generic methods in sequence
     for agent in agents:
+        # Sense the environment
         agent.sense(agents)
+        
+        # Based on the values from the sensor perform action
         agent.act()
-        agent.update()    
+
+        # Update the state of the agent
+        agent.update()  
+          
     return agents    
