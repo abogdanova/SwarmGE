@@ -193,27 +193,7 @@ def get_moo_stats(individuals, end):
         if not end:
             trackers.first_pareto_list.append(all_arr)
 
-            # Append empty array to best fitness list.
-            trackers.best_fitness_list.append([])
-
-            # Get best fitness for each objective.
-            for o in range(params['FITNESS_FUNCTION'].num_obj):
-                fits = sorted(trackers.best_ever, key=lambda item:
-                params['FITNESS_FUNCTION'].value(item.fitness, o))
-
-                # Append best fitness to trackers list.
-                trackers.best_fitness_list[-1].append(fits[0].fitness[o])
-
         if params['VERBOSE'] or end:
-
-            # Plot best fitness for each objective.
-            for o in range(params['FITNESS_FUNCTION'].num_obj):
-                to_plot = [i[o] for i in trackers.best_fitness_list]
-
-                # Plot fitness data for objective o.
-                save_plot_from_data(to_plot,
-                                    params['FITNESS_FUNCTION'].
-                                    fitness_functions[o].__class__.__name__)
 
             # TODO: PonyGE2 can currently only plot moo problems with 2 objectives.
             # Check that the number of fitness objectives is not greater than 2

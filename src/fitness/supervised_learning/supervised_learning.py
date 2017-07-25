@@ -5,7 +5,6 @@ from algorithm.parameters import params
 from utilities.fitness.get_data import get_data
 from utilities.fitness.math_functions import *
 from utilities.fitness.optimize_constants import optimize_constants
-from utilities.fitness.evaluate import eval_or_exec
 
 from fitness.base_ff_classes.base_ff import base_ff
 
@@ -82,12 +81,8 @@ class supervised_learning(base_ff):
                 # this string has been created during training
                 phen = ind.phenotype_consec_consts
                 c = ind.opt_consts
-
-                # Combine local and global dictionaries.
-                locals().update(globals())
-
                 # phen will refer to x (ie test_in), and possibly to c
-                yhat = eval_or_exec(phen, locals())
+                yhat = eval(phen)
                 assert np.isrealobj(yhat)
 
                 # let's always call the error function with the
@@ -95,12 +90,8 @@ class supervised_learning(base_ff):
                 return params['ERROR_METRIC'](y, yhat)
 
         else:
-
-            # Combine local and global dictinoaries.
-            locals().update(globals())
-
             # phenotype won't refer to C
-            yhat = eval_or_exec(ind.phenotype, locals())
+            yhat = eval(ind.phenotype)
             assert np.isrealobj(yhat)
 
             # let's always call the error function with the true

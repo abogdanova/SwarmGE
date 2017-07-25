@@ -79,10 +79,10 @@ def save_best_ind_to_file(stats, ind, end=False, name="best"):
     savefile.close()
 
 
-def save_first_front_to_file(stats, end=False, name="first"):
+def save_first_front_to_file(stats, end=False, name="first_front"):
     """
     Saves all individuals in the first front to individual files in a folder.
-
+    
     :param stats: The stats.stats.stats dictionary.
     :param end: A boolean flag indicating whether or not the evolutionary
                 process has finished.
@@ -94,24 +94,24 @@ def save_first_front_to_file(stats, end=False, name="first"):
     orig_file_path = copy(params['FILE_PATH'])
 
     # Define the new file path.
-    params['FILE_PATH'] = path.join(orig_file_path, str(name)+"_front")
-
+    params['FILE_PATH'] = path.join(orig_file_path, str(name))
+        
     # Check if the front folder exists already
-    if path.exists(params['FILE_PATH']):
-
+    if path.isdir(params['FILE_PATH']):
+        
         # Remove previous files.
         rmtree(params['FILE_PATH'])
-
+        
     # Create front folder.
     makedirs(params['FILE_PATH'])
-
+    
     for i, ind in enumerate(trackers.best_ever):
         # Save each individual in the first front to file.
         save_best_ind_to_file(stats, ind, end, name=str(i))
-
+        
     # Re-set the file path.
     params['FILE_PATH'] = copy(orig_file_path)
-
+    
 
 def generate_folders_and_files():
     """
@@ -165,7 +165,7 @@ def save_params_to_file():
     col_width = max(len(param) for param in params.keys())
 
     for param in sorted(params.keys()):
-
+        
         # Create whitespace buffer for pretty printing/saving.
         spaces = [" " for _ in range(col_width - len(param))]
         savefile.write(str(param) + ": " + "".join(spaces) +

@@ -71,7 +71,7 @@ def pdiv(x, y):
     this always evaluates x / y before running np.where, so that
     will raise a 'divide' error (in Numpy's terminology), which we
     ignore using a context manager.
-
+    
     In some instances, Numpy can raise a FloatingPointError. These are
     ignored with 'invalid = ignore'.
 
@@ -180,7 +180,7 @@ def percentile(sorted_list, p):
     :param p: The percetile
     :return: The element corresponding to the percentile
     """
-
+    
     return sorted_list[ceil(len(sorted_list) * p / 100) - 1]
 
 
@@ -195,56 +195,25 @@ def binary_phen_to_float(phen, n_codon, min_value, max_value):
     :param max_value: Maximum value for a gene
     :return: A list os float values, representing the chromosome
     """
-
+    
     i, count, chromosome = 0, 0, []
-
+    
     while i < len(phen):
         # Get the current gene from the phenotype string.
         gene = phen[i:(i + n_codon)]
-
+        
         # Convert the bit string in gene to an float/int
         gene_i = int(gene, 2)
         gene_f = float(gene_i) / (2 ** n_codon - 1)
-
+        
         # Define the variation for the gene
         delta = max_value[count] - min_value[count]
-
+        
         # Append the float value to the chromosome list
         chromosome.append(gene_f * delta + min_value[count])
-
+        
         # Increment the index and count.
         i = i + n_codon
         count += 1
-
+    
     return chromosome
-
-
-def ilog(n, base):
-    """
-    Find the integer log of n with respect to the base.
-
-    >>> import math
-    >>> for base in range(2, 16 + 1):
-    ...     for n in range(1, 1000):
-    ...         assert ilog(n, base) == int(math.log(n, base) + 1e-10), '%s %s' % (n, base)
-    """
-    count = 0
-    while n >= base:
-        count += 1
-        n //= base
-    return count
-
-
-def sci_notation(n, prec=3):
-    """
-    Represent n in scientific notation, with the specified precision.
-
-    >>> sci_notation(1234 * 10**1000)
-    '1.234e+1003'
-    >>> sci_notation(10**1000 // 2, prec=1)
-    '5.0e+999'
-    """
-    base = 10
-    exponent = ilog(n, base)
-    mantissa = n / base**exponent
-    return '{0:.{1}f}e{2:+d}'.format(mantissa, prec, exponent)

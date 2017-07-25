@@ -34,7 +34,7 @@ params = {
 
         # Set grammar file
         'GRAMMAR_FILE': "supervised_learning/Vladislavleva4.bnf",
-
+    
         # Set the number of depths permutations are calculated for
         # (starting from the minimum path of the grammar).
         # Mainly for use with the grammar analyser script.
@@ -81,7 +81,7 @@ params = {
         # Boolean flag for selecting whether or not mutation is confined to
         # within the used portion of the genome. Default set to True.
         'WITHIN_USED': True,
-
+        
         # CROSSOVER
         # Set crossover operator.
         'CROSSOVER': "operators.crossover.variable_onepoint",
@@ -126,7 +126,7 @@ params = {
         # Save a plot of the evolution of the best fitness result for each
         # generation.
         'SAVE_PLOTS': True,
-
+        
         # MULTIPROCESSING
         # Multi-core parallel processing of phenotype evaluations.
         'MULTICORE': False,
@@ -144,7 +144,7 @@ params = {
         # full file path to the desired state file. Note that state files have
         # no file type.
         'LOAD_STATE': None,
-
+        
         # SEEDING
         # Specify a list of PonyGE2 individuals with which to seed the initial
         # population.
@@ -158,7 +158,7 @@ params = {
         # Set Random Seed for all Random Number Generators to be used by
         # PonyGE2, including the standard Python RNG and the NumPy RNG.
         'RANDOM_SEED': None,
-
+        
         # CACHING
         # The cache tracks unique individuals across evolution by saving a
         # string of each phenotype in a big list of all phenotypes. Saves all
@@ -175,11 +175,11 @@ params = {
         # with mutated versions of the original individual. Hopefully this will
         # encourage diversity in the population.
         'MUTATE_DUPLICATES': False,
-
+        
         # OTHER
         # Set machine name (useful for doing multiple runs)
         'MACHINE': machine_name
-
+        
 }
 
 
@@ -204,19 +204,19 @@ def load_params(file_name):
         content = parameters.readlines()
 
         for line in content:
-
+            
             # Parameters files are parsed by finding the first instance of a
             # colon.
             split = line.find(":")
-
+            
             # Everything to the left of the colon is the parameter key,
             # everything to the right is the parameter value.
             key, value = line[:split], line[split+1:].strip()
-
+            
             # Evaluate parameters.
             try:
                 value = eval(value)
-
+            
             except:
                 # We can't evaluate, leave value as a string.
                 pass
@@ -236,16 +236,16 @@ def set_params(command_line_args, create_files=True):
     :param command_line_args: Command line arguments specified by the user.
     :return: Nothing.
     """
-    print("Importing various things ")
+
     from utilities.algorithm.initialise_run import initialise_run_params
     from utilities.algorithm.initialise_run import set_param_imports
     from utilities.fitness.math_functions import return_one_percent
-    from utilities.algorithm.command_line_parser import parse_cmd_args
-    from utilities.stats import trackers, clean_stats
     from representation import grammar
-    print("Parsing command line args")
-    cmd_args, unknown = parse_cmd_args(command_line_args)
+    import utilities.algorithm.command_line_parser as parser
+    from utilities.stats import trackers, clean_stats
 
+    cmd_args, unknown = parser.parse_cmd_args(command_line_args)
+    
     if unknown:
         # We currently do not parse unknown parameters. Raise error.
         s = "algorithm.parameters.set_params\nError: " \
@@ -253,7 +253,7 @@ def set_params(command_line_args, create_files=True):
             "add code to recognise this parameter, or use " \
             "--extra_parameters" % str(unknown)
         raise Exception(s)
-    print("Loading params dict")
+
     # LOAD PARAMETERS FILE
     # NOTE that the parameters file overwrites all previously set parameters.
     if 'PARAMETERS' in cmd_args:
@@ -282,25 +282,25 @@ def set_params(command_line_args, create_files=True):
             # Set steady state step and replacement.
             params['STEP'] = "steady_state_step"
             params['GENERATION_SIZE'] = 2
-
+        
         else:
             # Elite size is set to either 1 or 1% of the population size,
             # whichever is bigger if no elite size is previously set.
             if params['ELITE_SIZE'] is None:
                 params['ELITE_SIZE'] = return_one_percent(1, params[
                     'POPULATION_SIZE'])
-
+    
             # Set the size of a generation
             params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - \
                                         params['ELITE_SIZE']
-        print("Initialising run lists and folders")
+
         # Initialise run lists and folders before we set imports.r
         initialise_run_params(create_files)
-        print("Setting param imports")
+        
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
         set_param_imports()
-        print("Cleaning stats")
+        
         # Clean the stats dict to remove unused stats.
         clean_stats.clean_stats()
 
@@ -310,10 +310,10 @@ def set_params(command_line_args, create_files=True):
             params['GENOME_OPERATIONS'] = True
         else:
             params['GENOME_OPERATIONS'] = False
-
+        
         # Ensure correct operators are used if multiple fitness functions used.
         if hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
-
+            
             # Check that multi-objective compatible selection is specified.
             if not hasattr(params['SELECTION'], "multi_objective"):
                 s = "algorithm.parameters.set_params\n" \
@@ -321,9 +321,9 @@ def set_params(command_line_args, create_files=True):
                     "operator not specified for use with multiple " \
                     "fitness functions."
                 raise Exception(s)
-
+            
             if not hasattr(params['REPLACEMENT'], "multi_objective"):
-
+    
                 # Check that multi-objective compatible replacement is
                 # specified.
                 if not hasattr(params['REPLACEMENT'], "multi_objective"):
@@ -332,17 +332,17 @@ def set_params(command_line_args, create_files=True):
                         "operator not specified for use with multiple " \
                         "fitness functions."
                     raise Exception(s)
-        print("Parsing grammar")
+        
         # Parse grammar file and set grammar class.
         params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
                                                 params['GRAMMAR_FILE']))
 
         # Population loading for seeding runs (if specified)
         if params['TARGET_SEED_FOLDER']:
-
+            
             # Import population loading function.
             from operators.initialisation import load_population
-            print("Loading population")
+            
             # A target folder containing seed individuals has been given.
             params['SEED_INDIVIDUALS'] = load_population(
                 params['TARGET_SEED_FOLDER'])
@@ -352,6 +352,6 @@ def set_params(command_line_args, create_files=True):
 
             # Import GE LR Parser.
             from scripts import GE_LR_parser
-            print("Parsing seed individual")
+    
             # Parse seed individual and store in params.
             params['SEED_INDIVIDUALS'] = [GE_LR_parser.main()]
