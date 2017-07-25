@@ -54,7 +54,7 @@ class Agent():
             get_stats(individuals)
             
             #self.new_individual = sort(individuals)[0]
-            individuals.sort()
+            individuals.sort(reverse=True)
             self.new_individual = individuals[0]
     
     def update(self):
