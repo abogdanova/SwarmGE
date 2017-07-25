@@ -1,6 +1,7 @@
 from math import floor
 from re import match, finditer, DOTALL, MULTILINE
 from sys import maxsize
+from copy import deepcopy
 
 from algorithm.parameters import params
 
@@ -34,9 +35,10 @@ class Grammar(object):
         self.rules, self.permutations = {}, {}
 
         # Initialise dicts for terminals and non terminals, set params.
-        self.non_terminals, self.terminals = {}, {}
+        self.non_terminals, self.terminals, self.NT_parents = {}, {}, {}
         self.start_rule, self.codon_size = None, params['CODON_SIZE']
         self.min_path, self.max_arity, self.min_ramp = None, None, None
+        self.ADFs, self.n_ADFs = False, 0
 
         # Set regular expressions for parsing BNF grammar.
         self.ruleregex = '(?P<rulename><\S+>)\s*::=\s*(?P<production>(?:(?=\#)\#[^\r\n]*|(?!<\S+>\s*::=).+?)+)'
@@ -47,11 +49,15 @@ class Grammar(object):
         # non-terminals.
         self.read_bnf_file(file_name)
 
-        # Check the minimum depths of all non-terminals in the grammar.
-        self.check_depths()
-
         # Check which non-terminals are recursive.
         self.check_recursion(self.start_rule["symbol"], [])
+
+        if self.ADFs:
+            # Expand the grammar to accommodate ADFs.
+            self.inject_adfs()
+
+        # Check the minimum depths of all non-terminals in the grammar.
+        self.check_depths()
 
         # Set the minimum path and maximum arity of the grammar.
         self.set_arity()
@@ -111,6 +117,10 @@ class Grammar(object):
                     'recursive': True,
                     'b_factor': 0}
 
+                # Create and add a new NT parent instance
+                if rule.group('rulename') not in self.NT_parents:
+                    self.NT_parents[rule.group('rulename')] = []
+
                 # Initialise empty list of all production choices for this
                 # rule.
                 tmp_productions = []
@@ -168,6 +178,49 @@ class Grammar(object):
                         # (but later productions in same rule will work)
                         continue
 
+                    # special case: GE_ADFS:n will be transformed to
+                    # productions adfs[0] | adfs[1] | ... | adfs[n-1]
+                    ADFS_regex = r'GE_ADFS:(?P<range>\w*)'
+                    m = match(ADFS_regex, p.group('production'))
+                    if m:
+                        # ADFs have been specified in the grammar.
+                        self.ADFs = True
+
+                        try:
+                            # assume it's just an int
+                            n = int(m.group('range'))
+                        except (ValueError, AttributeError):
+                            raise ValueError("Bad use of GE_ADFS: " +
+                                             m.group() +
+                                             "\nPlease specify an integer.")
+
+                        # Set number of desired ADFs.
+                        self.n_ADFs = n
+
+                        for i in range(n):
+                            # add a terminal symbol
+                            tmp_production, terminalparts = [], None
+                            symbol = {
+                                "symbol": "adfs["+str(i)+"]",
+                                "type": "T",
+                                "min_steps": 0,
+                                "recursive": False}
+                            tmp_production.append(symbol)
+                            if str(i) not in self.terminals:
+                                self.terminals[str(i)] = \
+                                    [rule.group('rulename')]
+                            elif rule.group('rulename') not in \
+                                    self.terminals[str(i)]:
+                                self.terminals[str(i)].append(
+                                    rule.group('rulename'))
+                            tmp_productions.append({"choice": tmp_production,
+                                                    "recursive": False,
+                                                    "NT_kids": False,
+                                                    "ADF": True})
+                        # don't try to process this production further
+                        # (but later productions in same rule will work)
+                        continue
+
                     for sub_p in finditer(self.productionpartsregex,
                                           p.group('production').strip()):
                         # Split production into terminal and non terminal
@@ -194,6 +247,16 @@ class Grammar(object):
                             tmp_production.append(
                                 {"symbol": sub_p.group('subrule'),
                                  "type": "NT"})
+
+                            # Set NT parents
+                            if sub_p.group('subrule') not in self.NT_parents:
+                                self.NT_parents[sub_p.group('subrule')] = \
+                                    [rule.group('rulename')]
+
+                            elif rule.group('rulename') not in \
+                                    self.NT_parents[sub_p.group('subrule')]:
+                                self.NT_parents[sub_p.group('subrule')].append(
+                                    rule.group('rulename'))
 
                         else:
                             # Unescape special characters (\n, \t etc.)
@@ -625,6 +688,192 @@ class Grammar(object):
                         else:
                             if conc not in self.concat_NTs[NT]:
                                 self.concat_NTs[NT].append(conc)
+
+    def inject_adfs(self):
+        """
+        Inject a given number of ADFs into a fully parsed grammar.
+
+        :return: Nothing.
+        """
+
+        # Initialise a mapping from original NTs to new ADF NTs.
+        ADF_mapping = {}
+
+        # Create a copy of all NTs for use by ADFs
+        for NT in sorted(list(self.non_terminals)):
+            # Create copy of non_terminals dict as we will be changing it
+            # during iteration.
+
+            # Create new NT id
+            new_id = '<adf_'+NT.strip("<>")+'>'
+
+            # Check for start node.
+            if NT == self.start_rule['symbol']:
+                self.ADF_start_rule = new_id
+
+            # Create a copy of this non-terminal for the adfs
+            new_NT = {'id': new_id,
+                      'min_steps': maxsize,
+                      'expanded': False,
+                      'recursive': True,
+                      'b_factor': 0}
+
+            # Create a mapping from the old NT to the new ADF NT.
+            ADF_mapping[NT] = new_id
+
+            # Add new copy to the ADF non terminals list.
+            self.non_terminals[new_id] = new_NT
+
+            # Create new ADF production rules as copies of the original rules.
+            self.rules[new_id] = deepcopy(self.rules[NT])
+
+        # Iterate over everything once more now that everything is defined.
+        for NT in sorted(ADF_mapping):
+
+            # Create copy of NT parents for new ADF NT.
+            self.NT_parents[ADF_mapping[NT]] = [ADF_mapping[i] for i in
+                                                self.NT_parents[NT]]
+
+            # Change all NT production choices for the current rule.
+            choices = self.rules[ADF_mapping[NT]]['choices']
+
+            for i, choice in enumerate(list(choices)):
+                # Iterate over all production choices.
+
+                # Check each symbol and change NTs to their respective ADF
+                # NTs.
+                for sym in [s for s in choice['choice'] if s['type'] == 'NT']:
+                    sym['symbol'] = ADF_mapping[sym['symbol']]
+
+        def set_ADF_attribute(NT_parent, ADF_child):
+            """
+            Given a parent NT, and a child NT that contains only ADF
+            production choices, set an "ADF" attribute to the relevant
+            production choice of the parent NT.
+
+            :param NT_parent: A parent NT.
+            :param ADF_child: A NT which is a child of the parent NT and
+            which contains only ADFs.
+            :return: Nothing.
+            """
+
+            # Get production choices of parent NT.
+            choices = self.rules[NT_parent]['choices']
+
+            # Set ADF attribute to correct choice.
+            for i, choice in enumerate(choices):
+                if any([sym['symbol'] == ADF_child
+                        for sym in choice['choice']]):
+                    # This choice contains the ADF child production.
+                    # Set attribute.
+                    choice['ADF'] = True
+
+                    # Recurse through ADF recursive function with parent NT.
+                    recurse_ADF_nts(NT_parent)
+
+        def recurse_ADF_nts(NT):
+            """
+            Recursive function for removing ADF production choices and rules
+            from the ADF portion of the grammar.
+
+            :param NT: A non-terminal to check for ADF-specific production
+            choices.
+            :return: Nothing.
+            """
+
+            # Remove ADF production choices from rule if they exist.
+            self.rules[NT]['choices'] = \
+                [c for c in self.rules[NT]['choices'] if "ADF" not in c]
+
+            # Re-set number of production choices accordingly.
+            self.rules[NT]['no_choices'] = len(self.rules[NT]['choices'])
+
+            if self.rules[NT]['no_choices'] == 0:
+                # No remaining production choices in this rule
+
+                # Remove production rule entirely.
+                del(self.rules[NT])
+
+                # Find parent NT rules that contain this NT as a choice.
+                for parent in self.NT_parents[NT]:
+                    set_ADF_attribute(parent, NT)
+
+                # Remove NT from NT_parents.
+                del(self.NT_parents[NT])
+
+                # Remove NT from self.non_terminals.
+                del(self.non_terminals[NT])
+
+        # Remove ADF production choices from ADF parts of grammar.
+        for NT in sorted(ADF_mapping):
+
+            # Call the recursive function.
+            recurse_ADF_nts(ADF_mapping[NT])
+
+        # Generate new production choice for the new start rule.
+        new_rule = {"choices": [{"choice": [{"symbol": "adfs = [",
+                                             "type": "T",
+                                             "min_steps": 0,
+                                             "recursive": False},
+                                            {"symbol": self.start_rule[
+                                                'symbol'],
+                                             "type": "NT"}],
+                                "recursive": False,
+                                "NT_kids": False}],
+                    "no_choices": 1}
+
+        if self.python_mode:
+            # Grammar will generate code anyway. No need to define variable.
+            exp = {"symbol": "]{::}", "type": "T", "min_steps": 0,
+                   "recursive": False}
+
+        else:
+            # The grammar will generate an expression. Need to define a
+            # variable "XXXeval_or_exec_outputXXX" which will be used to
+            # capture output from the generated program.
+            exp = {"symbol": "]{::}XXXeval_or_exec_outputXXX = ",
+                   "type": "T", "min_steps": 0, "recursive": False}
+
+            # # Generate closing terminal node.
+            # close = {"symbol": "'", "type": "T", "min_steps": 0,
+            #          "recursive": False}
+            #
+            # # Append closing T to production choice.
+            # new_rule['choices'][0]['choice'].append(close)
+
+        new_rule['choices'][0]['choice'].insert(1, exp)
+
+        # Pre-load ADF non-terminals and separator terminals.
+        ADF_NT = {"symbol": self.ADF_start_rule, "type": "NT"}
+        sep_T = {"symbol": ", ", "type": "T", "min_steps": 0,
+                 "recursive": False}
+
+        # Dynamically add the specified number of ADFs.
+        for i in range(self.n_ADFs):
+            new_rule['choices'][0]['choice'].insert(i + 1, ADF_NT)
+
+        # Dynamically add comma separator terminals for number of ADFs.
+        for i in range(self.n_ADFs - 1):
+            new_rule['choices'][0]['choice'].insert(2*(i + 1), sep_T)
+
+        # Add new rule to self.rules
+        self.rules['<_adf_start>'] = new_rule
+
+        # Create new start rule.
+        self.start_rule = {'symbol': '<_adf_start>', 'type': 'NT'}
+
+        # Create a new NT for the new start rule.
+        new_NT = {'id': '<_adf_start>',
+                  'min_steps': maxsize,
+                  'expanded': False,
+                  'recursive': True,
+                  'b_factor': 0}
+
+        # Add new NT to self.non_terminals
+        self.non_terminals['<_adf_start>'] = new_NT
+
+        # Convert grammar into python grammar with "python_mode" flag.
+        self.python_mode = True
 
     def __str__(self):
         return "%s %s %s %s" % (self.terminals, self.non_terminals,
