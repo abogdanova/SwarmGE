@@ -16,7 +16,7 @@ MAX_INIT_TREE_DEPTH:    13
 MAX_TREE_DEPTH:         20
 MUTATION:               int_flip_per_codon
 MUTATION_PROBABILITY:   0.09
-POPULATION_SIZE:        1500
+POPULATION_SIZE:        4
 FITNESS_FUNCTION:       string_match
 REPLACEMENT:            generational
 SELECTION:              tournament
