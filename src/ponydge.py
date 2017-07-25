@@ -12,25 +12,26 @@ check_python_version()
 
 from stats.stats import get_stats
 from algorithm.parameters import params, set_params
-from agent.agent import Agent
+#from agent.agent import Agent
 
 import sys
 
-def create_agents(n,p):
-    return [Agent(p) for a in range(n)]
+
 
 def main():
     """ Run program """
 
     # Run evolution
-    if params['MULTIAGENT']:
+    #if params['MULTIAGENT']:
+    #    individuals = params['search_multiagent']()        
         ##Create agents based on the number of agent passed as parameters
-        agents = create_agents(params['AGENT_SIZE'],params['INTERACTION_PRBABILITY'])
-        pass
-    else:
-        individuals = params['SEARCH_LOOP']()
+        #agents = create_agents(params['AGENT_SIZE'],params['INTERACTION_PROBABILITY'])
+        #print (agents[0].individual)
+    #else:
+    individuals = params['SEARCH_LOOP']()
 
     # Print final review
+    #print (individuals)
     get_stats(individuals, end=True)
 
 
