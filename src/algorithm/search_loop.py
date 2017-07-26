@@ -5,13 +5,6 @@ from stats.stats import stats, get_stats
 from utilities.stats import trackers
 from operators.initialisation import initialisation
 from utilities.algorithm.initialise_run import pool_init
-from agent.agent import Agent
-
-def create_agents(n,p):
-    """
-    Create a list of agent specified by n parameter
-    """
-    return [ Agent(p) for a in range(n) ]
 
 def search_loop():
     """
@@ -78,20 +71,3 @@ def search_loop_from_state():
         params['POOL'].close()
     
     return individuals
-
-    
-def search_multiagent():
-    """
-    This loop is used when the multiagent parameter is passed
-    """
-    # Create a list of agents based on the paramater passed
-    agents = create_agents(params['AGENT_SIZE'],params['INTERACTION_PROBABILITY'])
-
-    ##Multi-Agent based GE
-    for generation in range(1,(params['GENERATIONS']+1)):
-        stats['gen'] = generation
-        
-        #New generation
-        agents = params['STEP'](agents)
-    
-    return [agent.individual[0] for agent in agents]

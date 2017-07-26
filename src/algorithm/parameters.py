@@ -230,7 +230,7 @@ def load_params(file_name):
 
             # Set parameter
             params[key] = value
-
+        
 
 def set_params(command_line_args, create_files=True):
     """
@@ -269,7 +269,7 @@ def set_params(command_line_args, create_files=True):
     # Join original params dictionary with command line specified arguments.
     # NOTE that command line arguments overwrite all previously set parameters.
     params.update(cmd_args)
-
+    
     if params['LOAD_STATE']:
         # Load run from state.
         from utilities.algorithm.state import load_state
@@ -362,12 +362,3 @@ def set_params(command_line_args, create_files=True):
     
             # Parse seed individual and store in params.
             params['SEED_INDIVIDUALS'] = [GE_LR_parser.main()]
-
-        # If multiagent argument is set from commandline
-        # Set the search_loop and step parameters by default to
-        # search_multiagent and step_multiagent respectively
-        if params['MULTIAGENT']:
-            from  algorithm.search_loop import search_multiagent
-            from  algorithm.step import step_multiagent
-            params['SEARCH_LOOP'] = search_multiagent
-            params['STEP'] = step_multiagent

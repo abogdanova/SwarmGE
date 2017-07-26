@@ -471,7 +471,8 @@ def parse_cmd_args(arguments):
     # MULTIAGENT
     parser.add_argument('--multiagent',
                         dest='MULTIAGENT',
-                        action='store_true',                        
+                        action='store_true',
+                        default=None,                        
                         help='This enable the multiagent mode. If this mode is'
                              ' enabled the search_loop and step parameter are' 
                              ' overridden with search_multiagent and step_multiagent'
