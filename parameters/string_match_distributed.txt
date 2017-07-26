@@ -27,6 +27,4 @@ MULTIAGENT:             True
 AGENT_SIZE:             200
 INTERACTION_PROBABILITY:0.7
 SEARCH_LOOP:            search_multiagent
-#SEARCH_LOOP:            search_loop
 STEP:                   step_multiagent
-#STEP:                   step

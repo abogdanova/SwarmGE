@@ -14,9 +14,16 @@ INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    10
 MAX_TREE_DEPTH:         17
 MUTATION:               int_flip_per_codon
-POPULATION_SIZE:        500
+POPULATION_SIZE:        5
 FITNESS_FUNCTION:       supervised_learning.classification
 REPLACEMENT:            generational
 SELECTION:              tournament
 TOURNAMENT_SIZE:        2
-VERBOSE: False
+VERBOSE:                False
+MULTIAGENT:             True
+AGENT_SIZE:             200
+INTERACTION_PROBABILITY:0.7
+SEARCH_LOOP:            search_multiagent
+#SEARCH_LOOP:            search_loop
+STEP:                   step_multiagent
+#STEP:                   step
