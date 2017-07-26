@@ -9,7 +9,7 @@ ERROR_METRIC:           f1_score
 GENERATIONS:            50
 MAX_GENOME_LENGTH:      500
 GRAMMAR_FILE:           supervised_learning/Banknote.bnf
-INITIALISATION:         PI_grow
+INITIALISATION:         uniform_tree
 INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    10
 MAX_TREE_DEPTH:         17
@@ -23,7 +23,5 @@ VERBOSE:                False
 MULTIAGENT:             True
 AGENT_SIZE:             200
 INTERACTION_PROBABILITY:0.7
-SEARCH_LOOP:            search_multiagent
-#SEARCH_LOOP:            search_loop
-STEP:                   step_multiagent
-#STEP:                   step
+SEARCH_LOOP:            search_loop
+STEP:                   step
