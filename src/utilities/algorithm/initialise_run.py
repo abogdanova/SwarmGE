@@ -159,8 +159,8 @@ def set_param_imports():
                         ( op == 'SEARCH_LOOP' or op == 'STEP' ) :
                             # Define the directory structure for the multiagent search
                             # loop and step
-                            multiagent_ops = {'search_loop':'search_loop_distributed.multiagent' \
-                                                ,'step':'step_distributed.multiagent'}
+                            multiagent_ops = {'search_loop':'distributed_algorithm.search_loop' \
+                                                ,'step':'distributed_algorithm.step'}
 
                             # Get module and attribute names
                             module_name = ".".join([special_ops, multiagent_ops[op.lower()]])
