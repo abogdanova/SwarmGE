@@ -165,7 +165,7 @@ def get_moo_stats(individuals, end):
     # Compute the pareto front metrics for the population.
     pareto = compute_pareto_metrics(individuals)
 
-    # Save first front in trackers.
+    # Save first front in trackers. Sort arbitrarily along first objective.
     trackers.best_ever = sorted(pareto.fronts[0], key=lambda x: x.fitness[0])
 
     # Store stats about pareto fronts.
@@ -179,16 +179,17 @@ def get_moo_stats(individuals, end):
     # Save fitness plot information
     if params['SAVE_PLOTS'] and not params['DEBUG']:
 
-        # Get array of fitnesses for all inds on first pareto front.
+        # Initialise empty array for fitnesses for all inds on first pareto
+        # front.
         all_arr = [[] for _ in range(params['FITNESS_FUNCTION'].num_obj)]
 
-        # Sort fitnesses.
+        # Generate array of fitness values.
         fitness_array = [ind.fitness for ind in trackers.best_ever]
 
         # Add paired fitnesses to array for graphing.
-        for ind in fitness_array:
-            for ff in range(params['FITNESS_FUNCTION'].num_obj):
-                all_arr[ff].append(ind[ff])
+        for fit in fitness_array:
+            for o in range(params['FITNESS_FUNCTION'].num_obj):
+                all_arr[o].append(fit[o])
 
         if not end:
             trackers.first_pareto_list.append(all_arr)
@@ -197,23 +198,24 @@ def get_moo_stats(individuals, end):
             trackers.best_fitness_list.append([])
 
             # Get best fitness for each objective.
-            for o in range(params['FITNESS_FUNCTION'].num_obj):
-                fits = sorted(trackers.best_ever, key=lambda item:
-                params['FITNESS_FUNCTION'].value(item.fitness, o))
+            for o, ff in \
+                    enumerate(params['FITNESS_FUNCTION'].fitness_functions):
+
+                # Get sorted list of all fitness values for objective "o"
+                fits = sorted(all_arr[o], reverse=ff.maximise)
 
                 # Append best fitness to trackers list.
-                trackers.best_fitness_list[-1].append(fits[0].fitness[o])
+                trackers.best_fitness_list[-1].append(fits[0])
 
         if params['VERBOSE'] or end:
 
             # Plot best fitness for each objective.
-            for o in range(params['FITNESS_FUNCTION'].num_obj):
+            for o, ff in \
+                    enumerate(params['FITNESS_FUNCTION'].fitness_functions):
                 to_plot = [i[o] for i in trackers.best_fitness_list]
 
                 # Plot fitness data for objective o.
-                save_plot_from_data(to_plot,
-                                    params['FITNESS_FUNCTION'].
-                                    fitness_functions[o].__class__.__name__)
+                save_plot_from_data(to_plot, ff.__class__.__name__)
 
             # TODO: PonyGE2 can currently only plot moo problems with 2 objectives.
             # Check that the number of fitness objectives is not greater than 2
