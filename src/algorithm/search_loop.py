@@ -6,7 +6,6 @@ from utilities.stats import trackers
 from operators.initialisation import initialisation
 from utilities.algorithm.initialise_run import pool_init
 
-
 def search_loop():
     """
     This is a standard search process for an evolutionary algorithm. Loop over

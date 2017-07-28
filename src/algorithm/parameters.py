@@ -178,8 +178,15 @@ params = {
         
         # OTHER
         # Set machine name (useful for doing multiple runs)
-        'MACHINE': machine_name
+        'MACHINE': machine_name,
         
+        # MULTIAGENT Parameters
+        # True or False for Multiagent
+        'MULTIAGENT': False,
+        # Agent Size. Number of agents having their own copy of genetic material
+        'AGENT_SIZE': 100,
+        # Interaction Probablity. How frequently the agents can interaction with each other
+        'INTERACTION_PROBABILITY':0.5
 }
 
 
@@ -223,7 +230,7 @@ def load_params(file_name):
 
             # Set parameter
             params[key] = value
-
+        
 
 def set_params(command_line_args, create_files=True):
     """
@@ -262,7 +269,7 @@ def set_params(command_line_args, create_files=True):
     # Join original params dictionary with command line specified arguments.
     # NOTE that command line arguments overwrite all previously set parameters.
     params.update(cmd_args)
-
+    
     if params['LOAD_STATE']:
         # Load run from state.
         from utilities.algorithm.state import load_state

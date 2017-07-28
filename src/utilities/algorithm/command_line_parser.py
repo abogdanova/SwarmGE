@@ -467,6 +467,31 @@ def parse_cmd_args(arguments):
                              'desired state file. Note that state files have '
                              'no file type.')
 
+
+    # MULTIAGENT
+    parser.add_argument('--multiagent',
+                        dest='MULTIAGENT',
+                        action='store_true',
+                        default=None,                        
+                        help='This enable the multiagent mode. If this mode is'
+                             ' enabled the search_loop and step parameter are' 
+                             ' overridden with search_multiagent and step_multiagent'
+                             ' respectively')
+    parser.add_argument('--agent_size',
+                        dest='AGENT_SIZE',
+                        type=int,
+                        help='Specifies how many agents are initialize in'
+                             ' the environment. By default 100 agents are initialize.'
+                             ' Greater the number of agents the time to find the'
+                             ' would be reduced')
+    parser.add_argument('--interaction_probability',
+                        dest='INTERACTION_PROBABILITY',
+                        action=FloatAction,
+                        help='Specifies the probability of agent interacting with'
+                             ' other nearby agents in the environment. By default'
+                             ' 0.5 probability is used. Higher the probability the time'
+                             ' to find the solution would be reduced')
+
     # CACHING
     class CachingAction(argparse.Action):
         """
