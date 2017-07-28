@@ -8,6 +8,7 @@ check_python_version()
 from algorithm.parameters import params
 import utilities.algorithm.command_line_parser as parser
 from representation.grammar import Grammar
+from utilities.fitness.math_functions import sci_notation
 
 import sys
 import os
@@ -38,8 +39,8 @@ def main(command_line_args):
 
     for depth in grammar.permutations:
 
-        print(" Depth: %d \t Number of unique solutions: %d" %
-              (depth, grammar.permutations[depth]))
+        print(" Depth: %d \t Number of unique solutions: %s" %
+              (depth, sci_notation(grammar.permutations[depth])))
 
 
 if __name__ == "__main__":
