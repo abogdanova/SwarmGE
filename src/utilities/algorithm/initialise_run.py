@@ -149,9 +149,27 @@ def set_param_imports():
                     else:
                         # Just module name specified. Use default location.
 
-                        # Get module and attribute names.
-                        module_name = ".".join([special_ops, op.lower()])
-                        attr_name = split_name[-1]
+                        # If multiagent is specified need to change
+                        # how search and step module is called
+                        # Loop and step functions for multiagent is contained 
+                        # inside algorithm search_loop_distributed and 
+                        # step_distributed respectively
+
+                        if params['MULTIAGENT'] and \
+                        ( op == 'SEARCH_LOOP' or op == 'STEP' ) :
+                            # Define the directory structure for the multiagent search
+                            # loop and step
+                            multiagent_ops = {'search_loop':'distributed_algorithm.search_loop' \
+                                                ,'step':'distributed_algorithm.step'}
+
+                            # Get module and attribute names
+                            module_name = ".".join([special_ops, multiagent_ops[op.lower()]])
+                            attr_name = split_name[-1]
+
+                        else:
+                            # Get module and attribute names.
+                            module_name = ".".join([special_ops, op.lower()])
+                            attr_name = split_name[-1]
 
                         # Import module and attribute and save.
                         params[op] = return_attr_from_module(module_name,
