@@ -55,13 +55,26 @@ def main(command_line_args):
         
     print("\nMaximum branching factor of the grammar:", max_b_factor)
 
+    # Initialise counter for the total number of solutions.
+    total_solutions = 0
+
     print("\nNumber of unique possible solutions for a range of depths:\n")
 
     for depth in grammar.permutations:
 
-        print(" Depth: %d \t Number of unique solutions: %s" %
-              (depth, sci_notation(grammar.permutations[depth])))
+        # Get number of solutions possible at current depth
+        solutions = grammar.permutations[depth]
 
+        print(" Depth: %d \t Number of unique solutions: %s" %
+              (depth, sci_notation(solutions)))
+
+        # Increment total number of solutions.
+        total_solutions += solutions
+    
+    print("\nTotal number of unique possible solutions that can be generated"
+          "up to and including a depth of %d: %s" %
+          (depth, sci_notation(total_solutions)))
+        
 
 if __name__ == "__main__":
 
