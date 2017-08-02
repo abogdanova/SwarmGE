@@ -34,8 +34,28 @@ def main(command_line_args):
     # Parse grammar file and set grammar class.
     grammar = Grammar(os.path.join("..", "grammars", params['GRAMMAR_FILE']))
 
-    print("\nNumber of unique possible solutions for a range of depths for "
-          "specified grammar:", params['GRAMMAR_FILE'], "\n")
+    print("\nSpecified grammar:", params['GRAMMAR_FILE'])
+    
+    # Initialise zero maximum branching factor for grammar
+    max_b_factor = 0
+    
+    print("\nBranching factor for each non-terminal:")
+    
+    for NT in sorted(grammar.non_terminals.keys()):
+        
+        # Get branching factor for current NT.
+        b_factor = grammar.non_terminals[NT]['b_factor']
+        
+        # Print info.
+        print("", NT, "   \t:", b_factor)
+        
+        # Set maximum branching factor.
+        if b_factor > max_b_factor:
+            max_b_factor = b_factor
+        
+    print("\nMaximum branching factor of the grammar:", max_b_factor)
+
+    print("\nNumber of unique possible solutions for a range of depths:\n")
 
     for depth in grammar.permutations:
 
