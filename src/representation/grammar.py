@@ -338,15 +338,10 @@ class Grammar(object):
         self.min_path = self.non_terminals[self.start_rule["symbol"]][
             'min_steps']
 
-        # Initialise the maximum arity of the grammar to 0.
-        self.max_arity = 0
-
-        # Find the maximum arity of the grammar.
-        for NT in self.non_terminals:
-            if self.non_terminals[NT]['min_steps'] > self.max_arity:
-                # Set the maximum arity of the grammar as the longest path
-                # to a T from any NT.
-                self.max_arity = self.non_terminals[NT]['min_steps']
+        # Set the maximum arity of the grammar as the longest path to
+        # a T from any NT.
+        self.max_arity = max(self.non_terminals[NT]['min_steps']
+                             for NT in self.non_terminals)
 
         # Add the minimum terminal path to each production rule.
         for rule in self.rules:
