@@ -80,7 +80,7 @@ class Grammar(object):
 
             # Find production choices which can be used to concatenate
             # subtrees.
-            self.find_concatination_NTs()
+            self.find_concatenation_NTs()
 
     def read_bnf_file(self, file_name):
         """
@@ -574,7 +574,7 @@ class Grammar(object):
                 break
         self.min_ramp = ramp
 
-    def find_concatination_NTs(self):
+    def find_concatenation_NTs(self):
         """
         Scour the grammar class to find non-terminals which can be used to
         combine/reduce_trees derivation trees. Build up a list of such
