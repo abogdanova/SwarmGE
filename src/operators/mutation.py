@@ -3,6 +3,7 @@ from random import randint, random, choice
 from algorithm.parameters import params
 from representation import individual
 from representation.derivation import generate_tree
+from representation.latent_tree import latent_tree_mutate, latent_tree_repair
 from utilities.representation.check_methods import check_ind
 
 
@@ -213,7 +214,32 @@ def get_effective_length(ind):
     return eff_length
 
 
+def LTGE_mutation(ind):
+    """Mutation in the LTGE representation."""
+    
+    # mutate and repair.
+    g, ph = latent_tree_repair(latent_tree_mutate(ind.genome), 
+                               params['BNF_GRAMMAR'], params['MAX_TREE_DEPTH'])
+
+    # wrap up in an Individual and fix up various Individual attributes
+    ind = individual.Individual(g, None, False)
+
+    ind.phenotype = ph
+    
+    # number of nodes is the number of decisions in the genome
+    ind.nodes = ind.used_codons = len(g)
+
+    # each key is the length of a path from root
+    ind.depth = max(len(k) for k in g)
+
+    # in LTGE there are no invalid individuals
+    ind.invalid = False
+    
+    return ind
+
+
 # Set attributes for all operators to define linear or subtree representations.
 int_flip_per_codon.representation = "linear"
 int_flip_per_ind.representation = "linear"
 subtree.representation = "subtree"
+LTGE_mutation.representation = "latent tree"

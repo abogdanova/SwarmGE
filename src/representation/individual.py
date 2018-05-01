@@ -130,7 +130,7 @@ class Individual(object):
             new_tree = None
 
         # Create a copy of self by initialising a new individual.
-        new_ind = Individual(list(self.genome), new_tree, map_ind=False)
+        new_ind = Individual(self.genome.copy(), new_tree, map_ind=False)
 
         # Set new individual parameters (no need to map genome to new
         # individual).

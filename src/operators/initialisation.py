@@ -7,6 +7,7 @@ from representation import individual
 from representation.derivation import generate_tree, pi_grow
 from representation.individual import Individual
 from representation.tree import Tree
+from representation.latent_tree import latent_tree_random_ind
 from scripts import GE_LR_parser
 from utilities.representation.python_filter import python_filter
 
@@ -454,6 +455,33 @@ def load_population(target):
 
     return seed_inds
 
+
+def LTGE_initialisation(size):
+    """Initialise a population in the LTGE representation."""
+
+    pop = []
+    for _ in range(size):
+
+        # Random genotype
+        g, ph = latent_tree_random_ind(params['BNF_GRAMMAR'],
+                                       params['MAX_TREE_DEPTH'])
+
+        # wrap up in an Individual and fix up various Individual attributes
+        ind = individual.Individual(g, None, False)
+
+        ind.phenotype = ph
+
+        # number of nodes is the number of decisions in the genome
+        ind.nodes = ind.used_codons = len(g)
+
+        # each key is the length of a path from root
+        ind.depth = max(len(k) for k in g)
+
+        # in LTGE there are no invalid individuals
+        ind.invalid = False
+
+        pop.append(ind)
+    return pop
 
 # Set ramping attributes for ramped initialisers.
 PI_grow.ramping = True

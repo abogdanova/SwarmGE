@@ -2,6 +2,7 @@ from random import randint, random, sample, choice
 
 from algorithm.parameters import params
 from representation import individual
+from representation.latent_tree import latent_tree_crossover, latent_tree_repair
 from utilities.representation.check_methods import check_ind
 
 
@@ -425,9 +426,47 @@ def get_max_genome_index(ind_0, ind_1):
     return max_p_0, max_p_1
 
 
+def LTGE_crossover(p_0, p_1):
+    """Crossover in the LTGE representation."""
+
+    # crossover and repair.
+    # the LTGE crossover produces one child, and is symmetric (ie
+    # xover(p0, p1) is not different from xover(p1, p0)), but since it's
+    # stochastic we can just run it twice to get two individuals
+    # expected to be different.
+    g_0, ph_0 = latent_tree_repair(
+        latent_tree_crossover(p_0.genome, p_1.genome),
+        params['BNF_GRAMMAR'], params['MAX_TREE_DEPTH'])
+    g_1, ph_1 = latent_tree_repair(
+        latent_tree_crossover(p_0.genome, p_1.genome),
+        params['BNF_GRAMMAR'], params['MAX_TREE_DEPTH'])
+
+    # wrap up in Individuals and fix up various Individual attributes
+    ind_0 = individual.Individual(g_0, None, False)
+    ind_1 = individual.Individual(g_1, None, False)
+
+    ind_0.phenotype = ph_0
+    ind_1.phenotype = ph_1
+
+    # number of nodes is the number of decisions in the genome
+    ind_0.nodes = ind_0.used_codons = len(g_0)
+    ind_1.nodes = ind_1.used_codons = len(g_1)
+
+    # each key is the length of a path from root
+    ind_0.depth = max(len(k) for k in g_0)
+    ind_1.depth = max(len(k) for k in g_1)
+    
+    # in LTGE there are no invalid individuals
+    ind_0.invalid = False
+    ind_1.invalid = False
+   
+    return [ind_0, ind_1]
+
+
 # Set attributes for all operators to define linear or subtree representations.
 variable_onepoint.representation = "linear"
 fixed_onepoint.representation = "linear"
 variable_twopoint.representation = "linear"
 fixed_twopoint.representation = "linear"
 subtree.representation = "subtree"
+LTGE_crossover.representation = "latent tree"

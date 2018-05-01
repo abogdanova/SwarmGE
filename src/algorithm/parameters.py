@@ -312,11 +312,11 @@ def set_params(command_line_args, create_files=True):
         clean_stats.clean_stats()
 
         # Set GENOME_OPERATIONS automatically for faster linear operations.
-        if params['CROSSOVER'].representation == "linear" and \
-                params['MUTATION'].representation == "linear":
-            params['GENOME_OPERATIONS'] = True
-        else:
+        if (params['CROSSOVER'].representation == "subtree" or
+            params['MUTATION'].representation == "subtree"):
             params['GENOME_OPERATIONS'] = False
+        else:
+            params['GENOME_OPERATIONS'] = True
 
         # Ensure correct operators are used if multiple fitness functions used.
         if hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
