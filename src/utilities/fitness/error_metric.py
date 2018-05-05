@@ -95,3 +95,12 @@ def f1_score(y, yhat):
         return sklearn_f1_score(y, yhat, average="weighted")
 # Set maximise attribute for f1_score error metric.
 f1_score.maximise = True
+
+
+def Hamming_error(y, yhat):
+    """
+    The number of mismatches between y and yhat. Suitable
+    for Boolean problems. Assumes both are binary.
+    """
+    return np.sum(y != yhat)
+Hamming_error.maximise = False
