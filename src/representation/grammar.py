@@ -129,15 +129,24 @@ class Grammar(object):
                     # Initialise empty data structures for production choice
                     tmp_production, terminalparts = [], None
 
-                    # special case: GERANGE:dataset_n_vars will be transformed
-                    # to productions 0 | 1 | ... | n_vars-1
+                    # special cases: GE_RANGE:dataset_n_vars will be
+                    # transformed to productions 0 | 1 | ... |
+                    # n_vars-1, and similar for dataset_n_is,
+                    # dataset_n_os
                     GE_RANGE_regex = r'GE_RANGE:(?P<range>\w*)'
                     m = match(GE_RANGE_regex, p.group('production'))
                     if m:
                         try:
                             if m.group('range') == "dataset_n_vars":
-                                # set n = number of columns from dataset
+                                # number of columns from dataset
                                 n = params['FITNESS_FUNCTION'].n_vars
+                            elif m.group('range') == "dataset_n_is":
+                                # number of input symbols (see
+                                # if_else_classifier.py)
+                                n = params['FITNESS_FUNCTION'].n_is
+                            elif m.group('range') == "dataset_n_os":
+                                # number of output symbols
+                                n = params['FITNESS_FUNCTION'].n_os
                             else:
                                 # assume it's just an int
                                 n = int(m.group('range'))
