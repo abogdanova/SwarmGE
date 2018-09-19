@@ -7,6 +7,7 @@ from representation import individual
 from representation.derivation import generate_tree, pi_grow
 from representation.individual import Individual
 from representation.tree import Tree
+from representation.grammar import Grammar
 from representation.latent_tree import latent_tree_random_ind
 from scripts import GE_LR_parser
 from utilities.representation.python_filter import python_filter
@@ -16,7 +17,6 @@ def initialisation(size):
     """
     Perform selection on a population in order to select a population of
     individuals for variation.
-    
     :param size: The size of the required population.
     :return: A full population generated using the specified initialisation
     technique.
