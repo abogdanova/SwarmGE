@@ -1,0 +1,30 @@
+# start symbol - S
+# {::} rendered as new line in python, {: - start indentation, :} - end indentation
+<S> ::= <imports>{::}<def_function>{::}<class_def>{::}<class_call>
+
+<imports> ::= import numpy as np{::}from . import intelligence
+
+# define function to evaluate fitness (ackley)
+<def_function> ::= def function(x):{:return -exp(-sqrt(0.5*sum([i**2 for i in x]))) - exp(0.5*sum([cos(i) for i in x])) + 1 + exp(1):}
+
+# swarm class deffinition follows the format of SwarmPackagePy
+<class_def> ::= class swarm(inteligence.sw):{:def __init__(<parameters>):{:<init>:}:}
+<parameters> ::= self, n, function, lb, ub, dimention, iterations
+<init> ::= super(swarm, self).__init__(){::}<init_positions>{::}<init_eval>{::}<declarations>{::}<main>
+<init_positions> ::= self._agents = np.random.uniform(lb, ub, (n, dimension))
+<init_eval> ::= self._points(self._agents){::}Pbest = self._agents[np.array([function(x)for x in self._agents]).argmin()]{::}Gbest = Pbest
+<declarations> ::= nest = 100{::}self._nests = np.random.uniform(lb, ub, (nest, dimension))
+<main> ::= for t in range(iteration):{:<loop>:}<result>
+<loop> ::= <update>{::}<swap>{::}<selection>{::}<clip>{::}<choose_best>{::}<update_best>
+<update> ::= self._velocity(Pbest, Gbest, n, dimension, velocity) | self._Levyfly(Pbest, n, dimension) | self._bee(n, function, lb, ub, dimension)
+<swap> ::= swap = None | swap = 1{::}self._swap(nest, function) | 
+<selection> ::= selection = None | <drop_worst> | <drop_worst>{::}<ordered_swap> | <ordered_swap>
+<drop_worst> ::= self._drop_worst_chance(nest, lb, ub, dimension, function)
+<ordered_swap> ::= swap = 1{::}self._ordered_swap(n, nest, function)
+<clip> ::= self._agents = np.clip(self._agents, lb, ub){::}self._nests = np.clip(self._nests, lb, ub){::}self._points(self._agents)
+<choose_best> ::= if swap:{:<from_nests>:}else:{:<from_agents>:}  
+<from_agents> ::= Pbest = self._agents[np.array([function(x) for x in self._agents]).argmin()]	
+<from_nests> ::= Pbest = self._nests[np.array([function(x) for x in self._nests]).argmin()]
+<update_best> ::= if function(Pbest) < function(Gbest):{:Gbest = Pbest:}
+<result> ::= self._set_Gbest(Gbest)
+<class_call> ::= XXX_output_XXX = swarm(50, function, -10, 10, 2, 30).getGbest[0]
