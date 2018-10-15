@@ -26,4 +26,4 @@
 <from_nests> ::= Pbest = self._nests[np.array([function(x) for x in self._nests]).argmin()]
 <update_best> ::= if function(Pbest) < function(Gbest):{:Gbest = Pbest:}
 <result> ::= self._set_Gbest(Gbest)
-<class_call> ::= XXX_output_XXX = swarm(50, function, -10, 10, 2, 30).get_Gbest()
+<class_call> ::= XXX_output_XXX = swarm(50, function, -10, 10, 5, 30).get_Gbest()
