@@ -175,9 +175,9 @@ def coco_optimize(solver, fun, max_evals, max_runs=1e9):
                    disp=0, rhoend=1e-9)
 ############################ ADD HERE ########################################
         # ### IMPLEMENT HERE THE CALL TO ANOTHER SOLVER/OPTIMIZER ###
-        elif solver.__name__ == "swarmge":
+        elif solver.__name__ == "my_solver":
         #     CALL MY SOLVER, interfaces vary
-            SwarmPackagePy.swarm(50, tf.ackley_function, -10, 10, 3, 30)
+            solver(fun, fun.lower_bounds, fun.upper_bounds, 2, remaining_evals)
 ##############################################################################
         else:
             solver(fun, x0)
@@ -209,14 +209,14 @@ number_of_batches = 1  # allows to run everything in several batches
 current_batch = 1      # 1..number_of_batches
 ##############################################################################
 # By default we call SOLVER(fun, x0), but the INTERFACE CAN BE ADAPTED TO EACH SOLVER ABOVE
-SOLVER = random_search
+# SOLVER = random_search
 # SOLVER = optimize.fmin_cobyla
-# SOLVER = my_solver # SOLVER = fmin_slsqp # SOLVER = cma.fmin
+SOLVER = my_solver # SOLVER = fmin_slsqp # SOLVER = cma.fmin
 suite_instance = "" # "year:2016"
-suite_options = ""  # "dimensions: 2,3,5,10,20 "  # if 40 is not desired
+suite_options = "2"  # "dimensions: 2,3,5,10,20 "  # if 40 is not desired
 # for more suite options, see http://numbbo.github.io/coco-doc/C/#suite-parameters
 observer_options = ObserverOptions({  # is (inherited from) a dictionary
-                    'algorithm_info': '"A SIMPLE RANDOM SEARCH ALGORITHM"', # CHANGE/INCOMMENT THIS!
+                    #'algorithm_info': '"A SIMPLE RANDOM SEARCH ALGORITHM"', # CHANGE/INCOMMENT THIS!
                     # 'algorithm_name': '',  # default already provided from SOLVER name
                     # 'result_folder': '',  # default already provided from several global vars
                    })

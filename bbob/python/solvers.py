@@ -29,7 +29,7 @@ def random_search(fun, lbounds, ubounds, budget):
         budget -= chunk
     return x_min
 
-def swarm(sw):
+def my_solver(sw):
     def __init__(self, n, function, lb, ub, dimension, iterations):
         super(swarm, self).__init__()
         self._agents = np.random.uniform(lb, ub, (n, dimension))
