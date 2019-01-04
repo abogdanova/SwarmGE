@@ -1,8 +1,8 @@
 from __future__ import absolute_import, division, print_function
 import numpy as np
 from math import *
-# from helper import sw
-from intelligence import sw
+from helper import sw
+
 
 # ===============================================
 # the most basic example solver
