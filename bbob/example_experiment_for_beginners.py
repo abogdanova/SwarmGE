@@ -20,15 +20,20 @@ import cocoex, cocopp  # experimentation and post-processing modules
 import scipy.optimize  # to define the solver to be benchmarked
 from numpy.random import rand  # for randomised restarts
 import os, webbrowser  # to show post-processed results in the browser
+import solvers
 
 ### input
 suite_name = "bbob"
-output_folder = "scipy-optimize-fmin"
+output_folder = "fa"
 fmin = scipy.optimize.fmin
-budget_multiplier = 1  # increase to 10, 100, ...
+budget_multiplier = 100  # increase to 10, 100, ...
+
+def fmin(fun, lbounds, ubounds, dim, budget):
+    result = solvers.fa(50, fun, lbounds, ubounds, dim, budget)
+    return result.get_Gbest()
 
 ### prepare
-suite = cocoex.Suite(suite_name, "", "")
+suite = cocoex.Suite(suite_name, "", "dimensions:2")
 observer = cocoex.Observer(suite_name, "result_folder: " + output_folder)
 minimal_print = cocoex.utilities.MiniPrint()
 
@@ -39,7 +44,8 @@ for problem in suite:  # this loop will take several minutes or longer
     # apply restarts while neither the problem is solved nor the budget is exhausted
     while (problem.evaluations < problem.dimension * budget_multiplier
            and not problem.final_target_hit):
-        fmin(problem, x0, disp=False)  # here we assume that `fmin` evaluates the final/returned solution
+        fmin(problem, problem.lower_bounds, problem.upper_bounds, 
+            problem.dimension,  problem.dimension * budget_multiplier) # here we assume that `fmin` evaluates the final/returned solution
         x0 = problem.lower_bounds + ((rand(problem.dimension) + rand(problem.dimension)) *
                     (problem.upper_bounds - problem.lower_bounds) / 2)
     minimal_print(problem, final=problem.index == len(suite) - 1)
