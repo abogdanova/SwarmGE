@@ -1,10 +1,10 @@
 import numpy as np
 from random import random
 
-from . import intelligence
+import helper
 
 
-class bfo(intelligence.sw):
+class bfo(helper.sw):
     """
     Bacteria Foraging Optimization
     """

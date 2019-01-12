@@ -3,13 +3,13 @@ import numpy as np
 from random import choice, shuffle
 import warnings
 
-from . import intelligence
+import helper
 
 
 warnings.filterwarnings("ignore")
 
 
-class chso(intelligence.sw):
+class chso(helper.sw):
     """Chicken Swarm Optimization"""
 
     def __init__(self, n, function, lb, ub, dimension, iteration, G=5, FL=0.5):

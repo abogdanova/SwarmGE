@@ -1,9 +1,9 @@
 import numpy as np
 
-from . import intelligence
+import helper
 
 
-class gwo(intelligence.sw):
+class gwo(helper.sw):
     """
     Grey Wolf Optimizer
     """

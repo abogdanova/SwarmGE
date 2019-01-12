@@ -1,9 +1,9 @@
 import numpy as np
 
-from . import intelligence
+import helper
 
 
-class wsa(intelligence.sw):
+class wsa(helper.sw):
     """
     Whale Swarm Algorithm
     """

@@ -2,10 +2,10 @@ from math import ceil, exp, floor
 import numpy as np
 from random import random
 
-from . import intelligence
+import helper
 
 
-class ssa(intelligence.sw):
+class ssa(helper.sw):
     """
     Social Spider Optimization
     """

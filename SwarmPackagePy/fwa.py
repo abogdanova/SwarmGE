@@ -1,10 +1,10 @@
 import numpy as np
 import random
 
-from . import intelligence
+import helper
 
 
-class fwa(intelligence.sw):
+class fwa(helper.sw):
     """
     Firework Algorithm
     """

@@ -2,10 +2,10 @@ from math import exp
 import numpy as np
 from random import random
 
-from . import intelligence
+import helper
 
 
-class ba(intelligence.sw):
+class ba(helper.sw):
     """
     Bat Algorithm
     """

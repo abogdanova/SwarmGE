@@ -1,9 +1,9 @@
 import numpy as np
 
-from . import intelligence
+import helper
 
 
-class pso(intelligence.sw):
+class pso(helper.sw):
     """
     Particle Swarm Optimization
     """

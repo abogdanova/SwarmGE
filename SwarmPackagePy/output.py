@@ -1,8 +1,9 @@
 import numpy as np
 from math import *
-from helper import sw
 
-class swarm(sw):
+import helper
+
+class swarm(helper.sw):
   def __init__(self, n, function, lb, ub, dimension, iterations):
     super(swarm, self).__init__()
     self._agents = np.random.uniform(lb, ub, (n, dimension))
@@ -19,6 +20,7 @@ class swarm(sw):
         val = np.random.randint(0, nest - 1)
         if function(i) < function(self._nests[val]):
           self._nests[val] = i
+      self._drop_worst_chance(nest, lb, ub, dimension, function)
       self._ordered_swap(n, nest, function)
       self._agents = np.clip(self._agents, lb, ub)
       self._nests = np.clip(self._nests, lb, ub)

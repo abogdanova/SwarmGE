@@ -1,10 +1,10 @@
 import numpy as np
 from random import choice, randint, random
 
-from . import intelligence
+import helper
 
 
-class ca(intelligence.sw):
+class ca(helper.sw):
     """
     Cat Algorithm (Cat Swarm Optimization)
     """

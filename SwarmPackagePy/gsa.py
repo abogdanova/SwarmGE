@@ -1,10 +1,10 @@
 from math import exp
 import numpy as np
 
-from . import intelligence
+import helper
 
 
-class gsa(intelligence.sw):
+class gsa(helper.sw):
     """
     Gravitational Search Algorithm
     """

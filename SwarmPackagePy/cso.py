@@ -2,10 +2,10 @@ from math import gamma, pi, sin
 import numpy as np
 from random import normalvariate, randint, random
 
-from . import intelligence
+import helper
 
 
-class cso(intelligence.sw):
+class cso(helper.sw):
     """
     Cuckoo Search Optimization
     """

@@ -1,10 +1,10 @@
 import numpy as np
 from random import randint, random, uniform
 
-from . import intelligence
+import helper
 
 
-class hs(intelligence.sw):
+class hs(helper.sw):
     """
     Harmony Search
     """

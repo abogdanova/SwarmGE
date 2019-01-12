@@ -1,10 +1,10 @@
 import numpy as np
 from random import randint, uniform
 
-from . import intelligence
+import helper
 
 
-class aba(intelligence.sw):
+class aba(helper.sw):
     """
     Artificial Bee Algorithm
     """

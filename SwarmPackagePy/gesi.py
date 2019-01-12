@@ -1,5 +1,6 @@
 import numpy as np
-from . import helper
+
+import helper
 
 class gesi(helper.sw):
 	def __init__(self, n, function, lb, ub, dimension, iteration):
