@@ -24,12 +24,12 @@ import solvers
 
 ### input
 suite_name = "bbob"
-output_folder = "fa"
+output_folder = "swarmge"
 fmin = scipy.optimize.fmin
 budget_multiplier = 100  # increase to 10, 100, ...
 
 def fmin(fun, lbounds, ubounds, dim, budget):
-    result = solvers.fa(50, fun, lbounds, ubounds, dim, budget)
+    result = solvers.swarmge(50, fun, lbounds, ubounds, dim, budget)
     return result.get_Gbest()
 
 ### prepare
