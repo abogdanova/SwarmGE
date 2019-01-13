@@ -1,9 +1,8 @@
 import numpy as np
 from math import *
+from helper import sw
 
-import helper
-
-class swarm(helper.sw):
+class swarm(sw):
   def __init__(self, n, function, lb, ub, dimension, iterations):
     super(swarm, self).__init__()
     self._agents = np.random.uniform(lb, ub, (n, dimension))
