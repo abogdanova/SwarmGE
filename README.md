@@ -13,7 +13,7 @@ To evolve swarm:
 - find best phenotype in results/"new experiment folder"/best.txt
 
 To check swarm performance:
-- Save result as python script inside SwarmPackagePy
+- Save result as swarm class in SwarmPackagePy/swarmtest.py
 - Run example.py modified to call the new swarm
 
 To test the swarm on bbob suite:
