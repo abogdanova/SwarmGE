@@ -1,11 +1,34 @@
-# Introduction
+# SwarmGE
+
+SwarmGE is a package build on the base of PonyGE (grammatical evolution package) that evolves variations of swarm algorythms and allows benchmarking them with Black Box Optimisation framework (bbob)
+BNF-style grammar for the evolution of swarms can be found in grammars/swarmge.pybnf 
+At the present stage it describes hybridisation of PSO (particle swarm optimisation), ABA (artificial bee algorithm) and CSO (cockoo search optimisation). It relies on helper.py for function declarations.
+
+# Instructions
+
+To evolve swarm:
+- function for training has to be declared in src/fitness folder adopting base_ff class from fitness.base_ff_classes.base_ff (TODO: declare selected functions so that the number of function evaluations to reach some accuracy margin is taken as fitness value. Right now, ackley_function.py is measuring fitness as proximity of the solution to the absolute function minimum)
+- specify the desired parameters in parameters/swarmge.txt
+- from the console run "python ponyge.py --parameters swarmge.txt"
+- find best phenotype in results/"new experiment folder"/best.txt
+
+To check swarm performance:
+- Save result as python script inside SwarmPackagePy
+- Run example.py modified to call the new swarm
+
+To test the swarm on bbob suite:
+- insert GE output (phentype) as class swarmge(sw) in bbob/solvers.py
+- run bbob/example_experiment_for_beginners.py
+
+
+# PonyGE2 (https://github.com/PonyGE/PonyGE2)
 --------------
 
 Grammatical Evolution (GE) is a population-based evolutionary algorithm, where a BNF-style grammar is used in the genotype to phenotype mapping process [O'Neill & Ryan, 2003].
 
 PonyGE2 is an implementation of GE in Python. It's intended as an advertisement and a starting-point for those new to GE, a reference for students and researchers, a rapid-prototyping medium for our own experiments, and as a Python workout.
 
-The original version of PonyGE (https://github.com/jmmcd/ponyge) was originally designed to be a small single-file implementation of GE. However, over time this has grown to a stage where a more formal structured approach was needed. This has led to the development of PonyGE2 (https://github.com/PonyGE/PonyGE2), presented here.
+The original version of PonyGE (https://github.com/jmmcd/ponyge) was originally designed to be a small single-file implementation of GE. However, over time this has grown to a stage where a more formal structured approach was needed. This has led to the development of PonyGE2, presented here.
 
 A technical paper describing PonyGE2 has been published and been made freely available on arXiv at:
 
@@ -67,3 +90,43 @@ https://github.com/PonyGE/PonyGE2/wiki
 Michael O'Neill and Conor Ryan, "Grammatical Evolution: Evolutionary Automatic Programming in an Arbitrary Language", Kluwer Academic Publishers, 2003.
 
 Koza, J.R., 1992. "Genetic programming: on the programming of computers by means of natural selection (Vol. 1)". MIT press.
+
+
+# SwarmPackagePy (https://github.com/SISDevelop/SwarmPackagePy)
+*SwarmPackagePy* is the package, witch contains the following swarm optimization algorithms:
+
+1. Artificial Bee Algorithm
+2. Bat Algorithm
+3. Bacterial Foraging Optimization
+4. Cat Swarm Optimization
+5. Chicken Swarm Optimization
+6. Cuckoo Search Optimization
+7. Firefly algorithm
+8. Firework Algorithm
+9. Gravitational Search Algorithm
+10. Grey Wolf Optimizer
+11. Harmony Search
+12. Particle Swarm Optimization
+13. Social Spider Algorithm
+14. Whale Swarm Algorithm
+
+Every algorithm has arguments listed below:
+
+* n: number of agents
+* function: test function
+* lb: lower limits for plot axes
+* ub: upper limits for plot axes
+* dimension: space dimension
+* iteration: number of iterations
+
+Every algorithm has methods listed below:
+
+* get_agents(): returns a history of all agents of the algorithm
+* get_Gbest(): returns the best position of algorithm
+
+All documentation you can view on the github repository https://github.com/SISDevelop/SwarmPackagePy.
+For all questions and suggestions contact us at swarm.team.dev@gmail.com. For more info you could also write to:
+
+* team leads - vllitskevich@gmail.com, polly.bartoshevic@gmail.com,
+* programmers - alexeymaleyko@gmail.com, b317.forinko@gmail.com, vladislaw.kapustin@gmail.com.
+
