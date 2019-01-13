@@ -3,6 +3,7 @@
 SwarmGE is a package build on the base of PonyGE (grammatical evolution package) that evolves variations of swarm algorythms and allows benchmarking them with Black Box Optimisation framework (bbob)
 BNF-style grammar for the evolution of swarms can be found in grammars/swarmge.pybnf 
 At the present stage it describes hybridisation of PSO (particle swarm optimisation), ABA (artificial bee algorithm) and CSO (cockoo search optimisation). It relies on helper.py for function declarations.
+We also use SwarmPackagePy for comparing and visualizing the performance of hybrids against conventional swarm algorithms.
 
 # Instructions
 
