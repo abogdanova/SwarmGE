@@ -28,6 +28,7 @@ output_folder = "swarmge"
 fmin = scipy.optimize.fmin
 budget_multiplier = 100  # increase to 10, 100, ...
 
+# fmin is re-defined to call our solver
 def fmin(fun, lbounds, ubounds, dim, budget):
     result = solvers.swarmge(50, fun, lbounds, ubounds, dim, budget)
     return result.get_Gbest()

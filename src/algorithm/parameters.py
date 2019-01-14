@@ -28,9 +28,9 @@ params = {
         'FITNESS_FUNCTION': "supervised_learning.regression",
 
         # Select problem dataset
-        'DATASET_TRAIN': "Vladislavleva4/Train.txt",
-        'DATASET_TEST': None,
-        'DATASET_DELIMITER': None,
+        # 'DATASET_TRAIN': "Vladislavleva4/Train.txt",
+        # 'DATASET_TEST': None,
+        # 'DATASET_DELIMITER': None,
 
         # Set grammar file
         'GRAMMAR_FILE': "supervised_learning/Vladislavleva4.bnf",
